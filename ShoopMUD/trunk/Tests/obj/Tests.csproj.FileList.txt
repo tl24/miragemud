@@ -1,3 +1,0 @@
-obj\Debug\ResolveAssemblyReference.cache
-obj\Debug\ROMtests.dll
-obj\Debug\ROMtests.pdb
