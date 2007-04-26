@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Player xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <level>23</level>
+  <sex>Female</sex>
+  <name>targetName</name>
+  <password>roxV31T9kO6XWtptSE995w==</password>
+  <description>target description line 1
+target description line 2</description>
+</Player>

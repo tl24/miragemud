@@ -1,0 +1,12 @@
+.\bin\Debug\ROMtests.dll
+.\bin\Debug\ROMtests.pdb
+.\bin\Debug\ROM.exe
+.\bin\Debug\ROM.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\ROMtests.dll
+obj\Debug\ROMtests.pdb
+.\bin\Debug\ROMtests.dll.config
+.\bin\Debug\ROM.xml
+.\bin\Debug\Newtonsoft.Json.dll
+.\bin\Debug\Newtonsoft.Json.pdb
+.\bin\Debug\Newtonsoft.Json.xml

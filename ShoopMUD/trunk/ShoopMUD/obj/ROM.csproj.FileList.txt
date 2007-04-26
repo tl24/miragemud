@@ -1,0 +1,10 @@
+obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\ROM.exe
+bin\Debug\ROM.pdb
+obj\Debug\ROM.exe
+obj\Debug\ROM.pdb
+bin\Debug\ROM.exe.config
+bin\Debug\Newtonsoft.Json.dll
+bin\Debug\Newtonsoft.Json.pdb
+bin\Debug\Newtonsoft.Json.xml
+bin\Debug\ROM.XML

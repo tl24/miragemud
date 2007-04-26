@@ -1,0 +1,3 @@
+bin\Debug\ShoopMUD.exe.config
+obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\ShoopMUD.xml
