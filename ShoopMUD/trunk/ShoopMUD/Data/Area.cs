@@ -15,7 +15,7 @@ namespace Shoop.Data
         public Area()
         {
             _rooms = new SortedDictionary<string, Room>();
-            _uriProperties["rooms"] = new QuerySortedDictionaryAdapter<Room>("rooms", _rooms);
+            _uriProperties["rooms"] = new QueryableDictionaryAdapter<Room>("rooms", _rooms);
         }
 
         public SortedDictionary<string, Room> Rooms

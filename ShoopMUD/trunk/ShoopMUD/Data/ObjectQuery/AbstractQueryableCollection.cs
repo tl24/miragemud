@@ -137,6 +137,7 @@ namespace Shoop.Data.Query
         #region IEnumerable<IQueryable> Members
 
         public abstract IEnumerator<IQueryable> GetEnumerator();
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -144,7 +145,7 @@ namespace Shoop.Data.Query
 
         #endregion
 
-        protected class WrappedEnumerator<T> : IEnumerator<T> where T : IQueryable
+        public class WrappedEnumerator<T> : IEnumerator<T> where T : IQueryable
         {
             protected IEnumerator _enumerator;
 

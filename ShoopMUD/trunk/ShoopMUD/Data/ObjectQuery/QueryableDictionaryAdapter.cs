@@ -5,19 +5,19 @@ using System.Collections;
 
 namespace Shoop.Data.Query
 {
-    public class QuerySortedDictionaryAdapter<V> : AbstractQueryableCollection 
+    public class QueryableDictionaryAdapter<V> : AbstractQueryableCollection 
         where V : IQueryable
     {
-        private SortedDictionary<string, V> sortCol;
+        private IDictionary<string, V> sortCol;
 
-        public QuerySortedDictionaryAdapter(string uri, SortedDictionary<string, V> collection)
+        public QueryableDictionaryAdapter(string uri, IDictionary<string, V> collection)
             :
             this(uri, collection, 0)
         {
             
         }
 
-        public QuerySortedDictionaryAdapter(string uri, SortedDictionary<string, V> collection, QueryCollectionFlags flags)
+        public QueryableDictionaryAdapter(string uri, IDictionary<string, V> collection, QueryCollectionFlags flags)
             : base(uri, flags | QueryCollectionFlags.Sorted)
         {
             this.sortCol = collection;
@@ -25,6 +25,7 @@ namespace Shoop.Data.Query
 
         public override IQueryable find(ObjectQuery query)
         {
+
             IQueryable child = sortCol[query.UriName];
             if (query.Subquery != null)
             {
@@ -38,20 +39,22 @@ namespace Shoop.Data.Query
 
         public override IEnumerator<IQueryable> GetEnumerator()
         {
-            return new SortedWrappedEnumerator(((IEnumerable)sortCol).GetEnumerator());
+            return (IEnumerator<IQueryable>) new WrappedDictionaryEnumerator(sortCol, ((IEnumerable)sortCol).GetEnumerator());
         }
 
-        protected class SortedWrappedEnumerator : AbstractQueryableCollection.WrappedEnumerator<V>
+        public class WrappedDictionaryEnumerator : AbstractQueryableCollection.WrappedEnumerator<V> , IEnumerator<V>
         {
-            protected SortedDictionary<string, V> sortCol;
+            protected IDictionary<string, V> sortCol;
 
-            protected SortedWrappedEnumerator(SortedDictionary<string, V> sortCol, IEnumerator _enumerator) : base(_enumerator) {
+            internal WrappedDictionaryEnumerator(IDictionary<string, V> sortCol, IEnumerator _enumerator)
+                : base(_enumerator)
+            {
                 this.sortCol = sortCol;
             }
 
             protected override V GetCurrent()
             {
-                string key = _enumerator.Current as string;
+                string key = (string)_enumerator.Current;
                 return sortCol[key];
             }
         }

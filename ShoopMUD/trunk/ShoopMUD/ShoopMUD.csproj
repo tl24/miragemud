@@ -47,12 +47,12 @@
     <Compile Include="Data\Area.cs" />
     <Compile Include="Data\BaseData.cs" />
     <Compile Include="Data\ObjectQuery\IQueryable.cs" />
+    <Compile Include="Data\ObjectQuery\QueryableDictionaryAdapter.cs" />
     <Compile Include="Data\ObjectQuery\QueryMatcher.cs" />
     <Compile Include="Data\Player.cs" />
     <Compile Include="Data\Room.cs" />
     <Compile Include="Data\ObjectQuery\AbstractQueryableCollection.cs" />
     <Compile Include="Data\ObjectQuery\ObjectQuery.cs" />
-    <Compile Include="Data\ObjectQuery\QuerySortedDictionaryAdapter.cs" />
     <Compile Include="IO\Descriptor.cs" />
     <Compile Include="IO\Server.cs" />
     <Compile Include="IO\Serialization\JSONSerializerAdapter.cs" />
