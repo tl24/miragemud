@@ -4,6 +4,16 @@ using System.Text;
 
 namespace Shoop.Data.Query
 {
+
+    [Flags]
+    public enum QueryFlags
+    {
+        IsExact,
+        All,
+        Wildcard,
+        TypeMatch
+    }
+
     /// <summary>
     /// Specifies a query over a URINameable set of resources
     /// </summary>
@@ -12,6 +22,7 @@ namespace Shoop.Data.Query
         private string _typeName;
         private string _uriName;
         private ObjectQuery _subquery;
+        private QueryFlags _flags;
 
         public ObjectQuery(string type, string uri, ObjectQuery subQuery)
         {
@@ -19,6 +30,21 @@ namespace Shoop.Data.Query
             this._typeName = type;
             this._uriName = uri;
             this._subquery = subQuery;
+
+            // parse the flag values
+            _flags = 0;
+            _flags |= this._typeName != null ? QueryFlags.TypeMatch : 0;
+            if (this._uriName.Contains("*"))
+            {
+                _flags |= QueryFlags.Wildcard;
+                _flags |= this._uriName == "*" ? QueryFlags.All : 0;
+                this._uriName = this._uriName.Replace("*", "");
+            }
+            else
+            {
+                _flags |= QueryFlags.IsExact;
+            }
+
         }
 
         public ObjectQuery(string uri) : this(null, uri, null) { }
@@ -41,6 +67,10 @@ namespace Shoop.Data.Query
                 {
                     result = new ObjectQuery(pieces[0], pieces[1]);
                 }
+                else if (pieces[0] != null && pieces[0] != string.Empty)
+                {
+                    result = new ObjectQuery(pieces[0]);
+                }
             }
 
             if (result != null && root.Length > 1)
@@ -62,6 +92,12 @@ namespace Shoop.Data.Query
             {
                 sb.Append(_uriName);
             }
+
+            if ((_flags & QueryFlags.Wildcard) != 0)
+            {
+                sb.Append('*');
+            }
+
             if (_subquery != null)
             {
                 sb.Append('/');
@@ -111,6 +147,12 @@ namespace Shoop.Data.Query
         {
             get { return this._subquery; }
             set { this._subquery = value; }
+        }
+
+        public QueryFlags Flags
+        {
+            get { return _flags; }
+            set { _flags = value; }
         }
     }
 }

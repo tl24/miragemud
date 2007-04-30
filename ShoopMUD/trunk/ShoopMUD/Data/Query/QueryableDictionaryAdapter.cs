@@ -18,7 +18,7 @@ namespace Shoop.Data.Query
         }
 
         public QueryableDictionaryAdapter(string uri, IDictionary<string, V> collection, QueryCollectionFlags flags)
-            : base(uri, flags | QueryCollectionFlags.Sorted)
+            : base(uri, flags)
         {
             this.sortCol = collection;
         }
@@ -42,7 +42,7 @@ namespace Shoop.Data.Query
             return (IEnumerator<IQueryable>) new WrappedDictionaryEnumerator(sortCol, ((IEnumerable)sortCol).GetEnumerator());
         }
 
-        public class WrappedDictionaryEnumerator : AbstractQueryableCollection.WrappedEnumerator<V> , IEnumerator<V>
+        public class WrappedDictionaryEnumerator : AbstractQueryableCollection.WrappedEnumerator<V> 
         {
             protected IDictionary<string, V> sortCol;
 

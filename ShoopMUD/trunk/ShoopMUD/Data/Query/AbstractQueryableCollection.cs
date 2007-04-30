@@ -76,11 +76,12 @@ namespace Shoop.Data.Query
         public virtual IList<IQueryable> findAll(ObjectQuery query)
         {
             List<IQueryable> list = new List<IQueryable>();
-            //TODO: Use query matcher
+            QueryMatcher matcher = QueryMatcher.getMatcher(query);
+
             foreach (IQueryable uriObj in this)
             {
                 // pick the first match
-                if (uriObj.URI == query.UriName)
+                if (matcher.IsMatch(uriObj))
                 {
                     if (query.Subquery != null)
                     {
@@ -91,6 +92,16 @@ namespace Shoop.Data.Query
                         list.Add(uriObj);
                     }
                 }
+                else
+                {
+                    if ((_flags & QueryCollectionFlags.Sorted) != 0)
+                    {
+                        if (uriObj.URI.CompareTo(query.UriName) > 0)
+                        {
+                            return null;
+                        }
+                    }
+                }
             }
             return list;
         }
@@ -98,10 +109,11 @@ namespace Shoop.Data.Query
         public virtual IQueryable find(ObjectQuery query, int index)
         {
             int match = 0;
+            QueryMatcher matcher = QueryMatcher.getMatcher(query);
             foreach (IQueryable uriObj in this)
             {
                 // pick the first match
-                if (uriObj.URI == query.UriName)
+                if (matcher.IsMatch(uriObj))
                 {
                     if (query.Subquery != null)
                     {
@@ -111,6 +123,16 @@ namespace Shoop.Data.Query
                     {
                         if (++match == index)
                             return uriObj;
+                    }
+                }
+                else
+                {
+                    if ((_flags & QueryCollectionFlags.Sorted) == QueryCollectionFlags.Sorted)
+                    {
+                        if (uriObj.URI.CompareTo(query.UriName) > 0)
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -145,18 +167,24 @@ namespace Shoop.Data.Query
 
         #endregion
 
-        public class WrappedEnumerator<T> : IEnumerator<T> where T : IQueryable
+        protected WrappedEnumerator<T> GetWrappedEnumerator<T>(IEnumerator enumerator) where T : IQueryable
+        {
+            return new WrappedEnumerator<T>(enumerator);
+        }
+
+        public class WrappedEnumerator<T> : IEnumerator<IQueryable> where T : IQueryable
         {
             protected IEnumerator _enumerator;
 
-            protected WrappedEnumerator(IEnumerator _enumerator)
+            public WrappedEnumerator(IEnumerator _enumerator)
             {
                 this._enumerator = _enumerator;
             }
 
             #region IEnumerator<T> Members
 
-            public virtual T Current {
+            public virtual IQueryable Current
+            {
                 get
                 {
                     return GetCurrent();

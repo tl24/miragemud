@@ -69,6 +69,15 @@ namespace ROMtests
         //
         #endregion
 
+        [TestMethod()]
+        public void ParseURIOnlyTest()
+        {
+            string uri = "myTestURI";
+            ObjectQuery query = ObjectQuery.parse(uri);
+
+            Assert.AreEqual(uri, query.UriName, "URI and queryURI are not equal");
+            Assert.IsTrue(query.TypeName == null || query.TypeName == string.Empty, "TypeName parameter is not empty");
+        }
 
         /// <summary>
         ///A test for parse (string)

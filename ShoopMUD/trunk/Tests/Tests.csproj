@@ -40,9 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="data\PlayerTest.cs" />
+    <Compile Include="Properties\data\PlayerTest.cs" />
     <Compile Include="IURINameableTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryableCollectionAdapterTest.cs" />
+    <Compile Include="QueryableDictionaryAdapterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AuthoringTests.txt" />
