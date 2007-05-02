@@ -167,7 +167,7 @@ namespace Shoop.Data.Query
 
         public QueryMatchType MatchType
         {
-            get { return _matchType; }
+            get { return _matchType;  }
             //set { _matchType = value; }
         }
     }
