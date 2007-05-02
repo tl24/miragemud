@@ -5,35 +5,49 @@ using Shoop.Data.Query;
 
 namespace Shoop.Data
 {
-    public class Area : BaseData
+    public class Area : BaseData, IViewable
     {
-    
-        private string _name;
-        private string _description;
-        private SortedDictionary<string, Room> _rooms;
+        private string _title;
+        private string _shortDescription;
+        private string _longDescription;
+        private IDictionary<string, Room> _rooms;
 
         public Area()
         {
-            _rooms = new SortedDictionary<string, Room>();
-            _uriProperties["rooms"] = new QueryableDictionaryAdapter<Room>("rooms", _rooms);
+            _rooms = new Dictionary<string, Room>();
+            _uriProperties["Rooms"] = new QueryableDictionaryAdapter<Room>("Rooms", _rooms);
         }
 
-        public SortedDictionary<string, Room> Rooms
+        public IDictionary<string, Room> Rooms
         {
             get { return this._rooms; }
             set { this._rooms = value; }
         }
 
-        public string Name
+        public string LongDescription
         {
-            get { return this._name; }
-            set { this._name = value; }
+            get { return this._longDescription; }
+            set { this._longDescription = value; }
         }
 
-        public string Description
+        public string ShortDescription
         {
-            get { return this._description; }
-            set { this._description = value; }
+            get { return this._shortDescription; }
+            set { this._shortDescription = value; }
+        }
+
+        public string Title
+        {
+            get { return this._title; }
+            set { this._title = value; }
+        }
+
+        public override string FullURI
+        {
+            get
+            {
+                return "Areas/" + this.URI;
+            }
         }
     }
 }

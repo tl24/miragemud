@@ -59,6 +59,7 @@ namespace Shoop.IO
             Socket server = listener.Server;
 
             sockets.Add(server);
+            GlobalLists globalLists = GlobalLists.GetInstance();
 
             while(!_shutdown) {
                 int i = 0;
@@ -89,7 +90,8 @@ namespace Shoop.IO
                     {
                         if (desc.state == ConnectedState.Playing)
                         {
-                            Player.save(desc.player);
+                            Player.Save(desc.player);
+                            globalLists.Players.Remove(desc.player);
                         }
                     }
                     desc.close();

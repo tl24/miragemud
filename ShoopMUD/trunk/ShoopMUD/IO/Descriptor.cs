@@ -283,7 +283,7 @@ namespace Shoop.IO
 
             if (snoop) {
                 foreach (Descriptor desc in snoopers) {
-                    desc.writeToBuffer(this.player.title, false);
+                    desc.writeToBuffer(this.player.Title, false);
                     desc.writeToBuffer(" > ", false);
                     desc.writeToBuffer(text, false);
                 }

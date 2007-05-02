@@ -17,6 +17,12 @@ namespace Shoop.Data.Query
         string URI { get; }
 
         /// <summary>
+        /// Gets the full URI for this object which includes
+        /// the full URI of the Parent.
+        /// </summary>
+        string FullURI { get; }
+        
+        /// <summary>
         /// Finds the first object matching the given query
         /// </summary>
         /// <param name="query">the uri query</param>

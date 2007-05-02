@@ -29,11 +29,13 @@ namespace Shoop.Data
     ///     A base class for living breathing things such as players
     /// and mobiles.
     /// </summary>
-    public class Animate : BaseData
+    public class Animate : BaseData, IViewable
     {
         private string _title;
         private int _level;
         private SexType _sex;
+        private string _shortDescription;
+        private string _longDescription;
 
         public Animate()
         {
@@ -59,13 +61,35 @@ namespace Shoop.Data
             set { _sex = value; }
         }
 
+        #region IViewable Members
+
         /// <summary>
         ///     The name of this animate
         /// </summary>
-        public string title
+        public string Title
         {
             get { return _title; }
             set { _title = value; }
         }
+
+        /// <summary>
+        /// A short description of this animate
+        /// </summary>
+        public string ShortDescription
+        {
+            get { return _shortDescription; }
+            set { _shortDescription = value; }
+        }
+
+        /// <summary>
+        /// A long description of this animate
+        /// </summary>
+        public string LongDescription
+        {
+            get { return _longDescription; }
+            set { _longDescription = value; }
+        }
+
+        #endregion
     }
 }

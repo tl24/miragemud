@@ -11,6 +11,7 @@ using Shoop.Command;
 using Shoop.Attributes;
 using Shoop.IO.Serialization;
 using Newtonsoft.Json;
+using Shoop.Data.Query;
 
 namespace Shoop.Data
 {
@@ -28,18 +29,20 @@ namespace Shoop.Data
         private string _password;
         private Descriptor _descriptor;
         private IInterpret _interpreter;
+        private Room _room;
 
         /// <summary>
         ///     Creates an instance of a player
         /// </summary>
         public Player() : base()
-        {            
+        {
+            _uriProperties.Add("Room", _room);
         }
 
         /// <summary>
         ///     The player's password
         /// </summary>
-        public string password        
+        public string Password        
         {            
             get { return _password; }
             set { _password = value; }
@@ -49,9 +52,9 @@ namespace Shoop.Data
         ///     Sets the password for the character, encrypting it first.
         /// </summary>
         /// <param name="password">plain text password</param>
-        public void setPassword(string password)
+        public void SetPassword(string password)
         {
-            _password = encryptPassword(password);
+            _password = EncryptPassword(password);
         }
 
         /// <summary>
@@ -59,7 +62,7 @@ namespace Shoop.Data
         /// </summary>
         /// <param name="otherPassword">plain text password</param>
         /// <returns>true if the password matches the one for this player</returns>
-        public bool comparePassword(string otherPassword)
+        public bool ComparePassword(string otherPassword)
         {
             // allow empty password to compare
             if ((otherPassword == null || otherPassword == string.Empty) &&
@@ -69,7 +72,7 @@ namespace Shoop.Data
             }
             else
             {
-                return encryptPassword(otherPassword).Equals(_password);
+                return EncryptPassword(otherPassword).Equals(_password);
             }
         }
 
@@ -79,7 +82,7 @@ namespace Shoop.Data
         /// </summary>
         /// <param name="password">the password to encrypt</param>
         /// <returns>the encrypted password</returns>
-        private string encryptPassword(string password)
+        private string EncryptPassword(string password)
         {
             byte[] salt = Encoding.ASCII.GetBytes("encryptPassword");
             Rfc2898DeriveBytes passwordKey = new Rfc2898DeriveBytes("ROMHashPassword", salt);
@@ -90,14 +93,6 @@ namespace Shoop.Data
             byte[] bytesOut = hash.ComputeHash(bytesIn);
             string encrypted = Convert.ToBase64String(bytesOut);
             return encrypted;
-        }
-        /// <summary>
-        ///     The player's Description
-        /// </summary>
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
         }
 
         /// <summary>
@@ -116,16 +111,54 @@ namespace Shoop.Data
         /// </summary>
         [XmlIgnore]
         [JsonIgnore]
-        public IInterpret interpreter
+        public IInterpret Interpreter
         {
             get { return _interpreter; }
             set { _interpreter = value; }
         }
 
+        [JsonIgnore]
+        [XmlIgnore]
+        public Room Room
+        {
+            get { return _room; }
+            set { _room = value; }
+        }
+
+        public string RoomURI
+        {
+            get { return _room.FullURI; }
+            set
+            {
+                if (value != null)
+                {
+                    _room = (Room)GlobalLists.GetInstance().Find(value);
+                    if (_room == null)
+                    {
+                        throw new ObjectNotFoundException("Could not find room with value: " + value);
+                    }
+                }
+                else
+                {
+                    _room = null;
+                }
+            }
+        }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public override string FullURI
+        {
+            get
+            {
+                return "Players/" + this.URI;
+            }
+        }
+
         /// <summary>
         ///     Retrieve configuration settings
         /// </summary>
-        private static void initConfigSettings()
+        private static void InitConfigSettings()
         {
             if (!_initted)
             {
@@ -140,9 +173,9 @@ namespace Shoop.Data
         /// </summary>
         /// <param name="name">the name of the player to load</param>
         /// <returns></returns>
-        public static Player load(string uri)
+        public static Player Load(string uri)
         {
-            initConfigSettings();
+            InitConfigSettings();
             IObjectDeserializer deserializer = ObjectSerializerFactory.getDeserializer(_playerDir, typeof(Player), uri.ToLower());
             try
             {
@@ -155,6 +188,19 @@ namespace Shoop.Data
             }
         }
 
+        /// <summary>
+        ///     Saves the given player to disk
+        /// </summary>
+        /// <param name="p">the player to save</param>
+        public static void Save(Player p)
+        {
+            InitConfigSettings();
+            IObjectSerializer serializer = ObjectSerializerFactory.getSerializer(_playerDir, p.GetType());
+            serializer.Serialize(p, p.URI);
+        }
+
+        #region Commands
+
         [Command(Description = "Attempt to kill another player or mobile")]
         public string kill([ArgumentType(ArgumentType.Self)] Player self, string target)
         {
@@ -164,9 +210,9 @@ namespace Shoop.Data
         [Command(Description = "Change the password")]
         public string changePassword(string oldPassword, string newPassword)
         {
-            if (comparePassword(oldPassword))
+            if (ComparePassword(oldPassword))
             {
-                setPassword(newPassword);
+                SetPassword(newPassword);
                 return "Password changed.\r\n";
             }
             else
@@ -192,38 +238,11 @@ namespace Shoop.Data
         [Confirmation(CancellationMessage="Save cancelled.\r\n")]
         public string save()
         {
-            Player.save(this);
+            Player.Save(this);
             return "Information saved.\r\n";
         }
 
-        /*
-        [Command(Description="Lists available commands")]
-        public string commands()
-        {
-            
-            StringBuilder sb = new StringBuilder();
-            Dictionary<string, rom.Command.MethodHelper> typeCache = rom.Command.MethodHelper.getTypeCache(typeof(Player));
-            sb.Append("Available Commands for Player:\r\n");
-            foreach (MethodHelper entry in typeCache.Values)
-            {
-                sb.Append(entry.Name);
-                sb.Append('\t');
-                sb.Append(entry.Description);
-                sb.Append("\r\n");
-            }
-            return sb.ToString();
-        }
-        */
+        #endregion
 
-        /// <summary>
-        ///     Saves the given player to disk
-        /// </summary>
-        /// <param name="p">the player to save</param>
-        public static void save(Player p)
-        {
-            initConfigSettings();
-            IObjectSerializer serializer = ObjectSerializerFactory.getSerializer(_playerDir, p.GetType());
-            serializer.Serialize(p, p.URI);
-        }
     }
 }

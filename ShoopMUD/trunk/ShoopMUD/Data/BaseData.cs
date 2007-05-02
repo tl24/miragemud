@@ -111,6 +111,11 @@ namespace Shoop.Data
             return Find(ObjectQuery.parse(query), index);
         }
 
+        public virtual string FullURI
+        {
+            get { return this.URI; }
+        }
+
         #endregion
     }
 }

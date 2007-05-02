@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Shoop.IO;
+using Shoop.Data;
 
 namespace Shoop
 {
@@ -12,6 +13,8 @@ namespace Shoop
             Shoop.Command.MethodInvoker.registerType(typeof(Shoop.Data.Player));
             Shoop.Command.MethodInvoker.registerType(typeof(Shoop.Command.Interpreter));
             Server listener = new Server(4500);
+            AreaLoader loader = new AreaLoader();
+            loader.LoadAll();
             listener.run();
         }
     }

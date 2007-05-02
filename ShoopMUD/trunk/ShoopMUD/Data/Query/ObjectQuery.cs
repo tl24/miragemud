@@ -108,13 +108,10 @@ namespace Shoop.Data.Query
             if (object.ReferenceEquals(q1, q2))
                 return true;
 
-            if (q1 != null)
-                return q1.Equals(q2);
-            else if (q2 != null)
-                return q2.Equals(q1);
+            if ((object)q1 == null)
+                return (object)q2 == null;
             else
-                return false;
-
+                return q1.Equals(q2);
         }
       
         public static bool operator !=(ObjectQuery q1, ObjectQuery q2)

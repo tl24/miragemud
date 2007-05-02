@@ -143,9 +143,9 @@ namespace Shoop.Command
             }
 
             bool success = false;
-            if (actor.interpreter != null)
+            if (actor.Interpreter != null)
             {
-                if (!actor.interpreter.execute(actor, input))
+                if (!actor.Interpreter.execute(actor, input))
                 {
                     actor.Descriptor.writeToBuffer("Huh?\n\r", true);
                 }
@@ -186,9 +186,33 @@ namespace Shoop.Command
         public static void quit([ArgumentType(ArgumentType.Self)] Player player)
         {
             player.Descriptor.writeToBuffer("Goodbye!\r\n");
+            if (player.Descriptor.state == ConnectedState.Playing)
+            {
+                player.save();
+            }
+            player.Room.Animates.Remove(player);
+            // TODO: Clean up connections, this isn't getting rid of it
             player.Descriptor.close();
         }
 
+        [Command]
+        public static string look([ArgumentType(ArgumentType.Self)] Player player)
+        {
+            string result = "";
+            result += player.Room.Title + "\n\r";
+            result += player.Room.ShortDescription + "\n\r";
+            result += "\n\r";
+            result += "Players:\n\r";
+            foreach (Animate animate in player.Room.Animates)
+            {
+                if (animate != player)
+                {
+                    result += animate.Title + "\r\n";
+                }
+            }
+
+            return result;
+        }
     }
 
     public interface IInterpret
@@ -233,8 +257,8 @@ namespace Shoop.Command
         private void setPlayer(Player player)
         {
             this._player = player;
-            priorInterpreter = player.interpreter;
-            this._player.interpreter = this;
+            priorInterpreter = player.Interpreter;
+            this._player.Interpreter = this;
         }
 
         #region IInterpret Members
@@ -261,7 +285,7 @@ namespace Shoop.Command
             {
                 success = false;
             }
-            actor.interpreter = priorInterpreter;
+            actor.Interpreter = priorInterpreter;
             return success;
         }
 

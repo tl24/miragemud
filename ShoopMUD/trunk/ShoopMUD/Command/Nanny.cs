@@ -4,6 +4,7 @@ using System.Text;
 using Shoop.IO;
 using Shoop.Data;
 using System.Text.RegularExpressions;
+using System.Configuration;
 
 namespace Shoop.Command
 {
@@ -87,7 +88,7 @@ namespace Shoop.Command
 	            return;
 	        }
 	
-            Player oldPlayer = Player.load(input);
+            Player oldPlayer = Player.Load(input);
             player = oldPlayer;
 	        //TODO: Check Deny players
 	        //TODO: Check Sitebans
@@ -113,8 +114,8 @@ namespace Shoop.Command
 	            // Check newbie ban
                 player = new Player();
                 player.URI = input;
-                player.title = input;
-	            descriptor.writeToBuffer("Is that right, " + player.title + " (Y/N)? " );
+                player.Title = input;
+	            descriptor.writeToBuffer("Is that right, " + player.Title + " (Y/N)? " );
                 currentState = states.ConfirmNewName;
 	            return;
 	        }	  
@@ -151,7 +152,7 @@ namespace Shoop.Command
         /// <param name="input">password</param>
         private void getOldPassword(string input) {
             descriptor.echoOn();
-            if (!player.comparePassword(input))
+            if (!player.ComparePassword(input))
             {
 	            descriptor.writeToBuffer( "\n\rWrong password.\n\r" );
 	            descriptor.close();
@@ -174,7 +175,7 @@ namespace Shoop.Command
         /// <param name="input">y or n</param>
         private void confirmNewName(string input) {
 	        if (input.StartsWith("y", StringComparison.CurrentCultureIgnoreCase)) {  // Yes
-	            descriptor.writeToBuffer("New character.\n\rEnter a password for " + player.title + ": ");
+	            descriptor.writeToBuffer("New character.\n\rEnter a password for " + player.Title + ": ");
                 descriptor.echoOff();
                 currentState = states.GetNewPassword;
 	        } else if (input.StartsWith("n", StringComparison.CurrentCultureIgnoreCase)) {  // No
@@ -198,7 +199,7 @@ namespace Shoop.Command
 	            descriptor.echoOff();
 	            return;
 	        }
-            player.setPassword( input );
+            player.SetPassword( input );
 	        descriptor.writeToBuffer("Confirm password: ");
 	        descriptor.echoOff();
 	        currentState = states.ConfirmPassword;	
@@ -210,10 +211,10 @@ namespace Shoop.Command
         /// <param name="input">password</param>
         private void confirmPassword(string input) {
 	        descriptor.writeToBuffer("\n\r");
-            if (!player.comparePassword(input)) {
+            if (!player.ComparePassword(input)) {
 	            descriptor.writeToBuffer("Passwords don't match.\n\rRetype password: ");
 	            descriptor.echoOff();
-	            player.setPassword("");
+	            player.SetPassword("");
                 currentState = states.GetNewPassword;
         	    return;
 	        }
@@ -229,6 +230,11 @@ namespace Shoop.Command
         private void finish(string input)
         {	
             //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
+            GlobalLists globalLists = GlobalLists.GetInstance();
+            globalLists.Players.Add(player);
+            player.Room = (Room) globalLists.Find(ConfigurationManager.AppSettings["default.room"]);
+            player.Room.Animates.Add(player);
+
 	        descriptor.writeToBuffer ( "\n\rWelcome to CROM 0.1.  Still in development.\n\r" );
 	        //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\n\r");
 	        descriptor.state = ConnectedState.Playing;

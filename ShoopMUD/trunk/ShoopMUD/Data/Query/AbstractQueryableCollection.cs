@@ -63,6 +63,11 @@ namespace Shoop.Data.Query
             set { _uri = value; }
         }
 
+        public string FullURI
+        {
+            get { return URI; }
+        }
+
         /// <summary>
         /// Find the first object matching the given query
         /// </summary>
