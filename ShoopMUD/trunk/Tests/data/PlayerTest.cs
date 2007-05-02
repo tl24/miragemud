@@ -77,27 +77,27 @@ namespace ROMtests
 
 
         /// <summary>
-        ///A test for comparePassword (string)
+        ///A test for ComparePassword (string)
         ///</summary>
         [TestMethod()]
         public void comparePasswordTest()
         {
             Player target = new Player();
-            target.setPassword("mypassword");
+            target.SetPassword("mypassword");
             string otherPassword = "mypassword";
 
             bool expected = true;
             bool actual;
 
-            actual = target.comparePassword(otherPassword);
+            actual = target.ComparePassword(otherPassword);
 
-            Assert.AreEqual(expected, actual, "rom.Data.Player.comparePassword did not return the expected value.");
+            Assert.AreEqual(expected, actual, "rom.Data.Player.ComparePassword did not return the expected value.");
 
-            target.setPassword("someotherpassword");
+            target.SetPassword("someotherpassword");
             expected = false;
-            actual = target.comparePassword(otherPassword);
+            actual = target.ComparePassword(otherPassword);
 
-            Assert.AreEqual(expected, actual, "rom.Data.Player.comparePassword did not return the expected value.");
+            Assert.AreEqual(expected, actual, "rom.Data.Player.ComparePassword did not return the expected value.");
         }
 
         /// <summary>
@@ -110,10 +110,10 @@ namespace ROMtests
 
             string val = "mypassword"; // TODO: Assign to an appropriate value for the property
 
-            target.setPassword(val);
+            target.SetPassword(val);
 
 
-            Assert.AreNotEqual(val, target.password, "rom.Data.Player.password was not encrypted.");
+            Assert.AreNotEqual(val, target.Password, "rom.Data.Player.password was not encrypted.");
         }
 
         [TestMethod()]
@@ -121,16 +121,16 @@ namespace ROMtests
         {
             Player target = new Player();
             target.URI = "targetName";
-            target.title = "targetName";
-            target.Description = "target Description line 1\r\ntargeDescriptionon line 2";
-            target.setPassword("targetPassword");
+            target.Title = "targetName";
+            target.LongDescription = "target Description line 1\r\ntargeDescriptionon line 2";
+            target.SetPassword("targetPassword");
             target.level = 23;
             target.sex = SexType.Female;
 
-            Player.save(target);
-            Player loaded = Player.load(target.URI);
+            Player.Save(target);
+            Player loaded = Player.Load(target.URI);
 
-            Assert.AreEqual(target.title, loaded.title, "rom.Data.Player.title field not equal to loaded value");
+            Assert.AreEqual(target.Title, loaded.Title, "rom.Data.Player.Title field not equal to loaded value");
         }
     }
 
