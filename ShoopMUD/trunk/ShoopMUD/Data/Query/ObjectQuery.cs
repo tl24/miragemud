@@ -5,13 +5,12 @@ using System.Text;
 namespace Shoop.Data.Query
 {
 
-    [Flags]
-    public enum QueryFlags
+    public enum QueryMatchType
     {
-        IsExact,
-        All,
-        Wildcard,
-        TypeMatch
+        Default = 0,
+        Exact,
+        Partial,
+        All
     }
 
     /// <summary>
@@ -22,7 +21,8 @@ namespace Shoop.Data.Query
         private string _typeName;
         private string _uriName;
         private ObjectQuery _subquery;
-        private QueryFlags _flags;
+        private QueryMatchType _matchType;
+        private string _toString;
 
         public ObjectQuery(string type, string uri, ObjectQuery subQuery)
         {
@@ -32,19 +32,13 @@ namespace Shoop.Data.Query
             this._subquery = subQuery;
 
             // parse the flag values
-            _flags = 0;
-            _flags |= this._typeName != null ? QueryFlags.TypeMatch : 0;
-            if (this._uriName.Contains("*"))
+            if (this._uriName == "*")
             {
-                _flags |= QueryFlags.Wildcard;
-                _flags |= this._uriName == "*" ? QueryFlags.All : 0;
-                this._uriName = this._uriName.Replace("*", "");
+                _matchType = QueryMatchType.All;
+            } else if (this._uriName.EndsWith("*")) {
+                _matchType = QueryMatchType.Partial;
+                this._uriName = this._uriName.Substring(0, this._uriName.Length - 1);
             }
-            else
-            {
-                _flags |= QueryFlags.IsExact;
-            }
-
         }
 
         public ObjectQuery(string uri) : this(null, uri, null) { }
@@ -75,35 +69,57 @@ namespace Shoop.Data.Query
 
             if (result != null && root.Length > 1)
             {
-                result.Subquery = parse(root[1]);
+                result._subquery = parse(root[1]);
             }
             return result;
         }
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            if (_typeName != null && _typeName != string.Empty)
+            if (_toString == null)
             {
-                sb.Append(_typeName);
-                sb.Append(':');
-            }
-            if (_uriName != null)
-            {
-                sb.Append(_uriName);
-            }
+                StringBuilder sb = new StringBuilder();
+                if (_typeName != null && _typeName != string.Empty)
+                {
+                    sb.Append(_typeName);
+                    sb.Append(':');
+                }
+                if (_uriName != null)
+                {
+                    sb.Append(_uriName);
+                }
 
-            if ((_flags & QueryFlags.Wildcard) != 0)
-            {
-                sb.Append('*');
-            }
+                if (_matchType == QueryMatchType.Partial || _matchType == QueryMatchType.All)
+                {
+                    sb.Append('*');
+                }
 
-            if (_subquery != null)
-            {
-                sb.Append('/');
-                sb.Append(_subquery.ToString());
+                if (_subquery != null)
+                {
+                    sb.Append('/');
+                    sb.Append(_subquery.ToString());
+                }
+                _toString = sb.ToString();
             }
-            return sb.ToString();
+            return _toString;
+        }
+
+        public static bool operator ==(ObjectQuery q1, ObjectQuery q2) {
+            if (object.ReferenceEquals(q1, q2))
+                return true;
+
+            if (q1 != null)
+                return q1.Equals(q2);
+            else if (q2 != null)
+                return q2.Equals(q1);
+            else
+                return false;
+
+        }
+      
+        public static bool operator !=(ObjectQuery q1, ObjectQuery q2)
+        {
+            return !(q1 == q2);
         }
 
         public override bool Equals(object obj)
@@ -134,25 +150,25 @@ namespace Shoop.Data.Query
         public string TypeName
         {
             get { return this._typeName; }
-            set { this._typeName = value; }
+            //set { this._typeName = value; }
         }
 
         public string UriName
         {
             get { return this._uriName; }
-            set { this._uriName = value; }
+            //set { this._uriName = value; }
         }
 
         public ObjectQuery Subquery
         {
             get { return this._subquery; }
-            set { this._subquery = value; }
+            //set { this._subquery = value; }
         }
 
-        public QueryFlags Flags
+        public QueryMatchType MatchType
         {
-            get { return _flags; }
-            set { _flags = value; }
+            get { return _matchType; }
+            //set { _matchType = value; }
         }
     }
 }

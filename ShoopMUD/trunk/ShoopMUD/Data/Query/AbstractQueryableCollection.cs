@@ -68,16 +68,16 @@ namespace Shoop.Data.Query
         /// </summary>
         /// <param name="query">the query</param>
         /// <returns>first matching object</returns>
-        public virtual IQueryable find(ObjectQuery query)
+        public virtual IQueryable Find(ObjectQuery query)
         {
-            return find(query, 1);
+            return Find(query, 1);
         }
 
-        public virtual IList<IQueryable> findAll(ObjectQuery query)
+        public virtual IList<IQueryable> FindAll(ObjectQuery query)
         {
             List<IQueryable> list = new List<IQueryable>();
             QueryMatcher matcher = QueryMatcher.getMatcher(query);
-
+            
             foreach (IQueryable uriObj in this)
             {
                 // pick the first match
@@ -85,7 +85,7 @@ namespace Shoop.Data.Query
                 {
                     if (query.Subquery != null)
                     {
-                        return uriObj.findAll(query.Subquery);
+                        return uriObj.FindAll(query.Subquery);
                     }
                     else
                     {
@@ -106,7 +106,7 @@ namespace Shoop.Data.Query
             return list;
         }
 
-        public virtual IQueryable find(ObjectQuery query, int index)
+        public virtual IQueryable Find(ObjectQuery query, int index)
         {
             int match = 0;
             QueryMatcher matcher = QueryMatcher.getMatcher(query);
@@ -117,7 +117,7 @@ namespace Shoop.Data.Query
                 {
                     if (query.Subquery != null)
                     {
-                        return uriObj.find(query.Subquery, index);
+                        return uriObj.Find(query.Subquery, index);
                     }
                     else
                     {
@@ -139,19 +139,19 @@ namespace Shoop.Data.Query
             return null;
         }
 
-        public virtual IQueryable find(string query)
+        public virtual IQueryable Find(string query)
         {
-            return find(ObjectQuery.parse(query));
+            return Find(ObjectQuery.parse(query));
         }
 
-        public virtual IList<IQueryable> findAll(string query)
+        public virtual IList<IQueryable> FindAll(string query)
         {
-            return findAll(ObjectQuery.parse(query));
+            return FindAll(ObjectQuery.parse(query));
         }
 
-        public virtual IQueryable find(string query, int index)
+        public virtual IQueryable Find(string query, int index)
         {
-            return find(ObjectQuery.parse(query), index);
+            return Find(ObjectQuery.parse(query), index);
         }
 
         #endregion

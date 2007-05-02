@@ -52,7 +52,7 @@ namespace Shoop.Util
 
         private IList<TVal> find(string key, ComparisonType compType)
         {
-            Debug.Assert(compType != ComparisonType.Insertion, "Insertion mode not valid for find");
+            Debug.Assert(compType != ComparisonType.Insertion, "Insertion mode not valid for Find");
             List<TVal> items = new List<TVal>();
             key = normalizeKey(key);
             LinkedListNode<IndexPage> page = findPage(key, ComparisonType.Partial);
@@ -106,7 +106,7 @@ namespace Shoop.Util
         }
 
         /// <summary>
-        ///     Searches the index to find the first page that the key could
+        ///     Searches the index to Find the first page that the key could
         /// occur on or fit if its an insertion
         /// </summary>
         /// <param name="key">the key to search on</param>
@@ -302,7 +302,7 @@ namespace Shoop.Util
             public void add(KeyNode node) {
                 LinkedListNode<KeyNode> added = null;
 
-                // search through the list to find the insertion point
+                // search through the list to Find the insertion point
                 for (LinkedListNode<KeyNode> pNode = start; pNode != end && pNode != null; pNode = pNode.Next)
                 {
                     if (node.Key.CompareTo(pNode.Value.Key) < 0)

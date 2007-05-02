@@ -25,18 +25,19 @@ namespace Shoop.Data.Query
         /// <param name="obj">the object to match</param>
         /// <returns>true if the object matches</returns>
         public bool IsMatch(IQueryable obj) {
+            QueryMatchType matchType = GetMatchType(QueryMatchType.Default);
             // simple match for now
-            if ((_query.Flags & QueryFlags.IsExact) == QueryFlags.IsExact)
+            if (matchType == QueryMatchType.Exact)
             {
                 if (!(obj.URI == _query.UriName))
                     return false;
             }
-            else if ((_query.Flags ^ (QueryFlags.Wildcard | QueryFlags.All)) != 0)
+            else if (matchType == QueryMatchType.Partial)
             {                
-                if (!obj.URI.StartsWith(_query.UriName.Substring(0, _query.UriName.Length - 1), StringComparison.CurrentCultureIgnoreCase))
+                if (!obj.URI.StartsWith(_query.UriName, StringComparison.CurrentCultureIgnoreCase))
                     return false;
             }
-            if ((_query.Flags & QueryFlags.TypeMatch) == QueryFlags.TypeMatch)
+            if (_query.TypeName != null)
             {
                 if (obj.GetType().Name != _query.TypeName
                     && obj.GetType().FullName != _query.TypeName)
@@ -47,5 +48,18 @@ namespace Shoop.Data.Query
             return true;
         }
 
+        private QueryMatchType GetMatchType(QueryMatchType desired)
+        {
+            QueryMatchType result = desired;
+            if (result == QueryMatchType.Default)
+            {
+                result = _query.MatchType;
+            }
+            if (result == QueryMatchType.Default)
+            {
+                result = QueryMatchType.Exact;
+            }
+            return result;
+        }
     }
 }

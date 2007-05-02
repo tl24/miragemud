@@ -23,13 +23,13 @@ namespace Shoop.Data.Query
             this.sortCol = collection;
         }
 
-        public override IQueryable find(ObjectQuery query)
+        public override IQueryable Find(ObjectQuery query)
         {
 
             IQueryable child = sortCol[query.UriName];
             if (query.Subquery != null)
             {
-                return child.find(query.Subquery);
+                return child.Find(query.Subquery);
             }
             else
             {

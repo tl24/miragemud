@@ -21,14 +21,14 @@ namespace Shoop.Data.Query
         /// </summary>
         /// <param name="query">the uri query</param>
         /// <returns>the first matching object</returns>
-        IQueryable find(ObjectQuery query);
+        IQueryable Find(ObjectQuery query);
 
         /// <summary>
         /// Finds all objects matching the given query
         /// </summary>
         /// <param name="query">the uri query</param>
         /// <returns>array of matching objects</returns>
-        IList<IQueryable> findAll(ObjectQuery query);
+        IList<IQueryable> FindAll(ObjectQuery query);
 
         /// <summary>
         /// For a query that returns multiple objects, the nth object in the list.
@@ -36,21 +36,21 @@ namespace Shoop.Data.Query
         /// <param name="query">the uri query</param>
         /// <param name="index">the index of the item in the result set to return</param>
         /// <returns>the nth item in the result of the query</returns>
-        IQueryable find(ObjectQuery query, int index);
+        IQueryable Find(ObjectQuery query, int index);
 
         /// <summary>
         /// Finds the first object matching the given query
         /// </summary>
         /// <param name="query">the uri query</param>
         /// <returns>the first matching object</returns>
-        IQueryable find(string query);
+        IQueryable Find(string query);
 
         /// <summary>
         /// Finds all objects matching the given query
         /// </summary>
         /// <param name="query">the uri query</param>
         /// <returns>array of matching objects</returns>
-        IList<IQueryable> findAll(string query);
+        IList<IQueryable> FindAll(string query);
 
         /// <summary>
         /// For a query that returns multiple objects, the nth object in the list.
@@ -58,7 +58,7 @@ namespace Shoop.Data.Query
         /// <param name="query">the uri query</param>
         /// <param name="index">the index of the item in the result set to return</param>
         /// <returns>the nth item in the result of the query</returns>
-        IQueryable find(string query, int index);
+        IQueryable Find(string query, int index);
     }
 
 }
