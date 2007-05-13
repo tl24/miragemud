@@ -5,6 +5,7 @@ using Shoop.IO;
 using Shoop.Data;
 using System.Text.RegularExpressions;
 using System.Configuration;
+using Shoop.Communication;
 
 namespace Shoop.Command
 {
@@ -14,7 +15,7 @@ namespace Shoop.Command
     /// </summary>
     public class Nanny
     {
-        private Descriptor descriptor;
+        private IClient _client;
         private Player player;
         private delegate void InputHandler(string input);
         private InputHandler[] handlers;
@@ -32,12 +33,12 @@ namespace Shoop.Command
         }
 
         /// <summary>
-        ///     Creates an instance of the nanny for this descriptor.
+        ///     Creates an instance of the nanny for this client.
         /// </summary>
-        /// <param name="descriptor">the descriptor</param>
-        private Nanny(Descriptor descriptor)
+        /// <param name="client">the client</param>
+        private Nanny(IClient client)
         {
-            this.descriptor = descriptor;
+            this._client = client;
             handlers = new InputHandler[Enum.GetNames(typeof(states)).Length];
             this.currentState = states.GetName;
             handlers[(int)states.GetName] = new InputHandler(getName);
@@ -54,9 +55,9 @@ namespace Shoop.Command
         /// </summary>
         /// <param name="descriptor">the descriptor</param>
         /// <returns>nanny instance</returns>
-        public static Nanny getInstance(Descriptor descriptor)
+        public static Nanny getInstance(IClient client)
         {
-            return new Nanny(descriptor);
+            return new Nanny(client);
         }
 
         /// <summary>
@@ -79,13 +80,14 @@ namespace Shoop.Command
         {
             if (input.Length == 0) {
                 //TODO: Make sure everything is cleaned up
-        	    descriptor.close();
+        	    _client.Close();
 	            return;
 	        }   
 	
 	        if (!checkName( input )) {
-	            descriptor.writeToBuffer( "Illegal name, try another.\n\rName: " );
-	            return;
+	            _client.Write(new StringMessage(MessageType.PlayerError, "Nanny.IllegalName", "Illegal name, try another.\n\r" ));
+                _client.Write(new StringMessage(MessageType.Prompt, "Nanny.Name", "Name: "));
+                return;
 	        }
 	
             Player oldPlayer = Player.Load(input);
@@ -97,8 +99,8 @@ namespace Shoop.Command
         	if (oldPlayer != null) {
 	            // Old player
                 isNew = false;
-	            descriptor.writeToBuffer( "Password: ", false );
-                descriptor.echoOff();
+	            _client.Write(new StringMessage(MessageType.Prompt, "Nanny.Password", "Password: "));
+                _client.Write(new EchoOffMessage());
 	            currentState = states.GetOldPassword;
 	            return;
 	        } else {
@@ -115,7 +117,7 @@ namespace Shoop.Command
                 player = new Player();
                 player.URI = input;
                 player.Title = input;
-	            descriptor.writeToBuffer("Is that right, " + player.Title + " (Y/N)? " );
+	            _client.Write(new StringMessage(MessageType.Prompt, "Nanny.ConfirmNewName", "Is that right, " + player.Title + " (Y/N)? " ));
                 currentState = states.ConfirmNewName;
 	            return;
 	        }	  
@@ -151,11 +153,11 @@ namespace Shoop.Command
         /// </summary>
         /// <param name="input">password</param>
         private void getOldPassword(string input) {
-            descriptor.echoOn();
+            _client.Write(new EchoOnMessage());
             if (!player.ComparePassword(input))
             {
-	            descriptor.writeToBuffer( "\n\rWrong password.\n\r" );
-	            descriptor.close();
+	            _client.Write(new StringMessage(MessageType.PlayerError, "Nanny.WrongPassword", "\n\rWrong password.\n\r" ));
+	            _client.Close();
     	        return;
 	        }
             //return if check_playing( $desc, $ch->{Name} );
@@ -175,15 +177,15 @@ namespace Shoop.Command
         /// <param name="input">y or n</param>
         private void confirmNewName(string input) {
 	        if (input.StartsWith("y", StringComparison.CurrentCultureIgnoreCase)) {  // Yes
-	            descriptor.writeToBuffer("New character.\n\rEnter a password for " + player.Title + ": ");
-                descriptor.echoOff();
+	            _client.Write(new StringMessage(MessageType.Prompt, "Nanny.Password", "New character.\n\rEnter a password for " + player.Title + ": "));
+                _client.Write(new EchoOffMessage());
                 currentState = states.GetNewPassword;
 	        } else if (input.StartsWith("n", StringComparison.CurrentCultureIgnoreCase)) {  // No
-	            descriptor.writeToBuffer("Ok, what is it, then? ");
+	            _client.Write(new StringMessage(MessageType.Prompt, "Nanny.NewName", "Ok, what is it, then? "));
 	            player = null;
 	            currentState = states.GetName;
 	        } else {
-	            descriptor.writeToBuffer("Please type Yes or No? ");
+                _client.Write(new StringMessage(MessageType.PlayerError, "Nanny.InvalidConfirmName", "Please type Yes or No? "));
 	        }
         }
 
@@ -192,16 +194,16 @@ namespace Shoop.Command
         /// </summary>
         /// <param name="input">new password</param>
         private void getNewPassword(string input) {
-    	    descriptor.echoOn();
+    	    _client.Write(new EchoOnMessage());
 	        if (input.Length < 5) {
-	            descriptor.writeToBuffer(
-				   "Password must be at least five characters long.\n\rPassword: ");
-	            descriptor.echoOff();
+	            _client.Write(new StringMessage(MessageType.PlayerError, "Nanny.InvalidPassword", "Password must be at least five characters long.\n\r"));
+				_client.Write(new StringMessage(MessageType.Prompt,"Nanny.Password", "Password: "));
+	            _client.Write(new EchoOffMessage());
 	            return;
 	        }
             player.SetPassword( input );
-	        descriptor.writeToBuffer("Confirm password: ");
-	        descriptor.echoOff();
+	        _client.Write(new StringMessage(MessageType.Prompt,"Nanny.ConfirmPassword", "Confirm password: "));
+	        _client.Write(new EchoOffMessage());
 	        currentState = states.ConfirmPassword;	
         }
 
@@ -210,15 +212,16 @@ namespace Shoop.Command
         /// </summary>
         /// <param name="input">password</param>
         private void confirmPassword(string input) {
-	        descriptor.writeToBuffer("\n\r");
+	        _client.Write(new StringMessage(MessageType.UIControl, "Newline", "\n\r"));
             if (!player.ComparePassword(input)) {
-	            descriptor.writeToBuffer("Passwords don't match.\n\rRetype password: ");
-	            descriptor.echoOff();
+                _client.Write(new StringMessage(MessageType.PlayerError, "Nanny.PasswordsDontMatch", "Passwords don't match.\n\r"));
+                _client.Write(new StringMessage(MessageType.Prompt, "Nanny.Password", "Retype password: "));
+                _client.Write(new EchoOffMessage());
 	            player.SetPassword("");
                 currentState = states.GetNewPassword;
         	    return;
 	        }
-            descriptor.echoOn();
+            _client.Write(new EchoOnMessage());
             currentState = states.Connected;
             finish(input);
         }
@@ -235,14 +238,14 @@ namespace Shoop.Command
             player.Room = (Room) globalLists.Find(ConfigurationManager.AppSettings["default.room"]);
             player.Room.Animates.Add(player);
 
-	        descriptor.writeToBuffer ( "\n\rWelcome to CROM 0.1.  Still in development.\n\r" );
+	        _client.Write (new StringMessage(MessageType.Information, "Welcome", "\n\rWelcome to CROM 0.1.  Still in development.\n\r" ));
 	        //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\n\r");
-	        descriptor.state = ConnectedState.Playing;
-	        //Descriptor->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\n\r",  $desc);	
-            descriptor.player = player;
-            player.Descriptor = descriptor;
-            descriptor.nanny = null;
-            descriptor = null;
+	        _client.State = ConnectedState.Playing;
+	        //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\n\r",  $desc);	
+            _client.Player = player;
+            player.Client = _client;
+            _client.Nanny = null;
+            _client = null;
             player = null;
 	        return;
         }

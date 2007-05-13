@@ -43,6 +43,11 @@
     <Compile Include="Command\Interpret.cs" />
     <Compile Include="Command\MethodInvoker.cs" />
     <Compile Include="Command\Nanny.cs" />
+    <Compile Include="Communication\EchoOffMessage.cs" />
+    <Compile Include="Communication\EchoOnMessage.cs" />
+    <Compile Include="Communication\Message.cs" />
+    <Compile Include="Communication\MultipartMessage.cs" />
+    <Compile Include="Communication\StringMessage.cs" />
     <Compile Include="Data\Animate.cs" />
     <Compile Include="Data\Area.cs" />
     <Compile Include="Data\AreaLoader.cs" />
@@ -59,6 +64,7 @@
     <Compile Include="Data\Query\AbstractQueryableCollection.cs" />
     <Compile Include="Data\Query\ObjectQuery.cs" />
     <Compile Include="IO\Descriptor.cs" />
+    <Compile Include="IO\IClient.cs" />
     <Compile Include="IO\Server.cs" />
     <Compile Include="IO\Serialization\JSONSerializerAdapter.cs" />
     <Compile Include="IO\Serialization\ObjectSerializer.cs" />

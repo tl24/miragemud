@@ -6,6 +6,7 @@ using System.Collections;
 using System.Diagnostics;
 using Shoop.Data;
 using Shoop.Command;
+using Shoop.Communication;
 
 namespace Shoop.IO
 {
@@ -29,17 +30,17 @@ namespace Shoop.IO
         /// <summary>
         ///     A mapping from sockets to their descriptors
         /// </summary>
-        private Dictionary<Socket, Descriptor> descMap;
+        private Dictionary<Socket, IClient> descMap;
 
         public Server(int port)
         {
             _port = port;
-            shutdown = true;
+            Shutdown = true;
             sockets = new ArrayList();
-            descMap = new Dictionary<Socket, Descriptor>();
+            descMap = new Dictionary<Socket, IClient>();
         }
 
-        public bool shutdown {
+        public bool Shutdown {
             get { return _shutdown; }
             set { _shutdown = value; }
         }
@@ -50,7 +51,7 @@ namespace Shoop.IO
         /// ready.  This method will block indefinitely until the
         /// shutdown flag is set to true.
         /// </summary>
-        public void run()
+        public void Run()
         {
             _shutdown = false;
             TcpListener listener = new TcpListener(System.Net.IPAddress.Loopback ,_port);
@@ -83,18 +84,18 @@ namespace Shoop.IO
             
                 Socket.Select(readList, writeList, errorList, 100);
 
-                Descriptor desc;
+                IClient desc;
                 foreach (Socket errSocket in errorList) {
-                    desc = getDescriptor(errSocket);
-                    if (desc.player != null)
+                    desc = GetClient(errSocket);
+                    if (desc.Player != null)
                     {
-                        if (desc.state == ConnectedState.Playing)
+                        if (desc.State == ConnectedState.Playing)
                         {
-                            Player.Save(desc.player);
-                            globalLists.Players.Remove(desc.player);
+                            Player.Save(desc.Player);
+                            globalLists.Players.Remove(desc.Player);
                         }
                     }
-                    desc.close();
+                    desc.Close();
                     descMap.Remove(errSocket);
                     sockets.Remove(errSocket);
                 }
@@ -102,14 +103,14 @@ namespace Shoop.IO
                 foreach (Socket reader in readList) {
                     if (reader == server) {
                         TcpClient client = listener.AcceptTcpClient();
-                        initConnection(client);
+                        InitConnection(client);
                     } else {
-                        readSocket(reader);
+                        ReadSocket(reader);
                     }
                 }
 
                 foreach (Socket writer in writeList) {
-                    writeSocket(writer);
+                    WriteSocket(writer);
                 }
             }
         }
@@ -118,44 +119,45 @@ namespace Shoop.IO
         ///     Initialize a new connection
         /// </summary>
         /// <param name="client"></param>
-        private void initConnection(TcpClient client)
+        private void InitConnection(TcpClient client)
         {
             Socket newSocket = client.Client;
             sockets.Add(newSocket);
-            Descriptor newDesc = new Descriptor(client);
+            IClient newDesc = new TextClient();
+            newDesc.Open(client);
             descMap[newSocket] = newDesc;
-            newDesc.nanny = Nanny.getInstance(newDesc);
+            newDesc.Nanny = Nanny.getInstance(newDesc);
             Trace.WriteLine("Connection from " + client.Client.RemoteEndPoint.ToString(), "Server");
 	
-            newDesc.writeToBuffer("Welcome to the mud\n\r");
-            newDesc.writeToBuffer("Enter Name: ");
+            newDesc.Write(new StringMessage(MessageType.Information, "Welcome", "Welcome to the mud\n\r"));
+            newDesc.Write(new StringMessage(MessageType.Prompt, "Nanny.Name", "Enter Name: "));
         }
 
-        private void writeSocket(Socket writer)
+        private void WriteSocket(Socket writer)
         {
-            Descriptor desc = getDescriptor(writer);
-            desc.processOutputBuffer();
+            IClient desc = GetClient(writer);
+            desc.FlushOutput();
         }
 
-        private void readSocket(Socket reader)
+        private void ReadSocket(Socket reader)
         {
-            Descriptor desc = getDescriptor(reader);
-            if (desc.read())
+            IClient desc = GetClient(reader);
+            string input = desc.Read();
+
+            if (input != null)
             {
-                desc.readFromBuffer();
-                if (desc.player != null)
+                if (desc.Player != null)
                 {
-                    Interpreter.executeCommand(desc.player, desc.inputLine);
+                    Interpreter.executeCommand(desc.Player, input);
                 }
                 else
                 {
-                    desc.nanny.handleInput(desc.inputLine);
+                    desc.Nanny.handleInput(input);
                 }
-                desc.inputLine = null;
             }
         }
 
-        private Descriptor getDescriptor(Socket connection) {
+        private IClient GetClient(Socket connection) {
             return descMap[connection];
         }
     }

@@ -27,7 +27,7 @@ namespace Shoop.Data
 
         private string _description;
         private string _password;
-        private Descriptor _descriptor;
+        private IClient _client;
         private IInterpret _interpreter;
         private Room _room;
 
@@ -100,10 +100,10 @@ namespace Shoop.Data
         /// </summary>
         [XmlIgnore]
         [JsonIgnore]
-        public Descriptor Descriptor
+        public IClient Client
         {
-            get { return _descriptor; }
-            set { _descriptor = value; }
+            get { return _client; }
+            set { _client = value; }
         }
 
         /// <summary>

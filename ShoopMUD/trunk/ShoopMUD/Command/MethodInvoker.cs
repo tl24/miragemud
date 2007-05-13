@@ -7,6 +7,7 @@ using Shoop.IO;
 using System.Reflection;
 using Shoop.Attributes;
 using Shoop.Util;
+using Shoop.Communication;
 namespace Shoop.Command
 {
     public static class MethodInvoker
@@ -126,7 +127,8 @@ namespace Shoop.Command
                         }
                         if (result != null)
                         {
-                            player.Descriptor.writeToBuffer(result.ToString());
+                            //TODO: Handle Message Return types
+                            player.Client.Write(new StringMessage(MessageType.Information, "MethodResult." + method.Name, result.ToString()));
                         }
                         break;
                     }
@@ -136,12 +138,12 @@ namespace Shoop.Command
             {
                 if (!fCommandInvoked)
                 {
-                    player.Descriptor.writeToBuffer("Wrong number or type of arguments to " + commandName + "\r\n");
+                    player.Client.Write(new StringMessage(MessageType.PlayerError, "InvalidCommand", "Wrong number or type of arguments to " + commandName + "\r\n"));
                 }
             }
             else
             {
-                player.Descriptor.writeToBuffer(errorMessage + "\r\n");
+                player.Client.Write(new StringMessage(MessageType.PlayerError, "CustomError", errorMessage + "\r\n"));
             }
             return fCommandInvoked;
         }

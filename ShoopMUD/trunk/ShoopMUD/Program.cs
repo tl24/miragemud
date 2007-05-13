@@ -15,7 +15,7 @@ namespace Shoop
             Server listener = new Server(4500);
             AreaLoader loader = new AreaLoader();
             loader.LoadAll();
-            listener.run();
+            listener.Run();
         }
     }
 }

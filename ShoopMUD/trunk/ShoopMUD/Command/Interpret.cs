@@ -6,6 +6,7 @@ using Shoop.Data;
 using Shoop.IO;
 using System.Reflection;
 using Shoop.Attributes;
+using Shoop.Communication;
 
 namespace Shoop.Command
 {
@@ -147,7 +148,7 @@ namespace Shoop.Command
             {
                 if (!actor.Interpreter.execute(actor, input))
                 {
-                    actor.Descriptor.writeToBuffer("Huh?\n\r", true);
+                    actor.Client.Write(new StringMessage(MessageType.PlayerError, "InvalidCommand", "Huh?\n\r"));
                 }
             }
             else
@@ -185,14 +186,14 @@ namespace Shoop.Command
         [Command]
         public static void quit([ArgumentType(ArgumentType.Self)] Player player)
         {
-            player.Descriptor.writeToBuffer("Goodbye!\r\n");
-            if (player.Descriptor.state == ConnectedState.Playing)
+            player.Client.Write(new StringMessage(MessageType.Information, "Goodbye", "Goodbye!\r\n"));
+            if (player.Client.State == ConnectedState.Playing)
             {
                 player.save();
             }
             player.Room.Animates.Remove(player);
             // TODO: Clean up connections, this isn't getting rid of it
-            player.Descriptor.close();
+            player.Client.Close();
         }
 
         [Command]
@@ -272,13 +273,13 @@ namespace Shoop.Command
                 object st = _method.Invoke(actor, args);
                 if (st != null)
                 {
-                    actor.Descriptor.writeToBuffer(st.ToString());
+                    actor.Client.Write(new StringMessage(MessageType.Information, "MethodResult." + _method.Name, st.ToString()));
                 }
                 success = true;
             }
             else if (input.Equals("no") || input.Equals("n"))
             {
-                actor.Descriptor.writeToBuffer(_cancellationMessage);
+                actor.Client.Write(new StringMessage(MessageType.Information, "Cancellation", _cancellationMessage));
                 success = true;
             }
             else
@@ -293,7 +294,7 @@ namespace Shoop.Command
 
         public void requestConfirmation()
         {
-            _player.Descriptor.writeToBuffer(_message); 
+            _player.Client.Write(new StringMessage(MessageType.Prompt, "ConfirmationPrompt", _message)); 
         }
     }
 }

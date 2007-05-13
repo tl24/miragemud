@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.IO;
 using Shoop.Data;
 using Shoop.Command;
+using Shoop.Communication;
 
 namespace Shoop.IO
 {
@@ -33,7 +34,7 @@ namespace Shoop.IO
     /// <summary>
     ///     Handles Server for a player
     /// </summary>
-    public class Descriptor
+    public class TextClient : IClient
     {
         /// <summary>
         ///     The player object attached to this descriptor
@@ -93,11 +94,6 @@ namespace Shoop.IO
         private string lastRead;
 
         /// <summary>
-        ///     The list of people snooping this connection
-        /// </summary>
-        private IList<Descriptor> snoopers;
-
-        /// <summary>
         ///     The stage of connection that this descriptor is at
         /// </summary>
         private ConnectedState _state;
@@ -112,7 +108,7 @@ namespace Shoop.IO
         /// tcp client (Socket)
         /// </summary>
         /// <param name="client"> the client to read and write from</param>
-        public Descriptor(TcpClient client)
+        public void Open(TcpClient client)
         {
             this._client = client;
             NetworkStream stm = _client.GetStream();
@@ -121,7 +117,7 @@ namespace Shoop.IO
             inputQueue = new Queue<string>();
             outputQueue = new Queue<string>();
             outputQueue.Enqueue("\n\r");
-            snoopers = new List<Descriptor>();
+            snoopers = new List<TextClient>();
             inputBuffer = new char[512];
             bufferLength = 0;
         }
@@ -129,7 +125,7 @@ namespace Shoop.IO
         /// <summary>
         ///     The stage of connection that this descriptor is at
         /// </summary>
-        public ConnectedState state
+        public ConnectedState State
         {
             get { return _state; }
             set { _state = value; }
@@ -138,7 +134,7 @@ namespace Shoop.IO
         /// <summary>
         ///     The player object attached to this descriptor
         /// </summary>
-        public Player player
+        public Player Player
         {
             get { return _player; }
             set { _player = value; }
@@ -147,35 +143,17 @@ namespace Shoop.IO
         /// <summary>
         ///     The nanny for this descriptor, can be null
         /// </summary>
-        public Nanny nanny
+        public Nanny Nanny
         {
             get { return _nanny; }
             set { _nanny = value; }
         }
 
         /// <summary>
-        ///     The socket for this description
-        /// </summary>
-        public TcpClient client
-        {
-            get { return _client; }
-            set { _client = value; }
-        }
-
-        /// <summary>
-        ///     The current line of input
-        /// </summary>
-        public string inputLine
-        {
-            get { return _inputLine; }
-            set { _inputLine = value; }
-        }
-
-        /// <summary>
         ///     Read from the descriptor.  Returns True if successful.
         ///     Populates an internal buffer, which can be read by read_from_buffer.
         /// </summary>
-        public bool read() {
+        private bool ReadClient() {
             int available = _client.Available;
 
             if (bufferLength == inputBuffer.Length)
@@ -236,10 +214,20 @@ namespace Shoop.IO
             return true;
         }
 
+        public string Read() {
+            if (ReadClient()) {
+                ReadFromBuffer();
+                string input = _inputLine;
+                _inputLine = null;
+                return input;
+            } else {
+                return null;
+            }
+        }
         /// <summary>
         ///    Transfer input from buffer to INCOMM so a Command can be processed. 
         /// </summary>
-        public void readFromBuffer() {
+        private void ReadFromBuffer() {
             // If we have a line already, return
             if (_inputLine != null)
             {
@@ -267,7 +255,7 @@ namespace Shoop.IO
         /// <summary>
         ///     Indicates that a Command was read this cycle
         /// </summary>
-        public bool commandRead
+        public bool CommandRead
         {
             get { return _commandRead; }
             set { _commandRead = value; }
@@ -275,39 +263,26 @@ namespace Shoop.IO
 
         /// <summary>
         /// Write the specified text to the descriptors output buffer. 
-        /// If snoop parameter is true, write to any descriptors snooping
-        /// this one as well, otherwise write to this descriptor only.
         /// </summary>
-        public void writeToBuffer(string text, bool snoop) {
-            outputQueue.Enqueue(text);
-
-            if (snoop) {
-                foreach (Descriptor desc in snoopers) {
-                    desc.writeToBuffer(this.player.Title, false);
-                    desc.writeToBuffer(" > ", false);
-                    desc.writeToBuffer(text, false);
-                }
-            }
+        public void Write(Message message) {
+            Write(message.ToString());
         }
 
-        /// <summary>
-        /// Write the specified text to the descriptors output buffer. 
-        /// </summary>
-        public void writeToBuffer(string text)
+        private void Write(string message)
         {
-            writeToBuffer(text, true);
+            outputQueue.Enqueue(message);
         }
 
         /// <summary>
         ///     Process the output waiting in the output buffer.  This
         /// Data will be sent to the socket.
         /// </summary>
-        public void processOutputBuffer()
+        public void FlushOutput()
         {
             bool bProcess = false;
             while (outputQueue.Count > 0) {
                 string line = outputQueue.Dequeue();
-                write(line);
+                writer.Write(line);
                 bProcess = true;
             }
             if (bProcess)
@@ -316,58 +291,16 @@ namespace Shoop.IO
             }
         }
 
-        /// <summary>
-        ///    Write to the descriptor.  Similar to print statement.
-        /// </summary>
-        /// <param name="text">the text to write</param>
-        public void write(string text) {
-            writer.Write(text);
-        }
-
-        /// <summary>
-        ///     Turn input echoing back on after turning it off
-        /// </summary>
-        /// <see cref="echoOff"/>
-        public void echoOn()
-        {
-            writeToBuffer("\x1B[0m");
-        }
-
-        /// <summary>
-        ///     Turn input echoing off, used when accepting passwords
-        /// </summary>
-        public void echoOff()
-        {
-            writeToBuffer("\x1B[0;30;40m");
-        }
-
-        /// <summary>
-        /// Will cause the calling descriptor to snoop the given
-        /// descriptor.  All text written to that descriptor will 
-        /// also be be written to the caller until unsnoop is called.
-        /// </summary>
-        /// <param name="snoopee">the descriptor being snooped</param>
-        public void snoop(Descriptor snoopee) {
-            snoopee.snoopers.Add(this);
-        }
-
-        /// <summary>
-        /// The caller will stop snooping the given descriptor.
-        /// </summary>
-        /// <param name="snoopee">the descriptor being unsnooped</param>
-        public void unsnoop(Descriptor snoopee) {
-            snoopee.snoopers.Remove(this);
-        }
 
         /// <summary>
         ///     Closes the underlying connection
         /// </summary>
-        public void close()
+        public void Close()
         {
-            processOutputBuffer();
+            FlushOutput();
             reader.Close();
             writer.Close();
-            client.Close();
+            _client.Close();
         }
     }
 }
