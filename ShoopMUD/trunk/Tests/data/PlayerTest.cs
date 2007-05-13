@@ -124,8 +124,8 @@ namespace ROMtests
             target.Title = "targetName";
             target.LongDescription = "target Description line 1\r\ntargeDescriptionon line 2";
             target.SetPassword("targetPassword");
-            target.level = 23;
-            target.sex = SexType.Female;
+            target.Level = 23;
+            target.Sex = SexType.Female;
 
             Player.Save(target);
             Player loaded = Player.Load(target.URI);

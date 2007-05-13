@@ -76,20 +76,20 @@ namespace ROMtests
         [TestMethod()]
         public void ListTest()
         {
-            Animate o1 = new Animate();
-            Animate o2 = new Animate();
-            Animate o3 = new Animate();
+            Player o1 = new Player();
+            Player o2 = new Player();
+            Player o3 = new Player();
 
             o1.URI = "ant";
             o2.URI = "cat";
             o3.URI = "carp";
 
-            List<Animate> list = new List<Animate>();
+            List<Player> list = new List<Player>();
             list.Add(o1);
             list.Add(o2);
             list.Add(o3);
 
-            IQueryable wrapper = new Shoop.Data.Query.QueryableCollectionAdapter<Shoop.Data.Animate>(list, "animates");
+            IQueryable wrapper = new QueryableCollectionAdapter<Player>(list, "animates");
 
             IQueryable actual = wrapper.Find("cat");
             Assert.AreSame(o2, actual);
