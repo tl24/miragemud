@@ -148,7 +148,7 @@ namespace Shoop.Command
             {
                 if (!actor.Interpreter.execute(actor, input))
                 {
-                    actor.Client.Write(new StringMessage(MessageType.PlayerError, "InvalidCommand", "Huh?\n\r"));
+                    actor.Write(new StringMessage(MessageType.PlayerError, "InvalidCommand", "Huh?\n\r"));
                 }
             }
             else
@@ -186,7 +186,7 @@ namespace Shoop.Command
         [Command]
         public static void quit([ArgumentType(ArgumentType.Self)] Player player)
         {
-            player.Client.Write(new StringMessage(MessageType.Information, "Goodbye", "Goodbye!\r\n"));
+            player.Write(new StringMessage(MessageType.Information, "Goodbye", "Goodbye!\r\n"));
             if (player.Client.State == ConnectedState.Playing)
             {
                 player.save();
@@ -273,13 +273,13 @@ namespace Shoop.Command
                 object st = _method.Invoke(actor, args);
                 if (st != null)
                 {
-                    actor.Client.Write(new StringMessage(MessageType.Information, "MethodResult." + _method.Name, st.ToString()));
+                    actor.Write(new StringMessage(MessageType.Information, "MethodResult." + _method.Name, st.ToString()));
                 }
                 success = true;
             }
             else if (input.Equals("no") || input.Equals("n"))
             {
-                actor.Client.Write(new StringMessage(MessageType.Information, "Cancellation", _cancellationMessage));
+                actor.Write(new StringMessage(MessageType.Information, "Cancellation", _cancellationMessage));
                 success = true;
             }
             else
@@ -294,7 +294,7 @@ namespace Shoop.Command
 
         public void requestConfirmation()
         {
-            _player.Client.Write(new StringMessage(MessageType.Prompt, "ConfirmationPrompt", _message)); 
+            _player.Write(new StringMessage(MessageType.Prompt, "ConfirmationPrompt", _message)); 
         }
     }
 }

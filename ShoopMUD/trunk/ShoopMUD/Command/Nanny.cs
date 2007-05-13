@@ -6,6 +6,7 @@ using Shoop.Data;
 using System.Text.RegularExpressions;
 using System.Configuration;
 using Shoop.Communication;
+using Shoop.Data.Query;
 
 namespace Shoop.Command
 {
@@ -89,7 +90,15 @@ namespace Shoop.Command
                 _client.Write(new StringMessage(MessageType.Prompt, "Nanny.Name", "Name: "));
                 return;
 	        }
-	
+
+            Player isPlaying = (Player) GlobalLists.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
+            if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
+            {
+                _client.Write(new StringMessage(MessageType.PlayerError, "Nanny.AlreadyPlaying", "That player is already playing.\r\n"));
+                _client.Write(new StringMessage(MessageType.Prompt, "Nanny.Name", "Name: "));
+                return;
+            }
+
             Player oldPlayer = Player.Load(input);
             player = oldPlayer;
 	        //TODO: Check Deny players
@@ -231,7 +240,17 @@ namespace Shoop.Command
         /// </summary>
         /// <param name="input"></param>
         private void finish(string input)
-        {	
+        {
+            Player isPlaying = (Player)GlobalLists.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(player.URI)));
+            if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
+            {
+                _client.Write(new StringMessage(MessageType.PlayerError, "Nanny.AlreadyPlaying", "That player is already playing.\r\n"));
+                _client.Player = null;
+                _client.State = ConnectedState.Connecting;
+                _client.Close();
+                return;
+            }
+
             //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
             GlobalLists globalLists = GlobalLists.GetInstance();
             globalLists.Players.Add(player);

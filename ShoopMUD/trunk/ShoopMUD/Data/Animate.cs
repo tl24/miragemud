@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using Shoop.Communication;
 
 namespace Shoop.Data
 {
@@ -29,7 +30,7 @@ namespace Shoop.Data
     ///     A base class for living breathing things such as players
     /// and mobiles.
     /// </summary>
-    public class Animate : BaseData, IViewable
+    public abstract class Animate : BaseData, IViewable
     {
         private string _title;
         private int _level;
@@ -46,7 +47,7 @@ namespace Shoop.Data
         ///     The level of this animate
         /// </summary>
 
-        public int level
+        public int Level
         {
             get { return _level; }
             set { _level = value; }
@@ -55,11 +56,13 @@ namespace Shoop.Data
         /// <summary>
         ///     The sex of this animate
         /// </summary>
-        public SexType sex
+        public SexType Sex
         {
             get { return _sex; }
             set { _sex = value; }
         }
+
+        public abstract void Write(Message message);
 
         #region IViewable Members
 

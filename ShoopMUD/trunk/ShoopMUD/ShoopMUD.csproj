@@ -63,7 +63,7 @@
     <Compile Include="Data\Room.cs" />
     <Compile Include="Data\Query\AbstractQueryableCollection.cs" />
     <Compile Include="Data\Query\ObjectQuery.cs" />
-    <Compile Include="IO\Descriptor.cs" />
+    <Compile Include="IO\TextClient.cs" />
     <Compile Include="IO\IClient.cs" />
     <Compile Include="IO\Server.cs" />
     <Compile Include="IO\Serialization\JSONSerializerAdapter.cs" />

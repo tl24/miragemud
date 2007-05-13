@@ -63,7 +63,7 @@ namespace Shoop.Command
 
             foreach (MethodHelper method in methods)
             {
-                if (method.Level <= player.level)
+                if (method.Level <= player.Level)
                 {
                     fCommandFound = true;
                     errorMessage = method.Description;
@@ -128,7 +128,7 @@ namespace Shoop.Command
                         if (result != null)
                         {
                             //TODO: Handle Message Return types
-                            player.Client.Write(new StringMessage(MessageType.Information, "MethodResult." + method.Name, result.ToString()));
+                            player.Write(new StringMessage(MessageType.Information, "MethodResult." + method.Name, result.ToString()));
                         }
                         break;
                     }
@@ -138,12 +138,12 @@ namespace Shoop.Command
             {
                 if (!fCommandInvoked)
                 {
-                    player.Client.Write(new StringMessage(MessageType.PlayerError, "InvalidCommand", "Wrong number or type of arguments to " + commandName + "\r\n"));
+                    player.Write(new StringMessage(MessageType.PlayerError, "InvalidCommand", "Wrong number or type of arguments to " + commandName + "\r\n"));
                 }
             }
             else
             {
-                player.Client.Write(new StringMessage(MessageType.PlayerError, "CustomError", errorMessage + "\r\n"));
+                player.Write(new StringMessage(MessageType.PlayerError, "CustomError", errorMessage + "\r\n"));
             }
             return fCommandInvoked;
         }

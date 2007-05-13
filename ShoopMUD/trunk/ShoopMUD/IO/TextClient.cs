@@ -117,7 +117,6 @@ namespace Shoop.IO
             inputQueue = new Queue<string>();
             outputQueue = new Queue<string>();
             outputQueue.Enqueue("\n\r");
-            snoopers = new List<TextClient>();
             inputBuffer = new char[512];
             bufferLength = 0;
         }

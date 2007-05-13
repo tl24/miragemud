@@ -12,6 +12,7 @@ using Shoop.Attributes;
 using Shoop.IO.Serialization;
 using Newtonsoft.Json;
 using Shoop.Data.Query;
+using Shoop.Communication;
 
 namespace Shoop.Data
 {
@@ -153,6 +154,12 @@ namespace Shoop.Data
             {
                 return "Players/" + this.URI;
             }
+        }
+
+        public override void Write(Message message)
+        {
+            if (Client != null)
+                Client.Write(message);
         }
 
         /// <summary>
