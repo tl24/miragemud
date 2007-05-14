@@ -13,6 +13,7 @@ using Shoop.IO.Serialization;
 using Newtonsoft.Json;
 using Shoop.Data.Query;
 using Shoop.Communication;
+using System.Security.Principal;
 
 namespace Shoop.Data
 {
@@ -40,6 +41,7 @@ namespace Shoop.Data
             _uriProperties.Add("Room", _room);
         }
 
+        #region Password Items
         /// <summary>
         ///     The player's password
         /// </summary>
@@ -95,6 +97,8 @@ namespace Shoop.Data
             string encrypted = Convert.ToBase64String(bytesOut);
             return encrypted;
         }
+
+        #endregion Password Items
 
         /// <summary>
         ///    Gets or sets the descriptor for this player

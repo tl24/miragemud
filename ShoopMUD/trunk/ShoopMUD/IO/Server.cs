@@ -22,22 +22,10 @@ namespace Shoop.IO
         /// </summary>
         private bool _shutdown;
 
-        /// <summary>
-        ///     The socket connections
-        /// </summary>
-        private IList sockets;
-
-        /// <summary>
-        ///     A mapping from sockets to their descriptors
-        /// </summary>
-        private Dictionary<Socket, IClient> descMap;
-
         public Server(int port)
         {
             _port = port;
             Shutdown = true;
-            sockets = new ArrayList();
-            descMap = new Dictionary<Socket, IClient>();
         }
 
         public bool Shutdown {
@@ -54,111 +42,62 @@ namespace Shoop.IO
         public void Run()
         {
             _shutdown = false;
-            TcpListener listener = new TcpListener(System.Net.IPAddress.Loopback ,_port);
-            listener.Start();
-            Trace.WriteLine("Listening at address " + listener.LocalEndpoint.ToString(), "Server");
-            Socket server = listener.Server;
+            ClientManager manager = new ClientManager();
+            manager.AddFactory(new TextClientFactory(_port));
 
-            sockets.Add(server);
             GlobalLists globalLists = GlobalLists.GetInstance();
 
             while(!_shutdown) {
-                int i = 0;
-                while (i < sockets.Count)
+                if (manager.Poll(100))
                 {
-                    Socket sck = (Socket) sockets[i];
-                    if (sck != server && !sck.Connected)
+                    foreach (IClient client in manager.ErroredClients)
                     {
-                        descMap.Remove(sck);
-                        sockets.RemoveAt(i);
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-
-                IList readList = new ArrayList(sockets);
-                IList writeList = new ArrayList(sockets);
-                IList errorList = new ArrayList(sockets);
-            
-                Socket.Select(readList, writeList, errorList, 100);
-
-                IClient desc;
-                foreach (Socket errSocket in errorList) {
-                    desc = GetClient(errSocket);
-                    if (desc.Player != null)
-                    {
-                        if (desc.State == ConnectedState.Playing)
+                        if (client.Player != null)
                         {
-                            Player.Save(desc.Player);
-                            globalLists.Players.Remove(desc.Player);
+                            if (client.State == ConnectedState.Playing)
+                            {
+                                Player.Save(client.Player);
+                                globalLists.Players.Remove(client.Player);
+                            }
                         }
+                        client.Close();
+                        client.ClientFactory.Remove(client);
                     }
-                    desc.Close();
-                    descMap.Remove(errSocket);
-                    sockets.Remove(errSocket);
-                }
 
-                foreach (Socket reader in readList) {
-                    if (reader == server) {
-                        TcpClient client = listener.AcceptTcpClient();
-                        InitConnection(client);
-                    } else {
-                        ReadSocket(reader);
+                    foreach (IClient client in manager.ReadableClients)
+                    {
+                        ReadClient(client);
                     }
-                }
 
-                foreach (Socket writer in writeList) {
-                    WriteSocket(writer);
+                    foreach (IClient client in manager.WritableClients)
+                    {
+                        WriteClient(client);
+                    }
                 }
             }
         }
 
-        /// <summary>
-        ///     Initialize a new connection
-        /// </summary>
-        /// <param name="client"></param>
-        private void InitConnection(TcpClient client)
+        private void WriteClient(IClient client)
         {
-            Socket newSocket = client.Client;
-            sockets.Add(newSocket);
-            IClient newDesc = new TextClient();
-            newDesc.Open(client);
-            descMap[newSocket] = newDesc;
-            newDesc.Nanny = Nanny.getInstance(newDesc);
-            Trace.WriteLine("Connection from " + client.Client.RemoteEndPoint.ToString(), "Server");
-	
-            newDesc.Write(new StringMessage(MessageType.Information, "Welcome", "Welcome to the mud\n\r"));
-            newDesc.Write(new StringMessage(MessageType.Prompt, "Nanny.Name", "Enter Name: "));
+            client.FlushOutput();
         }
 
-        private void WriteSocket(Socket writer)
+        private void ReadClient(IClient client)
         {
-            IClient desc = GetClient(writer);
-            desc.FlushOutput();
-        }
-
-        private void ReadSocket(Socket reader)
-        {
-            IClient desc = GetClient(reader);
-            string input = desc.Read();
+            string input = client.Read();
 
             if (input != null)
             {
-                if (desc.Player != null)
+                if (client.Player != null)
                 {
-                    Interpreter.executeCommand(desc.Player, input);
+                    Interpreter.executeCommand(client.Player, input);
                 }
                 else
                 {
-                    desc.Nanny.handleInput(input);
+                    client.Nanny.handleInput(input);
                 }
             }
         }
 
-        private IClient GetClient(Socket connection) {
-            return descMap[connection];
-        }
     }
 }

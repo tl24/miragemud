@@ -104,6 +104,11 @@ namespace Shoop.IO
         private bool _commandRead;
 
         /// <summary>
+        /// The client factory that created this client
+        /// </summary>
+        private IClientFactory _clientFactory;
+
+        /// <summary>
         ///     Create a descriptor to read and write to the given
         /// tcp client (Socket)
         /// </summary>
@@ -290,6 +295,13 @@ namespace Shoop.IO
             }
         }
 
+        /// <summary>
+        /// Indicates if this client is still open or connected
+        /// </summary>
+        public bool IsOpen
+        {
+            get { return _client.Connected;  }
+        }
 
         /// <summary>
         ///     Closes the underlying connection
@@ -300,6 +312,17 @@ namespace Shoop.IO
             reader.Close();
             writer.Close();
             _client.Close();
+        }
+
+        public IClientFactory ClientFactory
+        {
+            get { return _clientFactory; }
+            set { _clientFactory = value; }
+        }
+
+        public TcpClient TcpClient
+        {
+            get { return _client; }
         }
     }
 }

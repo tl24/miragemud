@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Configuration;
 using Shoop.Communication;
 using Shoop.Data.Query;
+using System.Security.Principal;
 
 namespace Shoop.Command
 {
@@ -261,11 +262,13 @@ namespace Shoop.Command
 	        //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\n\r");
 	        _client.State = ConnectedState.Playing;
 	        //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\n\r",  $desc);	
+
             _client.Player = player;
             player.Client = _client;
             _client.Nanny = null;
             _client = null;
             player = null;
+
 	        return;
         }
     }

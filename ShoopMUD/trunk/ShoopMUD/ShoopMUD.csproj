@@ -63,12 +63,15 @@
     <Compile Include="Data\Room.cs" />
     <Compile Include="Data\Query\AbstractQueryableCollection.cs" />
     <Compile Include="Data\Query\ObjectQuery.cs" />
+    <Compile Include="IO\ClientManager.cs" />
+    <Compile Include="IO\IClientFactory.cs" />
     <Compile Include="IO\TextClient.cs" />
     <Compile Include="IO\IClient.cs" />
     <Compile Include="IO\Server.cs" />
     <Compile Include="IO\Serialization\JSONSerializerAdapter.cs" />
     <Compile Include="IO\Serialization\ObjectSerializer.cs" />
     <Compile Include="IO\Serialization\XmlSerializerAdapter.cs" />
+    <Compile Include="IO\TextClientFactory.cs" />
     <Compile Include="IO\TransactionFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
