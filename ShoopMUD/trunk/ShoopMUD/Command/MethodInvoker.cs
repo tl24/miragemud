@@ -13,12 +13,12 @@ namespace Shoop.Command
     public static class MethodInvoker
     {
         private static Dictionary<Type, bool> registeredTypes;
-        private static IIndexedDictionary<MethodHelper> methods;
+        private static IIndexedDictionary<ICommand> methods;
 
         static MethodInvoker()
         {
             registeredTypes = new Dictionary<Type, bool>();
-            methods = new IndexedDictionary<MethodHelper>();
+            methods = new IndexedDictionary<ICommand>();
         }
 
         /// <summary>
@@ -40,13 +40,20 @@ namespace Shoop.Command
         {
             foreach (MethodInfo mInfo in objectType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static /* | BindingFlags.DeclaredOnly*/))
             {
-                foreach (Attribute attr in mInfo.GetCustomAttributes(typeof(CommandAttribute), true))
+                if (mInfo.IsDefined(typeof(CommandAttribute), false))
                 {
-                    CommandAttribute cmdAttr = (CommandAttribute)attr;
-
-                    MethodHelper helper = new MethodHelper(mInfo.Name, mInfo, cmdAttr.Level, cmdAttr.Description);
-                    methods.put(mInfo.Name, helper);
-                    break;
+                    ReflectedCommand helper = new ReflectedCommand(mInfo);
+                    if (helper.Aliases != null && helper.Aliases.Length > 0)
+                    {
+                        foreach (string alias in helper.Aliases)
+                        {
+                            methods.put(alias, helper);
+                        }
+                    }
+                    else
+                    {
+                        methods.put(helper.Name, helper);
+                    }
                 }
             }
         }
@@ -56,71 +63,83 @@ namespace Shoop.Command
             ArgumentParser parser = new ArgumentParser(command);
             string commandName = parser.getNextArgument();
             string args = parser.getRest().TrimStart(null);
-            IList<MethodHelper> methods = getAvailableMethods(commandName);
-            string errorMessage = "Huh?";
+            IList<ICommand> methods = getAvailableMethods(commandName);
             bool fCommandFound = false;
             bool fCommandInvoked = false;
+            List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
+            
+            bool fCommandValidated = true;
 
-            foreach (MethodHelper method in methods)
+            foreach (ICommand method in methods)
             {
                 if (method.Level <= player.Level)
                 {
                     fCommandFound = true;
-                    errorMessage = method.Description;
-
                     parser = new ArgumentParser(args);
-                    ParameterInfo[] parms = method.method.GetParameters();
-                    object[] methodArgs = new object[parms.Length];
+                    string[] commandArgs = new string[method.ArgCount];
+                    int parsedArgs = 0;
+                    for (int i = 0; i < commandArgs.Length && !parser.isEmpty(); i++)
+                    {
+                        if (i == commandArgs.Length - 1)
+                        {
+                            if (method.CustomParse)
+                            {
+                                commandArgs[i] = parser.getRest();
+                            }
+                            else
+                            {
+                                commandArgs[i] = parser.getNextArgument();
+                            }
+                        }
+                        else
+                        {
+                            commandArgs[i] = parser.getNextArgument();
+                        }
+                    }
+
+                    if (parsedArgs != method.ArgCount)
+                    {
+                        break;
+                    }
                     int argCount = 0;
                     bool nextMethod = false;
 
-                    foreach (ParameterInfo param in parms)
+                    //TODO: commandName is not really the invokedName...could just be a partial name
+                    CanidateCommand canidate = new CanidateCommand(method, commandName, commandArgs);
+                    canidateCommands.Add(canidate);
+                    object context;
+                    Message errorMessage;
+                    canidate.Validated = method.ValidateTypes(canidate.InvokedName, player, canidate.StringArgs, out context, out errorMessage);
+                    canidate.Context = context;
+                    canidate.ErrorMessage = errorMessage;
+                    if (canidate.Validated)
                     {
-                        object arg;
-
-                        ArgumentTypeAttribute[] attr = (ArgumentTypeAttribute[])param.GetCustomAttributes(typeof(ArgumentTypeAttribute), false);
-                        if (attr.Length > 0)
-                        {
-                            try
-                            {
-                                arg = parseSpecialArg(attr[0], player, parser);
-                            }
-                            catch (Exception e)
-                            {
-                                nextMethod = true;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            try
-                            {
-                                arg = Convert.ChangeType(parser.getNextArgument(), param.ParameterType);
-                            } catch (FormatException e) {
-                                nextMethod = true;
-                                break;
-                            }
-                        }
-                        if (arg == null)
-                        {
-                            nextMethod = true;
-                            break;
-                        }
-                        else
-                        {
-                            methodArgs[argCount++] = arg;
-                        }
+                        fCommandValidated = true;
                     }
+                }
+            }
 
-                    if (nextMethod)
-                    {
-                        continue;
-                    }
-
-                    if (argCount == methodArgs.Length && parser.isEmpty())
-                    {
-                        fCommandInvoked = true;
-                        object result = null;
+            if (canidateCommands.Count > 0)
+            {
+                canidateCommands.Sort();
+                CanidateCommand first = canidateCommands[0];
+                if (first.Validated)
+                {
+                    Message result = first.Command.Invoke(first.InvokedName, player, first.StringArgs, first.Context);
+                    fCommandInvoked = true;
+                    if (result != null)
+                        player.Write(result);
+                }
+                else
+                {
+                    player.Write(first.ErrorMessage);
+                }
+            }
+            else
+            {
+                player.Write(new StringMessage(MessageType.PlayerError, "NoCommandFound", "Huh?\r\n"));
+            }
+            /*
                         if (!handleConfirmation(player, method, methodArgs))
                         {
                             result = method.method.Invoke(player, methodArgs);
@@ -134,21 +153,11 @@ namespace Shoop.Command
                     }
                 }
             }
-            if (fCommandFound)
-            {
-                if (!fCommandInvoked)
-                {
-                    player.Write(new StringMessage(MessageType.PlayerError, "InvalidCommand", "Wrong number or type of arguments to " + commandName + "\r\n"));
-                }
-            }
-            else
-            {
-                player.Write(new StringMessage(MessageType.PlayerError, "CustomError", errorMessage + "\r\n"));
-            }
+             */ 
             return fCommandInvoked;
         }
 
-        private static bool handleConfirmation(Player player, MethodHelper method, object[] methodArgs)
+        private static bool handleConfirmation(Player player, ReflectedCommand method, object[] methodArgs)
         {
             ConfirmationAttribute[] attr = (ConfirmationAttribute[])method.method.GetCustomAttributes(typeof(ConfirmationAttribute), false);
             if (attr.Length > 0)
@@ -169,144 +178,87 @@ namespace Shoop.Command
             }
         }
 
-        private static object parseSpecialArg(ArgumentTypeAttribute attribute, Player player, ArgumentParser parser)
-        {
-            switch (attribute.ArgType)
-            {
-                case ArgumentType.Self:
-                    return player;
-                case ArgumentType.ToEOL:
-                    string rest = parser.getRest();
-                    if (rest == null)
-                    {
-                        rest = "";
-                    }
-                    return rest;
-                    break;
-                default:
-                    throw new ApplicationException("Unrecognized ArgType: " + attribute.ArgType);
-            }
-        }
-
-        private static IList<MethodHelper> getAvailableMethods(string commandName)
+        private static IList<ICommand> getAvailableMethods(string commandName)
         {
             return methods.findStartsWith(commandName);
         }
 
+        private class CanidateCommand : IComparable<CanidateCommand>
+        {
+            private ICommand _command;
+            private string _invokedName;
+            private string[] _stringArgs;
+            private object context;
+            private Message _errorMessage;
+            private bool _validated;
+
+            public CanidateCommand(ICommand command, string invokedName, string[] arguments)
+            {
+                this._command = command;
+                this._invokedName = invokedName;
+                this._stringArgs = arguments;
+            }
+
+            public ICommand Command
+            {
+                get { return this._command; }
+                set { this._command = value; }
+            }
+
+            public string InvokedName
+            {
+                get { return this._invokedName; }
+                set { this._invokedName = value; }
+            }
+
+            public string[] StringArgs
+            {
+                get { return this._stringArgs; }
+                set { this._stringArgs = value; }
+            }
+
+            public object Context
+            {
+                get { return this.context; }
+                set { this.context = value; }
+            }
+
+            public Message ErrorMessage
+            {
+                get { return this._errorMessage; }
+                set { this._errorMessage = value; }
+            }
+
+            public bool Validated
+            {
+                get { return this._validated; }
+                set { this._validated = value; }
+            }
+
+
+            #region IComparable<CanidateCommand> Members
+
+            public int CompareTo(CanidateCommand other)
+            {
+                if (other.Validated && !this.Validated)
+                    return -1;
+                if (this.Validated && !other.Validated)
+                    return 1;
+                if (other.Command.CustomParse && !this.Command.CustomParse)
+                    return -1;
+                if (this.Command.CustomParse && !other.Command.CustomParse)
+                    return 1;
+
+                if (this.Command.Priority != other.Command.Priority)
+                    return other.Command.Priority - this.Command.Priority;
+                else
+                    return other.Command.Level - this.Command.Level;
+            }
+
+            #endregion
+        }
     }
 
-    /// <summary>
-    /// Helper class for holding Attributes about a Command and invoking it.
-    /// </summary>
-    public class MethodHelper
-    {
-        private string _name;
-        private int _ArgCount;
 
-        /// <summary>
-        /// Number of arguments to the Command, not including private arguments such as "self"
-        /// </summary>
-        public int ArgCount
-        {
-            get { return _ArgCount; }
-        }
-        private bool _hasRest;
-
-        /// <summary>
-        /// True if the Command has a ToEOL argument, which means it has a variable number of arguments
-        /// </summary>
-        public bool HasRest
-        {
-            get { return _hasRest; }
-        }
-
-        /// <summary>
-        /// The name of the method
-        /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
-        private int _level;
-
-        /// <summary>
-        /// The required player level to execute the Command
-        /// </summary>
-        public int Level
-        {
-            get { return _level; }
-        }
-        private string _description;
-
-        /// <summary>
-        /// A description of what the Command does
-        /// </summary>
-        public string Description
-        {
-            get { return _description; }
-        }
-
-        private MethodInfo _methodInfo;
-
-        /// <summary>
-        /// Gets the System.Reflection.MethodInfo for this method
-        /// </summary>
-        public MethodInfo method
-        {
-            get { return _methodInfo; }                 
-        }
-
-        /// <summary>
-        /// Constructs an instace of the method helper
-        /// </summary>
-        /// <param name="name">The name of the method</param>
-        /// <param name="methInfo">Reflection methodInfo object</param>
-        /// <param name="level">The minimum player level required to execute the Command</param>
-        /// <param name="description">A description of the method</param>
-        public MethodHelper(string name, MethodInfo methInfo, int level, string description)
-        {
-            _name = name;
-            _methodInfo = methInfo;
-            this._level = level;
-            this._description = description;
-            _ArgCount = 0;
-            foreach (ParameterInfo param in methInfo.GetParameters())
-            {
-                foreach (Shoop.Attributes.ArgumentTypeAttribute attr in methInfo.GetCustomAttributes(typeof(Shoop.Attributes.ArgumentTypeAttribute), false))
-                {
-                    if (attr.ArgType != Shoop.Attributes.ArgumentType.Self)
-                    {
-                        _ArgCount++;
-                    }
-                    if (attr.ArgType == Shoop.Attributes.ArgumentType.ToEOL)
-                    {
-                        _hasRest = true;
-                    }
-                    break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Invoke the method with the given arguments
-        /// </summary>
-        /// <param name="target">The object instance on which to invoke the method</param>
-        /// <param name="actor">The player or caller of the Command</param>
-        /// <param name="arguments">Arguments to the Command</param>
-        /// <returns>Returns the string representation of the result or null if no return</returns>
-        public string invoke(object target, Animate actor, string arguments)
-        {
-            object retVal = _methodInfo.Invoke(target, null);
-            if (retVal != null)
-            {
-                return retVal.ToString();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-    }
 
 }

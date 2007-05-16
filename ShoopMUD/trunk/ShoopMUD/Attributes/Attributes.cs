@@ -13,6 +13,8 @@ namespace Shoop.Attributes
     {
         private int _level;
         private string _description;
+        private string[] _roles;
+        private string[] _aliases;
 
         /// <summary>
         ///     Creates an instance of the attribute
@@ -38,6 +40,18 @@ namespace Shoop.Attributes
         {
             get { return _description; }
             set { _description = value; }
+        }
+
+        public string[] Roles
+        {
+            get { return _roles; }
+            set { _roles = value; }
+        }
+
+        public string[] Aliases
+        {
+            get { return _aliases; }
+            set { _aliases = value; }
         }
     }
 
@@ -97,7 +111,12 @@ namespace Shoop.Attributes
         /// <summary>
         ///     The argument uses the rest of the input arguments as one parameter
         /// </summary>
-        ToEOL
+        ToEOL,
+
+        /// <summary>
+        ///     Holder for the actual command name used to invoke the command by the player
+        /// </summary>
+        CommandName
     }
 
     public enum ScopeType

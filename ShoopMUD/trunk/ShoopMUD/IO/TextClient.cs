@@ -44,7 +44,7 @@ namespace Shoop.IO
         /// <summary>
         ///     The nanny for this descriptor, if applicable
         /// </summary>
-        private Nanny _nanny;
+        private NannyStateMachine _nanny;
 
         /// <summary>
         ///     A reference to the tcp client (socket) that this description
@@ -147,7 +147,7 @@ namespace Shoop.IO
         /// <summary>
         ///     The nanny for this descriptor, can be null
         /// </summary>
-        public Nanny Nanny
+        public NannyStateMachine Nanny
         {
             get { return _nanny; }
             set { _nanny = value; }

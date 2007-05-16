@@ -27,7 +27,6 @@ namespace Shoop.Data
         private static string _playerDir;
         private static bool _initted;
 
-        private string _description;
         private string _password;
         private IClient _client;
         private IInterpret _interpreter;
@@ -123,7 +122,7 @@ namespace Shoop.Data
         }
 
         [JsonIgnore]
-        [XmlIgnore]
+        [XmlIgnore]      
         public Room Room
         {
             get { return _room; }

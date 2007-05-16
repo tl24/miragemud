@@ -94,7 +94,7 @@ namespace Shoop.IO
                 }
                 else
                 {
-                    client.Nanny.handleInput(input);
+                    client.Nanny.HandleInput(input);
                 }
             }
         }

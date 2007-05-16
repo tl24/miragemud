@@ -27,6 +27,12 @@ namespace Shoop.Communication
             }
         }
 
+        public ArrayList Parts
+        {
+            get { return _parts; }
+            set { _parts = value; }
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

@@ -56,7 +56,7 @@ namespace Shoop.IO
         /// <summary>
         /// The nanny that manages the initial connection state
         /// </summary>
-        Nanny Nanny { get; set; }
+        NannyStateMachine Nanny { get; set; }
 
         /// <summary>
         /// Gets or sets a reference to the ClientFactory that created this client
