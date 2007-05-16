@@ -191,8 +191,7 @@ namespace Shoop.Command
             {
                 player.save();
             }
-            player.Room.Animates.Remove(player);
-            // TODO: Clean up connections, this isn't getting rid of it
+            player.FirePlayerEvent(Player.PlayerEventType.Quiting);
             player.Client.Close();
         }
 

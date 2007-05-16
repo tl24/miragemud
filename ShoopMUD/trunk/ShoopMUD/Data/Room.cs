@@ -59,5 +59,44 @@ namespace Shoop.Data
                     return this.URI;
             }
         }
+
+        public void MoveTo(Player player)
+        {
+            if (player.Room != this || !this._animates.Contains(player))
+            {
+                if (player.Room != null && player.Room != this)
+                    player.Room.MoveFrom(player);
+
+                this._animates.AddLast(player);
+                player.Room = this;
+                player.PlayerEvent += new Player.PlayerEventHandler(player_PlayerEvent);
+    
+            }
+        }
+
+        void player_PlayerEvent(object sender, Player.PlayerEventArgs eventArgs)
+        {
+            Player player = (Player)sender;
+            if (player.Room != null)
+            {
+                player.Room.MoveFrom(player);
+            }
+        }
+
+        /// <summary>
+        /// Moves the player from this room
+        /// </summary>
+        /// <param name="player">The player to be removed</param>
+        private void MoveFrom(Player player)
+        {
+            this._animates.Remove(player);
+            if (player.Room == this)
+                player.Room = null;
+
+            player.PlayerEvent -= player_PlayerEvent;
+        }
+
+
     }
+
 }

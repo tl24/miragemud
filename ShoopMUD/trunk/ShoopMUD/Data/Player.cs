@@ -32,6 +32,24 @@ namespace Shoop.Data
         private IInterpret _interpreter;
         private Room _room;
 
+        public enum PlayerEventType {
+            Disconnected,
+            Quiting
+        }
+
+        public class PlayerEventArgs : EventArgs {
+            public PlayerEventType EventType;
+
+            public PlayerEventArgs(PlayerEventType eventType) {
+                this.EventType = eventType;
+            }
+
+        }
+
+        public delegate void PlayerEventHandler(object sender, PlayerEventArgs eventArgs);
+
+        public event PlayerEventHandler PlayerEvent;
+
         /// <summary>
         ///     Creates an instance of a player
         /// </summary>
@@ -252,6 +270,10 @@ namespace Shoop.Data
             return "Information saved.\r\n";
         }
 
+        public void FirePlayerEvent(PlayerEventType eventType)
+        {
+            PlayerEvent(this, new PlayerEventArgs(eventType));
+        }
         #endregion
 
     }

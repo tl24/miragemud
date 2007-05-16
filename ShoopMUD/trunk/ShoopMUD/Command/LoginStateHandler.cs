@@ -35,7 +35,7 @@ namespace Shoop.Command
                 else if (!Contains("password"))
                 {
                     MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
-                    message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "Password: "));
+                    message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "New character.\n\rEnter a password for " + GetValue<Player>("player").Title + ": "));
                     message.Parts.Add(new EchoOffMessage());
 
                     Require(message, new ValidateDelegate(this.ValidateNewPassword));
@@ -92,11 +92,20 @@ namespace Shoop.Command
                 else
                 {
 
+                    Player player = GetValue<Player>("player");
                     //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
                     GlobalLists globalLists = GlobalLists.GetInstance();
-                    globalLists.Players.Add(GetValue<Player>("player"));
-                    GetValue<Player>("player").Room = (Room)globalLists.Find(ConfigurationManager.AppSettings["default.room"]);
-                    GetValue<Player>("player").Room.Animates.Add(GetValue<Player>("player"));
+                    globalLists.AddPlayer(player);
+                    if (player.Room == null)
+                    {
+                        Room defaultRoom = (Room)globalLists.Find(ConfigurationManager.AppSettings["default.room"]);
+                        defaultRoom.MoveTo(GetValue<Player>("player"));
+
+                    }
+                    else
+                    {
+                        player.Room.MoveTo(player);
+                    }
 
                     Client.Write(new StringMessage(MessageType.Information, "Welcome", "\n\rWelcome to CROM 0.1.  Still in development.\n\r"));
                     //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\n\r");
@@ -202,8 +211,6 @@ namespace Shoop.Command
             if (input.StartsWith("y", StringComparison.CurrentCultureIgnoreCase))
             {  // Yes
                 SetValue<bool>("confirmName", true);
-                Client.Write(new StringMessage(MessageType.Prompt, "Nanny.Password", "New character.\n\rEnter a password for " + GetValue<Player>("player").Title + ": "));
-                Client.Write(new EchoOffMessage());
             }
             else if (input.StartsWith("n", StringComparison.CurrentCultureIgnoreCase))
             {  // No
@@ -212,7 +219,7 @@ namespace Shoop.Command
             }
             else
             {
-                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.InvalidConfirmName", "Please type Yes or No? "));
+                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.InvalidConfirmName", "Please type Yes or No.\r\n"));
             }
         }
 

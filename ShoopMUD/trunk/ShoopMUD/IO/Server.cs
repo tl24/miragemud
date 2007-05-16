@@ -88,13 +88,10 @@ namespace Shoop.IO
 
             if (input != null)
             {
-                if (client.Player != null)
-                {
-                    Interpreter.executeCommand(client.Player, input);
-                }
-                else
-                {
+                if (client.StateHandler != null) {
                     client.StateHandler.HandleInput(input);
+                } else {
+                    Interpreter.executeCommand(client.Player, input);
                 }
             }
         }

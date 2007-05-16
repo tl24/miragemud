@@ -40,6 +40,27 @@ namespace Shoop.Data
             get { return this._players; }
         }
 
+        public void AddPlayer(Player p)
+        {
+            this._players.Add(p);
+            p.PlayerEvent += new Player.PlayerEventHandler(OnPlayerEvent);
+        }
+
+        public void RemovePlayer(Player p)
+        {
+            this._players.Remove(p);            
+            p.PlayerEvent -= OnPlayerEvent;
+        }
+
+        private void OnPlayerEvent(object sender, Player.PlayerEventArgs eventArgs)
+        {
+            Player player = (Player)sender;
+            if (eventArgs.EventType == Player.PlayerEventType.Quiting)
+            {
+                RemovePlayer(player);
+            }
+        }
+
         public IDictionary<string, Area> Areas
         {
             get { return this._areas; }
