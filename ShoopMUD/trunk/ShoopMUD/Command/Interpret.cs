@@ -230,10 +230,12 @@ namespace Shoop.Command
     {
         private string _message = "Are you sure? (y\\n) ";
         private string _cancellationMessage = "Command cancelled\r\n";
-        private MethodInfo _method;
-        private object[] args;
+        private ICommand _method;
         private IInterpret priorInterpreter;
         private Player _player;
+        private string _invokedName;
+        private object _context;
+        private string[] args;
 
         public string Message
         {
@@ -247,10 +249,12 @@ namespace Shoop.Command
             set { _cancellationMessage = value; }
         }
 
-        public ConfirmationInterpreter(Player player, MethodInfo method, object[] arguments)
+        public ConfirmationInterpreter(Player player, ICommand method, string invokedName, string[] arguments, object context)
         {
             setPlayer(player);
             this._method = method;
+            this._invokedName = invokedName;
+            this._context = context;
             this.args = arguments;
         }
 
@@ -269,10 +273,17 @@ namespace Shoop.Command
             input = input.ToLower();
             if (input.Equals("yes") || input.Equals("y"))
             {
-                object st = _method.Invoke(actor, args);
+                object st = _method.Invoke(_invokedName, actor, args, _context);
                 if (st != null)
                 {
-                    actor.Write(new StringMessage(MessageType.Information, "MethodResult." + _method.Name, st.ToString()));
+                    if (st is Message)
+                    {
+                        actor.Write((Message)st);
+                    }
+                    else
+                    {
+                        actor.Write(new StringMessage(MessageType.Information, "MethodResult." + _method.Name, st.ToString()));
+                    }
                 }
                 success = true;
             }

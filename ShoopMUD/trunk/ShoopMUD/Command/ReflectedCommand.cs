@@ -30,13 +30,32 @@ namespace Shoop.Command
         #region Constructor
 
         /// <summary>
+        /// Factory method for creating an instance of ReflectedCommand
+        /// which is optionally wrapped by ConfirmationCommand if it needs
+        /// confirmation.
+        /// </summary>
+        /// <param name="methInfo">Reflection MethodInfo for the command method</param>
+        /// <returns>command</returns>
+        public static ICommand CreateInstance(MethodInfo methInfo)
+        {
+            ICommand cmd = new ReflectedCommand(methInfo);
+            if (methInfo.IsDefined(typeof(ConfirmationAttribute), false))
+            {
+                ConfirmationAttribute confAttr = (ConfirmationAttribute)methInfo.GetCustomAttributes(typeof(ConfirmationAttribute), false)[0];
+                ConfirmationCommand confCmd = new ConfirmationCommand(cmd, confAttr.Message, confAttr.CancellationMessage);
+                cmd = confCmd;
+            }
+            return cmd;
+        }
+
+        /// <summary>
         /// Constructs an instace of the method helper
         /// </summary>
         /// <param name="name">The name of the method</param>
         /// <param name="methInfo">Reflection methodInfo object</param>
         /// <param name="level">The minimum player level required to execute the Command</param>
         /// <param name="description">A description of the method</param>
-        public ReflectedCommand(MethodInfo methInfo)
+        private ReflectedCommand(MethodInfo methInfo)
         {
             _name = methInfo.Name;
             _methodInfo = methInfo;

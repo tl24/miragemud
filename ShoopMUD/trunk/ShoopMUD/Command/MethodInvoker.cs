@@ -42,17 +42,17 @@ namespace Shoop.Command
             {
                 if (mInfo.IsDefined(typeof(CommandAttribute), false))
                 {
-                    ReflectedCommand helper = new ReflectedCommand(mInfo);
-                    if (helper.Aliases != null && helper.Aliases.Length > 0)
+                    ICommand command = ReflectedCommand.CreateInstance(mInfo);
+                    if (command.Aliases != null && command.Aliases.Length > 0)
                     {
-                        foreach (string alias in helper.Aliases)
+                        foreach (string alias in command.Aliases)
                         {
-                            methods.put(alias, helper);
+                            methods.put(alias, command);
                         }
                     }
                     else
                     {
-                        methods.put(helper.Name, helper);
+                        methods.put(command.Name, command);
                     }
                 }
             }
@@ -78,28 +78,28 @@ namespace Shoop.Command
                     parser = new ArgumentParser(args);
                     string[] commandArgs = new string[method.ArgCount];
                     int parsedArgs = 0;
-                    for (int i = 0; i < commandArgs.Length && !parser.isEmpty(); i++)
+                    for (parsedArgs = 0; parsedArgs < commandArgs.Length && !parser.isEmpty(); parsedArgs++)
                     {
-                        if (i == commandArgs.Length - 1)
+                        if (parsedArgs == commandArgs.Length - 1)
                         {
                             if (method.CustomParse)
                             {
-                                commandArgs[i] = parser.getRest();
+                                commandArgs[parsedArgs] = parser.getRest();
                             }
                             else
                             {
-                                commandArgs[i] = parser.getNextArgument();
+                                commandArgs[parsedArgs] = parser.getNextArgument();
                             }
                         }
                         else
                         {
-                            commandArgs[i] = parser.getNextArgument();
+                            commandArgs[parsedArgs] = parser.getNextArgument();
                         }
                     }
 
-                    if (parsedArgs != method.ArgCount)
+                    if (parsedArgs != method.ArgCount || !parser.isEmpty())
                     {
-                        break;
+                        continue;
                     }
                     int argCount = 0;
                     bool nextMethod = false;
@@ -139,43 +139,7 @@ namespace Shoop.Command
             {
                 player.Write(new StringMessage(MessageType.PlayerError, "NoCommandFound", "Huh?\r\n"));
             }
-            /*
-                        if (!handleConfirmation(player, method, methodArgs))
-                        {
-                            result = method.method.Invoke(player, methodArgs);
-                        }
-                        if (result != null)
-                        {
-                            //TODO: Handle Message Return types
-                            player.Write(new StringMessage(MessageType.Information, "MethodResult." + method.Name, result.ToString()));
-                        }
-                        break;
-                    }
-                }
-            }
-             */ 
             return fCommandInvoked;
-        }
-
-        private static bool handleConfirmation(Player player, ReflectedCommand method, object[] methodArgs)
-        {
-            ConfirmationAttribute[] attr = (ConfirmationAttribute[])method.method.GetCustomAttributes(typeof(ConfirmationAttribute), false);
-            if (attr.Length > 0)
-            {
-                ConfirmationInterpreter interp = new ConfirmationInterpreter(player, method.method, methodArgs);
-                if (attr[0].Message != null)
-                    interp.Message = attr[0].Message;
-                if (attr[0].CancellationMessage != null)
-                    interp.CancellationMessage = attr[0].CancellationMessage;
-
-
-                interp.requestConfirmation();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         private static IList<ICommand> getAvailableMethods(string commandName)

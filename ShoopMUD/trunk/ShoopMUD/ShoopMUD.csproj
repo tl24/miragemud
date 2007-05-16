@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\Attributes.cs" />
+    <Compile Include="Command\ConfirmationCommand.cs" />
     <Compile Include="Util\AbstractStateMachine.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\Interpret.cs" />
