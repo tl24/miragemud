@@ -5,6 +5,7 @@ using Shoop.Communication;
 using System.Net.Sockets;
 using Shoop.Data;
 using Shoop.Command;
+using Shoop.Util;
 
 namespace Shoop.IO
 {
@@ -54,9 +55,12 @@ namespace Shoop.IO
         Player Player { get; set; }
 
         /// <summary>
-        /// The nanny that manages the initial connection state
+        /// The state handler for the client that will receive a series of
+        /// input from the client.  If this is non-null it will take precedence over the
+        /// command interpreter.
         /// </summary>
-        NannyStateMachine Nanny { get; set; }
+        /// <see cref="Shoop.Command.LoginStateHandler"/>
+        AbstractStateMachine StateHandler { get; set; }
 
         /// <summary>
         /// Gets or sets a reference to the ClientFactory that created this client

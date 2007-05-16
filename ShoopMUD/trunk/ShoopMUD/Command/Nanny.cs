@@ -265,7 +265,7 @@ namespace Shoop.Command
 
             _client.Player = player;
             player.Client = _client;
-            _client.Nanny = null;
+            _client.StateHandler = null;
             _client = null;
             player = null;
 

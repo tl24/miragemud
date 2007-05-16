@@ -94,7 +94,7 @@ namespace Shoop.IO
                 }
                 else
                 {
-                    client.Nanny.HandleInput(input);
+                    client.StateHandler.HandleInput(input);
                 }
             }
         }

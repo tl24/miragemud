@@ -7,34 +7,38 @@ using Shoop.Communication;
 using Shoop.Data.Query;
 using System.Configuration;
 using System.Text.RegularExpressions;
+using Shoop.Util;
 
 namespace Shoop.Command
 {
-    public class NannyStateMachine : AbstractStateMachine
+    /// <summary>
+    /// StateHandler class that controls Login and player creation.
+    /// </summary>
+    public class LoginStateHandler : AbstractStateMachine
     {
         private bool _failed;
         private bool _echoOn;
-        public NannyStateMachine(IClient client)
+        public LoginStateHandler(IClient client)
             : base(client)
         {
             _failed = false;
             _echoOn = true;
         }
 
-        protected override void Validate()
+        protected override void DetermineNextState()
         {
             if (!Contains("name"))
-                Require("Nanny.Name", "Enter Name: ", new ValidateValue(this.ValidateName));
+                Require("Nanny.Name", "Enter Name: ", new ValidateDelegate(this.ValidateName));
             else if (GetValue<bool>("isNew") == true) {
                 if (!Contains("confirmName"))
-                    Require("Nanny.ConfirmNewName", "Is that right, " + GetValue<Player>("player").Title + " (Y/N)? ", new ValidateValue(this.ConfirmName));
+                    Require("Nanny.ConfirmNewName", "Is that right, " + GetValue<Player>("player").Title + " (Y/N)? ", new ValidateDelegate(this.ConfirmName));
                 else if (!Contains("password"))
                 {
                     MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
                     message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "Password: "));
                     message.Parts.Add(new EchoOffMessage());
 
-                    Require(message, new ValidateValue(this.ValidateNewPassword));
+                    Require(message, new ValidateDelegate(this.ValidateNewPassword));
                 }
                 else if (!Contains("confirmPassword"))
                 {
@@ -42,7 +46,7 @@ namespace Shoop.Command
                     message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.ConfirmPassword", "Confirm password: "));
                     message.Parts.Add(new EchoOffMessage());
 
-                    Require(message, new ValidateValue(this.ConfirmPassword));
+                    Require(message, new ValidateDelegate(this.ConfirmPassword));
                 }
                 else
                 {
@@ -55,7 +59,7 @@ namespace Shoop.Command
                     message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "Password: "));
                     message.Parts.Add(new EchoOffMessage());
                     _echoOn = false;
-                    Require(message, new ValidateValue(this.ValidateOldPassword));
+                    Require(message, new ValidateDelegate(this.ValidateOldPassword));
                 }
                 else
                 {
@@ -103,7 +107,7 @@ namespace Shoop.Command
                     GetValue<Player>("player").Client = Client;
                 }
             }
-            Client.Nanny = null;
+            Client.StateHandler = null;
             Client = null;            
         }
 
@@ -112,7 +116,7 @@ namespace Shoop.Command
         /// </summary>
         /// <param name="name">the name to check</param>
         /// <returns>true if valid</returns>
-        private bool checkName(string name) {
+        private bool CheckName(string name) {
             Regex parser = new Regex(@"all|auto|immortal|self|someone|something|the|you|loner|none");
             if (parser.IsMatch(name)) {
                 return false;
@@ -132,6 +136,11 @@ namespace Shoop.Command
 	        return true;
         }
 
+        /// <summary>
+        /// Validate the player's name.  Check to make sure the name is a valid name,
+        /// if it is, then determine if it is an existing player or a new one.
+        /// </summary>
+        /// <param name="input"></param>
         private void ValidateName(string input)
         {
             if (input.Length == 0) {
@@ -140,7 +149,7 @@ namespace Shoop.Command
 	            return;
 	        }   
 	
-	        if (!checkName( input )) {
+	        if (!CheckName( input )) {
 	            Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.IllegalName", "Illegal name, try another.\n\r" ));
                 return;
 	        }
@@ -183,6 +192,11 @@ namespace Shoop.Command
             }
         }
 
+        /// <summary>
+        /// Confirm a new name for a player and that the player wants to create a new player
+        /// and did not mistype the name.
+        /// </summary>
+        /// <param name="input"></param>
         private void ConfirmName(string input)
         {
             if (input.StartsWith("y", StringComparison.CurrentCultureIgnoreCase))
@@ -202,6 +216,10 @@ namespace Shoop.Command
             }
         }
 
+        /// <summary>
+        /// Validate the password of an existing player.
+        /// </summary>
+        /// <param name="input"></param>
         private void ValidateOldPassword(string input)
         {
             Client.Write(new EchoOnMessage());
@@ -220,6 +238,11 @@ namespace Shoop.Command
             SetValue<string>("password", input);
         }
 
+        /// <summary>
+        /// Accept the initial password for a new player.  Verify that it meets any password
+        /// standards.
+        /// </summary>
+        /// <param name="input"></param>
         private void ValidateNewPassword(string input)
         {
             Client.Write(new EchoOnMessage());
@@ -232,6 +255,11 @@ namespace Shoop.Command
             SetValue<string>("password", input);
         }
 
+        /// <summary>
+        /// Confirm the players password.  This is the 2nd time the player enters the password and is
+        /// validated against their first entry.
+        /// </summary>
+        /// <param name="input"></param>
         private void ConfirmPassword(string input)
         {
             Client.Write(new EchoOnMessage());

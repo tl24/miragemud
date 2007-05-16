@@ -97,10 +97,10 @@ namespace Shoop.IO
             mudClient.Open(client);
             _clientMap[newSocket] = mudClient;
             //mudClient.Nanny = Nanny.getInstance(mudClient);
-            mudClient.Nanny = new NannyStateMachine(mudClient);
+            mudClient.StateHandler = new LoginStateHandler(mudClient);
             Trace.WriteLine("Connection from " + client.Client.RemoteEndPoint.ToString(), "Server");
 
-            mudClient.Nanny.HandleInput(null);
+            mudClient.StateHandler.HandleInput(null);
             //mudClient.Write(new StringMessage(MessageType.Information, "Welcome", "Welcome to the mud\n\r"));
             //mudClient.Write(new StringMessage(MessageType.Prompt, "Nanny.Name", "Enter Name: "));
         }

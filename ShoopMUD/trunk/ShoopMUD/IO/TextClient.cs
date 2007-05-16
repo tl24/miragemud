@@ -7,6 +7,7 @@ using System.IO;
 using Shoop.Data;
 using Shoop.Command;
 using Shoop.Communication;
+using Shoop.Util;
 
 namespace Shoop.IO
 {
@@ -42,9 +43,10 @@ namespace Shoop.IO
         private Player _player;
 
         /// <summary>
-        ///     The nanny for this descriptor, if applicable
+        /// State Handler for this client.  If this is present it takes
+        /// precedence over the command interpreter.
         /// </summary>
-        private NannyStateMachine _nanny;
+        private AbstractStateMachine _stateHandler;
 
         /// <summary>
         ///     A reference to the tcp client (socket) that this description
@@ -145,12 +147,12 @@ namespace Shoop.IO
         }
 
         /// <summary>
-        ///     The nanny for this descriptor, can be null
+        ///     state machine handler for the client
         /// </summary>
-        public NannyStateMachine Nanny
+        public AbstractStateMachine StateHandler
         {
-            get { return _nanny; }
-            set { _nanny = value; }
+            get { return _stateHandler; }
+            set { _stateHandler = value; }
         }
 
         /// <summary>
