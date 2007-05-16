@@ -199,18 +199,25 @@ namespace Shoop.Command
         public static string look([ArgumentType(ArgumentType.Self)] Player player)
         {
             string result = "";
-            result += player.Room.Title + "\n\r";
-            result += player.Room.ShortDescription + "\n\r";
-            result += "\n\r";
-            result += "Players:\n\r";
-            foreach (Animate animate in player.Room.Animates)
+            IViewable viewableContainer = player.Container as IViewable;
+            if (viewableContainer != null)
             {
-                if (animate != player)
+                result += viewableContainer.Title + "\n\r";
+                result += viewableContainer.ShortDescription + "\n\r";
+                result += "\n\r";
+            }
+            if (player.Container is Room)
+            {
+                Room room = player.Container as Room;
+                result += "Players:\n\r";
+                foreach (Animate animate in room.Animates)
                 {
-                    result += animate.Title + "\r\n";
+                    if (animate != player)
+                    {
+                        result += animate.Title + "\r\n";
+                    }
                 }
             }
-
             return result;
         }
     }

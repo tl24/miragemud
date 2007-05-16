@@ -30,7 +30,6 @@ namespace Shoop.Data
         private string _password;
         private IClient _client;
         private IInterpret _interpreter;
-        private Room _room;
 
         public enum PlayerEventType {
             Disconnected,
@@ -55,7 +54,6 @@ namespace Shoop.Data
         /// </summary>
         public Player() : base()
         {
-            _uriProperties.Add("Room", _room);
         }
 
         #region Password Items
@@ -139,30 +137,34 @@ namespace Shoop.Data
             set { _interpreter = value; }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]      
-        public Room Room
-        {
-            get { return _room; }
-            set { _room = value; }
-        }
 
         public string RoomURI
         {
-            get { return _room.FullURI; }
+            get
+            {
+                Room room = Container as Room;
+                if (room != null)
+                {
+                    return room.FullURI;
+                }
+                else
+                {
+                    return null;
+                }
+            }
             set
             {
                 if (value != null)
                 {
-                    _room = (Room)GlobalLists.GetInstance().Find(value);
-                    if (_room == null)
+                    Container = (Room)GlobalLists.GetInstance().Find(value);
+                    if (Container == null)
                     {
                         throw new ObjectNotFoundException("Could not find room with value: " + value);
                     }
                 }
                 else
                 {
-                    _room = null;
+                    Container = null;
                 }
             }
         }

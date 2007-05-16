@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using Shoop.Communication;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
 
 namespace Shoop.Data
 {
@@ -30,18 +32,21 @@ namespace Shoop.Data
     ///     A base class for living breathing things such as players
     /// and mobiles.
     /// </summary>
-    public abstract class Animate : BaseData, IViewable
+    public abstract class Animate : BaseData, IViewable, IContainable
     {
         private string _title;
         private int _level;
         private SexType _sex;
         private string _shortDescription;
         private string _longDescription;
+        private Room _room;
 
         public Animate()
         {
             _level = 1;
             _sex = SexType.Other;
+            //TODO: Allow this to be any container
+            _uriProperties.Add("Room", _room);
         }
         /// <summary>
         ///     The level of this animate
@@ -91,6 +96,29 @@ namespace Shoop.Data
         {
             get { return _longDescription; }
             set { _longDescription = value; }
+        }
+
+        #endregion
+
+        #region IContainable Members
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public IContainer Container
+        {
+            get
+            {
+                return _room;
+            }
+            set
+            {
+                _room = (Room)value;
+            }
+        }
+
+        public bool CanBeContainedBy(IContainer container)
+        {
+            return (container is Room);
         }
 
         #endregion

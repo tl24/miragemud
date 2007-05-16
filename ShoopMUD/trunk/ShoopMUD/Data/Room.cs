@@ -5,7 +5,7 @@ using Shoop.Data.Query;
 
 namespace Shoop.Data
 {
-    public class Room : BaseData, IViewable
+    public class Room : BaseData, IViewable, IContainer
     {
         private string _title;
         private string _shortDescription;
@@ -60,43 +60,69 @@ namespace Shoop.Data
             }
         }
 
-        public void MoveTo(Player player)
-        {
-            if (player.Room != this || !this._animates.Contains(player))
-            {
-                if (player.Room != null && player.Room != this)
-                    player.Room.MoveFrom(player);
-
-                this._animates.AddLast(player);
-                player.Room = this;
-                player.PlayerEvent += new Player.PlayerEventHandler(player_PlayerEvent);
-    
-            }
-        }
-
         void player_PlayerEvent(object sender, Player.PlayerEventArgs eventArgs)
         {
             Player player = (Player)sender;
-            if (player.Room != null)
+            if (player.Container != null)
             {
-                player.Room.MoveFrom(player);
+                player.Container.Remove(player);
             }
         }
 
-        /// <summary>
-        /// Moves the player from this room
-        /// </summary>
-        /// <param name="player">The player to be removed</param>
-        private void MoveFrom(Player player)
-        {
-            this._animates.Remove(player);
-            if (player.Room == this)
-                player.Room = null;
+        #region IContainer Members
 
-            player.PlayerEvent -= player_PlayerEvent;
+        public void Add(IContainable item)
+        {
+            
+            if (CanAdd(item))
+            {
+                if (item.Container != this || !this._animates.Contains((Animate) item))
+                {
+                    this._animates.AddLast((Animate) item);
+                    item.Container = this;
+                    if (item is Player)
+                        ((Player)item).PlayerEvent += new Player.PlayerEventHandler(player_PlayerEvent);
+
+                }
+            }
+            else
+            {
+                throw new ContainerAddException("item could not be added to the room", this, item);
+            }
         }
 
+        public void Remove(IContainable item)
+        {
+            if (CanAdd(item))
+            {
+                this._animates.Remove((Animate) item);
+                if (item.Container == this)
+                    item.Container = null;
 
+                if (item is Player)
+                    ((Player)item).PlayerEvent -= player_PlayerEvent;
+            }
+        }
+
+        public bool Contains(IContainable item)
+        {
+            if (item is Animate)
+                return this._animates.Contains((Animate)item);
+            else
+                return false;
+        }
+
+        public bool CanContain(Type item)
+        {
+            return typeof(Animate).IsAssignableFrom(item);
+        }
+
+        public bool CanAdd(IContainable item)
+        {
+            return (item is Animate);
+        }
+
+        #endregion
     }
 
 }

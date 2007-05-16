@@ -96,15 +96,14 @@ namespace Shoop.Command
                     //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
                     GlobalLists globalLists = GlobalLists.GetInstance();
                     globalLists.AddPlayer(player);
-                    if (player.Room == null)
+                    if (player.Container == null)
                     {
                         Room defaultRoom = (Room)globalLists.Find(ConfigurationManager.AppSettings["default.room"]);
-                        defaultRoom.MoveTo(GetValue<Player>("player"));
-
+                        defaultRoom.Add(player);
                     }
                     else
                     {
-                        player.Room.MoveTo(player);
+                        player.Container.Add(player);
                     }
 
                     Client.Write(new StringMessage(MessageType.Information, "Welcome", "\n\rWelcome to CROM 0.1.  Still in development.\n\r"));
