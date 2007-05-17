@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Shoop.Data.Query;
 
 namespace Shoop.Data
 {
@@ -56,12 +57,13 @@ namespace Shoop.Data
         {
             get {
                 if (_targetRoom == null) {
+                    QueryManager queryManager = new QueryManager();
                     if (_toRoomURI.StartsWith("/") || _toRoomURI.StartsWith("Areas")) {
                         // absolute link
-                        _targetRoom = (Room) GlobalLists.GetInstance().Find(_toRoomURI);
+                        _targetRoom = (Room)queryManager.Find(_toRoomURI);
                     } else {
                         // relative
-                        _targetRoom = (Room) _parentRoom.Area.Find("Rooms/" + _toRoomURI);
+                        _targetRoom = (Room)queryManager.Find(_parentRoom.Area, "Rooms/" + _toRoomURI);
                     }
                 }
                 return _targetRoom;

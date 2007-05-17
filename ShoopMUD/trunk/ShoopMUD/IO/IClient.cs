@@ -45,6 +45,17 @@ namespace Shoop.IO
         void FlushOutput();
 
         /// <summary>
+        /// Returns true if the client has output waiting to be sent
+        /// </summary>
+        /// <returns></returns>
+        bool HasOutput();
+
+        /// <summary>
+        ///     Indicates that a Command was read this cycle
+        /// </summary>
+        bool CommandRead { get; set; }
+
+        /// <summary>
         /// The current connected state of the Client
         /// </summary>
         ConnectedState State { get; set; }

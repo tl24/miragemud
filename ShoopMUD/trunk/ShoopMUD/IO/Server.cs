@@ -7,6 +7,7 @@ using System.Diagnostics;
 using Shoop.Data;
 using Shoop.Command;
 using Shoop.Communication;
+using System.Threading;
 
 namespace Shoop.IO
 {
@@ -47,7 +48,16 @@ namespace Shoop.IO
 
             GlobalLists globalLists = GlobalLists.GetInstance();
 
+            DateTime lastTime = DateTime.Now;
+            DateTime currentTime = DateTime.Now;
+            TimeSpan delta = new TimeSpan();
+            int loopCount = 0;
+
+            //TODO: Read this from config
+            int PulsePerSecond = 4;
+
             while(!_shutdown) {
+                loopCount++;
                 if (manager.Poll(100))
                 {
                     foreach (IClient client in manager.ErroredClients)
@@ -74,11 +84,24 @@ namespace Shoop.IO
                         WriteClient(client);
                     }
                 }
+
+                currentTime = DateTime.Now;
+	            delta = lastTime + TimeSpan.FromSeconds(1.0d/PulsePerSecond) - currentTime;
+	            if (delta.Ticks > 0) {
+	                //Thread.sleep($timedelta);
+                    Thread.Sleep(delta);
+	            }
+	            lastTime = currentTime;
+
             }
         }
 
         private void WriteClient(IClient client)
         {
+            if ((client.CommandRead || client.HasOutput()))
+            {
+                WritePrompt(client);
+            }
             client.FlushOutput();
         }
 
@@ -93,6 +116,16 @@ namespace Shoop.IO
                 } else {
                     Interpreter.executeCommand(client.Player, input);
                 }
+            }
+        }
+
+        private void WritePrompt(IClient client)
+        {
+            //Client specific??
+            
+            if (client.Player != null && client.State == ConnectedState.Playing) {
+                string clientName = client.Player.Title;
+                client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
             }
         }
 

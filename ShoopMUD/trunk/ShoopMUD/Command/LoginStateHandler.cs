@@ -81,7 +81,7 @@ namespace Shoop.Command
             }
             else
             {
-                Player isPlaying = (Player)GlobalLists.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(GetValue<Player>("player").URI)));
+                Player isPlaying = (Player)QueryManager.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(GetValue<Player>("player").Uri)));
                 if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
                 {
                     Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.AlreadyPlaying", "That player is already playing.\r\n"));
@@ -98,7 +98,7 @@ namespace Shoop.Command
                     globalLists.AddPlayer(player);
                     if (player.Container == null)
                     {
-                        Room defaultRoom = (Room)globalLists.Find(ConfigurationManager.AppSettings["default.room"]);
+                        Room defaultRoom = (Room)QueryManager.GetInstance().Find(ConfigurationManager.AppSettings["default.room"]);
                         defaultRoom.Add(player);
                     }
                     else
@@ -106,7 +106,7 @@ namespace Shoop.Command
                         player.Container.Add(player);
                     }
 
-                    Client.Write(new StringMessage(MessageType.Information, "Welcome", "\n\rWelcome to CROM 0.1.  Still in development.\n\r"));
+                    Client.Write(new StringMessage(MessageType.Information, "Welcome", "\n\rWelcome to ShoopMUD 0.1.  Still in development.\n\r"));
                     //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\n\r");
                     Client.State = ConnectedState.Playing;
                     //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\n\r",  $desc);	
@@ -162,7 +162,7 @@ namespace Shoop.Command
                 return;
 	        }
 
-            Player isPlaying = (Player) GlobalLists.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
+            Player isPlaying = (Player) QueryManager.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
                 Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.AlreadyPlaying", "That player is already playing.  Try another name.\r\n"));
@@ -194,7 +194,7 @@ namespace Shoop.Command
                 */
                 // Check newbie ban
                 Player player = new Player();
-                player.URI = input;
+                player.Uri = input;
                 player.Title = input;
                 SetValue<Player>("player", player);
             }

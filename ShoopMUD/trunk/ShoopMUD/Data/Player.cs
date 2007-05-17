@@ -138,14 +138,14 @@ namespace Shoop.Data
         }
 
 
-        public string RoomURI
+        public string RoomUri
         {
             get
             {
                 Room room = Container as Room;
                 if (room != null)
                 {
-                    return room.FullURI;
+                    return room.FullUri;
                 }
                 else
                 {
@@ -156,7 +156,7 @@ namespace Shoop.Data
             {
                 if (value != null)
                 {
-                    Container = (Room)GlobalLists.GetInstance().Find(value);
+                    Container = (Room)QueryManager.GetInstance().Find(value);
                     if (Container == null)
                     {
                         throw new ObjectNotFoundException("Could not find room with value: " + value);
@@ -171,11 +171,11 @@ namespace Shoop.Data
 
         [JsonIgnore]
         [XmlIgnore]
-        public override string FullURI
+        public override string FullUri
         {
             get
             {
-                return "Players/" + this.URI;
+                return "Players/" + this.Uri;
             }
         }
 
@@ -226,7 +226,7 @@ namespace Shoop.Data
         {
             InitConfigSettings();
             IObjectSerializer serializer = ObjectSerializerFactory.getSerializer(_playerDir, p.GetType());
-            serializer.Serialize(p, p.URI);
+            serializer.Serialize(p, p.Uri);
         }
 
         #region Commands
@@ -281,6 +281,7 @@ namespace Shoop.Data
         public override string ToString()
         {
             return this.GetType().Name + " " + Title;
-        }
+        }
+
     }
 }

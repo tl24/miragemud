@@ -18,7 +18,7 @@ namespace Shoop.Data
 
         #region IQueryable Members
 
-        public string URI
+        public string Uri
         {
             get { return _uri; }
             set { _uri = value ?? value.ToLower(); }
@@ -111,14 +111,14 @@ namespace Shoop.Data
             return Find(ObjectQuery.parse(query), index);
         }
 
-        public virtual string FullURI
+        public virtual string FullUri
         {
-            get { return this.URI; }
+            get { return this.Uri; }
         }
 
         public override string ToString()
         {
-            return base.ToString() + " mud://" + FullURI;
+            return base.ToString() + " mud://" + FullUri;
         }
         #endregion
     }

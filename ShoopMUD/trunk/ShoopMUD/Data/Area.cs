@@ -42,11 +42,11 @@ namespace Shoop.Data
             set { this._title = value; }
         }
 
-        public override string FullURI
+        public override string FullUri
         {
             get
             {
-                return "Areas/" + this.URI;
+                return "Areas/" + this.Uri;
             }
         }
     }

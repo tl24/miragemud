@@ -23,6 +23,7 @@ namespace Shoop.Data.Query
         private ObjectQuery _subquery;
         private QueryMatchType _matchType;
         private string _toString;
+        private bool _isAbsolute;
 
         public ObjectQuery(string type, string uri, ObjectQuery subQuery)
         {
@@ -46,15 +47,18 @@ namespace Shoop.Data.Query
         public ObjectQuery(string type, string uri) : this(type, uri, null) { }
 
         /// <summary>
-        /// Parses a string representation of a uri query into a URI query object
+        /// Parses a string representation of a uri query into a Uri query object
         /// </summary>
         /// <param name="uriQueryString"></param>
         /// <returns></returns>
         public static ObjectQuery parse(string uriQueryString)
         {
+            bool isAbsolute = false;
             if (uriQueryString.StartsWith("/"))
+            {
                 uriQueryString = uriQueryString.Substring(1);
-
+                isAbsolute = true;
+            }
             
             string[] root = uriQueryString.Split(new char[] { '/' }, 2);
             ObjectQuery result = null;
@@ -64,10 +68,12 @@ namespace Shoop.Data.Query
                 if (pieces.Length > 1)
                 {
                     result = new ObjectQuery(pieces[0], pieces[1]);
+                    result._isAbsolute = isAbsolute;
                 }
                 else if (pieces[0] != null && pieces[0] != string.Empty)
                 {
                     result = new ObjectQuery(pieces[0]);
+                    result._isAbsolute = isAbsolute;
                 }
             }
 
@@ -171,5 +177,12 @@ namespace Shoop.Data.Query
             get { return _matchType;  }
             //set { _matchType = value; }
         }
+
+        public bool IsAbsolute
+        {
+            get { return this._isAbsolute; }
+        }
+
+
     }
 }

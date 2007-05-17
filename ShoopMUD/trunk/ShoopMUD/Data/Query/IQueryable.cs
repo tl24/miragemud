@@ -6,22 +6,11 @@ namespace Shoop.Data.Query
 {
     /// <summary>
     /// IQueryable is an interface that designates an object is accessible
-    /// through a URI naming scheme.  It provides methods for accessing the URI
+    /// through a Uri naming scheme.  It provides methods for accessing the Uri
     /// of an object as well as searching its children that also implement the interface.
     /// </summary>
-    public interface IQueryable
-    {
-        /// <summary>
-        /// Returns the URI for this object.
-        /// </summary>
-        string URI { get; }
-
-        /// <summary>
-        /// Gets the full URI for this object which includes
-        /// the full URI of the Parent.
-        /// </summary>
-        string FullURI { get; }
-        
+    public interface IQueryable : IUri
+    {        
         /// <summary>
         /// Finds the first object matching the given query
         /// </summary>

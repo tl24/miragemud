@@ -51,6 +51,7 @@ namespace Shoop.IO
                 }
                 else
                 {
+                    _clientMap[sck].CommandRead = false;
                     i++;
                 }
             }

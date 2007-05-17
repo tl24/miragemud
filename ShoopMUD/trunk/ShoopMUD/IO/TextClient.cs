@@ -29,7 +29,12 @@ namespace Shoop.IO
         /// <summary>
         ///     The player is playing, completely logged in and not idle
         /// </summary>
-        Playing
+        Playing,
+
+        /// <summary>
+        /// The player has disconnected and should be cleaned up
+        /// </summary>
+        Disconnected
     }
 
     /// <summary>
@@ -297,6 +302,11 @@ namespace Shoop.IO
             }
         }
 
+        public bool HasOutput()
+        {
+            return outputQueue.Count > 0;
+        }
+
         /// <summary>
         /// Indicates if this client is still open or connected
         /// </summary>
@@ -314,6 +324,7 @@ namespace Shoop.IO
             reader.Close();
             writer.Close();
             _client.Close();
+            _state = ConnectedState.Disconnected;
         }
 
         public IClientFactory ClientFactory

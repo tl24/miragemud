@@ -29,12 +29,12 @@ namespace Shoop.Data.Query
             // simple match for now
             if (matchType == QueryMatchType.Exact)
             {
-                if (!(obj.URI == _query.UriName))
+                if (!(obj.Uri == _query.UriName))
                     return false;
             }
             else if (matchType == QueryMatchType.Partial)
             {                
-                if (!obj.URI.StartsWith(_query.UriName, StringComparison.CurrentCultureIgnoreCase))
+                if (!obj.Uri.StartsWith(_query.UriName, StringComparison.CurrentCultureIgnoreCase))
                     return false;
             }
             if (_query.TypeName != null)

@@ -51,14 +51,14 @@ namespace Shoop.Data
             get { return this._animates; }
         }
 
-        public override string FullURI
+        public override string FullUri
         {
             get
             {
                 if (this._area != null)
-                    return this._area.FullURI + "/Rooms/" + this.URI;
+                    return this._area.FullUri + "/Rooms/" + this.Uri;
                 else
-                    return this.URI;
+                    return this.Uri;
             }
         }
 

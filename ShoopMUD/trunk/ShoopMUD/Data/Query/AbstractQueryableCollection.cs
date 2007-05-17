@@ -57,15 +57,15 @@ namespace Shoop.Data.Query
         /// <summary>
         /// Resource identifier for this object
         /// </summary>
-        public string URI
+        public string Uri
         {
             get { return _uri; }
             set { _uri = value; }
         }
 
-        public string FullURI
+        public string FullUri
         {
-            get { return URI; }
+            get { return Uri; }
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Shoop.Data.Query
                 {
                     if ((_flags & QueryCollectionFlags.Sorted) != 0)
                     {
-                        if (uriObj.URI.CompareTo(query.UriName) > 0)
+                        if (uriObj.Uri.CompareTo(query.UriName) > 0)
                         {
                             return null;
                         }
@@ -134,7 +134,7 @@ namespace Shoop.Data.Query
                 {
                     if ((_flags & QueryCollectionFlags.Sorted) == QueryCollectionFlags.Sorted)
                     {
-                        if (uriObj.URI.CompareTo(query.UriName) > 0)
+                        if (uriObj.Uri.CompareTo(query.UriName) > 0)
                         {
                             return null;
                         }

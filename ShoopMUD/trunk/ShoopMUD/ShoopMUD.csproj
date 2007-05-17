@@ -48,6 +48,9 @@
     <Compile Include="Data\Containers.cs" />
     <Compile Include="Data\IContainable.cs" />
     <Compile Include="Data\IContainer.cs" />
+    <Compile Include="Data\Query\IURI.cs" />
+    <Compile Include="Data\Query\IUriContainer.cs" />
+    <Compile Include="Data\Query\QueryManager.cs" />
     <Compile Include="Data\RoomExit.cs" />
     <Compile Include="Util\AbstractStateMachine.cs" />
     <Compile Include="Command\ICommand.cs" />
