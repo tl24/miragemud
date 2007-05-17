@@ -79,12 +79,12 @@ namespace ROMtests
              
             IDictionary<string, Room> rooms = new SortedDictionary<string, Room>();
             Room r1 = new Room();
-            r1.URI = "cafe";
+            r1.Uri = "cafe";
             Room r2 = new Room();
-            r2.URI = "cantina";
+            r2.Uri = "cantina";
 
-            rooms[r1.URI] = r1;
-            rooms[r2.URI] = r2;
+            rooms[r1.Uri] = r1;
+            rooms[r2.Uri] = r2;
             QueryableDictionaryAdapter<Room> target = new QueryableDictionaryAdapter<Room>("rooms", rooms, QueryCollectionFlags.Sorted);
 
             ObjectQuery q1 = ObjectQuery.parse("cafe");

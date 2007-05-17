@@ -80,9 +80,9 @@ namespace ROMtests
             Player o2 = new Player();
             Player o3 = new Player();
 
-            o1.URI = "ant";
-            o2.URI = "cat";
-            o3.URI = "carp";
+            o1.Uri = "ant";
+            o2.Uri = "cat";
+            o3.Uri = "carp";
 
             List<Player> list = new List<Player>();
             list.Add(o1);
