@@ -12,12 +12,14 @@ namespace Shoop.Data
         private string _longDescription;
         private Area _area;
         private LinkedList<Animate> _animates;
+        private IDictionary<DirectionType, RoomExit> _exits;
 
         public Room()
             : base()
         {
             _animates = new LinkedList<Animate>();
             _uriProperties.Add("Animates", new QueryableCollectionAdapter<Animate>(_animates, "Animates"));
+            _exits = new Dictionary<DirectionType, RoomExit>();
         }
 
         public Shoop.Data.Area Area
@@ -123,6 +125,14 @@ namespace Shoop.Data
         }
 
         #endregion
+
+        public IDictionary<DirectionType, RoomExit> Exits
+        {
+            get { return this._exits; }
+            set { this._exits = value; }
+        }
+
+
     }
 
 }

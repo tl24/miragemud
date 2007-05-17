@@ -209,13 +209,31 @@ namespace Shoop.Command
             if (player.Container is Room)
             {
                 Room room = player.Container as Room;
-                result += "Players:\n\r";
-                foreach (Animate animate in room.Animates)
+                if (room.Animates.Count > 1)
                 {
-                    if (animate != player)
+                    result += "Players:\n\r";
+                    foreach (Animate animate in room.Animates)
                     {
-                        result += animate.Title + "\r\n";
+                        if (animate != player)
+                        {
+                            result += animate.Title + "\r\n";
+                        }
                     }
+                }
+
+                if (room.Exits.Count > 0)
+                {
+                    result += "Available Exits: [ ";
+                    foreach (DirectionType direction in room.Exits.Keys)
+                    {
+                        result += direction;
+                        result += " ";
+                    }
+                    result += "]\r\n";
+                }
+                else
+                {
+                    result += "Available Exits: none\r\n.";
                 }
             }
             return result;

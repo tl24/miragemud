@@ -12,6 +12,7 @@ namespace Shoop
         {
             Shoop.Command.MethodInvoker.registerType(typeof(Shoop.Data.Player));
             Shoop.Command.MethodInvoker.registerType(typeof(Shoop.Command.Interpreter));
+            Shoop.Command.MethodInvoker.registerType(typeof(Shoop.Command.Movement));
             Server listener = new Server(4500);
             AreaLoader loader = new AreaLoader();
             loader.LoadAll();

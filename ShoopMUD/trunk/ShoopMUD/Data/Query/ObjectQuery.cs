@@ -52,6 +52,10 @@ namespace Shoop.Data.Query
         /// <returns></returns>
         public static ObjectQuery parse(string uriQueryString)
         {
+            if (uriQueryString.StartsWith("/"))
+                uriQueryString = uriQueryString.Substring(1);
+
+            
             string[] root = uriQueryString.Split(new char[] { '/' }, 2);
             ObjectQuery result = null;
             if (root[0] != string.Empty)

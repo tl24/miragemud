@@ -278,5 +278,9 @@ namespace Shoop.Data
         }
         #endregion
 
+        public override string ToString()
+        {
+            return this.GetType().Name + " " + Title;
+        }
     }
 }

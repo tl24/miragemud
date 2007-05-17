@@ -6,13 +6,46 @@ namespace Shoop.Communication
 {
     public enum MessageType
     {
+        /// <summary>
+        /// Information to the player
+        /// </summary>
         Information,
+
+        /// <summary>
+        /// Channel communication
+        /// </summary>
         Communication,
+        /// <summary>
+        /// Message contains multiple parts
+        /// </summary>
         Multiple,
+        /// <summary>
+        /// Message contains a prompt for input from the player
+        /// </summary>
         Prompt,
+
+        /// <summary>
+        /// problem with a system error
+        /// </summary>
         SystemError,
+        /// <summary>
+        /// Validation error for the player
+        /// </summary>
         PlayerError,
-        UIControl
+        /// <summary>
+        /// Message contains control codes or escape sequences for controlling display on the client
+        /// such as line break info.
+        /// </summary>
+        UIControl,
+        /// <summary>
+        /// Confirmation that a player completed a command successfully
+        /// </summary>
+        Confirmation,
+
+        /// <summary>
+        /// Message contains a notification of an event
+        /// </summary>
+        Notification
     }
 
     public enum MessageTarget

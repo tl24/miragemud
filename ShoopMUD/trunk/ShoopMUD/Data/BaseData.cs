@@ -116,6 +116,10 @@ namespace Shoop.Data
             get { return this.URI; }
         }
 
+        public override string ToString()
+        {
+            return base.ToString() + " mud://" + FullURI;
+        }
         #endregion
     }
 }
