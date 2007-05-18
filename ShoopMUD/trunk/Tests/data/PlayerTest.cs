@@ -120,7 +120,7 @@ namespace ROMtests
         public void loadSaveTest()
         {
             Player target = new Player();
-            target.URI = "targetName";
+            target.Uri = "targetName";
             target.Title = "targetName";
             target.LongDescription = "target Description line 1\r\ntargeDescriptionon line 2";
             target.SetPassword("targetPassword");
@@ -128,7 +128,7 @@ namespace ROMtests
             target.Sex = SexType.Female;
 
             Player.Save(target);
-            Player loaded = Player.Load(target.URI);
+            Player loaded = Player.Load(target.Uri);
 
             Assert.AreEqual(target.Title, loaded.Title, "rom.Data.Player.Title field not equal to loaded value");
         }

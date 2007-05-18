@@ -47,8 +47,10 @@
     <Compile Include="Command\ConfirmationCommand.cs" />
     <Compile Include="Command\Movement.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
+    <Compile Include="Communication\ErrorResourceMessage.cs" />
     <Compile Include="Communication\ITemplate.cs" />
     <Compile Include="Communication\MovementMessage.cs" />
+    <Compile Include="Communication\ResourceMessage.cs" />
     <Compile Include="Communication\TemplateManager.cs" />
     <Compile Include="Data\ContainerAddException.cs" />
     <Compile Include="Data\Containers.cs" />
@@ -113,6 +115,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Includes\Welcome.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

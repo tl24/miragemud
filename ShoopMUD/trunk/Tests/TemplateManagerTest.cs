@@ -103,7 +103,7 @@ namespace ROMtests
         [TestMethod()]
         public void GetTemplateTest()
         {
-            string name = "movement.arrival"; // TODO: Initialize to an appropriate value
+            string name = "Movement.Arrival"; // TODO: Initialize to an appropriate value
 
             string templateText = "${player} goes ${dir}."; // TODO: Initialize to an appropriate value
 

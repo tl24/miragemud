@@ -61,11 +61,52 @@ namespace Shoop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Huh?.
+        /// </summary>
+        internal static string Error_InvalidCommand {
+            get {
+                return ResourceManager.GetString("Error.InvalidCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Goodbye!.
+        /// </summary>
+        internal static string Info_Goodbye {
+            get {
+                return ResourceManager.GetString("Info.Goodbye", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ${player} has arrived..
         /// </summary>
-        internal static string movement_arrival {
+        internal static string Movement_Arrival {
             get {
-                return ResourceManager.GetString("movement.arrival", resourceCulture);
+                return ResourceManager.GetString("Movement.Arrival", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ///
+        /// $$$$$$$
+        ///$$$$$$$$$$
+        ///$$$            III
+        /// $$$           III
+        ///  $$$          III
+        ///   $$$         III
+        ///    $$$        III IIII
+        ///     $$$       IIIIII III     OOOOOOOOO      OOOOOOOOO      OOOOOOOOO
+        ///      $$$      IIIII   III   OOOOOOOOOOO    OOOOOOOOOOO    OOOOOOOOOOO
+        ///       $$$     III      III  OOO     OOO    OOO     OOO    OOO     OOO
+        ///       $$$$    III      III  OOO     OOO    OOO     OOO    OOO     OOO
+        ///$$$    $$$$    III      III  OOO     OOO    OOO     OOO    OOO     OOO
+        ///$$$  $$$$      III     [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Welcome {
+            get {
+                return ResourceManager.GetString("Welcome", resourceCulture);
             }
         }
     }

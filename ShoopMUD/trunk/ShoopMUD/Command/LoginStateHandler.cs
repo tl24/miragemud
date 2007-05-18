@@ -70,7 +70,8 @@ namespace Shoop.Command
 
         protected override void InitialState()
         {
-            Client.Write(new StringMessage(MessageType.Information, "Welcome", "Welcome to the mud\n\r"));
+            //Client.Write(new StringMessage(MessageType.Information, "Welcome", "Welcome to the mud\n\r"));
+            Client.Write(new ResourceMessage(MessageType.Information, "Welcome", "Welcome"));
         }
 
         protected override void FinalState()

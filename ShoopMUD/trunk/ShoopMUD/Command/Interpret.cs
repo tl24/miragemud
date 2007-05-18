@@ -148,7 +148,7 @@ namespace Shoop.Command
             {
                 if (!actor.Interpreter.execute(actor, input))
                 {
-                    actor.Write(new StringMessage(MessageType.PlayerError, "InvalidCommand", "Huh?\n\r"));
+                    actor.Write(new ErrorResourceMessage("InvalidCommand", "Error.InvalidCommand"));
                 }
             }
             else
@@ -186,7 +186,7 @@ namespace Shoop.Command
         [Command]
         public static void quit([ArgumentType(ArgumentType.Self)] Player player)
         {
-            player.Write(new StringMessage(MessageType.Information, "Goodbye", "Goodbye!\r\n"));
+            player.Write(new ResourceMessage(MessageType.Information, "Goodbye", "Info.Goodbye"));
             if (player.Client.State == ConnectedState.Playing)
             {
                 player.save();
