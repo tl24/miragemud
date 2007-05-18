@@ -127,6 +127,35 @@ namespace ROMtests
             Assert.AreEqual(expected, actual, "Template did not render correctly.");
         }
 
+        [TestMethod]
+        public void ReferencedTemplateTest()
+        {
+
+            string IncludedTemplate = "IncludedTemplate"; //I'm inside ${otherTemplate}.
+            string TestTemplateInclude = "TestTemplateInclude"; //This template contains ( @{IncludedTemplate} ) custom = ${custom}
+
+            ITemplate testTemplate = TemplateManager.GetTemplate(TestTemplateInclude);
+
+            // verify that the referenced templates parameters are returned
+            Dictionary<string, bool> parms = new Dictionary<string, bool>();
+            parms["otherTemplate"] = true;
+            parms["custom"] = true;
+
+            ICollection<string> availParams = testTemplate.AvailableParameters;
+            Assert.AreEqual(parms.Count, availParams.Count, "Wrong number of available params");
+
+            foreach (string parm in availParams)
+            {
+                Assert.IsTrue(parms.ContainsKey(parm), "Wrong available param");
+            }
+
+            testTemplate["otherTemplate"] = "TestTemplateInclude";
+            testTemplate["custom"] = "123456";
+
+            string expected = "This template contains ( I'm inside TestTemplateInclude. ) custom = 123456\r\n";
+            string actual = testTemplate.Render();
+            Assert.AreEqual(expected, actual, "Template did not render correctly");
+        }
     }
 
 

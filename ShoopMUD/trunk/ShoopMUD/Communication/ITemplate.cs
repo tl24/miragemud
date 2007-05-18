@@ -34,10 +34,18 @@ namespace Shoop.Communication
         object Context { get; set; }
 
         /// <summary>
-        /// Render the template into final form, replacing any substitutions
+        /// Render the template into final form, replacing any substitutions and adding
+        /// an automatic newline at the end
         /// </summary>
-        /// <returns></returns>
+        /// <returns>rendered template</returns>
         string Render();
+
+        /// <summary>
+        /// Render the template into final form, replacing any substitutions.  A newline
+        /// will be added if suppressNewline is false.
+        /// </summary>
+        /// <returns>rendered template</returns>
+        string Render(bool suppressNewline);
 
         /// <summary>
         /// Resolves the parameter value in either this or the parent template's parameters

@@ -51,7 +51,9 @@
     <Compile Include="Communication\ITemplate.cs" />
     <Compile Include="Communication\MovementMessage.cs" />
     <Compile Include="Communication\ResourceMessage.cs" />
+    <Compile Include="Communication\TemplateDefinition.cs" />
     <Compile Include="Communication\TemplateManager.cs" />
+    <Compile Include="Communication\TemplateRenderer.cs" />
     <Compile Include="Data\ContainerAddException.cs" />
     <Compile Include="Data\Containers.cs" />
     <Compile Include="Data\IContainable.cs" />
