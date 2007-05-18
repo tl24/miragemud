@@ -6,11 +6,14 @@ using System.Net;
 using System.Diagnostics;
 using Shoop.Command;
 using Shoop.Communication;
+using log4net;
 
 namespace Shoop.IO
 {
     public class TextClientFactory : IClientFactory
     {
+        private static ILog log = LogManager.GetLogger(typeof(TextClientFactory));
+
         private IList<Socket> _sockets;
         private IDictionary<Socket, IClient> _clientMap;
         private TcpListener _listener;
@@ -100,6 +103,7 @@ namespace Shoop.IO
 
             mudClient.StateHandler = new LoginStateHandler(mudClient);
             Trace.WriteLine("Connection from " + client.Client.RemoteEndPoint.ToString(), "Server");
+            log.Info("Connection from " + client.Client.RemoteEndPoint.ToString());
 
             mudClient.StateHandler.HandleInput(null);
         }

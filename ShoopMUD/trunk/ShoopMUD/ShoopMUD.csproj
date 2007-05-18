@@ -29,6 +29,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Newtonsoft.Json.dll</HintPath>
@@ -43,7 +47,9 @@
     <Compile Include="Command\ConfirmationCommand.cs" />
     <Compile Include="Command\Movement.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
+    <Compile Include="Communication\ITemplate.cs" />
     <Compile Include="Communication\MovementMessage.cs" />
+    <Compile Include="Communication\TemplateManager.cs" />
     <Compile Include="Data\ContainerAddException.cs" />
     <Compile Include="Data\Containers.cs" />
     <Compile Include="Data\IContainable.cs" />
@@ -52,6 +58,11 @@
     <Compile Include="Data\Query\IUriContainer.cs" />
     <Compile Include="Data\Query\QueryManager.cs" />
     <Compile Include="Data\RoomExit.cs" />
+    <Compile Include="Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
     <Compile Include="Util\AbstractStateMachine.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\Interpret.cs" />
@@ -95,6 +106,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

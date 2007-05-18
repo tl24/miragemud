@@ -8,11 +8,14 @@ using Shoop.Data;
 using Shoop.Command;
 using Shoop.Communication;
 using System.Threading;
+using log4net;
 
 namespace Shoop.IO
 {
     class Server
     {
+        private static ILog logger = LogManager.GetLogger(typeof(Server));
+
         /// <summary>
         ///     The network port being listened on
         /// </summary>
