@@ -4,7 +4,7 @@ using System.Text;
 using System.Reflection;
 using Shoop.Data;
 using Shoop.Communication;
-using Shoop.Attributes;
+
 
 namespace Shoop.Command
 {
@@ -72,13 +72,13 @@ namespace Shoop.Command
             {
                 if (param.IsDefined(typeof(ArgumentTypeAttribute), false))
                 {
-                    foreach (Shoop.Attributes.ArgumentTypeAttribute attr in methInfo.GetCustomAttributes(typeof(Shoop.Attributes.ArgumentTypeAttribute), false))
+                    foreach (ArgumentTypeAttribute attr in param.GetCustomAttributes(typeof(ArgumentTypeAttribute), false))
                     {
-                        if (attr.ArgType != Shoop.Attributes.ArgumentType.Self)
+                        if (attr.ArgType != ArgumentType.Self)
                         {
                             _argCount++;
                         }
-                        if (attr.ArgType == Shoop.Attributes.ArgumentType.ToEOL)
+                        if (attr.ArgType == ArgumentType.ToEOL)
                         {
                             _customParse = true;
                         }

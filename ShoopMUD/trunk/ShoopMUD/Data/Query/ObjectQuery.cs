@@ -32,6 +32,11 @@ namespace Shoop.Data.Query
             this._uriName = uri;
             this._subquery = subQuery;
 
+            if (this._uriName != null && this._uriName.StartsWith("/"))
+            {
+                this._uriName = this._uriName.Substring(1);
+            }
+
             // parse the flag values
             if (this._uriName == "*")
             {

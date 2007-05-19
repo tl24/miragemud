@@ -3,39 +3,38 @@ using System.Collections.Generic;
 using System.Text;
 using Shoop.Data;
 using Shoop.Communication;
-using Shoop.Attributes;
 
 namespace Shoop.Command
 {
     public class Movement
     {
-        [Shoop.Attributes.Command]
+        [Command]
         public static Message north([ArgumentType(ArgumentType.Self)]Player self)
         {
             return Go(self, DirectionType.North);
         }
 
-        [Shoop.Attributes.Command]
+        [Command]
         public static Message south([ArgumentType(ArgumentType.Self)]Player self)
         {
             return Go(self, DirectionType.South);
         }
-        [Shoop.Attributes.Command]
+        [Command]
         public static Message east([ArgumentType(ArgumentType.Self)]Player self)
         {
             return Go(self, DirectionType.East);
         }
-        [Shoop.Attributes.Command]
+        [Command]
         public static Message west([ArgumentType(ArgumentType.Self)]Player self)
         {
             return Go(self, DirectionType.West);
         }
-        [Shoop.Attributes.Command]
+        [Command]
         public static Message up([ArgumentType(ArgumentType.Self)]Player self)
         {
             return Go(self, DirectionType.Up);
         }
-        [Shoop.Attributes.Command]
+        [Command]
         public static Message down([ArgumentType(ArgumentType.Self)]Player self)
         {
             return Go(self, DirectionType.Down);

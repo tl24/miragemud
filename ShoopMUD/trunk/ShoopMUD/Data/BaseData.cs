@@ -5,7 +5,7 @@ using Shoop.Data.Query;
 
 namespace Shoop.Data
 {
-    public class BaseData : IQueryable
+    public class BaseData : IQueryable, IUriContainer
     {
         protected string _uri;
         protected Dictionary<string, IQueryable> _uriProperties;
@@ -120,6 +120,25 @@ namespace Shoop.Data
         {
             return base.ToString() + " mud://" + FullUri;
         }
+        #endregion
+
+        #region IUriContainer Members
+
+        public object GetChild(string uri)
+        {
+            return _uriProperties.ContainsKey(uri) ? _uriProperties[uri] : null;
+        }
+
+        public QueryCollectionFlags GetChildHints(string uri)
+        {
+            object child = GetChild(uri);
+            if (child is AbstractQueryableCollection)
+            {
+                return ((AbstractQueryableCollection)child).Flags;
+            }
+            return 0;
+        }
+
         #endregion
     }
 }

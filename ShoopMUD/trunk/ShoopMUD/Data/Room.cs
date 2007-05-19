@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Shoop.Data.Query;
+using System.Collections;
 
 namespace Shoop.Data
 {
@@ -133,6 +134,23 @@ namespace Shoop.Data
         }
 
 
+
+        #region IContainer Members
+
+
+        public IEnumerable Contents(Type t)
+        {
+            if (t == typeof(Animate))
+            {
+                return _animates;
+            }
+            else 
+            {
+                return new List<object>();
+            }
+        }
+
+        #endregion
     }
 
 }

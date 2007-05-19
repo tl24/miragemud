@@ -9,7 +9,7 @@ namespace Shoop.Data.Query
     [Flags]
     public enum QueryCollectionFlags
     {
-        DuplicatesAllowed,
+        UniqueItems,
         Sorted,
         DefaultPartialMatch
     }
@@ -237,6 +237,11 @@ namespace Shoop.Data.Query
             }
 
             #endregion
+        }
+
+        public Shoop.Data.Query.QueryCollectionFlags Flags
+        {
+            get { return this._flags; }
         }
 
     }

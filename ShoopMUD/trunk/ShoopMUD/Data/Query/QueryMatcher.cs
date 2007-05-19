@@ -24,12 +24,12 @@ namespace Shoop.Data.Query
         /// </summary>
         /// <param name="obj">the object to match</param>
         /// <returns>true if the object matches</returns>
-        public bool IsMatch(IQueryable obj) {
+        public bool IsMatch(IUri obj) {
             QueryMatchType matchType = GetMatchType(QueryMatchType.Default);
             // simple match for now
             if (matchType == QueryMatchType.Exact)
             {
-                if (!(obj.Uri == _query.UriName))
+                if (!(obj.Uri.Equals(_query.UriName, StringComparison.CurrentCultureIgnoreCase)))
                     return false;
             }
             else if (matchType == QueryMatchType.Partial)

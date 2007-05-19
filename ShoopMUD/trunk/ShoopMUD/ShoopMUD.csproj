@@ -43,7 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\Attributes.cs" />
+    <Compile Include="Command\ArgumentParser.cs" />
+    <Compile Include="Command\ArgumentTypeAttribute.cs" />
+    <Compile Include="Command\CommandAttribute.cs" />
+    <Compile Include="Command\ConfirmationAttribute.cs" />
     <Compile Include="Command\ConfirmationCommand.cs" />
     <Compile Include="Command\Movement.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />

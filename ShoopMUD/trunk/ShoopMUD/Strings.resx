@@ -117,8 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Comm.Say.Others" xml:space="preserve">
+    <value>${player} says '${message}'.</value>
+  </data>
+  <data name="Comm.Say.Self" xml:space="preserve">
+    <value>You said '${message}'.</value>
+  </data>
+  <data name="Comm.Tell.Others" xml:space="preserve">
+    <value>${player} tells you '${message}'.</value>
+  </data>
+  <data name="Comm.Tell.Self" xml:space="preserve">
+    <value>You tell '${message}'.</value>
+  </data>
   <data name="Error.InvalidCommand" xml:space="preserve">
     <value>Huh?</value>
+  </data>
+  <data name="Error.PlayerNotPlaying" xml:space="preserve">
+    <value>${player} is not playing right now.</value>
   </data>
   <data name="IncludedTemplate" xml:space="preserve">
     <value>I'm inside ${otherTemplate}.</value>

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using Shoop.Data;
 using Shoop.IO;
 using System.Reflection;
-using Shoop.Attributes;
+
 using Shoop.Util;
 using Shoop.Communication;
 namespace Shoop.Command
@@ -60,9 +60,23 @@ namespace Shoop.Command
 
         public static bool interpret(Player player, string command)
         {
-            ArgumentParser parser = new ArgumentParser(command);
-            string commandName = parser.getNextArgument();
-            string args = parser.getRest().TrimStart(null);
+            ArgumentParser parser;
+            string commandName;
+            string args;
+
+            //TODO: Come up with a better method for single character commands
+            if (command.StartsWith("'"))
+            {
+                commandName = "'";
+                args = command.Substring(1);
+            }
+            else
+            {
+                parser = new ArgumentParser(command);
+                commandName = parser.getNextArgument();
+                args = parser.getRest().TrimStart(null);
+            }
+
             IList<ICommand> methods = getAvailableMethods(commandName);
             bool fCommandFound = false;
             bool fCommandInvoked = false;

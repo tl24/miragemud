@@ -8,7 +8,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Shoop.IO;
 using Shoop.Command;
-using Shoop.Attributes;
+
 using Shoop.IO.Serialization;
 using Newtonsoft.Json;
 using Shoop.Data.Query;

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Attributes;
+
 using Shoop.Data;
+using Shoop.Command;
 
 namespace Shoop.Communication
 {

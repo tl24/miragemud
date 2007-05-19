@@ -61,11 +61,65 @@ namespace Shoop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ${player} says &apos;${message}&apos;..
+        /// </summary>
+        internal static string Comm_Say_Others {
+            get {
+                return ResourceManager.GetString("Comm.Say.Others", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You said &apos;${message}&apos;..
+        /// </summary>
+        internal static string Comm_Say_Self {
+            get {
+                return ResourceManager.GetString("Comm.Say.Self", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${player} tells you &apos;${message}&apos;..
+        /// </summary>
+        internal static string Comm_Tell_Others {
+            get {
+                return ResourceManager.GetString("Comm.Tell.Others", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You tell &apos;${message}&apos;..
+        /// </summary>
+        internal static string Comm_Tell_Self {
+            get {
+                return ResourceManager.GetString("Comm.Tell.Self", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Huh?.
         /// </summary>
         internal static string Error_InvalidCommand {
             get {
                 return ResourceManager.GetString("Error.InvalidCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${player} is not playing right now..
+        /// </summary>
+        internal static string Error_PlayerNotPlaying {
+            get {
+                return ResourceManager.GetString("Error.PlayerNotPlaying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I&apos;m inside ${otherTemplate}..
+        /// </summary>
+        internal static string IncludedTemplate {
+            get {
+                return ResourceManager.GetString("IncludedTemplate", resourceCulture);
             }
         }
         
@@ -84,6 +138,15 @@ namespace Shoop {
         internal static string Movement_Arrival {
             get {
                 return ResourceManager.GetString("Movement.Arrival", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This template contains ( @{IncludedTemplate} ) custom = ${custom}.
+        /// </summary>
+        internal static string TestTemplateInclude {
+            get {
+                return ResourceManager.GetString("TestTemplateInclude", resourceCulture);
             }
         }
         

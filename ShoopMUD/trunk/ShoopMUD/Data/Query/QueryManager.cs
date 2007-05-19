@@ -11,8 +11,11 @@ namespace Shoop.Data.Query
     /// </summary>
     public class QueryManager
     {
+        private object[] emptyList;
+
         public QueryManager()
         {
+            emptyList = new object[0];
         }
 
         public static QueryManager GetInstance()
@@ -25,7 +28,7 @@ namespace Shoop.Data.Query
         /// </summary>
         /// <param name="query">the uri query</param>
         /// <returns>the first matching object</returns>
-        public object Find(object searched, ObjectQuery query)
+        public object FindX(object searched, ObjectQuery query)
         {
             if (query.IsAbsolute)
             {
@@ -51,6 +54,15 @@ namespace Shoop.Data.Query
             return null;
         }
 
+        public object Find(object searched, ObjectQuery query)
+        {
+            IEnumerable result = FindAll(searched, query, 0, 1);
+            foreach (object o in result)
+            {
+                return o;
+            }
+            return null;
+        }
         public object Find(ObjectQuery query)
         {
             return Find(GlobalLists.GetInstance(), query);
@@ -66,18 +78,100 @@ namespace Shoop.Data.Query
             return Find(ObjectQuery.parse(query));
         }
 
-        public IEnumerable FindAll(object searched, ObjectQuery query)
+
+          //only real thing to implement is FindAll
+        public IEnumerable FindAll(object searched, ObjectQuery query, int start, int count)
         {
-            if (searched is IQueryable)
+            if (query.IsAbsolute)
             {
-                return GetListEnumerator(((IQueryable)searched).FindAll(query));
+                searched = GlobalLists.GetInstance();
+            }
+            if (searched == null)
+                return emptyList;
+
+            bool hasSubQuery = query.Subquery != null;
+
+            if (!hasSubQuery)
+            {
+                if (searched is IUriContainer)
+                {
+                    IUriContainer cont = (IUriContainer)searched;
+                    object child = cont.GetChild(query.UriName);
+                    if (IsCollection(child))
+                    {
+                        return SearchCollection(child, new ObjectQuery("*"), start, count, cont.GetChildHints(query.UriName));
+                    }
+                    else
+                    {
+                        ArrayList al = new ArrayList();
+                        al.Add(child);
+                        return al;
+                    }
+                }
+                else if (IsCollection(searched))
+                {
+                    return SearchCollection(searched, query, start, count, 0);
+                }
             }
             else
             {
-                return null;
+                if (searched is IUriContainer)
+                {
+                    IUriContainer cont = (IUriContainer)searched;
+                    object child = cont.GetChild(query.UriName);
+                    return FindAll(child, query.Subquery, start, count);
+                }
+                else if (IsCollection(searched))
+                {
+                    object child = FindFirstMatch(searched, query);
+                    return SearchCollection(child, query.Subquery, start, count, 0);
+                }
             }
+            return null;
         }
 
+
+        public IEnumerable SearchCollection(object searched, ObjectQuery query, int start, int count, QueryCollectionFlags flags)
+        {
+            if (searched == null)
+                yield break;
+
+            QueryMatcher matcher = QueryMatcher.getMatcher(query);
+            int matchCount = 0;
+            int index = 0;
+            foreach (IUri uriObj in GetCollectionEnumerable(searched))
+            {
+                if (count != 0 && matchCount == count) {
+                    yield break;
+                }
+
+                // pick the first match
+                if (matcher.IsMatch(uriObj))
+                {
+                    if (index >= start)
+                    {
+                        index++;
+                        matchCount++;
+                        yield return uriObj;
+                    }
+                }
+            }
+            yield break;
+        }
+
+        private object FindFirstMatch(object searched, ObjectQuery query)
+        {
+            foreach (object o in SearchCollection(searched, query, 0, 1, 0))
+            {
+                return o;
+            }
+            return null;
+        }
+
+        private bool IsCollection(object coll)
+        {
+            return (coll is IEnumerable);
+        }
         private IEnumerable GetListEnumerator(IList<IQueryable> queryableList)
         {
             foreach (IQueryable obj in queryableList)
@@ -86,61 +180,13 @@ namespace Shoop.Data.Query
             }
         }
 
-        private IEnumerable SearchCollection(object coll, ObjectQuery query, int start, int length)
+        private IEnumerable GetCollectionEnumerable(object coll)
         {
-
-            if (coll is IEnumerable)
-                return SearchEnumerator(((IEnumerable)coll).GetEnumerator(), query, start, length);
-            else if (coll is IEnumerator)
-                return SearchEnumerator((IEnumerator) coll, query, start, length);
-            else
-                return null;
+            IEnumerable e = coll as IEnumerable;
+            return e;
         }
 
-        private IEnumerable SearchEnumerator(IEnumerator en, ObjectQuery query, int start, int length)
-        {
-            int i = 0;
-            int matchCount = 0;
-            QueryMatcher matcher = QueryMatcher.getMatcher(query);
-            while (en.MoveNext() && (matchCount < length || length == 0))
-            {
-                if (i < start)
-                {
-                    continue;
-                }
-                bool isMatch = false;
-                IUri uriObj = en.Current as IUri;
-                if (query.MatchType == QueryMatchType.All) {
-                    isMatch = true;
-                } else {
-                    if (uriObj != null)
-                    {
-                        if (query.MatchType == QueryMatchType.Exact)
-                        {
-                            isMatch = uriObj.Uri == query.UriName;
-                        }
-                        else
-                        {
-                            isMatch = uriObj.Uri.StartsWith(query.UriName);
-                        }
-                    }
-                }
-                if (isMatch && query.TypeName != null)
-                {
-                    if (query.TypeName != en.Current.GetType().Name
-                        && query.TypeName != en.Current.GetType().FullName)
-                    {
-                        isMatch = false;
-                    }
-                }
-                if (isMatch)
-                {
-                    matchCount++;
-                    yield return en.Current;
-                }
-            }
-            yield break;
-        }
+
 
     }
 }

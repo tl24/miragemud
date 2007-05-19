@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace Shoop.Data
 {
@@ -48,5 +49,12 @@ namespace Shoop.Data
         /// <param name="item">the item to check</param>
         /// <returns>true if the item can be added</returns>
         bool CanAdd(IContainable item);
+
+        /// <summary>
+        /// Get the contents of the object filtering by a certain type
+        /// </summary>
+        /// <typeparam name="T">the type of object to get</typeparam>
+        /// <returns>enumerable item</returns>
+        IEnumerable Contents(Type t);
     }
 }
