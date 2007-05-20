@@ -11,7 +11,11 @@ namespace Shoop.Data.Query
     {
         UniqueItems,
         Sorted,
-        DefaultPartialMatch
+        DefaultPartialMatch,
+        /// <summary>
+        /// Indicates that the keys for the dictionary are the Uris of the items
+        /// </summary>
+        UriKeyedDictionary
     }
 
     /// <summary>

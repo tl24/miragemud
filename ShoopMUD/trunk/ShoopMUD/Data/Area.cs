@@ -15,7 +15,7 @@ namespace Shoop.Data
         public Area()
         {
             _rooms = new Dictionary<string, Room>();
-            _uriProperties["Rooms"] = new QueryableDictionaryAdapter<Room>("Rooms", _rooms);
+            _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryCollectionFlags.UriKeyedDictionary | QueryCollectionFlags.UniqueItems);
         }
 
         public IDictionary<string, Room> Rooms

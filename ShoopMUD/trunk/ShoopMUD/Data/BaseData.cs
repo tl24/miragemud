@@ -5,15 +5,15 @@ using Shoop.Data.Query;
 
 namespace Shoop.Data
 {
-    public class BaseData : IQueryable, IUriContainer
+    public class BaseData : IUriContainer, IUri
     {
         protected string _uri;
-        protected Dictionary<string, IQueryable> _uriProperties;
+        protected Dictionary<string, ChildCollectionPair> _uriChildCollections;
 
         protected BaseData()
         {
             _uri = this.ToString();
-            _uriProperties = new Dictionary<string, IQueryable>();
+            _uriChildCollections = new Dictionary<string, ChildCollectionPair>();
         }
 
         #region IQueryable Members
@@ -22,93 +22,6 @@ namespace Shoop.Data
         {
             get { return _uri; }
             set { _uri = value ?? value.ToLower(); }
-        }
-
-        public virtual IQueryable Find(ObjectQuery query)
-        {
-            validateQuery(query);
-            IQueryable child = _uriProperties[query.UriName];
-            if (query.Subquery != null)
-            {
-                return child.Find(query.Subquery);
-            }
-            else
-            {
-                return child;
-            }
-        }
-
-        protected virtual void validateQuery(ObjectQuery query)
-        {
-            if (!_uriProperties.ContainsKey(query.UriName))
-            {
-                throw new ArgumentException(query.UriName + " does not exist or is not registered in " + this.GetType().ToString() + "." + this._uri);
-            }
-        }
-
-        public virtual IList<IQueryable> FindAll(ObjectQuery query)
-        {
-            validateQuery(query);
-            IQueryable child = _uriProperties[query.UriName];
-            if (query.Subquery != null)
-            {
-                return child.FindAll(query.Subquery);
-            }
-            else
-            {
-                if (child is IEnumerable<IQueryable>)
-                {
-                    return new List<IQueryable>((IEnumerable<IQueryable>)child);
-                }
-                else
-                {
-                    IList<IQueryable> list = new List<IQueryable>();
-                    list.Add(child);
-                    return list;
-                }
-            }
-        }
-
-        public virtual IQueryable Find(ObjectQuery query, int index)
-        {
-            validateQuery(query);
-            IQueryable child = _uriProperties[query.UriName];
-            if (query.Subquery != null)
-            {
-                return child.Find(query.Subquery, index);
-            }
-            else
-            {
-                if (child is System.Collections.IEnumerable)
-                {
-                    int i = 0;
-                    foreach (IQueryable uriObj in (System.Collections.IEnumerable) child)
-                    {
-                        if (i++ == index)
-                            return uriObj;
-                    }
-                    return null;
-                }
-                else
-                {
-                    return (index == 1) ? child : null;
-                }
-            }
-        }
-
-        public virtual IQueryable Find(string query)
-        {
-            return Find(ObjectQuery.parse(query));
-        }
-
-        public virtual IList<IQueryable> FindAll(string query)
-        {
-            return FindAll(ObjectQuery.parse(query));
-        }
-
-        public virtual IQueryable Find(string query, int index)
-        {
-            return Find(ObjectQuery.parse(query), index);
         }
 
         public virtual string FullUri
@@ -126,19 +39,30 @@ namespace Shoop.Data
 
         public object GetChild(string uri)
         {
-            return _uriProperties.ContainsKey(uri) ? _uriProperties[uri] : null;
+            return _uriChildCollections.ContainsKey(uri) ? _uriChildCollections[uri].Child : null;
         }
 
         public QueryCollectionFlags GetChildHints(string uri)
         {
-            object child = GetChild(uri);
-            if (child is AbstractQueryableCollection)
-            {
-                return ((AbstractQueryableCollection)child).Flags;
-            }
-            return 0;
+            return _uriChildCollections.ContainsKey(uri) ? _uriChildCollections[uri].Flags : 0;
         }
 
         #endregion
+
+        protected struct ChildCollectionPair
+        {
+            public object Child;
+            public QueryCollectionFlags Flags;
+
+            public ChildCollectionPair(object Child, QueryCollectionFlags flags) {
+                this.Child = Child;
+                this.Flags = flags;
+            }
+
+            public ChildCollectionPair(object Child) : this(Child, 0)
+            {
+            }
+
+        }
     }
 }

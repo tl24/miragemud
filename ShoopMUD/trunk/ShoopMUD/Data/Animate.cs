@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Shoop.Communication;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
+using Shoop.Data.Query;
 
 namespace Shoop.Data
 {
@@ -45,8 +46,6 @@ namespace Shoop.Data
         {
             _level = 1;
             _sex = SexType.Other;
-            //TODO: Allow this to be any container
-            _uriProperties.Add("Room", _room);
         }
         /// <summary>
         ///     The level of this animate

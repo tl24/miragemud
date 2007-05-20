@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Query\IURINameableTest.cs" />
     <Compile Include="Data\Query\QueryManagerTest.cs" />
     <Compile Include="Mock\MockUriContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using System.Collections.Specialized;
+using System.Reflection;
 
 namespace Shoop.Data.Query
 {
@@ -56,13 +58,9 @@ namespace Shoop.Data.Query
 
         public object Find(object searched, ObjectQuery query)
         {
-            IEnumerable result = FindAll(searched, query, 0, 1);
-            foreach (object o in result)
-            {
-                return o;
-            }
-            return null;
+            return Find(searched, query, 0);
         }
+
         public object Find(ObjectQuery query)
         {
             return Find(GlobalLists.GetInstance(), query);
@@ -78,9 +76,38 @@ namespace Shoop.Data.Query
             return Find(ObjectQuery.parse(query));
         }
 
+        public object Find(object searched, ObjectQuery query, int index)
+        {
+            IEnumerable result = FindAll(searched, query, index, 1);
+            foreach (object o in result)
+            {
+                return o;
+            }
+            return null;
+        }
+        public object Find(ObjectQuery query, int index)
+        {
+            return Find(GlobalLists.GetInstance(), query, index);
+        }
+
+        public object Find(object searched, string query, int index)
+        {
+            return Find(searched, ObjectQuery.parse(query), index);
+        }
+
+        public object Find(string query, int index)
+        {
+            return Find(GlobalLists.GetInstance(), ObjectQuery.parse(query), index);
+        }
+
+
+        public IEnumerable FindAll(object searched, ObjectQuery query, int start, int count)
+        {
+            return FindAll(searched, query, start, count, 0);
+        }
 
           //only real thing to implement is FindAll
-        public IEnumerable FindAll(object searched, ObjectQuery query, int start, int count)
+        private IEnumerable FindAll(object searched, ObjectQuery query, int start, int count, QueryCollectionFlags flags)
         {
             if (query.IsAbsolute)
             {
@@ -104,13 +131,30 @@ namespace Shoop.Data.Query
                     else
                     {
                         ArrayList al = new ArrayList();
-                        al.Add(child);
+                        // if they aren't starting at first item, there are no matches then
+                        if (start == 0)
+                        {
+                            al.Add(child);
+                        }
                         return al;
                     }
                 }
                 else if (IsCollection(searched))
                 {
-                    return SearchCollection(searched, query, start, count, 0);
+                    if (CanUseIndexer(searched, flags, query)) {
+                        object child = ((IDictionary)searched)[query.UriName];
+                        ArrayList al = new ArrayList();
+                        // if they aren't starting at first item, there are no matches then
+                        if (start == 0)
+                        {
+                            al.Add(child);
+                        }
+                        return al;
+                    }
+                    else
+                    {
+                        return SearchCollection(searched, query, start, count, flags);
+                    }
                 }
             }
             else
@@ -119,17 +163,41 @@ namespace Shoop.Data.Query
                 {
                     IUriContainer cont = (IUriContainer)searched;
                     object child = cont.GetChild(query.UriName);
-                    return FindAll(child, query.Subquery, start, count);
+                    return FindAll(child, query.Subquery, start, count, cont.GetChildHints(query.UriName));
                 }
                 else if (IsCollection(searched))
                 {
-                    object child = FindFirstMatch(searched, query);
-                    return SearchCollection(child, query.Subquery, start, count, 0);
+                    object child;
+                    if (CanUseIndexer(searched, flags, query))
+                    {
+                        child = ((IDictionary)searched)[query.UriName];
+                    }
+                    else
+                    {
+                        child = FindFirstMatch(searched, query);
+                    }
+                    return FindAll(child, query.Subquery, start, count);
                 }
             }
             return null;
         }
 
+        private bool CanUseIndexer(object searched, QueryCollectionFlags flags, ObjectQuery query)
+        {
+            if (searched is IDictionary
+                && (flags & QueryCollectionFlags.UriKeyedDictionary) == QueryCollectionFlags.UriKeyedDictionary
+                && (query.MatchType == QueryMatchType.Exact
+                    || (query.MatchType == QueryMatchType.Default)))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+
+        }
 
         public IEnumerable SearchCollection(object searched, ObjectQuery query, int start, int count, QueryCollectionFlags flags)
         {
@@ -148,9 +216,8 @@ namespace Shoop.Data.Query
                 // pick the first match
                 if (matcher.IsMatch(uriObj))
                 {
-                    if (index >= start)
+                    if (index++ >= start)
                     {
-                        index++;
                         matchCount++;
                         yield return uriObj;
                     }
@@ -172,21 +239,20 @@ namespace Shoop.Data.Query
         {
             return (coll is IEnumerable);
         }
-        private IEnumerable GetListEnumerator(IList<IQueryable> queryableList)
-        {
-            foreach (IQueryable obj in queryableList)
-            {
-                yield return obj;
-            }
-        }
 
         private IEnumerable GetCollectionEnumerable(object coll)
         {
-            IEnumerable e = coll as IEnumerable;
+            IEnumerable e = null;
+            if (coll is IDictionary)
+            {
+                e = ((IDictionary)coll).Values;
+            }
+            // if not dictionary just try regular enumerator
+            if (e == null)
+            {
+                e = coll as IEnumerable;
+            }
             return e;
         }
-
-
-
     }
 }

@@ -19,7 +19,7 @@ namespace Shoop.Data
             : base()
         {
             _animates = new LinkedList<Animate>();
-            _uriProperties.Add("Animates", new QueryableCollectionAdapter<Animate>(_animates, "Animates"));
+            _uriChildCollections.Add("Animates", new BaseData.ChildCollectionPair(_animates, QueryCollectionFlags.DefaultPartialMatch));
             _exits = new Dictionary<DirectionType, RoomExit>();
         }
 
