@@ -42,19 +42,22 @@ namespace Shoop.Data
             return _uriChildCollections.ContainsKey(uri) ? _uriChildCollections[uri].Child : null;
         }
 
-        public QueryCollectionFlags GetChildHints(string uri)
+        public QueryHints GetChildHints(string uri)
         {
             return _uriChildCollections.ContainsKey(uri) ? _uriChildCollections[uri].Flags : 0;
         }
 
         #endregion
 
+        /// <summary>
+        /// struct to hold data about a child collection exposed under Uri interfaces
+        /// </summary>
         protected struct ChildCollectionPair
         {
             public object Child;
-            public QueryCollectionFlags Flags;
+            public QueryHints Flags;
 
-            public ChildCollectionPair(object Child, QueryCollectionFlags flags) {
+            public ChildCollectionPair(object Child, QueryHints flags) {
                 this.Child = Child;
                 this.Flags = flags;
             }

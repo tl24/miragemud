@@ -171,7 +171,7 @@ namespace Shoop.Util
 
         public IEnumerator<TVal> GetEnumerator()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return new IndexedDictionaryEnumerator(this, this.list.First, EnumerationMode.All, null);
         }
 
         #endregion
@@ -180,7 +180,7 @@ namespace Shoop.Util
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            throw new Exception("The method or operation is not implemented.");
+            return GetEnumerator();
         }
         #endregion
 

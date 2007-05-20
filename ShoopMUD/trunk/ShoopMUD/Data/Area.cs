@@ -15,7 +15,7 @@ namespace Shoop.Data
         public Area()
         {
             _rooms = new Dictionary<string, Room>();
-            _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryCollectionFlags.UriKeyedDictionary | QueryCollectionFlags.UniqueItems);
+            _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
         }
 
         public IDictionary<string, Room> Rooms

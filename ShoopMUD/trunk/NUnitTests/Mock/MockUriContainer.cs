@@ -9,13 +9,13 @@ namespace NUnitTests.Mock
     {
         private string _uri = "global";
         private IDictionary<string, object> _objects;
-        private IDictionary<string, QueryCollectionFlags> _flags;
+        private IDictionary<string, QueryHints> _flags;
 
 
         public MockUriContainer()
         {
             _objects = new Dictionary<string, object>();
-            _flags = new Dictionary<string, QueryCollectionFlags>();
+            _flags = new Dictionary<string, QueryHints>();
         }
 
         #region IUri Members
@@ -41,13 +41,13 @@ namespace NUnitTests.Mock
             return _objects.ContainsKey(uri) ? _objects[uri] : null;
         }
 
-        public QueryCollectionFlags GetChildHints(string uri)
+        public QueryHints GetChildHints(string uri)
         {
             uri = uri.ToLower();
             return _flags.ContainsKey(uri) ? _flags[uri] : 0;
         }
 
-        public void AddObject(string uri, object o, QueryCollectionFlags flags)
+        public void AddObject(string uri, object o, QueryHints flags)
         {
             uri = uri.ToLower();
             _objects[uri] = o;

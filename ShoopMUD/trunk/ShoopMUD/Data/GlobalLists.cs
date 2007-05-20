@@ -31,8 +31,8 @@ namespace Shoop.Data
             _uri = "global";
             _players = new LinkedList<Player>();
             _areas = new Dictionary<string, Area>();
-            _uriChildCollections.Add("Players", new BaseData.ChildCollectionPair(_players, QueryCollectionFlags.DefaultPartialMatch));
-            _uriChildCollections.Add("Areas", new BaseData.ChildCollectionPair(_areas, QueryCollectionFlags.UriKeyedDictionary | QueryCollectionFlags.UniqueItems));
+            _uriChildCollections.Add("Players", new BaseData.ChildCollectionPair(_players, QueryHints.DefaultPartialMatch));
+            _uriChildCollections.Add("Areas", new BaseData.ChildCollectionPair(_areas, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems));
         }
 
         public ICollection<Player> Players

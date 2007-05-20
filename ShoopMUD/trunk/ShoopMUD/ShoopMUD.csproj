@@ -89,13 +89,8 @@
     <Compile Include="Data\GlobalLists.cs" />
     <Compile Include="Data\IViewable.cs" />
     <Compile Include="Data\ObjectNotFoundException.cs" />
-    <Compile Include="Data\Query\IQueryable.cs" />
-    <Compile Include="Data\Query\QueryableDictionaryAdapter.cs" />
-    <Compile Include="Data\Query\QueryableCollectionAdapter.cs" />
-    <Compile Include="Data\Query\QueryMatcher.cs" />
     <Compile Include="Data\Player.cs" />
     <Compile Include="Data\Room.cs" />
-    <Compile Include="Data\Query\AbstractQueryableCollection.cs" />
     <Compile Include="Data\Query\ObjectQuery.cs" />
     <Compile Include="IO\ClientManager.cs" />
     <Compile Include="IO\IClientFactory.cs" />

@@ -188,6 +188,48 @@ namespace Shoop.Data.Query
             get { return this._isAbsolute; }
         }
 
+        /// <summary>
+        /// Checks the object against the given query to see if there is a match
+        /// </summary>
+        /// <param name="obj">the object to match</param>
+        /// <returns>true if the object matches</returns>
+        public bool IsMatch(IUri obj)
+        {
+            QueryMatchType matchType = GetMatchType(QueryMatchType.Default);
+            // simple match for now
+            if (matchType == QueryMatchType.Exact)
+            {
+                if (!(obj.Uri.Equals(this.UriName, StringComparison.CurrentCultureIgnoreCase)))
+                    return false;
+            }
+            else if (matchType == QueryMatchType.Partial)
+            {
+                if (!obj.Uri.StartsWith(this.UriName, StringComparison.CurrentCultureIgnoreCase))
+                    return false;
+            }
+            if (this.TypeName != null)
+            {
+                if (obj.GetType().Name != this.TypeName
+                    && obj.GetType().FullName != this.TypeName)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
+        private QueryMatchType GetMatchType(QueryMatchType desired)
+        {
+            QueryMatchType result = desired;
+            if (result == QueryMatchType.Default)
+            {
+                result = this.MatchType;
+            }
+            if (result == QueryMatchType.Default)
+            {
+                result = QueryMatchType.Exact;
+            }
+            return result;
+        }
     }
 }

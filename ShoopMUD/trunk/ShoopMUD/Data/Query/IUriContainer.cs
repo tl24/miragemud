@@ -8,6 +8,6 @@ namespace Shoop.Data.Query
     public interface IUriContainer
     {
         object GetChild(string uri);
-        QueryCollectionFlags GetChildHints(string uri);
+        QueryHints GetChildHints(string uri);
     }    
 }

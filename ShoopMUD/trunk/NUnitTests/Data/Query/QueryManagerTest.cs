@@ -16,7 +16,7 @@ namespace NUnitTests.Data.Query
         {
             MockUriContainer bd = new MockUriContainer();
             LinkedList<Player> players = new LinkedList<Player>();
-            bd.AddObject("Players", players, QueryCollectionFlags.UniqueItems);
+            bd.AddObject("Players", players, QueryHints.UniqueItems);
             Player abc = new Player();
             abc.Uri = "Abc";
             players.AddLast(abc);
@@ -43,7 +43,7 @@ namespace NUnitTests.Data.Query
         {
             MockUriContainer bd = new MockUriContainer();
             LinkedList<Player> players = new LinkedList<Player>();
-            bd.AddObject("Players", players, QueryCollectionFlags.UniqueItems);
+            bd.AddObject("Players", players, QueryHints.UniqueItems);
             Player abc = new Player();
             abc.Uri = "Abc";
             players.AddLast(abc);
@@ -85,7 +85,7 @@ namespace NUnitTests.Data.Query
         {
             MockUriContainer bd = new MockUriContainer();
             IDictionary<string, Area> _areas = new Dictionary<string, Area>();
-            bd.AddObject("Areas", _areas, QueryCollectionFlags.UniqueItems | QueryCollectionFlags.UriKeyedDictionary);
+            bd.AddObject("Areas", _areas, QueryHints.UniqueItems | QueryHints.UriKeyedDictionary);
             Area area1 = new Area();
             area1.Uri = "Area1";
             _areas[area1.Uri] = area1;
@@ -112,7 +112,7 @@ namespace NUnitTests.Data.Query
         {
             MockUriContainer bd = new MockUriContainer();
             IDictionary<string, Area> _areas = new Dictionary<string, Area>();
-            bd.AddObject("Areas", _areas, QueryCollectionFlags.UniqueItems | QueryCollectionFlags.UriKeyedDictionary);
+            bd.AddObject("Areas", _areas, QueryHints.UniqueItems | QueryHints.UriKeyedDictionary);
             Area area1 = new Area();
             area1.Uri = "Area1";
             _areas[area1.Uri] = area1;
