@@ -33,11 +33,6 @@ namespace Shoop.Command
     public enum ArgumentType
     {
         /// <summary>
-        ///     Refers to the invoking player
-        /// </summary>
-        Self,
-
-        /// <summary>
         ///     The argument refers to player invoking the Command
         /// </summary>
         Player,

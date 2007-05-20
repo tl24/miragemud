@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\ActorAttribute.cs" />
     <Compile Include="Command\ArgumentParser.cs" />
     <Compile Include="Command\ArgumentTypeAttribute.cs" />
     <Compile Include="Command\CommandAttribute.cs" />

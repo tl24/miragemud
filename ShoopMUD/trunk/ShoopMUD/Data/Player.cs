@@ -232,7 +232,7 @@ namespace Shoop.Data
         #region Commands
 
         [Command(Description = "Attempt to kill another player or mobile")]
-        public string kill([ArgumentType(ArgumentType.Self)] Player self, string target)
+        public string kill([Actor] Player self, string target)
         {
             return "You are going to kill " + target + "\r\n";
         }
@@ -252,13 +252,13 @@ namespace Shoop.Data
         }
 
         [Command(Description = "Attempt to kill another player or mobile")]
-        public string kill([ArgumentType(ArgumentType.Self)] Player self, string target, int count)
+        public string kill([Actor] Player self, string target, int count)
         {
             return "You are going to kill " + target + " " + count + " times\r\n";
         }
 
         [Command(Description="Attempt to kill another player or mobile")]
-        public string kill([ArgumentType(ArgumentType.Self)] Player self, 
+        public string kill([Actor] Player self, 
                            [ArgumentType(ArgumentType.Player, Scope=ScopeType.Room)] Player target)
         {
             return "You started a fight.\r\n";

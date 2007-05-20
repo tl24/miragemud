@@ -80,12 +80,12 @@ namespace Shoop.Communication
         */
 
         [Command(Aliases=new string[]{"test"})]
-        public static void Send([ArgumentType(ArgumentType.CommandName)] string name, [ArgumentType(ArgumentType.Self)] Player player) {
+        public static void Send([ArgumentType(ArgumentType.CommandName)] string name, [Actor] Player player) {
             
         }        
 
         [Command]
-        public static void Send([ArgumentType(ArgumentType.CommandName)] string name, [ArgumentType(ArgumentType.Self)] Player player, [ArgumentType(ArgumentType.ToEOL)] string message) {
+        public static void Send([ArgumentType(ArgumentType.CommandName)] string name, [Actor] Player player, [ArgumentType(ArgumentType.ToEOL)] string message) {
            
         }        
     }

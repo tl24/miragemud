@@ -9,33 +9,33 @@ namespace Shoop.Command
     public class Movement
     {
         [Command]
-        public static Message north([ArgumentType(ArgumentType.Self)]Player self)
+        public static Message north([Actor]Player self)
         {
             return Go(self, DirectionType.North);
         }
 
         [Command]
-        public static Message south([ArgumentType(ArgumentType.Self)]Player self)
+        public static Message south([Actor]Player self)
         {
             return Go(self, DirectionType.South);
         }
         [Command]
-        public static Message east([ArgumentType(ArgumentType.Self)]Player self)
+        public static Message east([Actor]Player self)
         {
             return Go(self, DirectionType.East);
         }
         [Command]
-        public static Message west([ArgumentType(ArgumentType.Self)]Player self)
+        public static Message west([Actor]Player self)
         {
             return Go(self, DirectionType.West);
         }
         [Command]
-        public static Message up([ArgumentType(ArgumentType.Self)]Player self)
+        public static Message up([Actor]Player self)
         {
             return Go(self, DirectionType.Up);
         }
         [Command]
-        public static Message down([ArgumentType(ArgumentType.Self)]Player self)
+        public static Message down([Actor]Player self)
         {
             return Go(self, DirectionType.Down);
         }

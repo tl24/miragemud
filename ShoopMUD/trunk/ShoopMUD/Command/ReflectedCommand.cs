@@ -70,14 +70,15 @@ namespace Shoop.Command
             _argCount = 0;
             foreach (ParameterInfo param in methInfo.GetParameters())
             {
-                if (param.IsDefined(typeof(ArgumentTypeAttribute), false))
+                if (param.IsDefined(typeof(ActorAttribute), false))
                 {
+                    //suppress count
+                }
+                else if (param.IsDefined(typeof(ArgumentTypeAttribute), false))
+                {
+                    _argCount++;
                     foreach (ArgumentTypeAttribute attr in param.GetCustomAttributes(typeof(ArgumentTypeAttribute), false))
                     {
-                        if (attr.ArgType != ArgumentType.Self)
-                        {
-                            _argCount++;
-                        }
                         if (attr.ArgType == ArgumentType.ToEOL)
                         {
                             _customParse = true;
@@ -178,13 +179,14 @@ namespace Shoop.Command
                 {
                     switch (attr[0].ArgType)
                     {
-                        case ArgumentType.Self:
-                            typedArgs[i] = self;
-                            break;
                         case ArgumentType.ToEOL:
                             typedArgs[i] = arguments[argIndex++];
                             break;
                     }
+                }
+                else if (param.IsDefined(typeof(ActorAttribute), false))
+                {
+                    typedArgs[i] = self;
                 }
                 else
                 {

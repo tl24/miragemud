@@ -91,7 +91,7 @@ namespace Shoop.Command
         /// <param name="args">the message to speak</param>
         /// <param name="extraArgs"></param>
         [Command(Aliases=new string[]{"'", "say"})]
-        public static Message say([ArgumentType(ArgumentType.Self)] Player player, [ArgumentType(ArgumentType.ToEOL)] string message)
+        public static Message say([Actor] Player player, [ArgumentType(ArgumentType.ToEOL)] string message)
         {
             //speak to all others in the room
             ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, "Comm.Say", "Comm.Say.Others");
@@ -112,7 +112,7 @@ namespace Shoop.Command
         }
 
         [Command]
-        public static Message tell([ArgumentType(ArgumentType.Self)] Player player, string target, [ArgumentType(ArgumentType.ToEOL)] string message)
+        public static Message tell([Actor] Player player, string target, [ArgumentType(ArgumentType.ToEOL)] string message)
         {
             // look up the target
             Player p = (Player) QueryManager.GetInstance().Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));
@@ -140,7 +140,7 @@ namespace Shoop.Command
         }
 
         [Command]
-        public static void quit([ArgumentType(ArgumentType.Self)] Player player)
+        public static void quit([Actor] Player player)
         {
             player.Write(new ResourceMessage(MessageType.Information, "Goodbye", "Info.Goodbye"));
             if (player.Client.State == ConnectedState.Playing)
@@ -152,7 +152,7 @@ namespace Shoop.Command
         }
 
         [Command]
-        public static string look([ArgumentType(ArgumentType.Self)] Player player)
+        public static string look([Actor] Player player)
         {
             string result = "";
             IViewable viewableContainer = player.Container as IViewable;
