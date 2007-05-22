@@ -4,6 +4,7 @@ using System.Text;
 using System.Reflection;
 using Shoop.Data;
 using Shoop.Communication;
+using Shoop.Data.Query;
 
 
 namespace Shoop.Command
@@ -74,17 +75,10 @@ namespace Shoop.Command
                 {
                     //suppress count
                 }
-                else if (param.IsDefined(typeof(ArgumentTypeAttribute), false))
+                else if (param.IsDefined(typeof(CustomParseAttribute), false))
                 {
                     _argCount++;
-                    foreach (ArgumentTypeAttribute attr in param.GetCustomAttributes(typeof(ArgumentTypeAttribute), false))
-                    {
-                        if (attr.ArgType == ArgumentType.ToEOL)
-                        {
-                            _customParse = true;
-                        }
-                        break;
-                    }
+                    _customParse = true;
                 }
                 else
                 {
@@ -174,19 +168,31 @@ namespace Shoop.Command
                 ParameterInfo param = parms[i];
                 object arg;
 
-                ArgumentTypeAttribute[] attr = (ArgumentTypeAttribute[])param.GetCustomAttributes(typeof(ArgumentTypeAttribute), false);
-                if (attr.Length > 0)
+                if (param.IsDefined(typeof(CustomParseAttribute), false))
                 {
-                    switch (attr[0].ArgType)
-                    {
-                        case ArgumentType.ToEOL:
-                            typedArgs[i] = arguments[argIndex++];
-                            break;
-                    }
+                    typedArgs[i] = arguments[argIndex++];
                 }
                 else if (param.IsDefined(typeof(ActorAttribute), false))
                 {
                     typedArgs[i] = self;
+                }
+                else if (param.IsDefined(typeof(LookupAttribute), false))
+                {
+                    string target = arguments[argIndex++];
+                    LookupAttribute attr = (LookupAttribute) param.GetCustomAttributes(typeof(LookupAttribute), false)[0];
+                    ObjectQuery query = attr.ConstructQuery(target);
+                    object result = QueryManager.GetInstance().Find(self, query);
+                    if (result == null && attr.IsRequired)
+                    {
+                        errorMessage = new ErrorResourceMessage("Error.NotHere", "Error.NotHere");
+                        ((ErrorResourceMessage)errorMessage).Parameters["target"] = target;
+                        context = null;
+                        return false;
+                    }
+                    else
+                    {
+                        typedArgs[i] = result;
+                    }
                 }
                 else
                 {

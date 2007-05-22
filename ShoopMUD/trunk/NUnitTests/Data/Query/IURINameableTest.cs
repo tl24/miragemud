@@ -130,6 +130,14 @@ namespace NUnitTests.Data.Query
 
             Assert.AreEqual(expected, actual, "rom.Data.ObjectQuery.Equals did not return the expected value.");
         }
+
+        [Test]
+        public void ParseWithSubQueryTest()
+        {
+            ObjectQuery q = ObjectQuery.parse("/Players", "SomePlayer/Prop");
+            Assert.AreEqual("Players", q.UriName);
+            Assert.AreEqual("SomePlayer/Prop", q.Subquery.UriName);
+        }
     }
 
 

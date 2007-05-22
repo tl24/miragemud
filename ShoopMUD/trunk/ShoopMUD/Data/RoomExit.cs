@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Shoop.Data.Query;
+using Shoop.Data.Attribute;
 
 namespace Shoop.Data
 {
@@ -14,7 +15,7 @@ namespace Shoop.Data
         Down
     }
 
-    public class RoomExit
+    public class RoomExit : Thing, IAttributable
     {
         private DirectionType _direction;
         private string _toRoomURI;
@@ -47,7 +48,7 @@ namespace Shoop.Data
             set { this._toRoomURI = value; }
         }
 
-        public Shoop.Data.Room ParentRoom
+        public Room ParentRoom
         {
             get { return this._parentRoom; }
             set { this._parentRoom = value; }
@@ -74,5 +75,26 @@ namespace Shoop.Data
         {
             return _direction.ToString();
         }
+
+        #region IAttributable Members
+
+        public bool AddAttribute(object attribute)
+        {
+            _attributes.Add(attribute);
+            return true;
+        }
+
+
+        public bool RemoveAttribute(Type t)
+        {
+            object o = TryGetAttribute(t);
+            if (o != null)
+            {
+                _attributes.Remove(o);
+            }
+            return o != null;
+        }
+
+        #endregion
     }
 }

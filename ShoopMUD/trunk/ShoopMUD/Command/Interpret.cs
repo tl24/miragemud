@@ -91,7 +91,7 @@ namespace Shoop.Command
         /// <param name="args">the message to speak</param>
         /// <param name="extraArgs"></param>
         [Command(Aliases=new string[]{"'", "say"})]
-        public static Message say([Actor] Player player, [ArgumentType(ArgumentType.ToEOL)] string message)
+        public static Message say([Actor] Player player, [CustomParse] string message)
         {
             //speak to all others in the room
             ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, "Comm.Say", "Comm.Say.Others");
@@ -112,7 +112,7 @@ namespace Shoop.Command
         }
 
         [Command]
-        public static Message tell([Actor] Player player, string target, [ArgumentType(ArgumentType.ToEOL)] string message)
+        public static Message tell([Actor] Player player, string target, [CustomParse] string message)
         {
             // look up the target
             Player p = (Player) QueryManager.GetInstance().Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));
@@ -129,11 +129,11 @@ namespace Shoop.Command
                 ResourceMessage msgToTarget = new ResourceMessage(MessageType.Communication, "Comm.Tell", "Comm.Tell.Others");
                 msgToTarget.Parameters["player"] = player.Title;
                 msgToTarget.Parameters["message"] = message;
-
                 p.Write(msgToTarget);
 
                 ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, "Command.Tell", "Comm.Tell.Self");
                 msgToSelf.Parameters["message"] = message;
+                msgToSelf.Parameters["target"] = p.Title;
 
                 return msgToSelf;
             }

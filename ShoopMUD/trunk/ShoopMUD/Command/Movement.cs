@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Shoop.Data;
 using Shoop.Communication;
+using Shoop.Data.Attribute;
 
 namespace Shoop.Command
 {
@@ -49,6 +50,14 @@ namespace Shoop.Command
                 if (room.Exits.ContainsKey(direction))
                 {
                     RoomExit exit = room.Exits[direction];
+                    if (exit.HasAttribute(typeof(IOpenable)))
+                    {
+                        IOpenable openObj = (IOpenable) exit.GetAttribute(typeof(IOpenable));
+                        if (!openObj.IsOpen())
+                        {
+                            return new ErrorMessage("Error.ExitClosed", "The door is closed.");
+                        }
+                    }
                     // create the messages
                     MovementMessage departMessage = new MovementMessage(dirName,
                         MovementMessage.MovementType.Departure,

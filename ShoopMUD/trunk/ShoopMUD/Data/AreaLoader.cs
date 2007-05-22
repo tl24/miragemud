@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Shoop.Data.Attribute;
 
 namespace Shoop.Data
 {
@@ -29,7 +30,9 @@ namespace Shoop.Data
             room.Title = "The Second Room";
             room.ShortDescription = "This is the second room";
             room.LongDescription = "This is the second room.  It is a little more advanced than the default room, but still pretty basic";
-            room.Exits[DirectionType.West] = new RoomExit(DirectionType.West, "/Areas/DefaultArea/Rooms/DefaultRoom", room);
+            RoomExit westExit = new RoomExit(DirectionType.West, "/Areas/DefaultArea/Rooms/DefaultRoom", room);
+            //westExit.AddAttribute(new OpenableAttribute(westExit, false));
+            room.Exits[DirectionType.West] = westExit;
             defaultArea.Rooms[room.Uri] = room;
             room.Area = defaultArea;
 

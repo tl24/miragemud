@@ -45,10 +45,12 @@
   <ItemGroup>
     <Compile Include="Command\ActorAttribute.cs" />
     <Compile Include="Command\ArgumentParser.cs" />
-    <Compile Include="Command\ArgumentTypeAttribute.cs" />
+    <Compile Include="Command\BaseArgumentAttribute.cs" />
     <Compile Include="Command\CommandAttribute.cs" />
     <Compile Include="Command\ConfirmationAttribute.cs" />
     <Compile Include="Command\ConfirmationCommand.cs" />
+    <Compile Include="Command\CustomParseAttribute.cs" />
+    <Compile Include="Command\LookupAttribute.cs" />
     <Compile Include="Command\Movement.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
     <Compile Include="Communication\ErrorResourceMessage.cs" />
@@ -58,6 +60,15 @@
     <Compile Include="Communication\TemplateDefinition.cs" />
     <Compile Include="Communication\TemplateManager.cs" />
     <Compile Include="Communication\TemplateRenderer.cs" />
+    <Compile Include="Data\Attribute\AttributeNotSupportedException.cs" />
+    <Compile Include="Data\Attribute\BaseAttribute.cs" />
+    <Compile Include="Data\Attribute\IAttributable.cs" />
+    <Compile Include="Data\Attribute\IAttribute.cs" />
+    <Compile Include="Data\Attribute\ILockable.cs" />
+    <Compile Include="Data\Attribute\IOpenable.cs" />
+    <Compile Include="Data\Attribute\ISupportAttribute.cs" />
+    <Compile Include="Data\Attribute\LockableAttribute.cs" />
+    <Compile Include="Data\Attribute\OpenableAttribute.cs" />
     <Compile Include="Data\ContainerAddException.cs" />
     <Compile Include="Data\Containers.cs" />
     <Compile Include="Data\IContainable.cs" />
@@ -66,6 +77,7 @@
     <Compile Include="Data\Query\IUriContainer.cs" />
     <Compile Include="Data\Query\QueryManager.cs" />
     <Compile Include="Data\RoomExit.cs" />
+    <Compile Include="Data\Thing.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

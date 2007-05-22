@@ -127,10 +127,14 @@
     <value>${player} tells you '${message}'.</value>
   </data>
   <data name="Comm.Tell.Self" xml:space="preserve">
-    <value>You tell '${message}'.</value>
+    <value>You tell ${target} '${message}'.</value>
   </data>
   <data name="Error.InvalidCommand" xml:space="preserve">
     <value>Huh?</value>
+  </data>
+  <data name="Error.NotHere" xml:space="preserve">
+    <value>${target} is not here.</value>
+    <comment>Error message when a lookup fails.</comment>
   </data>
   <data name="Error.PlayerNotPlaying" xml:space="preserve">
     <value>${player} is not playing right now.</value>

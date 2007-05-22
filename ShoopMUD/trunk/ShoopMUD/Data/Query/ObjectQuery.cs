@@ -56,7 +56,7 @@ namespace Shoop.Data.Query
         /// </summary>
         /// <param name="uriQueryString"></param>
         /// <returns></returns>
-        public static ObjectQuery parse(string uriQueryString)
+        public static ObjectQuery parse(string uriQueryString, string subQueryUri)
         {
             bool isAbsolute = false;
             if (uriQueryString.StartsWith("/"))
@@ -84,11 +84,28 @@ namespace Shoop.Data.Query
 
             if (result != null && root.Length > 1)
             {
-                result._subquery = parse(root[1]);
+                result._subquery = parse(root[1], subQueryUri);
+            }
+            else if (result != null && subQueryUri != null)
+            {
+                result._subquery = new ObjectQuery(subQueryUri);
             }
             return result;
         }
 
+        /// <summary>
+        /// Parses the uriQueryString and sets the subquery of the result to the subQueryUri.  The subQueryUri
+        /// is not parsed.  Use this parser for user entered input so that the query cannot be altered unexpectedly.
+        /// </summary>
+        /// <example>
+        ///     <code>ObjectQuery query = ObjectQuery.parse("/Players", someUserInput);</code>
+        /// </example>
+        /// <param name="uriQueryString">the uri query string</param>
+        /// <param name="subQueryUri">the subquery, will be the final subquery</param>
+        /// <returns></returns>
+        public static ObjectQuery parse(string uriQueryString) {
+            return parse(uriQueryString, null);
+        }
         public override string ToString()
         {
             if (_toString == null)
@@ -162,25 +179,25 @@ namespace Shoop.Data.Query
         public string TypeName
         {
             get { return this._typeName; }
-            //set { this._typeName = value; }
+            set { this._typeName = value; }
         }
 
         public string UriName
         {
             get { return this._uriName; }
-            //set { this._uriName = value; }
+            set { this._uriName = value; }
         }
 
         public ObjectQuery Subquery
         {
             get { return this._subquery; }
-            //set { this._subquery = value; }
+            set { this._subquery = value; }
         }
 
         public QueryMatchType MatchType
         {
             get { return _matchType;  }
-            //set { _matchType = value; }
+            set { _matchType = value; }
         }
 
         public bool IsAbsolute

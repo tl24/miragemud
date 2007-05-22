@@ -88,7 +88,7 @@ namespace Shoop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You tell &apos;${message}&apos;..
+        ///   Looks up a localized string similar to You tell ${target} &apos;${message}&apos;..
         /// </summary>
         internal static string Comm_Tell_Self {
             get {
@@ -102,6 +102,15 @@ namespace Shoop {
         internal static string Error_InvalidCommand {
             get {
                 return ResourceManager.GetString("Error.InvalidCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${target} is not here..
+        /// </summary>
+        internal static string Error_NotHere {
+            get {
+                return ResourceManager.GetString("Error.NotHere", resourceCulture);
             }
         }
         

@@ -9,7 +9,7 @@ namespace Shoop.Command
     /// or invoker of the command.
     /// </summary>
     [AttributeUsageAttribute(System.AttributeTargets.Parameter)]
-    public class ActorAttribute : System.Attribute
+    public class ActorAttribute : BaseArgumentAttribute
     {
     }
 }

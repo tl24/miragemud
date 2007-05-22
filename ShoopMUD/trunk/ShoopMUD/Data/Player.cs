@@ -259,9 +259,9 @@ namespace Shoop.Data
 
         [Command(Description="Attempt to kill another player or mobile")]
         public string kill([Actor] Player self, 
-                           [ArgumentType(ArgumentType.Player, Scope=ScopeType.Room)] Player target)
+                          [Lookup("/Players")] Player target)
         {
-            return "You started a fight.\r\n";
+            return "You started a fight with " + target.Title + ".\r\n";
         }
 
         [Command(Description="Saves the current progress")]
