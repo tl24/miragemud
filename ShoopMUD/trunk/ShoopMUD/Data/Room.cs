@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Shoop.Data.Query;
 using System.Collections;
+using JsonExSerializer;
 
 namespace Shoop.Data
 {
@@ -23,6 +24,7 @@ namespace Shoop.Data
             _exits = new Dictionary<DirectionType, RoomExit>();
         }
 
+        [JsonExIgnore]
         public Shoop.Data.Area Area
         {
             get { return this._area; }
@@ -47,11 +49,13 @@ namespace Shoop.Data
             set { this._title = value; }
         }
 
+        [JsonExIgnore]
         public ICollection<Animate> Animates
         {
             get { return this._animates; }
         }
 
+        [JsonExIgnore]
         public override string FullUri
         {
             get
@@ -70,6 +74,12 @@ namespace Shoop.Data
             {
                 player.Container.Remove(player);
             }
+        }
+
+        public IDictionary<DirectionType, RoomExit> Exits
+        {
+            get { return this._exits; }
+            set { this._exits = value; }
         }
 
         #region IContainer Members
@@ -125,32 +135,19 @@ namespace Shoop.Data
             return (item is Animate);
         }
 
-        #endregion
-
-        public IDictionary<DirectionType, RoomExit> Exits
-        {
-            get { return this._exits; }
-            set { this._exits = value; }
-        }
-
-
-
-        #region IContainer Members
-
-
         public IEnumerable Contents(Type t)
         {
             if (t == typeof(Animate))
             {
                 return _animates;
             }
-            else 
+            else
             {
                 return new List<object>();
             }
         }
 
-        #endregion
+        #endregion      
     }
 
 }

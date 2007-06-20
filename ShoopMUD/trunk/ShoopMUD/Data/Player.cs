@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Shoop.Data.Query;
 using Shoop.Communication;
 using System.Security.Principal;
+using JsonExSerializer;
 
 namespace Shoop.Data
 {
@@ -120,6 +121,7 @@ namespace Shoop.Data
         /// </summary>
         [XmlIgnore]
         [JsonIgnore]
+        [JsonExIgnore]
         public IClient Client
         {
             get { return _client; }
@@ -131,6 +133,7 @@ namespace Shoop.Data
         /// </summary>
         [XmlIgnore]
         [JsonIgnore]
+        [JsonExIgnore]
         public IInterpret Interpreter
         {
             get { return _interpreter; }
@@ -171,6 +174,7 @@ namespace Shoop.Data
 
         [JsonIgnore]
         [XmlIgnore]
+        [JsonExIgnore]
         public override string FullUri
         {
             get
@@ -206,10 +210,10 @@ namespace Shoop.Data
         public static Player Load(string uri)
         {
             InitConfigSettings();
-            IObjectDeserializer deserializer = ObjectSerializerFactory.getDeserializer(_playerDir, typeof(Player), uri.ToLower());
+            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Player));
             try
             {
-                Player p = (Player) deserializer.Deserialize(uri);
+                Player p = (Player) persister.Load(uri);
                 return p;
             }
             catch (FileNotFoundException e)
@@ -225,8 +229,8 @@ namespace Shoop.Data
         public static void Save(Player p)
         {
             InitConfigSettings();
-            IObjectSerializer serializer = ObjectSerializerFactory.getSerializer(_playerDir, p.GetType());
-            serializer.Serialize(p, p.Uri);
+            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(p.GetType());
+            persister.Save(p, p.Uri);
         }
 
         #region Commands

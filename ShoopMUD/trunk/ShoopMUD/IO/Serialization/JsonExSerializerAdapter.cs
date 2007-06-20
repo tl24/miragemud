@@ -1,41 +1,36 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
+using JsonExSerializer;
 using System.IO;
 
 namespace Shoop.IO.Serialization
 {
-    class JSONPersistenceAdapter : IPersistenceManager
+    class JsonExPersistenceAdapter : IPersistenceManager
     {
-        private JsonSerializer _serializer;
+        private Serializer _serializer;
         private Type _objectType;
         private string _basePath;
         private string _name;
-        private string ext = ".js";
+        private string ext = ".jsx";
 
-        public JSONPersistenceAdapter(string basePath, Type t, string ext)
+        public JsonExPersistenceAdapter(string basePath, Type t, string ext)
         {
-            this._serializer = new JsonSerializer();
-            _serializer.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            this._serializer = Serializer.GetSerializer(t);
             this._objectType = t;
             this._basePath = basePath;
             this.ext = ext;
         }
 
-        #region IObjectDeserializer Members
+        #region IPersistenceManager Members
 
         public object Load(string id)
         {
-            JsonReader jrdr = new JsonReader(new StreamReader(Path.Combine(_basePath, id + ext)));
-            object value = _serializer.Deserialize(jrdr,_objectType);
-            jrdr.Close();
+            StreamReader rdr = new StreamReader(Path.Combine(_basePath, id + ext));
+            object value = _serializer.Deserialize(rdr);
+            rdr.Close();
             return value;
         }
-
-        #endregion
-
-        #region IObjectSerializer Members
 
         public void Save(object o, string id, ITransaction txn)
         {
@@ -60,10 +55,10 @@ namespace Shoop.IO.Serialization
         private void SerializeHelper(object o, string id, ITransaction txn)
         {
 
-            JsonWriter writer = new JsonWriter(new StreamWriter(txn.aquireOutputFileStream(Path.Combine(_basePath, id + ext), false)));
+            StreamWriter writer = new StreamWriter(txn.aquireOutputFileStream(Path.Combine(_basePath, id + ext), false));
             try
             {
-                _serializer.Serialize(writer, o);
+                _serializer.Serialize(o, writer);
             }
             finally
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Shoop.Data.Query;
 using Shoop.Data.Attribute;
+using JsonExSerializer;
 
 namespace Shoop.Data
 {
@@ -48,6 +49,7 @@ namespace Shoop.Data
             set { this._toRoomURI = value; }
         }
 
+        [JsonExIgnore]
         public Room ParentRoom
         {
             get { return this._parentRoom; }

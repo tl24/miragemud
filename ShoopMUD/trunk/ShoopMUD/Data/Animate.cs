@@ -6,6 +6,7 @@ using Shoop.Communication;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
 using Shoop.Data.Query;
+using JsonExSerializer;
 
 namespace Shoop.Data
 {
@@ -103,6 +104,7 @@ namespace Shoop.Data
 
         [JsonIgnore]
         [XmlIgnore]
+        [JsonExIgnore]
         public IContainer Container
         {
             get

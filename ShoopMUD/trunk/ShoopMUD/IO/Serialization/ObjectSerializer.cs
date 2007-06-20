@@ -8,146 +8,126 @@ using System.Reflection;
 
 namespace Shoop.IO.Serialization
 {
-    public class ObjectSerializerFactory
+    public class ObjectStorageFactory
     {
-        private static ObjectSerializerConfiguration config;
+        private static ObjectStorageConfiguration config;
 
-        static ObjectSerializerFactory()
+        static ObjectStorageFactory()
         {
-            config = (ObjectSerializerConfiguration) ConfigurationManager.GetSection("serializerFactory");
+            config = (ObjectStorageConfiguration)ConfigurationManager.GetSection("ObjectStorageFactory");
 
         }
 
-        public static IObjectSerializer getSerializer(string basePath, Type t)
+        public static IPersistenceManager GetPersistenceManager(Type t)
         {
-            if (config == null)
+            foreach (PersistenceManagerConfig manager in config.PersistenceManagers)
             {
-                return new XmlSerializerAdapter(basePath, t, ".xml");
-            }
-            else
-            {
-                return (IObjectSerializer)createInstance(config.defaultFactory, basePath, t);
-            }
-        }
-
-        private static object createInstance(string serializerKey, string basePath, Type serializedType)
-        {
-            return createInstance(config.Serializers[serializerKey], basePath, serializedType);
-        }
-
-
-        private static object createInstance(SerializerFactoryConfig conf, string basePath, Type serializedType)
-        {
-            Type t = Type.GetType(conf.ClassName);
-            return t.GetConstructor(new Type[] { typeof(string), typeof(Type), typeof(string) }).Invoke(new object[] { basePath, serializedType, conf.Extension });
-        }
-
-        public static IObjectDeserializer getDeserializer(string basePath, Type t, string name)
-        {
-            if (config == null)
-            {
-                return new XmlSerializerAdapter(basePath, t, ".xml");
-            }
-            else
-            {
-                SerializerFactoryConfig conf = config.Serializers[config.defaultFactory];
-                if (File.Exists(Path.Combine(basePath, name + conf.Extension)))
+                if (manager.GetPersistedType().IsAssignableFrom(t))
                 {
-                    return (IObjectDeserializer)createInstance(conf, basePath, t);
-                }
-                else
-                {
-                    // look for suitable type in order
-                    foreach (SerializerFactoryConfig fconf in config.Serializers)
-                    {
-                        if (File.Exists(Path.Combine(basePath, name + fconf.Extension)))
-                        {
-                            return (IObjectDeserializer)createInstance(fconf, basePath, t);
-                        }
-                    }
-
-                    // nothing matched, return the default
-                    return (IObjectDeserializer)createInstance(conf, basePath, t);
+                    return (IPersistenceManager) Activator.CreateInstance(manager.GetFactoryType(), manager.BasePath, manager.GetPersistedType(), manager.FileExtension);
                 }
             }
+            throw new ApplicationException("No persistence manager found for type: " + t);
         }
-
     }
 
     /// <summary>
     /// An object that will Deserialize a given object
     /// </summary>
-    public interface IObjectDeserializer
+    public interface IPersistenceManager
     {
         /// <summary>
-        ///     Deserialize the object refered to by name
+        ///     Load the object refered to by id
         /// </summary>
-        /// <param name="name">the name of the object</param>
-        /// <returns>the created object</returns>
-        object Deserialize(string name);
-    }
+        /// <param name="name">the id of the object</param>
+        /// <returns>the loaded object</returns>
+        object Load(string id);
 
-    /// <summary>
-    /// An object that will Serialize a given object
-    /// </summary>
-    public interface IObjectSerializer
-    {
-        /// <summary>
-        ///     Serialize the given object using the passed transaction
+       /// <summary>
+        ///     Save the given object using the passed transaction
         /// </summary>
-        /// <param name="o">the object to serialize</param>
-        /// <param name="name">the name of the object</param>
+        /// <param name="o">the object to save</param>
+        /// <param name="id">the name of the object</param>
         /// <param name="txn">the transaction that the Serialization process will be part of</param>
-        void Serialize(object o, string name, ITransaction txn);
+        void Save(object o, string id, ITransaction txn);
 
         /// <summary>
-        ///     Serialize the given object.  The Serialization process will be
+        ///     Save the given object.  The save process will be
         /// a single transaction.
         /// </summary>
-        /// <param name="o">the object to serialize</param>
-        /// <param name="name">the name of the object</param>
-        void Serialize(object o, string name);
+        /// <param name="o">the object to save</param>
+        /// <param name="id">the id of the object</param>
+        void Save(object o, string id);
     }
 
-    public class ObjectSerializerConfiguration : ConfigurationSection
+    public class ObjectStorageConfiguration : ConfigurationSection
     {
-        [ConfigurationProperty("default", DefaultValue="xml")]
-        public string defaultFactory
-        {
-            get { return this["default"] as string; }
-        }
-
-        [ConfigurationProperty("serializers", IsDefaultCollection=true)]
-        public SerializerFactoryConfigCollection Serializers {
-            get { return this["serializers"] as SerializerFactoryConfigCollection; }
+        [ConfigurationProperty("PersistenceManagers", IsDefaultCollection = true)]
+        public PersistenceManagerConfigCollection PersistenceManagers {
+            get { return this["PersistenceManagers"] as PersistenceManagerConfigCollection; }
         }
     }
 
-    public class SerializerFactoryConfig : ConfigurationElement
+    public class PersistenceManagerConfig : ConfigurationElement
     {
+        private Type _factoryType;
+        private Type _persistedType;
+
         [ConfigurationProperty("name", IsKey=true, IsRequired=true)]
         public string Name {
             get { return this["name"] as string; }
         }
 
-        [ConfigurationProperty("extension")]
-        public string Extension {
-            get { return this["extension"] as string; }
+        [ConfigurationProperty("base-path")]
+        public string BasePath
+        {
+            get { return this["base-path"] as string; }
+        }
+
+        [ConfigurationProperty("file-extension")]
+        public string FileExtension {
+            get { return this["file-extension"] as string; }
         }
 
         [ConfigurationProperty("type", IsRequired = true)]
-        public string ClassName {
-            get { return this["type"] as String; }
+        public string FactoryClass {
+            get { return this["type"] as string; }
         }
+
+        public Type GetFactoryType()
+        {
+            if (_factoryType == null)
+            {
+                _factoryType = Type.GetType(FactoryClass, true);
+            }
+            return _factoryType;
+
+        }
+
+        [ConfigurationProperty("persisted-type", IsRequired = true)]
+        public string PersistedClass
+        {
+            get { return this["persisted-type"] as string; }
+        }
+
+        public Type GetPersistedType()
+        {
+            if (_persistedType == null)
+            {
+                _persistedType = Type.GetType(PersistedClass, true);
+            }
+            return _persistedType;
+        }
+
     }
 
-    public class SerializerFactoryConfigCollection : ConfigurationElementCollection
+    public class PersistenceManagerConfigCollection : ConfigurationElementCollection
     {
-        public SerializerFactoryConfig this[int index]
+        public PersistenceManagerConfig this[int index]
         {
             get
             {
-                return base.BaseGet(index) as SerializerFactoryConfig;
+                return base.BaseGet(index) as PersistenceManagerConfig;
             }
             set
             {
@@ -159,9 +139,9 @@ namespace Shoop.IO.Serialization
             }
         }
 
-        public SerializerFactoryConfig this[string key] {
+        public PersistenceManagerConfig this[string key] {
             get {
-                return base.BaseGet(key) as SerializerFactoryConfig;
+                return base.BaseGet(key) as PersistenceManagerConfig;
             }
             set {
                 if (base.BaseGet(key) != null)
@@ -174,12 +154,12 @@ namespace Shoop.IO.Serialization
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new SerializerFactoryConfig();
+            return new PersistenceManagerConfig();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((SerializerFactoryConfig)element).Name;
+            return ((PersistenceManagerConfig)element).Name;
         }
 
     }

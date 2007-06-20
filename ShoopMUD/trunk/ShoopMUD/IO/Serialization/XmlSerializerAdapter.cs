@@ -9,7 +9,7 @@ namespace Shoop.IO.Serialization
     /// <summary>
     /// Serializes/Deserializes object into xml format
     /// </summary>
-    public class XmlSerializerAdapter : IObjectSerializer, IObjectDeserializer
+    public class XmlPersistenceAdapter : IPersistenceManager
     {
 
         private XmlSerializer _serializer;
@@ -17,27 +17,27 @@ namespace Shoop.IO.Serialization
         private string _name;
         private string ext = ".xml";
 
-        public XmlSerializerAdapter(string basePath, Type t, string ext)
+        public XmlPersistenceAdapter(string basePath, Type t, string ext)
         {
             _serializer = new XmlSerializer(t);
             this._basePath = basePath;
             this.ext = ext;
         }
 
-        #region IObjectSerializer Members
+        #region IPersistenceManager Members
 
-        public void Serialize(object o, string name, ITransaction txn)
+        public void Save(object o, string id, ITransaction txn)
         {
-            SerializeHelper(o, name, txn);
+            SerializeHelper(o, id, txn);
         }
 
-        public void Serialize(object o, string name)
+        public void Save(object o, string id)
         {
 
             ITransaction txn = TransactionFactory.startTransaction();
             try
             {
-                SerializeHelper(o, name, txn);
+                SerializeHelper(o, id, txn);
                 txn.commit();
             }
             catch (Exception e)
@@ -47,9 +47,9 @@ namespace Shoop.IO.Serialization
             }
         }
 
-        private void SerializeHelper(object o, string name, ITransaction txn)
+        private void SerializeHelper(object o, string id, ITransaction txn)
         {
-            Stream stm = txn.aquireOutputFileStream(Path.Combine(_basePath, name + ext), false);
+            Stream stm = txn.aquireOutputFileStream(Path.Combine(_basePath, id + ext), false);
             try
             {
                 _serializer.Serialize(stm, o);
@@ -60,13 +60,9 @@ namespace Shoop.IO.Serialization
             }
         }
 
-        #endregion
-
-        #region IObjectDeserializer Members
-
-        public object Deserialize(string name)
+        public object Load(string id)
         {
-            StreamReader stm = new StreamReader(Path.Combine(_basePath, name + ext));
+            StreamReader stm = new StreamReader(Path.Combine(_basePath, id + ext));
             object value = _serializer.Deserialize(stm);
             stm.Close();
             return value;

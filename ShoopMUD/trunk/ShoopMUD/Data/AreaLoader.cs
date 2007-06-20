@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Shoop.Data.Attribute;
+using Shoop.IO.Serialization;
 
 namespace Shoop.Data
 {
@@ -36,6 +37,8 @@ namespace Shoop.Data
             defaultArea.Rooms[room.Uri] = room;
             room.Area = defaultArea;
 
+            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
+            persister.Save(defaultArea, defaultArea.Uri);
             globalLists.Areas[defaultArea.Uri] = defaultArea;
         }
 
