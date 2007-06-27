@@ -24,7 +24,6 @@ namespace Shoop.Data
             _exits = new Dictionary<DirectionType, RoomExit>();
         }
 
-        [JsonExIgnore]
         public Shoop.Data.Area Area
         {
             get { return this._area; }
@@ -55,7 +54,6 @@ namespace Shoop.Data
             get { return this._animates; }
         }
 
-        [JsonExIgnore]
         public override string FullUri
         {
             get

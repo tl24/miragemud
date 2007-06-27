@@ -13,6 +13,8 @@ namespace Shoop.Data.Attribute
         public LockableAttribute()
             : base()
         {
+            _isLocked = true;
+            _isOpen = false;
         }
 
         public LockableAttribute(IAttributable target, bool isOpen, bool isLocked, string key)

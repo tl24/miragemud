@@ -14,14 +14,16 @@ namespace Shoop.Data
 
         public Area()
         {
-            _rooms = new Dictionary<string, Room>();
-            _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
+            Rooms = new Dictionary<string, Room>();            
         }
 
         public IDictionary<string, Room> Rooms
         {
             get { return this._rooms; }
-            set { this._rooms = value; }
+            set { 
+                this._rooms = value;
+                _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
+            }
         }
 
         public string LongDescription

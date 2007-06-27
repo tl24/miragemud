@@ -4,6 +4,7 @@ using System.Text;
 using Shoop.Data.Query;
 using Shoop.Data.Attribute;
 using JsonExSerializer;
+using System.Collections;
 
 namespace Shoop.Data
 {
@@ -48,8 +49,7 @@ namespace Shoop.Data
             get { return this._toRoomURI; }
             set { this._toRoomURI = value; }
         }
-
-        [JsonExIgnore]
+        
         public Room ParentRoom
         {
             get { return this._parentRoom; }
@@ -97,6 +97,11 @@ namespace Shoop.Data
             return o != null;
         }
 
+        public ArrayList Attributes
+        {
+            get { return _attributes; }
+            set { _attributes = value; }
+        }
         #endregion
     }
 }

@@ -17,6 +17,7 @@ namespace Shoop.IO.Serialization
         public JsonExPersistenceAdapter(string basePath, Type t, string ext)
         {
             this._serializer = Serializer.GetSerializer(t);
+            this._serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
             this._objectType = t;
             this._basePath = basePath;
             this.ext = ext;

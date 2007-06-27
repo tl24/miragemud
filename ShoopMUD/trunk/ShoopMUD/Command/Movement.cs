@@ -50,12 +50,20 @@ namespace Shoop.Command
                 if (room.Exits.ContainsKey(direction))
                 {
                     RoomExit exit = room.Exits[direction];
+                    if (exit.HasAttribute(typeof(ILockable)))
+                    {
+                        ILockable lockObj = (ILockable)exit.GetAttribute(typeof(ILockable));
+                        if (lockObj.IsLocked())
+                        {
+                            return new ErrorMessage("Error.ExitLocked", "The door is locked.\r\n");
+                        }
+                    }
                     if (exit.HasAttribute(typeof(IOpenable)))
                     {
                         IOpenable openObj = (IOpenable) exit.GetAttribute(typeof(IOpenable));
                         if (!openObj.IsOpen())
                         {
-                            return new ErrorMessage("Error.ExitClosed", "The door is closed.");
+                            return new ErrorMessage("Error.ExitClosed", "The door is closed.\r\n");
                         }
                     }
                     // create the messages
