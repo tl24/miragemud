@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.IO;
-using Shoop.Data;
-using Shoop.Communication;
-using Shoop.Data.Query;
+using Mirage.IO;
+using Mirage.Data;
+using Mirage.Communication;
+using Mirage.Data.Query;
 using System.Configuration;
 using System.Text.RegularExpressions;
-using Shoop.Util;
+using Mirage.Util;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     /// <summary>
     /// StateHandler class that controls Login and player creation.
@@ -107,7 +107,7 @@ namespace Shoop.Command
                         player.Container.Add(player);
                     }
 
-                    Client.Write(new StringMessage(MessageType.Information, "Welcome", "\n\rWelcome to ShoopMUD 0.1.  Still in development.\n\r"));
+                    Client.Write(new StringMessage(MessageType.Information, "Welcome", "\n\rWelcome to MirageMUD 0.1.  Still in development.\n\r"));
                     //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\n\r");
                     Client.State = ConnectedState.Playing;
                     //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\n\r",  $desc);	

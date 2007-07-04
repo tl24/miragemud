@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data.Query;
+using Mirage.Data.Query;
 using System.Collections;
 using JsonExSerializer;
 
-namespace Shoop.Data
+namespace Mirage.Data
 {
     public class Room : BaseData, IViewable, IContainer
     {
@@ -24,7 +24,7 @@ namespace Shoop.Data
             _exits = new Dictionary<DirectionType, RoomExit>();
         }
 
-        public Shoop.Data.Area Area
+        public Mirage.Data.Area Area
         {
             get { return this._area; }
             set { this._area = value; }

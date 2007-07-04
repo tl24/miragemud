@@ -6,17 +6,17 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using System.Security.Cryptography;
-using Shoop.IO;
-using Shoop.Command;
+using Mirage.IO;
+using Mirage.Command;
 
-using Shoop.IO.Serialization;
+using Mirage.IO.Serialization;
 using Newtonsoft.Json;
-using Shoop.Data.Query;
-using Shoop.Communication;
+using Mirage.Data.Query;
+using Mirage.Communication;
 using System.Security.Principal;
 using JsonExSerializer;
 
-namespace Shoop.Data
+namespace Mirage.Data
 {
     /// <summary>
     ///     A player is controlled by a live person and a participant in

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data.Attribute;
-using Shoop.IO.Serialization;
+using Mirage.Data.Attribute;
+using Mirage.IO.Serialization;
 
-namespace Shoop.Data
+namespace Mirage.Data
 {
     public class AreaLoader
     {

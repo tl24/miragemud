@@ -7,8 +7,8 @@
     <ProjectGuid>{EFADF99D-5747-445E-9FC7-94CB2A17BE45}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Shoop</RootNamespace>
-    <AssemblyName>ShoopMUD</AssemblyName>
+    <RootNamespace>Mirage</RootNamespace>
+    <AssemblyName>MirageMUD</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -18,7 +18,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\ShoopMUD.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\MirageMUD.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -82,6 +82,7 @@
     <Compile Include="Data\Query\QueryManager.cs" />
     <Compile Include="Data\RoomExit.cs" />
     <Compile Include="Data\Thing.cs" />
+    <Compile Include="IO\AdvancedClient.cs" />
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>

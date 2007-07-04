@@ -6,7 +6,7 @@ using System.IO;
 using System.Configuration;
 using System.Reflection;
 
-namespace Shoop.IO.Serialization
+namespace Mirage.IO.Serialization
 {
     public class ObjectStorageFactory
     {

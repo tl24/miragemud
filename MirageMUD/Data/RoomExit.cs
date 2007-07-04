@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data.Query;
-using Shoop.Data.Attribute;
+using Mirage.Data.Query;
+using Mirage.Data.Attribute;
 using JsonExSerializer;
 using System.Collections;
 
-namespace Shoop.Data
+namespace Mirage.Data
 {
     public enum DirectionType {
         North,
@@ -38,7 +38,7 @@ namespace Shoop.Data
         public RoomExit(DirectionType direction, string targetRoomURI) : this(direction, targetRoomURI, null) {
         }
 
-        public Shoop.Data.DirectionType Direction
+        public Mirage.Data.DirectionType Direction
         {
             get { return this._direction; }
             set { this._direction = value; }

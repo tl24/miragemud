@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace Shoop.IO
+namespace Mirage.IO
 {
     public static class TransactionFactory {
 

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.Specialized;
-using Shoop.IO;
-using Shoop.Communication;
+using Mirage.IO;
+using Mirage.Communication;
 
-namespace Shoop.Util
+namespace Mirage.Util
 {
 
     /// <summary>

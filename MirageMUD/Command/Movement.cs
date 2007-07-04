@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data;
-using Shoop.Communication;
-using Shoop.Data.Attribute;
+using Mirage.Data;
+using Mirage.Communication;
+using Mirage.Data.Attribute;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     public class Movement
     {

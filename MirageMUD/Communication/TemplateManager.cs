@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Resources;
 using System.Reflection;
 
-namespace Shoop.Communication
+namespace Mirage.Communication
 {
     public class TemplateManager
     {
@@ -25,7 +25,7 @@ namespace Shoop.Communication
 
         private void init()
         {
-            resourceManager = new ResourceManager("Shoop.Strings", Assembly.GetExecutingAssembly());
+            resourceManager = new ResourceManager("Mirage.Strings", Assembly.GetExecutingAssembly());
             _cache = new Dictionary<string, TemplateDefinition>();            
             initted = true;
         }

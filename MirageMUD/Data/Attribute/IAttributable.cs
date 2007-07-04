@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Data.Attribute
+namespace Mirage.Data.Attribute
 {
     /// <summary>
     /// Interface for an object that supports adding and removing attributes at runtime.

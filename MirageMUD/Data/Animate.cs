@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-using Shoop.Communication;
+using Mirage.Communication;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
-using Shoop.Data.Query;
+using Mirage.Data.Query;
 using JsonExSerializer;
 
-namespace Shoop.Data
+namespace Mirage.Data
 {
     /// <summary>
     ///     The sex for an animate

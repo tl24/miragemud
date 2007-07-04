@@ -4,7 +4,7 @@ using System.Text;
 using JsonExSerializer;
 using System.IO;
 
-namespace Shoop.IO.Serialization
+namespace Mirage.IO.Serialization
 {
     class JsonExPersistenceAdapter : IPersistenceManager
     {

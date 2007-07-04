@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 
-namespace Shoop.Data
+namespace Mirage.Data
 {
 
     /// <summary>
@@ -18,7 +18,7 @@ namespace Shoop.Data
         /// Adds an item to this container
         /// </summary>
         /// <param name="item">the item to add</param>
-        /// <exception cref="Shoop.Data.ContainerAddException">When the item cannot be added to the container</exception>
+        /// <exception cref="Mirage.Data.ContainerAddException">When the item cannot be added to the container</exception>
         void Add(IContainable item);
 
         /// <summary>

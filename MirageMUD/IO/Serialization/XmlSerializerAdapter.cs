@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace Shoop.IO.Serialization
+namespace Mirage.IO.Serialization
 {
     /// <summary>
     /// Serializes/Deserializes object into xml format
