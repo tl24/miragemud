@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using Shoop.Data;
-using Shoop.IO;
+using Mirage.Data;
+using Mirage.IO;
 using System.Reflection;
 
-using Shoop.Util;
-using Shoop.Communication;
-namespace Shoop.Command
+using Mirage.Util;
+using Mirage.Communication;
+namespace Mirage.Command
 {
     public static class MethodInvoker
     {

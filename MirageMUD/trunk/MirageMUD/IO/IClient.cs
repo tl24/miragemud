@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Communication;
+using Mirage.Communication;
 using System.Net.Sockets;
-using Shoop.Data;
-using Shoop.Command;
-using Shoop.Util;
+using Mirage.Data;
+using Mirage.Command;
+using Mirage.Util;
 
-namespace Shoop.IO
+namespace Mirage.IO
 {
     /// <summary>
     /// The IClient interface specifies the interface for reading input and
@@ -27,10 +27,9 @@ namespace Shoop.IO
         void Close();
 
         /// <summary>
-        /// Read a command from the client
+        /// Process input available and execute a command
         /// </summary>
-        /// <returns>a command or null if no command ready</returns>
-        string Read();
+        void ProcessInput();
 
         /// <summary>
         /// Write a message to the client's output buffer.  The message will not be sent to the
@@ -38,6 +37,11 @@ namespace Shoop.IO
         /// </summary>
         /// <param name="message">The message to write</param>
         void Write(Message message);
+
+        /// <summary>
+        /// Write the prompt for the client to the output buffer
+        /// </summary>
+        void WritePrompt();
 
         /// <summary>
         /// Process all messages in the output buffer and write them to the client
@@ -70,7 +74,7 @@ namespace Shoop.IO
         /// input from the client.  If this is non-null it will take precedence over the
         /// command interpreter.
         /// </summary>
-        /// <see cref="Shoop.Command.LoginStateHandler"/>
+        /// <see cref="Mirage.Command.LoginStateHandler"/>
         AbstractStateMachine StateHandler { get; set; }
 
         /// <summary>

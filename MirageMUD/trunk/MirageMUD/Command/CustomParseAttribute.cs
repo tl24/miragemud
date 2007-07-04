@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     [AttributeUsageAttribute(System.AttributeTargets.Parameter)]
     public class CustomParseAttribute : BaseArgumentAttribute

@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
 
-namespace Shoop.Data.Query
+namespace Mirage.Data.Query
 {
 
     [Flags]

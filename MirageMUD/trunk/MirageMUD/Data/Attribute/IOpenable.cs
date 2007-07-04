@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Data.Attribute
+namespace Mirage.Data.Attribute
 {
     /// <summary>
     /// Attribute for an object that can be opened and closed.

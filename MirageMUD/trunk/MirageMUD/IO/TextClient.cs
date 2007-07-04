@@ -4,12 +4,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
 using System.IO;
-using Shoop.Data;
-using Shoop.Command;
-using Shoop.Communication;
-using Shoop.Util;
+using Mirage.Data;
+using Mirage.Command;
+using Mirage.Communication;
+using Mirage.Util;
 
-namespace Shoop.IO
+namespace Mirage.IO
 {
 
     /// <summary>
@@ -225,7 +225,7 @@ namespace Shoop.IO
             return true;
         }
 
-        public string Read() {
+        private string Read() {
             if (ReadClient()) {
                 ReadFromBuffer();
                 string input = _inputLine;
@@ -235,6 +235,24 @@ namespace Shoop.IO
                 return null;
             }
         }
+
+        public void ProcessInput()
+        {
+            string input = this.Read();
+
+            if (input != null)
+            {
+                if (StateHandler != null)
+                {
+                    StateHandler.HandleInput(input);
+                }
+                else
+                {
+                    Interpreter.executeCommand(Player, input);
+                }
+            }
+        }
+
         /// <summary>
         ///    Transfer input from buffer to INCOMM so a Command can be processed. 
         /// </summary>
@@ -282,6 +300,15 @@ namespace Shoop.IO
         private void Write(string message)
         {
             outputQueue.Enqueue(message);
+        }
+
+        public void WritePrompt()
+        {
+            if (Player != null && State == ConnectedState.Playing)
+            {
+                string clientName = Player.Title;
+                Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
+            }
         }
 
         /// <summary>

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data;
-using Shoop.Communication;
+using Mirage.Data;
+using Mirage.Communication;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     class ConfirmationCommand : ICommand
     {
@@ -55,12 +55,12 @@ namespace Shoop.Command
             get { return _innerCommand.CustomParse; }
         }
 
-        public bool ValidateTypes(string invokedName, Player self, string[] arguments, out object context, out Shoop.Communication.Message errorMessage)
+        public bool ValidateTypes(string invokedName, Player self, string[] arguments, out object context, out Mirage.Communication.Message errorMessage)
         {
             return _innerCommand.ValidateTypes(invokedName, self, arguments, out context, out errorMessage);
         }
 
-        public Message Invoke(string invokedName, Shoop.Data.Player self, string[] arguments, object context)
+        public Message Invoke(string invokedName, Mirage.Data.Player self, string[] arguments, object context)
         {
             // create the interpreter
             ConfirmationInterpreter interp = new ConfirmationInterpreter(self, _innerCommand, invokedName, arguments, context);

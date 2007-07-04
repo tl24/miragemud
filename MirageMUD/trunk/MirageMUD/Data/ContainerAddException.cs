@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Data
+namespace Mirage.Data
 {
     /// <summary>
     /// Exception thrown when an object can't be added to a container

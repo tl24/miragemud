@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data;
-using Shoop.IO;
+using Mirage.Data;
+using Mirage.IO;
 
-using Shoop.Communication;
-using Shoop.Data.Query;
+using Mirage.Communication;
+using Mirage.Data.Query;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
 
     /// <summary>

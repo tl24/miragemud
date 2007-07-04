@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Shoop.Data;
-using Shoop.Command;
+using Mirage.Data;
+using Mirage.Command;
 
-namespace Shoop.Communication
+namespace Mirage.Communication
 {
     public class Channel {
         /*

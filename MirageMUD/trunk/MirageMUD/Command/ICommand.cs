@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data;
-using Shoop.Communication;
+using Mirage.Data;
+using Mirage.Communication;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     public interface ICommand
     {

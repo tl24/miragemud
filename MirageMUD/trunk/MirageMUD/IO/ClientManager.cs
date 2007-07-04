@@ -4,11 +4,11 @@ using System.Text;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Net;
-using Shoop.Command;
+using Mirage.Command;
 using System.Diagnostics;
-using Shoop.Communication;
+using Mirage.Communication;
 
-namespace Shoop.IO
+namespace Mirage.IO
 {
 
     /// <summary>

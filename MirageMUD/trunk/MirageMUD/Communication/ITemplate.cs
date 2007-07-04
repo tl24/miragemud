@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Communication
+namespace Mirage.Communication
 {
     public interface ITemplate
     {

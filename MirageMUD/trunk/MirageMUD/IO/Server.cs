@@ -4,13 +4,13 @@ using System.Text;
 using System.Net.Sockets;
 using System.Collections;
 using System.Diagnostics;
-using Shoop.Data;
-using Shoop.Command;
-using Shoop.Communication;
+using Mirage.Data;
+using Mirage.Command;
+using Mirage.Communication;
 using System.Threading;
 using log4net;
 
-namespace Shoop.IO
+namespace Mirage.IO
 {
     class Server
     {
@@ -79,7 +79,7 @@ namespace Shoop.IO
 
                     foreach (IClient client in manager.ReadableClients)
                     {
-                        ReadClient(client);
+                        client.ProcessInput();
                     }
 
                     foreach (IClient client in manager.WritableClients)
@@ -103,34 +103,9 @@ namespace Shoop.IO
         {
             if ((client.CommandRead || client.HasOutput()))
             {
-                WritePrompt(client);
+                client.WritePrompt();
             }
             client.FlushOutput();
-        }
-
-        private void ReadClient(IClient client)
-        {
-            string input = client.Read();
-
-            if (input != null)
-            {
-                if (client.StateHandler != null) {
-                    client.StateHandler.HandleInput(input);
-                } else {
-                    Interpreter.executeCommand(client.Player, input);
-                }
-            }
-        }
-
-        private void WritePrompt(IClient client)
-        {
-            //Client specific??
-            
-            if (client.Player != null && client.State == ConnectedState.Playing) {
-                string clientName = client.Player.Title;
-                client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
-            }
-        }
-
+        }        
     }
 }

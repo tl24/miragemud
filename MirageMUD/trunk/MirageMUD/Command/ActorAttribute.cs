@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     /// <summary>
     /// Decorates a property to indicate that this argument indicates the actor

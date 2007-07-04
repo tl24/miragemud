@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.IO;
-using Shoop.Data;
+using Mirage.IO;
+using Mirage.Data;
 
-namespace Shoop
+namespace Mirage
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Shoop.Command.MethodInvoker.registerType(typeof(Shoop.Data.Player));
-            Shoop.Command.MethodInvoker.registerType(typeof(Shoop.Command.Interpreter));
-            Shoop.Command.MethodInvoker.registerType(typeof(Shoop.Command.Movement));
+            Mirage.Command.MethodInvoker.registerType(typeof(Mirage.Data.Player));
+            Mirage.Command.MethodInvoker.registerType(typeof(Mirage.Command.Interpreter));
+            Mirage.Command.MethodInvoker.registerType(typeof(Mirage.Command.Movement));
             Server listener = new Server(4500);
             AreaLoader loader = new AreaLoader();
             loader.LoadAll();

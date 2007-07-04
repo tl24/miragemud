@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Data.Attribute
+namespace Mirage.Data.Attribute
 {
     /// <summary>
     /// An interface that supports querying an object for supported attributes.

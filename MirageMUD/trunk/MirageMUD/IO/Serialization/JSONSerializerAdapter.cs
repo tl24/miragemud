@@ -4,7 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.IO;
 
-namespace Shoop.IO.Serialization
+namespace Mirage.IO.Serialization
 {
     class JSONPersistenceAdapter : IPersistenceManager
     {

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data.Attribute;
+using Mirage.Data.Attribute;
 using System.Collections;
 
-namespace Shoop.Data
+namespace Mirage.Data
 {
 
     /// <summary>

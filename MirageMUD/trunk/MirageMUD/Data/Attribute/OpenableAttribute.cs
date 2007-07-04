@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Data.Attribute
+namespace Mirage.Data.Attribute
 {
     public class OpenableAttribute : BaseAttribute, IOpenable
     {

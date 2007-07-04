@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data.Query;
+using Mirage.Data.Query;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     [AttributeUsageAttribute(System.AttributeTargets.Parameter)]
     public class LookupAttribute : BaseArgumentAttribute

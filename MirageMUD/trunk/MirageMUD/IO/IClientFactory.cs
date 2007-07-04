@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.IO
+namespace Mirage.IO
 {
     /// <summary>
     /// A client factory is responsible for create IClient instances and

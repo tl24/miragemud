@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Data.Query
+namespace Mirage.Data.Query
 {
 
     public enum QueryMatchType

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-namespace Shoop.Util
+namespace Mirage.Util
 {
     /// <summary>
     /// Default implementation of the IIndexDictionary interface.  It provides a keyed-collection

@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
-using Shoop.Data;
-using Shoop.Communication;
-using Shoop.Data.Query;
+using Mirage.Data;
+using Mirage.Communication;
+using Mirage.Data.Query;
 
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     /// <summary>
     /// Helper class for holding Attributes about a Command and invoking it.

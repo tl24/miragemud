@@ -4,11 +4,11 @@ using System.Text;
 using System.Net.Sockets;
 using System.Net;
 using System.Diagnostics;
-using Shoop.Command;
-using Shoop.Communication;
+using Mirage.Command;
+using Mirage.Communication;
 using log4net;
 
-namespace Shoop.IO
+namespace Mirage.IO
 {
     public class TextClientFactory : IClientFactory
     {

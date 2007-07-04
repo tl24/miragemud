@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shoop.Command
+namespace Mirage.Command
 {
     /// <summary>
     ///     Attribute applied to a method to identify it as a Command that is callable
