@@ -45,7 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShoopMUD\ShoopMUD.csproj">
+    <ProjectReference Include="..\MirageMUD\MirageMUD.csproj">
       <Project>{EFADF99D-5747-445E-9FC7-94CB2A17BE45}</Project>
       <Name>ShoopMUD</Name>
     </ProjectReference>

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using Shoop.Communication;
+using Mirage.Communication;
 using System.Collections;
 using NUnit.Framework;
 
 namespace NUnitTests.Communication
 {
     /// <summary>
-    ///This is a test class for Shoop.Communication.TemplateManager and is intended
-    ///to contain all Shoop.Communication.TemplateManager Unit Tests
+    ///This is a test class for Mirage.Communication.TemplateManager and is intended
+    ///to contain all Mirage.Communication.TemplateManager Unit Tests
     ///</summary>
     [TestFixture]
     public class TemplateManagerTest

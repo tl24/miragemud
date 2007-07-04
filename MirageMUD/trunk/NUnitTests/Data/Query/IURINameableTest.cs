@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using Shoop.Data;
-using Shoop.Data.Query;
+using Mirage.Data;
+using Mirage.Data.Query;
 using NUnit.Framework;
 
 namespace NUnitTests.Data.Query

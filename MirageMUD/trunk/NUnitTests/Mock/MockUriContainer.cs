@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Shoop.Data.Query;
+using Mirage.Data.Query;
 
 namespace NUnitTests.Mock
 {
