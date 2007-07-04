@@ -1,0 +1,148 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EFADF99D-5747-445E-9FC7-94CB2A17BE45}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Shoop</RootNamespace>
+    <AssemblyName>ShoopMUD</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\ShoopMUD.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JsonExSerializer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\JsonExSerializer.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Command\ActorAttribute.cs" />
+    <Compile Include="Command\ArgumentParser.cs" />
+    <Compile Include="Command\BaseArgumentAttribute.cs" />
+    <Compile Include="Command\CommandAttribute.cs" />
+    <Compile Include="Command\ConfirmationAttribute.cs" />
+    <Compile Include="Command\ConfirmationCommand.cs" />
+    <Compile Include="Command\CustomParseAttribute.cs" />
+    <Compile Include="Command\LookupAttribute.cs" />
+    <Compile Include="Command\Movement.cs" />
+    <Compile Include="Communication\ErrorMessage.cs" />
+    <Compile Include="Communication\ErrorResourceMessage.cs" />
+    <Compile Include="Communication\ITemplate.cs" />
+    <Compile Include="Communication\MovementMessage.cs" />
+    <Compile Include="Communication\ResourceMessage.cs" />
+    <Compile Include="Communication\TemplateDefinition.cs" />
+    <Compile Include="Communication\TemplateManager.cs" />
+    <Compile Include="Communication\TemplateRenderer.cs" />
+    <Compile Include="Data\Attribute\AttributeNotSupportedException.cs" />
+    <Compile Include="Data\Attribute\BaseAttribute.cs" />
+    <Compile Include="Data\Attribute\IAttributable.cs" />
+    <Compile Include="Data\Attribute\IAttribute.cs" />
+    <Compile Include="Data\Attribute\ILockable.cs" />
+    <Compile Include="Data\Attribute\IOpenable.cs" />
+    <Compile Include="Data\Attribute\ISupportAttribute.cs" />
+    <Compile Include="Data\Attribute\LockableAttribute.cs" />
+    <Compile Include="Data\Attribute\OpenableAttribute.cs" />
+    <Compile Include="Data\ContainerAddException.cs" />
+    <Compile Include="Data\Containers.cs" />
+    <Compile Include="Data\IContainable.cs" />
+    <Compile Include="Data\IContainer.cs" />
+    <Compile Include="Data\Query\IURI.cs" />
+    <Compile Include="Data\Query\IUriContainer.cs" />
+    <Compile Include="Data\Query\QueryManager.cs" />
+    <Compile Include="Data\RoomExit.cs" />
+    <Compile Include="Data\Thing.cs" />
+    <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
+    <Compile Include="Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Util\AbstractStateMachine.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\Interpret.cs" />
+    <Compile Include="Command\MethodInvoker.cs" />
+    <Compile Include="Command\LoginStateHandler.cs" />
+    <Compile Include="Command\ReflectedCommand.cs" />
+    <Compile Include="Communication\Channel.cs" />
+    <Compile Include="Communication\EchoOffMessage.cs" />
+    <Compile Include="Communication\EchoOnMessage.cs" />
+    <Compile Include="Communication\Message.cs" />
+    <Compile Include="Communication\MultipartMessage.cs" />
+    <Compile Include="Communication\StringMessage.cs" />
+    <Compile Include="Data\Animate.cs" />
+    <Compile Include="Data\Area.cs" />
+    <Compile Include="Data\AreaLoader.cs" />
+    <Compile Include="Data\BaseData.cs" />
+    <Compile Include="Data\GlobalLists.cs" />
+    <Compile Include="Data\IViewable.cs" />
+    <Compile Include="Data\ObjectNotFoundException.cs" />
+    <Compile Include="Data\Player.cs" />
+    <Compile Include="Data\Room.cs" />
+    <Compile Include="Data\Query\ObjectQuery.cs" />
+    <Compile Include="IO\ClientManager.cs" />
+    <Compile Include="IO\IClientFactory.cs" />
+    <Compile Include="IO\TextClient.cs" />
+    <Compile Include="IO\IClient.cs" />
+    <Compile Include="IO\Server.cs" />
+    <Compile Include="IO\Serialization\JSONSerializerAdapter.cs" />
+    <Compile Include="IO\Serialization\ObjectSerializer.cs" />
+    <Compile Include="IO\Serialization\XmlSerializerAdapter.cs" />
+    <Compile Include="IO\TextClientFactory.cs" />
+    <Compile Include="IO\TransactionFactory.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\Collections.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Includes\Welcome.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

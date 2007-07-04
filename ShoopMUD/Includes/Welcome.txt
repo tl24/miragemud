@@ -1,0 +1,29 @@
+
+
+ $$$$$$$
+$$$$$$$$$$
+$$$            III
+ $$$           III
+  $$$          III
+   $$$         III
+    $$$        III IIII
+     $$$       IIIIII III     OOOOOOOOO      OOOOOOOOO      OOOOOOOOO
+      $$$      IIIII   III   OOOOOOOOOOO    OOOOOOOOOOO    OOOOOOOOOOO
+       $$$     III      III  OOO     OOO    OOO     OOO    OOO     OOO
+       $$$$    III      III  OOO     OOO    OOO     OOO    OOO     OOO
+$$$    $$$$    III      III  OOO     OOO    OOO     OOO    OOO     OOO
+$$$  $$$$      III      III  OOOOOOOOOOO    0OOOOOOOOO0    0OOOOOOOOO0
+ $$$$$$        III      III   OOOOOOOOO      OOOOOOOOO     OOOOOOOOO0
+                                                           000
+                                                           000
+ __    __   __   __   ____                                 000
+|  \  /  | | |  | |  |  _ \                                000
+|   \/   | | |  | |  | | \ \                               000
+| |\  /| | | |  | |  | |  | |                              000
+| | \/ | | | |__| |  | |_/ /
+|_|    |_| |______|  |____/
+
+
+ ~~ The C# MUD ~~
+ ~~ Version 0.1 ~~
+ 
