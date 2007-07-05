@@ -22,5 +22,8 @@ namespace Mirage.Communication
         {
         }
 
+        public ErrorResourceMessage()
+        {
+        }
     }
 }

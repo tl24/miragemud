@@ -15,6 +15,10 @@ namespace Mirage.Communication
             Departure
         }
 
+        public MovementMessage()
+        {
+        }
+
         public MovementMessage(string direction, MovementType movementType, string actorName)
             : base(MessageType.Notification, "Movement." + direction, "Animate.Movement")
         {

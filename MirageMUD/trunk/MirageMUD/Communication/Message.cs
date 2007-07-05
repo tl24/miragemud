@@ -62,6 +62,10 @@ namespace Mirage.Communication
         private MessageType _messageType;
         private string _name;
 
+        public Message()
+        {
+        }
+
         public Message(MessageType messageType, string name)
         {
             this._messageType = messageType;

@@ -12,6 +12,10 @@ namespace Mirage.Communication
     {
         private ArrayList _parts;
 
+        public MultipartMessage()
+        {
+        }
+
         public MultipartMessage(MessageType messageType, string name) : this(messageType, name, null) { }
 
         public MultipartMessage(MessageType messageType, string name, ICollection parts)

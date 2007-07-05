@@ -5,142 +5,127 @@ using Mirage.Data;
 using Mirage.Util;
 using System.Net.Sockets;
 using System.IO;
+using JsonExSerializer;
+using Mirage.Communication;
+using Mirage.Command;
 
 namespace Mirage.IO
 {
+    public enum AdvancedClientTransmitType
+    {
+        StringMessage,
+        JsonEncodedMessage
+    }
+
     /// <summary>
     /// Mud client class that can accept and send objects and other complex types
     /// more advanced than strings
     /// </summary>
-    public class AdvancedClient : IClient
+    public class AdvancedClient : ClientBase
     {
+        protected BinaryReader reader;
+        protected BinaryWriter writer;
+
+        protected Queue<AdvancedMessage> inputQueue;
+
+        public AdvancedClient()
+        {
+            inputQueue = new Queue<AdvancedMessage>();
+        }
+
+        public override void Open(TcpClient client)
+        {
+            base.Open(client);
+            NetworkStream stm = client.GetStream();
+            reader = new BinaryReader(stm);
+            writer = new BinaryWriter(stm);
+        }
+        public override void ProcessInput()
+        {
+            if (ReadClient())
+            {
+                AdvancedMessage msg = inputQueue.Dequeue();
+                if (msg != null)
+                {
+                    if (msg.type == AdvancedClientTransmitType.JsonEncodedMessage)
+                    {
+                        Serializer serializer = Serializer.GetSerializer(typeof(object));
+                        msg.data = serializer.Deserialize((string)msg.data);
+                    }
+                    if (msg.type == AdvancedClientTransmitType.StringMessage)
+                    {
+                        if (StateHandler != null)
+                        {
+                            StateHandler.HandleInput((string) msg.data);
+                        }
+                        else
+                        {
+                            Interpreter.executeCommand(Player, (string)msg.data);
+                        }                        
+                    }
+                }
+            }
+        }
+
         /// <summary>
-        ///     The player object attached to this descriptor
+        ///     Read from the descriptor.  Returns True if successful.
+        ///     Populates an internal buffer, which can be read by read_from_buffer.
         /// </summary>
-        private Player _player;
-
-        /// <summary>
-        /// State Handler for this client.  If this is present it takes
-        /// precedence over the command interpreter.
-        /// </summary>
-        private AbstractStateMachine _stateHandler;
-
-        /// <summary>
-        ///     A reference to the tcp client (socket) that this description
-        /// reads and writes from
-        /// </summary>
-        private TcpClient _client;
-
-        /// <summary>
-        ///     A reader for the tcp client's stream
-        /// </summary>
-        private StreamReader reader;
-
-        /// <summary>
-        ///     A writer for the tcp client's stream
-        /// </summary>
-        private StreamWriter writer;
-
-        #region IClient Members
-
-        public void Open(System.Net.Sockets.TcpClient client)
+        private bool ReadClient()
         {
-            this._client = client;
-            NetworkStream stm = _client.GetStream();
-            reader = new StreamReader(stm);
-            writer = new StreamWriter(stm);
-        }
+            int available = _client.Available;
 
-        public void Close()
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public void ProcessInput()
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public void Write(Mirage.Communication.Message message)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public void WritePrompt()
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public void FlushOutput()
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public bool HasOutput()
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public bool CommandRead
-        {
-            get
+            int type = reader.ReadInt32();
+            AdvancedMessage msg = new AdvancedMessage();
+            msg.type = (AdvancedClientTransmitType) type;
+            switch ((AdvancedClientTransmitType) type)
             {
-                throw new Exception("The method or operation is not implemented.");
+                case AdvancedClientTransmitType.StringMessage:
+                    msg.data = reader.ReadString();
+                    break;
+                case AdvancedClientTransmitType.JsonEncodedMessage:
+                    msg.name = reader.ReadString();
+                    msg.data = reader.ReadString();
+                    break;
+                default:
+                    throw new Exception("Unrecognized message type: " + type);
             }
-            set
+            CommandRead = true;
+            inputQueue.Enqueue(msg);
+            return true;
+        }
+
+        public override void FlushOutput()
+        {
+            bool bProcess = false;
+            while (outputQueue.Count > 0)
             {
-                throw new Exception("The method or operation is not implemented.");
+                Message msg = outputQueue.Dequeue();
+                if (msg is ResourceMessage)
+                {
+                    msg = new StringMessage(msg.MessageType, msg.Name, msg.ToString());
+                }
+                AdvancedMessage advMsg = new AdvancedMessage();
+                advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;
+                advMsg.name = msg.Name;
+                Serializer serializer = Serializer.GetSerializer(typeof(object));
+                advMsg.data = serializer.Serialize(msg);
+                writer.Write((int)advMsg.type);
+                writer.Write(advMsg.name);
+                writer.Write((string)advMsg.data);
+                bProcess = true;
+            }
+            if (bProcess)
+            {
+                writer.Flush();
             }
         }
 
-        public ConnectedState State
+        protected class AdvancedMessage
         {
-            get
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-            set
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
+            public AdvancedClientTransmitType type;
+            public string name;
+            public object data;
         }
-
-        public Mirage.Data.Player Player
-        {
-            get
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-            set
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-        }
-
-        public Mirage.Util.AbstractStateMachine StateHandler
-        {
-            get
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-            set
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-        }
-
-        public IClientFactory ClientFactory
-        {
-            get
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-            set
-            {
-                throw new Exception("The method or operation is not implemented.");
-            }
-        }
-
-        #endregion
     }
 }

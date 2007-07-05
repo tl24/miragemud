@@ -11,6 +11,10 @@ namespace Mirage.Communication
     {
        private string _messageString;
 
+        public StringMessage()
+        {
+        }
+
         public StringMessage(MessageType messageType, string name, string message)
             : base(messageType, name)
         {

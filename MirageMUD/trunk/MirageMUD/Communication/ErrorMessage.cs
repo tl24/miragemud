@@ -6,6 +6,10 @@ namespace Mirage.Communication
 {
     public class ErrorMessage : StringMessage
     {
+        public ErrorMessage()
+        {
+        }
+
         public ErrorMessage(string name, string message)
             : this(MessageType.PlayerError, name, message)
         {

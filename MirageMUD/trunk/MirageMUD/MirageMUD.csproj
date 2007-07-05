@@ -83,6 +83,10 @@
     <Compile Include="Data\RoomExit.cs" />
     <Compile Include="Data\Thing.cs" />
     <Compile Include="IO\AdvancedClient.cs" />
+    <Compile Include="IO\AdvancedClientFactory.cs" />
+    <Compile Include="IO\ClientBase.cs" />
+    <Compile Include="IO\ClientFactoryBase.cs" />
+    <Compile Include="IO\ConnectedState.cs" />
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>

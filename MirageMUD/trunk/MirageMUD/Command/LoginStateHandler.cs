@@ -35,7 +35,7 @@ namespace Mirage.Command
                 else if (!Contains("password"))
                 {
                     MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
-                    message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "New character.\n\rEnter a password for " + GetValue<Player>("player").Title + ": "));
+                    message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "New character.\r\nEnter a password for " + GetValue<Player>("player").Title + ": "));
                     message.Parts.Add(new EchoOffMessage());
 
                     Require(message, new ValidateDelegate(this.ValidateNewPassword));
@@ -55,9 +55,10 @@ namespace Mirage.Command
             } else {
                 if (!Contains("password"))
                 {
-                    MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
-                    message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "Password: "));
-                    message.Parts.Add(new EchoOffMessage());
+                    List<Message> message = new List<Message>();
+                    //MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
+                    message.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "Password: "));
+                    message.Add(new EchoOffMessage());
                     _echoOn = false;
                     Require(message, new ValidateDelegate(this.ValidateOldPassword));
                 }
@@ -70,7 +71,7 @@ namespace Mirage.Command
 
         protected override void InitialState()
         {
-            //Client.Write(new StringMessage(MessageType.Information, "Welcome", "Welcome to the mud\n\r"));
+            //Client.Write(new StringMessage(MessageType.Information, "Welcome", "Welcome to the mud\r\n"));
             Client.Write(new ResourceMessage(MessageType.Information, "Welcome", "Welcome"));
         }
 
@@ -107,10 +108,10 @@ namespace Mirage.Command
                         player.Container.Add(player);
                     }
 
-                    Client.Write(new StringMessage(MessageType.Information, "Welcome", "\n\rWelcome to MirageMUD 0.1.  Still in development.\n\r"));
-                    //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\n\r");
+                    Client.Write(new StringMessage(MessageType.Information, "Welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
+                    //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\r\n");
                     Client.State = ConnectedState.Playing;
-                    //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\n\r",  $desc);	
+                    //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\r\n",  $desc);	
 
                     Client.Player = GetValue<Player>("player");
                     GetValue<Player>("player").Client = Client;
@@ -159,7 +160,7 @@ namespace Mirage.Command
 	        }   
 	
 	        if (!CheckName( input )) {
-	            Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.IllegalName", "Illegal name, try another.\n\r" ));
+	            Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.IllegalName", "Illegal name, try another.\r\n" ));
                 return;
 	        }
 
@@ -188,7 +189,7 @@ namespace Mirage.Command
                 SetValue<bool>("isNew", true);
                 /*
 	            if ($GB_Newlock) {
-		            descriptor.writeToBuffer( "The game is newlocked.\n\r" );
+		            descriptor.writeToBuffer( "The game is newlocked.\r\n" );
 		            descriptor.close;
 		            return;
 	            }
@@ -232,7 +233,7 @@ namespace Mirage.Command
             Client.Write(new EchoOnMessage());
             if (!GetValue<Player>("player").ComparePassword(input))
             {
-                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.WrongPassword", "\n\rWrong password.\n\r"));
+                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.WrongPassword", "\r\nWrong password.\r\n"));
                 Finished = _failed = true;
                 return;
             }
@@ -274,7 +275,7 @@ namespace Mirage.Command
             Client.Write(new StringMessage(MessageType.UIControl, "Newline", "\n\r"));
             if (!GetValue<Player>("player").ComparePassword(input))
             {
-                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.PasswordsDontMatch", "Passwords don't match.\n\r"));
+                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.PasswordsDontMatch", "Passwords don't match.\r\n"));
                 GetValue<Player>("player").SetPassword("");
                 Remove("password");
             }
