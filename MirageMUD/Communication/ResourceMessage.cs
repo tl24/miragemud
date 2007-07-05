@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JsonExSerializer.TypeConversion;
 
 namespace Mirage.Communication
 {
@@ -8,11 +9,14 @@ namespace Mirage.Communication
     /// <summary>
     /// Consructs a message from the resource template
     /// </summary>
-    public class ResourceMessage : Message
+    public class ResourceMessage : Message, IJsonTypeConverter
     {
         private string _resourceName;
         private IDictionary<string, object> _parameters;
 
+        public ResourceMessage()
+        {
+        }
 
         /// <summary>
         /// Constructs the message for the given resource.  The resourceName will be
@@ -76,5 +80,30 @@ namespace Mirage.Communication
             return template.Render();
         }
 
+
+        #region IJsonTypeConverter Members
+
+        public object Context
+        {
+            set { return; }
+        }
+
+        public object ConvertFrom(object item, JsonExSerializer.SerializationContext serializationContext)
+        {
+            return new StringMessage(this.MessageType, this.Name, this.ToString());
+        }
+
+        public object ConvertTo(object item, Type sourceType, JsonExSerializer.SerializationContext serializationContext)
+        {
+            // one-way conversion, just return the string message
+            return item;
+        }
+
+        public Type GetSerializedType(Type sourceType)
+        {
+            return typeof(StringMessage);
+        }
+
+        #endregion
     }
 }

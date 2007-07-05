@@ -158,16 +158,16 @@ namespace Mirage.Command
             IViewable viewableContainer = player.Container as IViewable;
             if (viewableContainer != null)
             {
-                result += viewableContainer.Title + "\n\r";
-                result += viewableContainer.ShortDescription + "\n\r";
-                result += "\n\r";
+                result += viewableContainer.Title + "\r\n";
+                result += viewableContainer.ShortDescription + "\r\n";
+                result += "\r\n";
             }
             if (player.Container is Room)
             {
                 Room room = player.Container as Room;
                 if (room.Animates.Count > 1)
                 {
-                    result += "Players:\n\r";
+                    result += "Players:\r\n";
                     foreach (Animate animate in room.Animates)
                     {
                         if (animate != player)

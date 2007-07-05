@@ -4,20 +4,15 @@ using System.Text;
 
 namespace Mirage.Communication
 {
-    public class EchoOnMessage : Message
+    /// <summary>
+    ///     Turn input echoing back on after turning it off
+    /// </summary>
+    /// <see cref="echoOff"/>
+    public class EchoOnMessage : StringMessage
     {
         public EchoOnMessage()
-            : base(MessageType.UIControl, "EchoOn")
+            : base(MessageType.UIControl, "EchoOn", "\x1B[0m")
         {
-        }
-
-        /// <summary>
-        ///     Turn input echoing back on after turning it off
-        /// </summary>
-        /// <see cref="echoOff"/>
-        public override string ToString()
-        {
-            return "\x1B[0m";
         }
     }
 }

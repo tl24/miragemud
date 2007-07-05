@@ -13,151 +13,61 @@ namespace Mirage.IO
 {
 
     /// <summary>
-    ///     The connection state for a player.  A player goes through
-    /// various states before they are completely logged in
-    /// </summary>
-    public enum ConnectedState
-    {
-        /// <summary>
-        ///     The player is connecting
-        /// </summary>
-        Connecting,
-        /// <summary>
-        ///     The player is idle
-        /// </summary>
-        Idle,
-        /// <summary>
-        ///     The player is playing, completely logged in and not idle
-        /// </summary>
-        Playing,
-
-        /// <summary>
-        /// The player has disconnected and should be cleaned up
-        /// </summary>
-        Disconnected
-    }
-
-    /// <summary>
     ///     Handles Server for a player
     /// </summary>
-    public class TextClient : IClient
+    public class TextClient : ClientBase
     {
-        /// <summary>
-        ///     The player object attached to this descriptor
-        /// </summary>
-        private Player _player;
-
-        /// <summary>
-        /// State Handler for this client.  If this is present it takes
-        /// precedence over the command interpreter.
-        /// </summary>
-        private AbstractStateMachine _stateHandler;
-
-        /// <summary>
-        ///     A reference to the tcp client (socket) that this description
-        /// reads and writes from
-        /// </summary>
-        private TcpClient _client;
-
         /// <summary>
         ///     A reader for the tcp client's stream
         /// </summary>
-        private StreamReader reader;
+        protected StreamReader reader;
 
         /// <summary>
         ///     A writer for the tcp client's stream
         /// </summary>
-        private StreamWriter writer;
+        protected StreamWriter writer;
 
         /// <summary>
         ///     The lines that have been read from the socket
         /// </summary>
-        private Queue<string> inputQueue;
-
-        /// <summary>
-        ///     The lines that are waiting to be written to the socket
-        /// </summary>
-        private Queue<string> outputQueue;
+        protected Queue<string> inputQueue;
 
         /// <summary>
         ///     The incomming line to be processed
         /// </summary>
-        private string _inputLine;
+        protected string _inputLine;
 
         /// <summary>
         ///     Buffer to hold input until it forms a complete line
         /// </summary>
-        private char[] inputBuffer;
+        protected char[] inputBuffer;
 
         /// <summary>
         ///     The number of characters that have been put in the buffer
         /// </summary>
-        private int bufferLength;
+        protected int bufferLength;
 
 
         /// <summary>
         ///     The last Command read
         /// </summary>
-        private string lastRead;
-
-        /// <summary>
-        ///     The stage of connection that this descriptor is at
-        /// </summary>
-        private ConnectedState _state;
-
-        /// <summary>
-        ///     Indicates that a Command was read this cycle
-        /// </summary>
-        private bool _commandRead;
-
-        /// <summary>
-        /// The client factory that created this client
-        /// </summary>
-        private IClientFactory _clientFactory;
+        protected string lastRead;
 
         /// <summary>
         ///     Create a descriptor to read and write to the given
         /// tcp client (Socket)
         /// </summary>
         /// <param name="client"> the client to read and write from</param>
-        public void Open(TcpClient client)
+        public override void Open(TcpClient client)
         {
-            this._client = client;
+            base.Open(client);
             NetworkStream stm = _client.GetStream();
             reader = new StreamReader(stm);
-            writer = new StreamWriter(stm);            
+            writer = new StreamWriter(stm);
             inputQueue = new Queue<string>();
-            outputQueue = new Queue<string>();
-            outputQueue.Enqueue("\n\r");
+            outputQueue.Enqueue(new StringMessage(MessageType.UIControl, "Newline", "\r\n"));
             inputBuffer = new char[512];
             bufferLength = 0;
-        }
-
-        /// <summary>
-        ///     The stage of connection that this descriptor is at
-        /// </summary>
-        public ConnectedState State
-        {
-            get { return _state; }
-            set { _state = value; }
-        }
-
-        /// <summary>
-        ///     The player object attached to this descriptor
-        /// </summary>
-        public Player Player
-        {
-            get { return _player; }
-            set { _player = value; }
-        }
-
-        /// <summary>
-        ///     state machine handler for the client
-        /// </summary>
-        public AbstractStateMachine StateHandler
-        {
-            get { return _stateHandler; }
-            set { _stateHandler = value; }
         }
 
         /// <summary>
@@ -236,7 +146,7 @@ namespace Mirage.IO
             }
         }
 
-        public void ProcessInput()
+        public override void ProcessInput()
         {
             string input = this.Read();
 
@@ -282,45 +192,15 @@ namespace Mirage.IO
         }
 
         /// <summary>
-        ///     Indicates that a Command was read this cycle
-        /// </summary>
-        public bool CommandRead
-        {
-            get { return _commandRead; }
-            set { _commandRead = value; }
-        }
-
-        /// <summary>
-        /// Write the specified text to the descriptors output buffer. 
-        /// </summary>
-        public void Write(Message message) {
-            Write(message.ToString());
-        }
-
-        private void Write(string message)
-        {
-            outputQueue.Enqueue(message);
-        }
-
-        public void WritePrompt()
-        {
-            if (Player != null && State == ConnectedState.Playing)
-            {
-                string clientName = Player.Title;
-                Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
-            }
-        }
-
-        /// <summary>
         ///     Process the output waiting in the output buffer.  This
         /// Data will be sent to the socket.
         /// </summary>
-        public void FlushOutput()
+        public override void FlushOutput()
         {
             bool bProcess = false;
             while (outputQueue.Count > 0) {
-                string line = outputQueue.Dequeue();
-                writer.Write(line);
+                Message msg = outputQueue.Dequeue();
+                writer.Write(msg.ToString());
                 bProcess = true;
             }
             if (bProcess)
@@ -329,40 +209,11 @@ namespace Mirage.IO
             }
         }
 
-        public bool HasOutput()
+        public override void Close()
         {
-            return outputQueue.Count > 0;
-        }
-
-        /// <summary>
-        /// Indicates if this client is still open or connected
-        /// </summary>
-        public bool IsOpen
-        {
-            get { return _client.Connected;  }
-        }
-
-        /// <summary>
-        ///     Closes the underlying connection
-        /// </summary>
-        public void Close()
-        {
-            FlushOutput();
+            base.Close();
             reader.Close();
             writer.Close();
-            _client.Close();
-            _state = ConnectedState.Disconnected;
-        }
-
-        public IClientFactory ClientFactory
-        {
-            get { return _clientFactory; }
-            set { _clientFactory = value; }
-        }
-
-        public TcpClient TcpClient
-        {
-            get { return _client; }
         }
     }
 }

@@ -168,6 +168,15 @@ namespace Mirage.Util
             _nextState = nextStep;
         }
 
+        public void Require(IList<Message> messages, ValidateDelegate nextStep)
+        {
+            foreach (Message m in messages)
+            {
+                _client.Write(m);
+            }
+            _nextState = nextStep;
+        }
+
         /// <summary>
         /// Called to handle incoming input and determine the next state transition.
         /// The validation step will be called and then the next state will be determined

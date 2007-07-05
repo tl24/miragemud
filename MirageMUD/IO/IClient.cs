@@ -81,5 +81,17 @@ namespace Mirage.IO
         /// Gets or sets a reference to the ClientFactory that created this client
         /// </summary>
         IClientFactory ClientFactory { get; set; }
+
+        /// <summary>
+        /// Checks to see if the client socket is still open
+        /// </summary>
+        /// <returns></returns>
+        bool IsOpen { get; }
+
+        /// <summary>
+        /// Gets the underlying TcpClient socket
+        /// </summary>
+        TcpClient TcpClient { get; }
+
     }
 }
