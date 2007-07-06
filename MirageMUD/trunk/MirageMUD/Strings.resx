@@ -129,6 +129,9 @@
   <data name="Comm.Tell.Self" xml:space="preserve">
     <value>You tell ${target} '${message}'.</value>
   </data>
+  <data name="Error.InvalidActor" xml:space="preserve">
+    <value>This command can not be executed by a ${ActorType}.</value>
+  </data>
   <data name="Error.InvalidCommand" xml:space="preserve">
     <value>Huh?</value>
   </data>

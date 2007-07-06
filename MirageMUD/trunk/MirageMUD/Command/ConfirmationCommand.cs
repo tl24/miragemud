@@ -55,22 +55,40 @@ namespace Mirage.Command
             get { return _innerCommand.CustomParse; }
         }
 
-        public bool ValidateTypes(string invokedName, Player self, string[] arguments, out object context, out Mirage.Communication.Message errorMessage)
+        public bool ConvertArguments(string invokedName, Living actor, object[] arguments, out object[] convertedArguments, out Message errorMessage)
         {
-            return _innerCommand.ValidateTypes(invokedName, self, arguments, out context, out errorMessage);
+            return _innerCommand.ConvertArguments(invokedName, actor, arguments, out convertedArguments, out errorMessage);
         }
 
-        public Message Invoke(string invokedName, Mirage.Data.Player self, string[] arguments, object context)
+        public Message Invoke(string invokedName, Living actor, object[] arguments)
         {
-            // create the interpreter
-            ConfirmationInterpreter interp = new ConfirmationInterpreter(self, _innerCommand, invokedName, arguments, context);
-            if (_promptMessage != null)
-                interp.Message = _promptMessage;
-            if (_cancellationMessage != null)
-                interp.CancellationMessage = _promptMessage;
+            if (actor is Player)
+            {
+                // create the interpreter
+                ConfirmationInterpreter interp = new ConfirmationInterpreter((Player) actor, _innerCommand, invokedName, arguments);
+                if (_promptMessage != null)
+                    interp.Message = _promptMessage;
+                if (_cancellationMessage != null)
+                    interp.CancellationMessage = _promptMessage;
 
-            interp.requestConfirmation();
+                interp.RequestConfirmation();
+            }
+            else
+            {
+                // mobile, just execute the command without confirmation
+                _innerCommand.Invoke(invokedName, actor, arguments);
+            }
             return null;
+        }
+
+        #endregion
+
+        #region ICommand Members
+
+
+        public Type[] ClientTypes
+        {
+            get { return _innerCommand.ClientTypes; }
         }
 
         #endregion

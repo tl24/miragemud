@@ -12,7 +12,7 @@ namespace Mirage.Command
 
     /// <summary>
     ///     A class for interpreting commands from players.
-    /// Use the execute Command method.
+    /// Use the Execute Command method.
     /// </summary>
     public class Interpreter : IInterpret
     {
@@ -30,7 +30,7 @@ namespace Mirage.Command
         /// Gets the default interpreter for a player
         /// </summary>
         /// <returns>the default interpreter</returns>
-        public static IInterpret getDefaultInterpreter()
+        public static IInterpret GetDefaultInterpreter()
         {
             lock (lockObject)
             {
@@ -50,7 +50,7 @@ namespace Mirage.Command
         /// <param name="actor">the player</param>
         /// <param name="input">Command and arguments</param>
         /// <returns>true if a Command was executed</returns>
-        public static void executeCommand(Player actor, string input)
+        public static void ExecuteCommand(Living actor, string input)
         {
             if (actor == null)
             {
@@ -58,16 +58,17 @@ namespace Mirage.Command
             }
 
             bool success = false;
-            if (actor.Interpreter != null)
+            Player player = actor as Player;
+            if (player != null && player.Interpreter != null)
             {
-                if (!actor.Interpreter.execute(actor, input))
+                if (!player.Interpreter.Execute(actor, input))
                 {
                     actor.Write(new ErrorResourceMessage("InvalidCommand", "Error.InvalidCommand"));
                 }
             }
             else
             {
-                getDefaultInterpreter().execute(actor, input);
+                GetDefaultInterpreter().Execute(actor, input);
             }
         }
 
@@ -79,9 +80,9 @@ namespace Mirage.Command
         /// <param name="actor">The player executing the Command</param>
         /// <param name="input">the Command and arguments</param>
         /// <returns>true if executed successfully</returns>
-        public bool execute(Player actor, string input)
+        public bool Execute(Living actor, string input)
         {
-            return MethodInvoker.interpret(actor, input);
+            return MethodInvoker.Interpret(actor, input);
         }
 
         /// <summary>
@@ -91,15 +92,15 @@ namespace Mirage.Command
         /// <param name="args">the message to speak</param>
         /// <param name="extraArgs"></param>
         [Command(Aliases=new string[]{"'", "say"})]
-        public static Message say([Actor] Player player, [CustomParse] string message)
+        public static Message say([Actor] Living actor, [CustomParse] string message)
         {
             //speak to all others in the room
             ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, "Comm.Say", "Comm.Say.Others");
-            msgToOthers.Parameters["player"] = player.Title;
+            msgToOthers.Parameters["player"] = actor.Title;
             msgToOthers.Parameters["message"] = message;
-            foreach (Animate am in player.Container.Contents(typeof(Animate)))
+            foreach (Living am in actor.Container.Contents(typeof(Living)))
             {
-                if (am != player)
+                if (am != actor)
                 {
                     am.Write(msgToOthers);
                 }
@@ -112,7 +113,7 @@ namespace Mirage.Command
         }
 
         [Command]
-        public static Message tell([Actor] Player player, string target, [CustomParse] string message)
+        public static Message tell([Actor] Living actor, string target, [CustomParse] string message)
         {
             // look up the target
             Player p = (Player) QueryManager.GetInstance().Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));
@@ -127,7 +128,7 @@ namespace Mirage.Command
             {
                 // format the messages
                 ResourceMessage msgToTarget = new ResourceMessage(MessageType.Communication, "Comm.Tell", "Comm.Tell.Others");
-                msgToTarget.Parameters["player"] = player.Title;
+                msgToTarget.Parameters["player"] = actor.Title;
                 msgToTarget.Parameters["message"] = message;
                 p.Write(msgToTarget);
 
@@ -152,25 +153,25 @@ namespace Mirage.Command
         }
 
         [Command]
-        public static string look([Actor] Player player)
+        public static string look([Actor] Living actor)
         {
             string result = "";
-            IViewable viewableContainer = player.Container as IViewable;
+            IViewable viewableContainer = actor.Container as IViewable;
             if (viewableContainer != null)
             {
                 result += viewableContainer.Title + "\r\n";
                 result += viewableContainer.ShortDescription + "\r\n";
                 result += "\r\n";
             }
-            if (player.Container is Room)
+            if (actor.Container is Room)
             {
-                Room room = player.Container as Room;
+                Room room = actor.Container as Room;
                 if (room.Animates.Count > 1)
                 {
                     result += "Players:\r\n";
-                    foreach (Animate animate in room.Animates)
+                    foreach (Living animate in room.Animates)
                     {
-                        if (animate != player)
+                        if (animate != actor)
                         {
                             result += animate.Title + "\r\n";
                         }
@@ -204,88 +205,7 @@ namespace Mirage.Command
         /// <param name="actor">The player</param>
         /// <param name="input">the input string of arguments</param>
         /// <returns>true if the Command was executed</returns>
-        bool execute(Player actor, string input);
+        bool Execute(Living actor, string input);
     }
 
-    public class ConfirmationInterpreter : IInterpret
-    {
-        private string _message = "Are you sure? (y\\n) ";
-        private string _cancellationMessage = "Command cancelled\r\n";
-        private ICommand _method;
-        private IInterpret priorInterpreter;
-        private Player _player;
-        private string _invokedName;
-        private object _context;
-        private string[] args;
-
-        public string Message
-        {
-            get { return _message; }
-            set { _message = value; }
-        }
-
-        public string CancellationMessage
-        {
-            get { return _cancellationMessage; }
-            set { _cancellationMessage = value; }
-        }
-
-        public ConfirmationInterpreter(Player player, ICommand method, string invokedName, string[] arguments, object context)
-        {
-            setPlayer(player);
-            this._method = method;
-            this._invokedName = invokedName;
-            this._context = context;
-            this.args = arguments;
-        }
-
-        private void setPlayer(Player player)
-        {
-            this._player = player;
-            priorInterpreter = player.Interpreter;
-            this._player.Interpreter = this;
-        }
-
-        #region IInterpret Members
-
-        public bool execute(Player actor, string input)
-        {
-            bool success = false;
-            input = input.ToLower();
-            if (input.Equals("yes") || input.Equals("y"))
-            {
-                object st = _method.Invoke(_invokedName, actor, args, _context);
-                if (st != null)
-                {
-                    if (st is Message)
-                    {
-                        actor.Write((Message)st);
-                    }
-                    else
-                    {
-                        actor.Write(new StringMessage(MessageType.Information, "MethodResult." + _method.Name, st.ToString()));
-                    }
-                }
-                success = true;
-            }
-            else if (input.Equals("no") || input.Equals("n"))
-            {
-                actor.Write(new StringMessage(MessageType.Information, "Cancellation", _cancellationMessage));
-                success = true;
-            }
-            else
-            {
-                success = false;
-            }
-            actor.Interpreter = priorInterpreter;
-            return success;
-        }
-
-        #endregion
-
-        public void requestConfirmation()
-        {
-            _player.Write(new StringMessage(MessageType.Prompt, "ConfirmationPrompt", _message)); 
-        }
-    }
 }

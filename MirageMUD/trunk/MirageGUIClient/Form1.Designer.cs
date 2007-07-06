@@ -37,6 +37,8 @@ namespace MirageGUIClient
             this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -109,7 +111,8 @@ namespace MirageGUIClient
             // formatToolStripMenuItem
             // 
             this.formatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fontToolStripMenuItem});
+            this.fontToolStripMenuItem,
+            this.colorToolStripMenuItem});
             this.formatToolStripMenuItem.Name = "formatToolStripMenuItem";
             this.formatToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
             this.formatToolStripMenuItem.Text = "Format";
@@ -126,6 +129,13 @@ namespace MirageGUIClient
             this.fontDialog1.ShowApply = true;
             this.fontDialog1.ShowColor = true;
             this.fontDialog1.Apply += new System.EventHandler(this.fontDialog1_Apply);
+            // 
+            // colorToolStripMenuItem
+            // 
+            this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.colorToolStripMenuItem.Text = "Color";
+            this.colorToolStripMenuItem.Click += new System.EventHandler(this.colorToolStripMenuItem_Click);
             // 
             // frmConsole
             // 
@@ -162,6 +172,8 @@ namespace MirageGUIClient
         private System.Windows.Forms.ToolStripMenuItem formatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fontToolStripMenuItem;
         private System.Windows.Forms.FontDialog fontDialog1;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.ToolStripMenuItem colorToolStripMenuItem;
     }
 }
 

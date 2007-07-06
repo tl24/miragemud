@@ -25,18 +25,18 @@ namespace Mirage.Command
         ///     Register a class that exposes Command methods.
         ///     The methods must be marked with the CommandAttribute
         /// </summary>
-        /// <see cref="rom.attribute.CommandAttribute"/>
+        /// <see cref="Mirage.Command.CommandAttribute"/>
         /// <param name="t">The type to register</param>
-        public static void registerType(Type t)
+        public static void RegisterType(Type t)
         {
             if (!registeredTypes.ContainsKey(t))
             {
-                getTypeMethods(t);
+                GetTypeMethods(t);
                 registeredTypes[t] = true;
             }
         }
 
-        private static void getTypeMethods(Type objectType)
+        private static void GetTypeMethods(Type objectType)
         {
             foreach (MethodInfo mInfo in objectType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static /* | BindingFlags.DeclaredOnly*/))
             {
@@ -47,18 +47,18 @@ namespace Mirage.Command
                     {
                         foreach (string alias in command.Aliases)
                         {
-                            methods.put(alias, command);
+                            methods.Put(alias, command);
                         }
                     }
                     else
                     {
-                        methods.put(command.Name, command);
+                        methods.Put(command.Name, command);
                     }
                 }
             }
         }
 
-        public static bool interpret(Player player, string command)
+        public static bool Interpret(Living actor, string command)
         {
             ArgumentParser parser;
             string commandName;
@@ -77,18 +77,20 @@ namespace Mirage.Command
                 args = parser.getRest().TrimStart(null);
             }
 
-            IList<ICommand> methods = getAvailableMethods(commandName);
-            bool fCommandFound = false;
+            IList<ICommand> methods = GetAvailableMethods(commandName);
             bool fCommandInvoked = false;
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
             
-            bool fCommandValidated = true;
+            Type clientType = null;
+            if (actor is Player && ((Player)actor).Client != null)
+            {
+                clientType = ((Player)actor).Client.GetType();
+            }
 
             foreach (ICommand method in methods)
             {
-                if (method.Level <= player.Level)
+                if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes))
                 {
-                    fCommandFound = true;
                     parser = new ArgumentParser(args);
                     string[] commandArgs = new string[method.ArgCount];
                     int parsedArgs = 0;
@@ -119,16 +121,18 @@ namespace Mirage.Command
                     bool nextMethod = false;
 
                     //TODO: commandName is not really the invokedName...could just be a partial name
-                    CanidateCommand canidate = new CanidateCommand(method, commandName, commandArgs);
+                    CanidateCommand canidate = new CanidateCommand(method, commandName);
                     canidateCommands.Add(canidate);
-                    object context;
+                    object[] convertedArguments;
                     Message errorMessage;
-                    canidate.Validated = method.ValidateTypes(canidate.InvokedName, player, canidate.StringArgs, out context, out errorMessage);
-                    canidate.Context = context;
-                    canidate.ErrorMessage = errorMessage;
-                    if (canidate.Validated)
+                    if (method.ConvertArguments(canidate.InvokedName, actor, commandArgs, out convertedArguments, out errorMessage))
                     {
-                        fCommandValidated = true;
+                        canidate.Arguments = convertedArguments;
+                        canidate.Validated = true;
+                    }
+                    else
+                    {
+                        canidate.ErrorMessage = errorMessage;
                     }
                 }
             }
@@ -139,42 +143,75 @@ namespace Mirage.Command
                 CanidateCommand first = canidateCommands[0];
                 if (first.Validated)
                 {
-                    Message result = first.Command.Invoke(first.InvokedName, player, first.StringArgs, first.Context);
+                    Message result = first.Command.Invoke(first.InvokedName, actor, first.Arguments);
                     fCommandInvoked = true;
                     if (result != null)
-                        player.Write(result);
+                        actor.Write(result);
                 }
                 else
                 {
-                    player.Write(first.ErrorMessage);
+                    actor.Write(first.ErrorMessage);
                 }
             }
             else
             {
-                player.Write(new StringMessage(MessageType.PlayerError, "NoCommandFound", "Huh?\r\n"));
+                actor.Write(new StringMessage(MessageType.PlayerError, "NoCommandFound", "Huh?\r\n"));
             }
             return fCommandInvoked;
         }
 
-        private static IList<ICommand> getAvailableMethods(string commandName)
+
+        /// <summary>
+        /// Checks to see if the type of the player's client is within the allowed list
+        /// or if all clients are accepted
+        /// </summary>
+        /// <param name="clientType">the players client type</param>
+        /// <param name="allowedTypes">the list of allowed types</param>
+        /// <returns>true if allowed</returns>
+        private static bool CheckClientType(Type clientType, Type[] allowedTypes)
         {
-            return methods.findStartsWith(commandName);
+            if (allowedTypes == null || allowedTypes.Length == 0)
+            {
+                return true;
+            }
+            else
+            {
+                if (clientType == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    foreach (Type t in allowedTypes)
+                    {
+                        if (t.IsAssignableFrom(clientType))
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+
+        private static IList<ICommand> GetAvailableMethods(string commandName)
+        {
+            return methods.FindStartsWith(commandName);
         }
 
         private class CanidateCommand : IComparable<CanidateCommand>
         {
             private ICommand _command;
             private string _invokedName;
-            private string[] _stringArgs;
+            private object[] _arguments;
             private object context;
             private Message _errorMessage;
             private bool _validated;
 
-            public CanidateCommand(ICommand command, string invokedName, string[] arguments)
+            public CanidateCommand(ICommand command, string invokedName)
             {
                 this._command = command;
                 this._invokedName = invokedName;
-                this._stringArgs = arguments;
             }
 
             public ICommand Command
@@ -189,16 +226,10 @@ namespace Mirage.Command
                 set { this._invokedName = value; }
             }
 
-            public string[] StringArgs
+            public object[] Arguments
             {
-                get { return this._stringArgs; }
-                set { this._stringArgs = value; }
-            }
-
-            public object Context
-            {
-                get { return this.context; }
-                set { this.context = value; }
+                get { return this._arguments; }
+                set { this._arguments = value; }
             }
 
             public Message ErrorMessage

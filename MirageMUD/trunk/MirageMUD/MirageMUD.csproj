@@ -51,8 +51,10 @@
     <Compile Include="Command\ArgumentParser.cs" />
     <Compile Include="Command\BaseArgumentAttribute.cs" />
     <Compile Include="Command\CommandAttribute.cs" />
+    <Compile Include="Command\CommandBase.cs" />
     <Compile Include="Command\ConfirmationAttribute.cs" />
     <Compile Include="Command\ConfirmationCommand.cs" />
+    <Compile Include="Command\ConfirmationInterpreter.cs" />
     <Compile Include="Command\CustomParseAttribute.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
     <Compile Include="Command\Movement.cs" />
@@ -105,7 +107,7 @@
     <Compile Include="Communication\Message.cs" />
     <Compile Include="Communication\MultipartMessage.cs" />
     <Compile Include="Communication\StringMessage.cs" />
-    <Compile Include="Data\Animate.cs" />
+    <Compile Include="Data\Living.cs" />
     <Compile Include="Data\Area.cs" />
     <Compile Include="Data\AreaLoader.cs" />
     <Compile Include="Data\BaseData.cs" />

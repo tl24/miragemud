@@ -13,13 +13,13 @@ namespace Mirage.Data
         private string _shortDescription;
         private string _longDescription;
         private Area _area;
-        private LinkedList<Animate> _animates;
+        private LinkedList<Living> _animates;
         private IDictionary<DirectionType, RoomExit> _exits;
 
         public Room()
             : base()
         {
-            _animates = new LinkedList<Animate>();
+            _animates = new LinkedList<Living>();
             _uriChildCollections.Add("Animates", new BaseData.ChildCollectionPair(_animates, QueryHints.DefaultPartialMatch));
             _exits = new Dictionary<DirectionType, RoomExit>();
         }
@@ -49,7 +49,7 @@ namespace Mirage.Data
         }
 
         [JsonExIgnore]
-        public ICollection<Animate> Animates
+        public ICollection<Living> Animates
         {
             get { return this._animates; }
         }
@@ -87,9 +87,9 @@ namespace Mirage.Data
             
             if (CanAdd(item))
             {
-                if (item.Container != this || !this._animates.Contains((Animate) item))
+                if (item.Container != this || !this._animates.Contains((Living) item))
                 {
-                    this._animates.AddLast((Animate) item);
+                    this._animates.AddLast((Living) item);
                     item.Container = this;
                     if (item is Player)
                         ((Player)item).PlayerEvent += new Player.PlayerEventHandler(player_PlayerEvent);
@@ -106,7 +106,7 @@ namespace Mirage.Data
         {
             if (CanAdd(item))
             {
-                this._animates.Remove((Animate) item);
+                this._animates.Remove((Living) item);
                 if (item.Container == this)
                     item.Container = null;
 
@@ -117,25 +117,25 @@ namespace Mirage.Data
 
         public bool Contains(IContainable item)
         {
-            if (item is Animate)
-                return this._animates.Contains((Animate)item);
+            if (item is Living)
+                return this._animates.Contains((Living)item);
             else
                 return false;
         }
 
         public bool CanContain(Type item)
         {
-            return typeof(Animate).IsAssignableFrom(item);
+            return typeof(Living).IsAssignableFrom(item);
         }
 
         public bool CanAdd(IContainable item)
         {
-            return (item is Animate);
+            return (item is Living);
         }
 
         public IEnumerable Contents(Type t)
         {
-            if (t == typeof(Animate))
+            if (t == typeof(Living))
             {
                 return _animates;
             }

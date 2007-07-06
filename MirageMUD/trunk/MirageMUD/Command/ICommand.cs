@@ -40,29 +40,35 @@ namespace Mirage.Command
         int ArgCount { get; }
 
         /// <summary>
+        /// The types of mud clients that are allowed to Execute this command.  Generally this should be
+        /// left blank which includes all, unless only certain clients have the capability to provide inputs
+        /// to this command or are incapable of recieving the output from it.
+        /// </summary>
+        Type[] ClientTypes { get; }
+
+        /// <summary>
         /// True if this Command does custom parsing
         /// </summary>
         bool CustomParse { get; }
 
         /// <summary>
-        /// Validates the argument array against the expected types.  If validation fails,
-        /// false should be returned and the errorMessage property will be populated with an error message.
+        /// Converts arguments from their input format into their desired types
         /// </summary>
         /// <param name="invokedName">the command name or alias that was used to invoke this command</param>
-        /// <param name="self">the player invoking the command</param>
+        /// <param name="actor">the entity invoking the command (Player or Mobile)</param>
         /// <param name="arguments">the arguments to the command</param>
-        /// <param name="context">A custom context object that will be passed to the Invoke Method</param>
-        /// <param name="errorMessage">an error message if validation fails</param>
-        /// <returns>true if types are correct</returns>
-        bool ValidateTypes(string invokedName, Player self, string[] arguments, out object context, out Message errorMessage);
+        /// <param name="convertedArguments">The converted arguments</param>
+        /// <param name="errorMessage">an error message if conversion fails</param>
+        /// <returns>true if types were converted successfully</returns>
+        bool ConvertArguments(string invokedName, Living actor, object[] arguments, out object[] convertedArguments, out Message errorMessage);
 
         /// <summary>
         /// Invoke the given command
         /// </summary>
         /// <param name="invokedName">the command name or alias that was used to invoke this command</param>
-        /// <param name="self">the player invoking the command</param>
+        /// <param name="self">the entity invoking the command (Player or Mobile)</param>
         /// <param name="arguments">the arguments to the command</param>
         /// <returns>A message to be returned to the player if any</returns>
-        Message Invoke(string invokedName, Player self, string[] arguments, object context);
+        Message Invoke(string invokedName, Living actor, object[] arguments);
     }
 }
