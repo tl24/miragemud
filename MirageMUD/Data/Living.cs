@@ -34,7 +34,7 @@ namespace Mirage.Data
     ///     A base class for living breathing things such as players
     /// and mobiles.
     /// </summary>
-    public abstract class Animate : BaseData, IViewable, IContainable
+    public abstract class Living : BaseData, IViewable, IContainable
     {
         private string _title;
         private int _level;
@@ -43,7 +43,7 @@ namespace Mirage.Data
         private string _longDescription;
         private Room _room;
 
-        public Animate()
+        public Living()
         {
             _level = 1;
             _sex = SexType.Other;

@@ -43,7 +43,7 @@ namespace Mirage.IO
         protected char[] inputBuffer;
 
         /// <summary>
-        ///     The number of characters that have been put in the buffer
+        ///     The number of characters that have been Put in the buffer
         /// </summary>
         protected int bufferLength;
 
@@ -158,7 +158,7 @@ namespace Mirage.IO
                 }
                 else
                 {
-                    Interpreter.executeCommand(Player, input);
+                    Interpreter.ExecuteCommand(Player, input);
                 }
             }
         }

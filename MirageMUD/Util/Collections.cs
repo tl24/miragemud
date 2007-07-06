@@ -34,18 +34,18 @@ namespace Mirage.Util
 
         #region IIndexedDictionary<TVal> Members
 
-        public IList<TVal> getAllValues()
+        public IList<TVal> GetAllValues()
         {
             return new List<TVal>(this);
         }
 
 
-        public IList<TVal> findStartsWith(string substring)
+        public IList<TVal> FindStartsWith(string substring)
         {
             return find(substring, ComparisonType.Partial);
         }
 
-        public IList<TVal> findExact(string key)
+        public IList<TVal> FindExact(string key)
         {
             return find(key, ComparisonType.Exact);
         }
@@ -83,7 +83,7 @@ namespace Mirage.Util
             return items;
         }
 
-        public void put(string key, TVal item)
+        public void Put(string key, TVal item)
         {
             if (key == null || key.Length == 0)
             {
@@ -420,10 +420,10 @@ namespace Mirage.Util
 
     public interface IIndexedDictionary<TVal> : IEnumerable<TVal>
     {
-        IList<TVal> findStartsWith(string substring);
-        IList<TVal> findExact(string key);
-        IList<TVal> getAllValues();
-        void put(string key, TVal item);
+        IList<TVal> FindStartsWith(string substring);
+        IList<TVal> FindExact(string key);
+        IList<TVal> GetAllValues();
+        void Put(string key, TVal item);
         int Count { get; }
     }
 }

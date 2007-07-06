@@ -15,6 +15,7 @@ namespace Mirage.Command
         private string _description;
         private string[] _roles;
         private string[] _aliases;
+        private Type[] _clients;
 
         /// <summary>
         ///     Creates an instance of the attribute
@@ -60,5 +61,13 @@ namespace Mirage.Command
             get { return _aliases; }
             set { _aliases = value; }
         }
+
+        public Type[] ClientTypes
+        {
+            get { return this._clients; }
+            set { this._clients = value; }
+        }
+
+
     }
 }

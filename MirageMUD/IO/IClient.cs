@@ -27,7 +27,7 @@ namespace Mirage.IO
         void Close();
 
         /// <summary>
-        /// Process input available and execute a command
+        /// Process input available and Execute a command
         /// </summary>
         void ProcessInput();
 

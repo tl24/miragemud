@@ -60,7 +60,7 @@ namespace Mirage.IO
                         }
                         else
                         {
-                            Interpreter.executeCommand(Player, (string)msg.data);
+                            Interpreter.ExecuteCommand(Player, (string)msg.data);
                         }                        
                     }
                 }

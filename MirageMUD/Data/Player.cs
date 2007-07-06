@@ -23,7 +23,7 @@ namespace Mirage.Data
     /// the game (as opposed to a Mobile which is a game object controlled by AI).
     /// It is a descendant of Animate, the base-class for living breating things
     /// </summary>
-    public class Player : Animate
+    public class Player : Living
     {
         private static string _playerDir;
         private static bool _initted;

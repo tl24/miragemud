@@ -41,7 +41,7 @@ namespace Mirage.Command
             return Go(self, DirectionType.Down);
         }
 
-        public static Message Go(Animate animate, DirectionType direction)
+        public static Message Go(Living animate, DirectionType direction)
         {
             if (animate.Container is Room)
             {
@@ -77,14 +77,14 @@ namespace Mirage.Command
                     try
                     {
                         Containers.Transfer(animate, exit.TargetRoom);
-                        foreach (Animate oldRoomPeople in room.Animates)
+                        foreach (Living oldRoomPeople in room.Animates)
                         {
                             if (oldRoomPeople != animate)
                             {
                                 oldRoomPeople.Write(departMessage);
                             }
                         }
-                        foreach (Animate newRoomPeople in exit.TargetRoom.Animates)
+                        foreach (Living newRoomPeople in exit.TargetRoom.Animates)
                         {
                             if (newRoomPeople != animate)
                             {

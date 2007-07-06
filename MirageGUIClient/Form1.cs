@@ -21,6 +21,8 @@ namespace MirageGUIClient
         public BinaryReader reader;
         public BinaryWriter writer;
 
+        delegate void ResponseHandler(MudResponse response);
+
         public frmConsole()
         {
             InitializeComponent();
@@ -58,24 +60,35 @@ namespace MirageGUIClient
             }
         }
 
-        public void WriteResponse(string data)
+        public void HandleResponse(MudResponse response)
         {
-            OutputText.AppendText(data);
-        }
+            if (response.Type == AdvancedClientTransmitType.JsonEncodedMessage)
+            {
+                Mirage.Communication.Message msg = (Mirage.Communication.Message)response.Data;
+                if (msg is EchoOnMessage)
+                {
+                    this.InputText.UseSystemPasswordChar = false;
+                }
+                else if (msg is EchoOffMessage)
+                {
+                    this.InputText.UseSystemPasswordChar = false;
+                }
+                else
+                {
+                    OutputText.AppendText(msg.ToString());
+                }
+            }
+            else
+            {
+                OutputText.AppendText((string)response.Data);
+            }
 
-        public void SetEcho(bool enabled)
-        {
-            this.InputText.UseSystemPasswordChar = enabled;
         }
-
-        delegate void WriteTextDelegate(string data);
-        delegate void SetEchoDelegate(bool enabled);
 
         private void Run()
         {
             string name;
-            string data;
-            Mirage.Communication.Message msg;
+            object data;
             Serializer serializer = Serializer.GetSerializer(typeof(object));
             while (true)
             {
@@ -89,27 +102,12 @@ namespace MirageGUIClient
                     case AdvancedClientTransmitType.JsonEncodedMessage:
                         name = reader.ReadString();
                         data = reader.ReadString();
-                        msg =  (Mirage.Communication.Message) serializer.Deserialize(data);
-                        if (msg is EchoOnMessage)
-                        {
-                            Invoke(new SetEchoDelegate(this.SetEcho), false);
-                            data = null;
-                        }
-                        else if (msg is EchoOffMessage)
-                        {
-                            Invoke(new SetEchoDelegate(this.SetEcho), true);
-                            data = null;
-                        }
-                        else
-                        {
-                            data = msg.ToString();
-                        }
+                        data =  (Mirage.Communication.Message) serializer.Deserialize((string) data);
                         break;
                     default:
                         throw new Exception("Unrecognized response: " + type);
-                }                
-                if (data != null)
-                    this.Invoke(new WriteTextDelegate(this.WriteResponse), data);
+                }
+                this.Invoke(new ResponseHandler(this.HandleResponse), new MudResponse((AdvancedClientTransmitType) type, name, data));
             }
         }
 
@@ -129,6 +127,16 @@ namespace MirageGUIClient
             OutputText.ForeColor = fontDialog1.Color;
             InputText.Font = fontDialog1.Font;
             InputText.ForeColor = fontDialog1.Color;
+        }
+
+        private void colorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            colorDialog1.Color = OutputText.BackColor;
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                OutputText.BackColor = colorDialog1.Color;
+                InputText.BackColor = colorDialog1.Color;
+            }
         }
     }
 }

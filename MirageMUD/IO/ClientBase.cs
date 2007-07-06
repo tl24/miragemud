@@ -91,7 +91,7 @@ namespace Mirage.IO
         }
 
         /// <summary>
-        /// Process the input from the connection and execute a command
+        /// Process the input from the connection and Execute a command
         /// </summary>
         public abstract void ProcessInput();
 
