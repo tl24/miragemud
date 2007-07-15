@@ -45,7 +45,12 @@ namespace Mirage.Communication
         /// <summary>
         /// Message contains a notification of an event
         /// </summary>
-        Notification
+        Notification,
+
+        /// <summary>
+        /// Message contains a data object
+        /// </summary>
+        Data
     }
 
     public enum MessageTarget

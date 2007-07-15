@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\ActorAttribute.cs" />
+    <Compile Include="Command\AreaBuilder.cs" />
     <Compile Include="Command\ArgumentParser.cs" />
     <Compile Include="Command\BaseArgumentAttribute.cs" />
     <Compile Include="Command\CommandAttribute.cs" />
@@ -58,6 +59,8 @@
     <Compile Include="Command\CustomParseAttribute.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
     <Compile Include="Command\Movement.cs" />
+    <Compile Include="Communication\BuilderMessages\AreaListMessage.cs" />
+    <Compile Include="Communication\BuilderMessages\AreaMessage.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
     <Compile Include="Communication\ErrorResourceMessage.cs" />
     <Compile Include="Communication\ITemplate.cs" />

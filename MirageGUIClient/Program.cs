@@ -14,7 +14,7 @@ namespace MirageGUIClient
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmConsole());
+            Application.Run(new BuilderPane());
         }
     }
 }

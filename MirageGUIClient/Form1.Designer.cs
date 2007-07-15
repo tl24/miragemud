@@ -36,9 +36,9 @@ namespace MirageGUIClient
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,6 +64,10 @@ namespace MirageGUIClient
             // 
             this.InputText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.InputText.BackColor = global::MirageGUIClient.MirageGUIClient.Default.ConsoleBackground;
+            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleBackground", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputText.Font = global::MirageGUIClient.MirageGUIClient.Default.ConsoleFont;
             this.InputText.Location = new System.Drawing.Point(55, 27);
             this.InputText.MaximumSize = new System.Drawing.Size(800, 20);
             this.InputText.MinimumSize = new System.Drawing.Size(100, 20);
@@ -77,7 +81,10 @@ namespace MirageGUIClient
             this.OutputText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.OutputText.BackColor = System.Drawing.SystemColors.Window;
+            this.OutputText.BackColor = global::MirageGUIClient.MirageGUIClient.Default.ConsoleBackground;
+            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleBackground", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.OutputText.Font = global::MirageGUIClient.MirageGUIClient.Default.ConsoleFont;
             this.OutputText.Location = new System.Drawing.Point(55, 54);
             this.OutputText.Multiline = true;
             this.OutputText.Name = "OutputText";
@@ -120,22 +127,22 @@ namespace MirageGUIClient
             // fontToolStripMenuItem
             // 
             this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
-            this.fontToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.fontToolStripMenuItem.Text = "Font";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
+            // 
+            // colorToolStripMenuItem
+            // 
+            this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
+            this.colorToolStripMenuItem.Text = "Color";
+            this.colorToolStripMenuItem.Click += new System.EventHandler(this.colorToolStripMenuItem_Click);
             // 
             // fontDialog1
             // 
             this.fontDialog1.ShowApply = true;
             this.fontDialog1.ShowColor = true;
             this.fontDialog1.Apply += new System.EventHandler(this.fontDialog1_Apply);
-            // 
-            // colorToolStripMenuItem
-            // 
-            this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
-            this.colorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.colorToolStripMenuItem.Text = "Color";
-            this.colorToolStripMenuItem.Click += new System.EventHandler(this.colorToolStripMenuItem_Click);
             // 
             // frmConsole
             // 
@@ -149,11 +156,11 @@ namespace MirageGUIClient
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(225, 150);
             this.Name = "frmConsole";
             this.Text = "Mirage Builder Console";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

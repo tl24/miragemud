@@ -50,6 +50,7 @@ namespace Mirage.IO
                     if (msg.type == AdvancedClientTransmitType.JsonEncodedMessage)
                     {
                         Serializer serializer = Serializer.GetSerializer(typeof(object));
+                        serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
                         msg.data = serializer.Deserialize((string)msg.data);
                     }
                     if (msg.type == AdvancedClientTransmitType.StringMessage)
@@ -74,25 +75,31 @@ namespace Mirage.IO
         private bool ReadClient()
         {
             int available = _client.Available;
-
-            int type = reader.ReadInt32();
-            AdvancedMessage msg = new AdvancedMessage();
-            msg.type = (AdvancedClientTransmitType) type;
-            switch ((AdvancedClientTransmitType) type)
+            if (available > 0)
             {
-                case AdvancedClientTransmitType.StringMessage:
-                    msg.data = reader.ReadString();
-                    break;
-                case AdvancedClientTransmitType.JsonEncodedMessage:
-                    msg.name = reader.ReadString();
-                    msg.data = reader.ReadString();
-                    break;
-                default:
-                    throw new Exception("Unrecognized message type: " + type);
+                int type = reader.ReadInt32();
+                AdvancedMessage msg = new AdvancedMessage();
+                msg.type = (AdvancedClientTransmitType)type;
+                switch ((AdvancedClientTransmitType)type)
+                {
+                    case AdvancedClientTransmitType.StringMessage:
+                        msg.data = reader.ReadString();
+                        break;
+                    case AdvancedClientTransmitType.JsonEncodedMessage:
+                        msg.name = reader.ReadString();
+                        msg.data = reader.ReadString();
+                        break;
+                    default:
+                        throw new Exception("Unrecognized message type: " + type);
+                }
+                CommandRead = true;
+                inputQueue.Enqueue(msg);
+                return true;
             }
-            CommandRead = true;
-            inputQueue.Enqueue(msg);
-            return true;
+            else
+            {
+                return false;
+            }
         }
 
         public override void FlushOutput()
@@ -109,6 +116,7 @@ namespace Mirage.IO
                 advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;
                 advMsg.name = msg.Name;
                 Serializer serializer = Serializer.GetSerializer(typeof(object));
+                serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
                 advMsg.data = serializer.Serialize(msg);
                 writer.Write((int)advMsg.type);
                 writer.Write(advMsg.name);

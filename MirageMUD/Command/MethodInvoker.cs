@@ -244,15 +244,40 @@ namespace Mirage.Command
                 set { this._validated = value; }
             }
 
-
+            public bool IsExactName
+            {
+                get
+                {
+                    if (this.Command.Aliases != null && this.Command.Aliases.Length > 0)
+                    {
+                        foreach (string alias in this.Command.Aliases)
+                        {
+                            if (alias.Equals(InvokedName, StringComparison.InvariantCultureIgnoreCase))
+                                return true;
+                        }
+                    }
+                    else
+                    {
+                        if (InvokedName.Equals(Command.Name, StringComparison.InvariantCultureIgnoreCase))
+                            return true;
+                    }
+                    return false;
+                }
+            }
             #region IComparable<CanidateCommand> Members
 
             public int CompareTo(CanidateCommand other)
             {
                 if (other.Validated && !this.Validated)
-                    return -1;
-                if (this.Validated && !other.Validated)
                     return 1;
+                if (this.Validated && !other.Validated)
+                    return -1;
+
+                if (other.IsExactName && !this.IsExactName)
+                    return 1;
+                if (this.IsExactName && !other.IsExactName)
+                    return -1;
+
                 if (other.Command.CustomParse && !this.Command.CustomParse)
                     return -1;
                 if (this.Command.CustomParse && !other.Command.CustomParse)
