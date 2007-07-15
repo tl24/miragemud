@@ -132,5 +132,20 @@ namespace MirageGUI.Forms
             form.Dock = DockStyle.Fill;
             form.Visible = true;
         }
+
+        private void BuilderPane_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _handler.Close();
+        }
+
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Console.ShowFont(sender, e);
+        }
+
+        private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Console.ShowBackgroundColor(sender, e);
+        }
     }
 }

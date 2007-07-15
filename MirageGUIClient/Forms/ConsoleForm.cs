@@ -90,17 +90,17 @@ namespace MirageGUI.Forms
 
         }
 
-        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        internal void ShowFont(object sender, EventArgs e)
         {
             fontDialog1.Font = OutputText.Font;
             fontDialog1.Color = OutputText.ForeColor;
             if (fontDialog1.ShowDialog(this) == DialogResult.OK)
             {
-                fontDialog1_Apply(fontDialog1, new EventArgs());
+                ApplyFont(fontDialog1, new EventArgs());
             }
         }
 
-        void fontDialog1_Apply(object sender, EventArgs e)
+        void ApplyFont(object sender, EventArgs e)
         {
             OutputText.Font = fontDialog1.Font;
             OutputText.ForeColor = fontDialog1.Color;
@@ -109,7 +109,7 @@ namespace MirageGUI.Forms
             MirageGUI.Default.Save();
         }
 
-        private void colorToolStripMenuItem_Click(object sender, EventArgs e)
+        internal void ShowBackgroundColor(object sender, EventArgs e)
         {
             colorDialog1.Color = OutputText.BackColor;
             if (colorDialog1.ShowDialog() == DialogResult.OK)
