@@ -13,6 +13,7 @@ namespace Mirage
             Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Data.Player));
             Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Command.Interpreter));
             Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Command.Movement));
+            Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Command.AreaBuilder));
             Server listener = new Server(4500);
             AreaLoader loader = new AreaLoader();
             loader.LoadAll();

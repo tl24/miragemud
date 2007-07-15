@@ -15,33 +15,32 @@ using Mirage.Communication;
 
 namespace MirageGUIClient
 {
-    public partial class frmConsole : Form
+    public partial class frmConsole : Form, IResponseHandler
     {
-        public TcpClient client;
-        public BinaryReader reader;
-        public BinaryWriter writer;
+        private IOHandler _handler;
 
-        delegate void ResponseHandler(MudResponse response);
-
-        public frmConsole()
+        public frmConsole(IOHandler handler)
         {
             InitializeComponent();
+            this._handler = handler;
+            this._handler.ConnectStateChanged += new IOHandler.ConnectStateChangedHandler(handler_ConnectStateChanged);
+            SendButton.Enabled = _handler.IsConnected;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        void handler_ConnectStateChanged(object sender, EventArgs e)
         {
-            try
+            if (this.InvokeRequired)
             {
-                client = new TcpClient("localhost", 4501);
-                NetworkStream stm = client.GetStream();
-                reader = new BinaryReader(stm);
-                writer = new BinaryWriter(stm);
-                Thread t = new Thread(new ThreadStart(this.Run));
-                t.Start();
+                this.Invoke(new IOHandler.ConnectStateChangedHandler(handler_ConnectStateChanged), sender, e);
+                return;
             }
-            catch (Exception ex)
+            if (_handler.IsConnected)
             {
-                MessageBox.Show(ex.Message);
+                SendButton.Enabled = true;
+            }
+            else
+            {
+                SendButton.Enabled = false;
             }
         }
 
@@ -53,15 +52,20 @@ namespace MirageGUIClient
                 {
                     OutputText.AppendText(InputText.Text);
                 }
-                OutputText.AppendText("\r\n");                
-                writer.Write((int)AdvancedClientTransmitType.StringMessage);
-                writer.Write(InputText.Text);
+                OutputText.AppendText("\r\n");
+                _handler.SendString(InputText.Text);
                 InputText.Text = "";
             }
         }
 
         public void HandleResponse(MudResponse response)
         {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new ResponseHandler(HandleResponse), response);
+                return;
+            }
+
             if (response.Type == AdvancedClientTransmitType.JsonEncodedMessage)
             {
                 Mirage.Communication.Message msg = (Mirage.Communication.Message)response.Data;
@@ -71,7 +75,7 @@ namespace MirageGUIClient
                 }
                 else if (msg is EchoOffMessage)
                 {
-                    this.InputText.UseSystemPasswordChar = false;
+                    this.InputText.UseSystemPasswordChar = true;
                 }
                 else
                 {
@@ -83,32 +87,6 @@ namespace MirageGUIClient
                 OutputText.AppendText((string)response.Data);
             }
 
-        }
-
-        private void Run()
-        {
-            string name;
-            object data;
-            Serializer serializer = Serializer.GetSerializer(typeof(object));
-            while (true)
-            {
-                int type = reader.ReadInt32();
-                switch ((AdvancedClientTransmitType)type)
-                {
-                    case AdvancedClientTransmitType.StringMessage:
-                        name = reader.ReadString();
-                        data = reader.ReadString();
-                        break;
-                    case AdvancedClientTransmitType.JsonEncodedMessage:
-                        name = reader.ReadString();
-                        data = reader.ReadString();
-                        data =  (Mirage.Communication.Message) serializer.Deserialize((string) data);
-                        break;
-                    default:
-                        throw new Exception("Unrecognized response: " + type);
-                }
-                this.Invoke(new ResponseHandler(this.HandleResponse), new MudResponse((AdvancedClientTransmitType) type, name, data));
-            }
         }
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
@@ -127,6 +105,7 @@ namespace MirageGUIClient
             OutputText.ForeColor = fontDialog1.Color;
             InputText.Font = fontDialog1.Font;
             InputText.ForeColor = fontDialog1.Color;
+            MirageGUIClient.Default.Save();
         }
 
         private void colorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -136,6 +115,7 @@ namespace MirageGUIClient
             {
                 OutputText.BackColor = colorDialog1.Color;
                 InputText.BackColor = colorDialog1.Color;
+                MirageGUIClient.Default.Save();
             }
         }
     }

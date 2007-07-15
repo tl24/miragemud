@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MirageGUIClient" GeneratedClassName="MirageGUIClient">
+  <Profiles />
+  <Settings>
+    <Setting Name="RemoteHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">localhost</Value>
+    </Setting>
+    <Setting Name="Login" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Password" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="RemotePort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4500</Value>
+    </Setting>
+    <Setting Name="ConsoleFont" Type="System.Drawing.Font" Scope="User">
+      <Value Profile="(Default)">Microsoft Sans Serif, 8.25pt</Value>
+    </Setting>
+    <Setting Name="ConsoleBackground" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Window</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -97,6 +97,15 @@ namespace Mirage {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This command can not be executed by a ${ActorType}..
+        /// </summary>
+        internal static string Error_InvalidActor {
+            get {
+                return ResourceManager.GetString("Error.InvalidActor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Huh?.
         /// </summary>
         internal static string Error_InvalidCommand {
