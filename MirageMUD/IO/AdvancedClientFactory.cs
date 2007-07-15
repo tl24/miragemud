@@ -25,7 +25,7 @@ namespace Mirage.IO
         {
             IClient mudClient = new AdvancedClient();
             mudClient.Open(client);
-            mudClient.StateHandler = new LoginStateHandler(mudClient);
+            mudClient.StateHandler = new TextLoginStateHandler(mudClient);
             mudClient.StateHandler.HandleInput(null);
             return mudClient;
         }
