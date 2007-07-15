@@ -13,11 +13,11 @@ namespace MirageGUI {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class MirageGUIClient : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class MirageGUI : global::System.Configuration.ApplicationSettingsBase {
         
-        private static MirageGUIClient defaultInstance = ((MirageGUIClient)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new MirageGUIClient())));
+        private static MirageGUI defaultInstance = ((MirageGUI)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new MirageGUI())));
         
-        public static MirageGUIClient Default {
+        public static MirageGUI Default {
             get {
                 return defaultInstance;
             }

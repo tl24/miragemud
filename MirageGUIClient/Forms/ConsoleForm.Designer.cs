@@ -115,12 +115,12 @@ namespace MirageGUI.Forms
             this.OutputText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.OutputText.BackColor = global::MirageGUI.MirageGUIClient.Default.ConsoleBackColor;
-            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUI.MirageGUIClient.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUI.MirageGUIClient.Default, "ConsoleBackColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("ForeColor", global::MirageGUI.MirageGUIClient.Default, "ConsoleForeColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.OutputText.Font = global::MirageGUI.MirageGUIClient.Default.ConsoleFont;
-            this.OutputText.ForeColor = global::MirageGUI.MirageGUIClient.Default.ConsoleForeColor;
+            this.OutputText.BackColor = global::MirageGUI.MirageGUI.Default.ConsoleBackColor;
+            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUI.MirageGUI.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUI.MirageGUI.Default, "ConsoleBackColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("ForeColor", global::MirageGUI.MirageGUI.Default, "ConsoleForeColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.OutputText.Font = global::MirageGUI.MirageGUI.Default.ConsoleFont;
+            this.OutputText.ForeColor = global::MirageGUI.MirageGUI.Default.ConsoleForeColor;
             this.OutputText.Location = new System.Drawing.Point(55, 54);
             this.OutputText.Multiline = true;
             this.OutputText.Name = "OutputText";
@@ -134,12 +134,12 @@ namespace MirageGUI.Forms
             // 
             this.InputText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.InputText.BackColor = global::MirageGUI.MirageGUIClient.Default.ConsoleBackColor;
-            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUI.MirageGUIClient.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUI.MirageGUIClient.Default, "ConsoleBackColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("ForeColor", global::MirageGUI.MirageGUIClient.Default, "ConsoleForeColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.InputText.Font = global::MirageGUI.MirageGUIClient.Default.ConsoleFont;
-            this.InputText.ForeColor = global::MirageGUI.MirageGUIClient.Default.ConsoleForeColor;
+            this.InputText.BackColor = global::MirageGUI.MirageGUI.Default.ConsoleBackColor;
+            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUI.MirageGUI.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUI.MirageGUI.Default, "ConsoleBackColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("ForeColor", global::MirageGUI.MirageGUI.Default, "ConsoleForeColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputText.Font = global::MirageGUI.MirageGUI.Default.ConsoleFont;
+            this.InputText.ForeColor = global::MirageGUI.MirageGUI.Default.ConsoleForeColor;
             this.InputText.Location = new System.Drawing.Point(55, 27);
             this.InputText.MaximumSize = new System.Drawing.Size(800, 20);
             this.InputText.MinimumSize = new System.Drawing.Size(100, 20);

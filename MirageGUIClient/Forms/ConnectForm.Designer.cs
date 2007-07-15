@@ -66,23 +66,23 @@ namespace MirageGUI.Forms
             // 
             // RemotePort
             // 
-            this.RemotePort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.MirageGUIClient.Default, "RemotePort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.RemotePort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.MirageGUI.Default, "RemotePort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.RemotePort.Location = new System.Drawing.Point(91, 36);
             this.RemotePort.Mask = "00000";
             this.RemotePort.Name = "RemotePort";
             this.RemotePort.Size = new System.Drawing.Size(100, 20);
             this.RemotePort.TabIndex = 5;
-            this.RemotePort.Text = global::MirageGUI.MirageGUIClient.Default.RemotePort;
+            this.RemotePort.Text = global::MirageGUI.MirageGUI.Default.RemotePort;
             this.RemotePort.ValidatingType = typeof(int);
             // 
             // RemoteHost
             // 
-            this.RemoteHost.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.MirageGUIClient.Default, "RemoteHost", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.RemoteHost.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.MirageGUI.Default, "RemoteHost", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.RemoteHost.Location = new System.Drawing.Point(91, 9);
             this.RemoteHost.Name = "RemoteHost";
             this.RemoteHost.Size = new System.Drawing.Size(189, 20);
             this.RemoteHost.TabIndex = 2;
-            this.RemoteHost.Text = global::MirageGUI.MirageGUIClient.Default.RemoteHost;
+            this.RemoteHost.Text = global::MirageGUI.MirageGUI.Default.RemoteHost;
             // 
             // CancelButton
             // 

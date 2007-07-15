@@ -66,11 +66,11 @@
     </Compile>
     <Compile Include="Code\IOHandler.cs" />
     <Compile Include="Code\MessageDispatcher.cs" />
-    <Compile Include="MirageGUIClient.cs" />
-    <Compile Include="MirageGUIClient.Designer.cs">
+    <Compile Include="MirageGUI.cs" />
+    <Compile Include="MirageGUI.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>MirageGUIClient.settings</DependentUpon>
+      <DependentUpon>MirageGUI.settings</DependentUpon>
     </Compile>
     <Compile Include="Code\MudResponse.cs" />
     <Compile Include="Program.cs" />
@@ -102,9 +102,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <None Include="MirageGUIClient.settings">
+    <None Include="MirageGUI.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>MirageGUIClient.Designer.cs</LastGenOutput>
+      <LastGenOutput>MirageGUI.Designer.cs</LastGenOutput>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
