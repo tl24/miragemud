@@ -86,12 +86,24 @@ namespace MirageGUIClient {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Window")]
-        public global::System.Drawing.Color ConsoleBackground {
+        public global::System.Drawing.Color ConsoleForeColor {
             get {
-                return ((global::System.Drawing.Color)(this["ConsoleBackground"]));
+                return ((global::System.Drawing.Color)(this["ConsoleForeColor"]));
             }
             set {
-                this["ConsoleBackground"] = value;
+                this["ConsoleForeColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Window")]
+        public global::System.Drawing.Color ConsoleBackColor {
+            get {
+                return ((global::System.Drawing.Color)(this["ConsoleBackColor"]));
+            }
+            set {
+                this["ConsoleBackColor"] = value;
             }
         }
     }
