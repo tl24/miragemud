@@ -41,7 +41,7 @@ namespace Mirage.Util
         /// an argument to Require.
         /// </summary>
         /// <param name="input">The user's current input string</param>
-        public delegate void ValidateDelegate(string input);
+        public delegate void ValidateDelegate(object input);
 
         /// <summary>
         /// Creates an instance with the given client.  The client
@@ -183,7 +183,7 @@ namespace Mirage.Util
         /// and run.
         /// </summary>
         /// <param name="input">client input</param>
-        public void HandleInput(string input)
+        public void HandleInput(object input)
         {
             if (_nextState == null)
             {

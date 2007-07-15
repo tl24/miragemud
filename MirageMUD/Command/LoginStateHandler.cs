@@ -151,8 +151,9 @@ namespace Mirage.Command
         /// if it is, then determine if it is an existing player or a new one.
         /// </summary>
         /// <param name="input"></param>
-        private void ValidateName(string input)
+        private void ValidateName(object data)
         {
+            string input = (string)data;
             if (input.Length == 0) {
                 _failed = true;
                 Finished = true;
@@ -207,8 +208,9 @@ namespace Mirage.Command
         /// and did not mistype the name.
         /// </summary>
         /// <param name="input"></param>
-        private void ConfirmName(string input)
+        private void ConfirmName(object data)
         {
+            string input = (string)data;
             if (input.StartsWith("y", StringComparison.CurrentCultureIgnoreCase))
             {  // Yes
                 SetValue<bool>("confirmName", true);
@@ -228,8 +230,9 @@ namespace Mirage.Command
         /// Validate the password of an existing player.
         /// </summary>
         /// <param name="input"></param>
-        private void ValidateOldPassword(string input)
+        private void ValidateOldPassword(object data)
         {
+            string input = (string)data;
             Client.Write(new EchoOnMessage());
             if (!GetValue<Player>("player").ComparePassword(input))
             {
@@ -251,8 +254,9 @@ namespace Mirage.Command
         /// standards.
         /// </summary>
         /// <param name="input"></param>
-        private void ValidateNewPassword(string input)
+        private void ValidateNewPassword(object data)
         {
+            string input = (string)data;
             Client.Write(new EchoOnMessage());
             if (input.Length < 5)
             {
@@ -268,8 +272,9 @@ namespace Mirage.Command
         /// validated against their first entry.
         /// </summary>
         /// <param name="input"></param>
-        private void ConfirmPassword(string input)
+        private void ConfirmPassword(object data)
         {
+            string input = (string)data;
             Client.Write(new EchoOnMessage());
             _echoOn = true;
             Client.Write(new StringMessage(MessageType.UIControl, "Newline", "\n\r"));
