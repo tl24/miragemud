@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using MirageGUI.Forms;
 
-namespace MirageGUIClient
+namespace MirageGUI
 {
     static class Program
     {
