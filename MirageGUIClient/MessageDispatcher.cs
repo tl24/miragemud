@@ -8,7 +8,7 @@ namespace MirageGUIClient
     public class MessageDispatcher
     {
         private BuilderPane _masterForm;
-        private frmConsole _console;
+        private ConsoleForm _console;
 
         public MessageDispatcher(BuilderPane masterForm)
         {

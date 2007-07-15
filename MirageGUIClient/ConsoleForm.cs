@@ -15,11 +15,11 @@ using Mirage.Communication;
 
 namespace MirageGUIClient
 {
-    public partial class frmConsole : Form, IResponseHandler
+    public partial class ConsoleForm : Form, IResponseHandler
     {
         private IOHandler _handler;
 
-        public frmConsole(IOHandler handler)
+        public ConsoleForm(IOHandler handler)
         {
             InitializeComponent();
             this._handler = handler;

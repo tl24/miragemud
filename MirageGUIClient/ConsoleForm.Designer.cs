@@ -1,6 +1,6 @@
 namespace MirageGUIClient
 {
-    partial class frmConsole
+    partial class ConsoleForm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,8 +30,6 @@ namespace MirageGUIClient
         {
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.InputText = new System.Windows.Forms.TextBox();
-            this.OutputText = new System.Windows.Forms.TextBox();
             this.SendButton = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,6 +37,8 @@ namespace MirageGUIClient
             this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.OutputText = new System.Windows.Forms.TextBox();
+            this.InputText = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,40 +59,6 @@ namespace MirageGUIClient
             this.label2.Size = new System.Drawing.Size(39, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "Output";
-            // 
-            // InputText
-            // 
-            this.InputText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.InputText.BackColor = global::MirageGUIClient.MirageGUIClient.Default.ConsoleBackground;
-            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleBackground", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.InputText.Font = global::MirageGUIClient.MirageGUIClient.Default.ConsoleFont;
-            this.InputText.Location = new System.Drawing.Point(55, 27);
-            this.InputText.MaximumSize = new System.Drawing.Size(800, 20);
-            this.InputText.MinimumSize = new System.Drawing.Size(100, 20);
-            this.InputText.Name = "InputText";
-            this.InputText.Size = new System.Drawing.Size(292, 20);
-            this.InputText.TabIndex = 1;
-            this.InputText.WordWrap = false;
-            // 
-            // OutputText
-            // 
-            this.OutputText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.OutputText.BackColor = global::MirageGUIClient.MirageGUIClient.Default.ConsoleBackground;
-            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleBackground", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.OutputText.Font = global::MirageGUIClient.MirageGUIClient.Default.ConsoleFont;
-            this.OutputText.Location = new System.Drawing.Point(55, 54);
-            this.OutputText.Multiline = true;
-            this.OutputText.Name = "OutputText";
-            this.OutputText.ReadOnly = true;
-            this.OutputText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.OutputText.Size = new System.Drawing.Size(348, 226);
-            this.OutputText.TabIndex = 3;
-            this.OutputText.WordWrap = false;
             // 
             // SendButton
             // 
@@ -144,9 +110,46 @@ namespace MirageGUIClient
             this.fontDialog1.ShowColor = true;
             this.fontDialog1.Apply += new System.EventHandler(this.fontDialog1_Apply);
             // 
-            // frmConsole
+            // OutputText
             // 
-            this.AcceptButton = this.SendButton;
+            this.OutputText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.OutputText.BackColor = global::MirageGUIClient.MirageGUIClient.Default.ConsoleBackColor;
+            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleBackColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("ForeColor", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleForeColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.OutputText.Font = global::MirageGUIClient.MirageGUIClient.Default.ConsoleFont;
+            this.OutputText.ForeColor = global::MirageGUIClient.MirageGUIClient.Default.ConsoleForeColor;
+            this.OutputText.Location = new System.Drawing.Point(55, 54);
+            this.OutputText.Multiline = true;
+            this.OutputText.Name = "OutputText";
+            this.OutputText.ReadOnly = true;
+            this.OutputText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.OutputText.Size = new System.Drawing.Size(348, 226);
+            this.OutputText.TabIndex = 3;
+            this.OutputText.WordWrap = false;
+            // 
+            // InputText
+            // 
+            this.InputText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.InputText.BackColor = global::MirageGUIClient.MirageGUIClient.Default.ConsoleBackColor;
+            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleBackColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("ForeColor", global::MirageGUIClient.MirageGUIClient.Default, "ConsoleForeColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.InputText.Font = global::MirageGUIClient.MirageGUIClient.Default.ConsoleFont;
+            this.InputText.ForeColor = global::MirageGUIClient.MirageGUIClient.Default.ConsoleForeColor;
+            this.InputText.Location = new System.Drawing.Point(55, 27);
+            this.InputText.MaximumSize = new System.Drawing.Size(800, 20);
+            this.InputText.MinimumSize = new System.Drawing.Size(100, 20);
+            this.InputText.Name = "InputText";
+            this.InputText.Size = new System.Drawing.Size(292, 20);
+            this.InputText.TabIndex = 1;
+            this.InputText.WordWrap = false;
+            // 
+            // ConsoleForm
+            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(415, 292);
@@ -159,7 +162,7 @@ namespace MirageGUIClient
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(225, 150);
-            this.Name = "frmConsole";
+            this.Name = "ConsoleForm";
             this.Text = "Mirage Builder Console";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

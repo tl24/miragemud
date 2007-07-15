@@ -13,7 +13,7 @@ namespace MirageGUIClient
     public partial class BuilderPane : Form, IResponseHandler
     {
         private IOHandler _handler;
-        private frmConsole console;
+        private ConsoleForm console;
         private MessageDispatcher _dispatcher;
 
         public BuilderPane()
@@ -36,7 +36,7 @@ namespace MirageGUIClient
         private void BuilderPane_Load(object sender, EventArgs e)
         {
             // construct the console
-            console = new frmConsole(this._handler);
+            console = new ConsoleForm(this._handler);
             console.TopMost = false;
             console.FormBorderStyle = FormBorderStyle.None;
             console.ShowInTaskbar = false;
@@ -65,7 +65,7 @@ namespace MirageGUIClient
             //}
         }
 
-        public frmConsole Console
+        public ConsoleForm Console
         {
             get { return console; }
         }
