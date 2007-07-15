@@ -29,14 +29,17 @@ namespace MirageGUI.Forms
         private void InitializeComponent()
         {
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
+            this.ConnectedLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.fileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OuterSplit = new System.Windows.Forms.SplitContainer();
             this.InnerSplit = new System.Windows.Forms.SplitContainer();
-            this.ConnectedLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.AreaTree = new System.Windows.Forms.TreeView();
             this.EditorTabs = new System.Windows.Forms.TabControl();
+            this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusStrip.SuspendLayout();
             this.MainMenu.SuspendLayout();
             this.OuterSplit.Panel1.SuspendLayout();
@@ -56,10 +59,17 @@ namespace MirageGUI.Forms
             this.StatusStrip.TabIndex = 2;
             this.StatusStrip.Text = "statusStrip1";
             // 
+            // ConnectedLabel
+            // 
+            this.ConnectedLabel.Name = "ConnectedLabel";
+            this.ConnectedLabel.Size = new System.Drawing.Size(79, 17);
+            this.ConnectedLabel.Text = "Not Connected";
+            // 
             // MainMenu
             // 
             this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileMenuItem});
+            this.fileMenuItem,
+            this.consoleToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.Size = new System.Drawing.Size(558, 24);
@@ -77,7 +87,7 @@ namespace MirageGUI.Forms
             // connectMenuItem
             // 
             this.connectMenuItem.Name = "connectMenuItem";
-            this.connectMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.connectMenuItem.Size = new System.Drawing.Size(125, 22);
             this.connectMenuItem.Text = "Connect";
             this.connectMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
@@ -112,12 +122,6 @@ namespace MirageGUI.Forms
             this.InnerSplit.SplitterDistance = 129;
             this.InnerSplit.TabIndex = 1;
             // 
-            // ConnectedLabel
-            // 
-            this.ConnectedLabel.Name = "ConnectedLabel";
-            this.ConnectedLabel.Size = new System.Drawing.Size(79, 17);
-            this.ConnectedLabel.Text = "Not Connected";
-            // 
             // AreaTree
             // 
             this.AreaTree.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -136,6 +140,29 @@ namespace MirageGUI.Forms
             this.EditorTabs.Size = new System.Drawing.Size(425, 158);
             this.EditorTabs.TabIndex = 0;
             // 
+            // consoleToolStripMenuItem
+            // 
+            this.consoleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fontToolStripMenuItem,
+            this.backgroundColorToolStripMenuItem});
+            this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
+            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.consoleToolStripMenuItem.Text = "Console";
+            // 
+            // fontToolStripMenuItem
+            // 
+            this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.fontToolStripMenuItem.Text = "Font";
+            this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
+            // 
+            // backgroundColorToolStripMenuItem
+            // 
+            this.backgroundColorToolStripMenuItem.Name = "backgroundColorToolStripMenuItem";
+            this.backgroundColorToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.backgroundColorToolStripMenuItem.Text = "Background Color";
+            this.backgroundColorToolStripMenuItem.Click += new System.EventHandler(this.backgroundColorToolStripMenuItem_Click);
+            // 
             // BuilderPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -147,6 +174,7 @@ namespace MirageGUI.Forms
             this.MainMenuStrip = this.MainMenu;
             this.Name = "BuilderPane";
             this.Text = "BuilderPane";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BuilderPane_FormClosing);
             this.Load += new System.EventHandler(this.BuilderPane_Load);
             this.StatusStrip.ResumeLayout(false);
             this.StatusStrip.PerformLayout();
@@ -173,5 +201,8 @@ namespace MirageGUI.Forms
         private System.Windows.Forms.ToolStripStatusLabel ConnectedLabel;
         private System.Windows.Forms.TreeView AreaTree;
         private System.Windows.Forms.TabControl EditorTabs;
+        private System.Windows.Forms.ToolStripMenuItem consoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fontToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backgroundColorToolStripMenuItem;
     }
 }

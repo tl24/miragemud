@@ -54,8 +54,10 @@ namespace MirageGUI.Code
         {
             if (IsConnected)
                 client.Close();
-            reader.Close();
-            writer.Close();
+            if (reader != null)
+                reader.Close();
+            if (writer != null)
+                writer.Close();
             client = null;
             reader = null;
             writer = null;
