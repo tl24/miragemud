@@ -102,7 +102,7 @@
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\Interpret.cs" />
     <Compile Include="Command\MethodInvoker.cs" />
-    <Compile Include="Command\LoginStateHandler.cs" />
+    <Compile Include="Command\TextLoginStateHandler.cs" />
     <Compile Include="Command\ReflectedCommand.cs" />
     <Compile Include="Communication\Channel.cs" />
     <Compile Include="Communication\EchoOffMessage.cs" />
