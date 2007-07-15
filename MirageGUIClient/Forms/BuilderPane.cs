@@ -7,8 +7,9 @@ using System.Text;
 using System.Windows.Forms;
 using Mirage.Communication.BuilderMessages;
 using Mirage.Data;
+using MirageGUI.Code;
 
-namespace MirageGUIClient
+namespace MirageGUI.Forms
 {
     public partial class BuilderPane : Form, IResponseHandler
     {

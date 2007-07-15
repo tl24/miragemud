@@ -5,8 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
-namespace MirageGUIClient
+using MirageGUI.Code;
+namespace MirageGUI.Forms
 {
     public partial class ConnectForm : Form
     {
@@ -24,7 +24,7 @@ namespace MirageGUIClient
             {
                 this.Cursor = Cursors.WaitCursor;
                 this.handler.Connect(RemoteHost.Text, int.Parse(RemotePort.Text));
-                MirageGUIClient.Default.Save();
+                MirageGUI.Default.Save();
                 this.Close();
             }
             catch (Exception ex)

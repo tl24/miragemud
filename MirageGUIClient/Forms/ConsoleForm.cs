@@ -12,8 +12,9 @@ using Mirage.IO;
 using System.Threading;
 using JsonExSerializer;
 using Mirage.Communication;
+using MirageGUI.Code;
 
-namespace MirageGUIClient
+namespace MirageGUI.Forms
 {
     public partial class ConsoleForm : Form, IResponseHandler
     {
@@ -105,7 +106,7 @@ namespace MirageGUIClient
             OutputText.ForeColor = fontDialog1.Color;
             InputText.Font = fontDialog1.Font;
             InputText.ForeColor = fontDialog1.Color;
-            MirageGUIClient.Default.Save();
+            MirageGUI.Default.Save();
         }
 
         private void colorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -115,7 +116,7 @@ namespace MirageGUIClient
             {
                 OutputText.BackColor = colorDialog1.Color;
                 InputText.BackColor = colorDialog1.Color;
-                MirageGUIClient.Default.Save();
+                MirageGUI.Default.Save();
             }
         }
     }

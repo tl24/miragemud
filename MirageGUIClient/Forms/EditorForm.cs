@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 
-namespace MirageGUIClient
+namespace MirageGUI.Forms
 {
     public partial class EditorForm : Form
     {

@@ -7,7 +7,7 @@ using System.Threading;
 using JsonExSerializer;
 using Mirage.IO;
 
-namespace MirageGUIClient
+namespace MirageGUI.Code
 {
     public class IOHandler
     {

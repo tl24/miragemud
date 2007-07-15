@@ -1,4 +1,4 @@
-namespace MirageGUIClient
+namespace MirageGUI.Forms
 {
     partial class EditorForm
     {

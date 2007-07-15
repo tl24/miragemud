@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using MirageGUI.Forms;
 
-namespace MirageGUIClient
+namespace MirageGUI.Code
 {
     public class MessageDispatcher
     {

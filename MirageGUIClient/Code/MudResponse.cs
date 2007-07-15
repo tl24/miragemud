@@ -4,7 +4,7 @@ using System.Text;
 using Mirage.IO;
 using Mirage.Communication;
 
-namespace MirageGUIClient
+namespace MirageGUI.Code
 {
     public class MudResponse
     {
