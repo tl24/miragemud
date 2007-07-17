@@ -48,7 +48,7 @@ namespace Mirage.IO
             _shutdown = false;
             ClientManager manager = new ClientManager();
             manager.AddFactory(new TextClientFactory(_port));
-            manager.AddFactory(new AdvancedClientFactory(_port + 1));
+            manager.AddFactory(new GuiClientFactory(_port + 1));
             GlobalLists globalLists = GlobalLists.GetInstance();
 
             DateTime lastTime = DateTime.Now;

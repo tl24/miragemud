@@ -89,9 +89,9 @@
     <Compile Include="Data\Query\QueryManager.cs" />
     <Compile Include="Data\RoomExit.cs" />
     <Compile Include="Data\Thing.cs" />
-    <Compile Include="IO\AdvancedClient.cs" />
-    <Compile Include="IO\AdvancedClientFactory.cs" />
-    <Compile Include="IO\BuilderLoginStateHandler.cs" />
+    <Compile Include="IO\GuiClient.cs" />
+    <Compile Include="IO\GuiClientFactory.cs" />
+    <Compile Include="IO\GuiLoginHandler.cs" />
     <Compile Include="IO\ClientBase.cs" />
     <Compile Include="IO\ClientFactoryBase.cs" />
     <Compile Include="IO\ConnectedState.cs" />

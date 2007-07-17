@@ -19,7 +19,7 @@ namespace Mirage.Command
         /// <param name="builder">the builder player doing the request</param>
         /// <returns>area list</returns>
         [Command(
-            ClientTypes=new Type[]{typeof(AdvancedClient)},
+            ClientTypes=new Type[]{typeof(GuiClient)},
             Roles = new string[] {"builder"})]
         public static Message GetAreas()
         {
@@ -34,7 +34,7 @@ namespace Mirage.Command
         /// <param name="builder">the builder player doing the request</param>
         /// <returns>area</returns>
         [Command(
-            ClientTypes = new Type[] { typeof(AdvancedClient) },
+            ClientTypes = new Type[] { typeof(GuiClient) },
             Roles = new string[] { "builder" })]
         public static Message GetArea(string name)
         {
