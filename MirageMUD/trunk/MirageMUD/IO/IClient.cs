@@ -75,7 +75,7 @@ namespace Mirage.IO
         /// command interpreter.
         /// </summary>
         /// <see cref="Mirage.Command.LoginStateHandler"/>
-        AbstractStateMachine StateHandler { get; set; }
+        ILoginInputHandler LoginHandler { get; set; }
 
         /// <summary>
         /// Gets or sets a reference to the ClientFactory that created this client

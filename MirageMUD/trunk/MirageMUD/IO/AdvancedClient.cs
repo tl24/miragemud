@@ -55,14 +55,25 @@ namespace Mirage.IO
                     }
                     if (msg.type == AdvancedClientTransmitType.StringMessage)
                     {
-                        if (StateHandler != null)
+                        if (LoginHandler != null)
                         {
-                            StateHandler.HandleInput((string) msg.data);
+                            LoginHandler.HandleInput((string)msg.data);
                         }
                         else
                         {
                             Interpreter.ExecuteCommand(Player, (string)msg.data);
-                        }                        
+                        }
+                    }
+                    else
+                    {
+                        if (LoginHandler != null)
+                        {
+                            LoginHandler.HandleInput(msg.data);
+                        }
+                        else
+                        {
+                            throw new NotSupportedException("Advanced Client can't handle object data yet");
+                        }
                     }
                 }
             }
