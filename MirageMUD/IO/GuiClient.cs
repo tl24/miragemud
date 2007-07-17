@@ -21,14 +21,14 @@ namespace Mirage.IO
     /// Mud client class that can accept and send objects and other complex types
     /// more advanced than strings
     /// </summary>
-    public class AdvancedClient : ClientBase
+    public class GuiClient : ClientBase
     {
         protected BinaryReader reader;
         protected BinaryWriter writer;
 
         protected Queue<AdvancedMessage> inputQueue;
 
-        public AdvancedClient()
+        public GuiClient()
         {
             inputQueue = new Queue<AdvancedMessage>();
         }

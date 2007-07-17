@@ -8,14 +8,14 @@ using Mirage.Command;
 
 namespace Mirage.IO
 {
-    public class AdvancedClientFactory : ClientFactoryBase
+    public class GuiClientFactory : ClientFactoryBase
     {
-        private static ILog log = LogManager.GetLogger(typeof(AdvancedClientFactory));
+        private static ILog log = LogManager.GetLogger(typeof(GuiClientFactory));
 
-        public AdvancedClientFactory(IPEndPoint listeningEndPoint) : base(listeningEndPoint, log) {
+        public GuiClientFactory(IPEndPoint listeningEndPoint) : base(listeningEndPoint, log) {
         }
 
-        public AdvancedClientFactory(int port)
+        public GuiClientFactory(int port)
             : base(port, log)
         {
         }
@@ -23,9 +23,9 @@ namespace Mirage.IO
 
         protected override IClient CreateClient(TcpClient client)
         {
-            IClient mudClient = new AdvancedClient();
+            IClient mudClient = new GuiClient();
             mudClient.Open(client);
-            mudClient.LoginHandler = new BuilderLoginStateHandler(mudClient);
+            mudClient.LoginHandler = new GuiLoginHandler(mudClient);
             mudClient.LoginHandler.HandleInput(null);
             return mudClient;
         }

@@ -11,11 +11,15 @@ using System.Configuration;
 
 namespace Mirage.IO
 {
-    public class BuilderLoginStateHandler : ILoginInputHandler
+    /// <summary>
+    /// State handler used to process a Gui client connection until login is
+    /// completed.
+    /// </summary>
+    public class GuiLoginHandler : ILoginInputHandler
     {
         private IClient _client;
 
-        public BuilderLoginStateHandler(IClient client)
+        public GuiLoginHandler(IClient client)
         {
             _client = client;
         }
