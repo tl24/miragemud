@@ -19,9 +19,10 @@ namespace MirageGUI.Code
         private int _port;
 
         public delegate void ConnectStateChangedHandler(object sender, EventArgs e);
-
+        
         public event ResponseHandler ResponseReceived;
-        public event ConnectStateChangedHandler ConnectStateChanged;
+        public event EventHandler ConnectStateChanged;
+        public event EventHandler LoginSuccess;
 
         public void Connect(string remoteHost, int port)
         {
@@ -79,7 +80,7 @@ namespace MirageGUI.Code
                     switch ((AdvancedClientTransmitType)type)
                     {
                         case AdvancedClientTransmitType.StringMessage:
-                            name = reader.ReadString();
+                            name = "";
                             data = reader.ReadString();
                             break;
                         case AdvancedClientTransmitType.JsonEncodedMessage:
@@ -92,7 +93,7 @@ namespace MirageGUI.Code
                             throw new Exception("Unrecognized response: " + type);
                     }
                     //TODO: Wrap in exception handler so it doesn't kill the thread
-                    OnResponseRecieved(new MudResponse((AdvancedClientTransmitType)type, name, data));
+                    OnResponseReceived(new MudResponse((AdvancedClientTransmitType)type, name, data));
                 }
             }
             catch (Exception ex)
@@ -106,7 +107,7 @@ namespace MirageGUI.Code
             }
         }
 
-        protected void OnResponseRecieved(MudResponse response)
+        protected void OnResponseReceived(MudResponse response)
         {
             if (ResponseReceived != null)
                 ResponseReceived(response);
@@ -118,6 +119,11 @@ namespace MirageGUI.Code
                 ConnectStateChanged(this, new EventArgs());
         }
 
+        public void OnLogin()
+        {
+            if (LoginSuccess != null)
+                LoginSuccess(this, new EventArgs());
+        }
         /// <summary>
         /// Sends string data to the connection
         /// </summary>
@@ -126,6 +132,15 @@ namespace MirageGUI.Code
         {
             writer.Write((int)AdvancedClientTransmitType.StringMessage);
             writer.Write(data);
+        }
+
+        public void SendObject(string name, object o)
+        {
+            writer.Write((int)AdvancedClientTransmitType.JsonEncodedMessage);
+            writer.Write(name);
+            Serializer serializer = Serializer.GetSerializer(typeof(object));
+            serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
+            writer.Write(serializer.Serialize(o));
         }
 
         public string Host

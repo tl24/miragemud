@@ -32,6 +32,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\lib\JsonExSerializer.dll</HintPath>
     </Reference>
+    <Reference Include="NGenerics, Version=1.2.0.0, Culture=neutral, PublicKeyToken=e4b41be133ea7faf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\NGenerics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -40,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\RealSortedList.cs" />
     <Compile Include="Forms\BuilderPane.cs">
       <SubType>Form</SubType>
     </Compile>

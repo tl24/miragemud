@@ -30,6 +30,10 @@ namespace MirageGUI.Forms
                     Label lbl = new Label();
                     lbl.Text = prop.Name;
                     TextBox tb = new TextBox();
+                    if (prop.Name == "LongDescription") {
+                        tb.Multiline = true;
+                        tb.Height *=3;
+                    }
                     tb.Text = prop.GetValue(data, null).ToString();
 
                     int row = 0;
@@ -46,7 +50,7 @@ namespace MirageGUI.Forms
 
                     TableLayout.Controls.Add(lbl, 0, row);
                     TableLayout.Controls.Add(tb, 1, row);
-                    
+                    tb.Dock = DockStyle.Fill;                    
                 }
             }
             Button btn = new Button();

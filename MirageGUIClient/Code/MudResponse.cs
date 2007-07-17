@@ -6,12 +6,13 @@ using Mirage.Communication;
 
 namespace MirageGUI.Code
 {
+
     public class MudResponse
     {
         private AdvancedClientTransmitType _type;
         private string _name;
         private object _data;
-
+        
         public MudResponse(AdvancedClientTransmitType type, string name, object data)
         {
             this._type = type;
