@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.IO;
 using Mirage.Data;
 using Mirage.Util;
+using Mirage.Command;
 
 namespace Mirage.IO
 {
@@ -23,7 +24,7 @@ namespace Mirage.IO
         /// State Handler for this client.  If this is present it takes
         /// precedence over the command interpreter.
         /// </summary>
-        protected AbstractStateMachine _stateHandler;
+        protected ILoginInputHandler _loginHandler;
 
         /// <summary>
         ///     A reference to the tcp client (socket) that this description
@@ -84,10 +85,10 @@ namespace Mirage.IO
         /// <summary>
         ///     state machine handler for the client
         /// </summary>
-        public virtual AbstractStateMachine StateHandler
+        public virtual ILoginInputHandler LoginHandler
         {
-            get { return _stateHandler; }
-            set { _stateHandler = value; }
+            get { return _loginHandler; }
+            set { _loginHandler = value; }
         }
 
         /// <summary>

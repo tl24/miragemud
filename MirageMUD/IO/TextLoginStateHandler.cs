@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.IO;
 using Mirage.Data;
 using Mirage.Communication;
 using Mirage.Data.Query;
@@ -9,10 +8,10 @@ using System.Configuration;
 using System.Text.RegularExpressions;
 using Mirage.Util;
 
-namespace Mirage.Command
+namespace Mirage.IO
 {
     /// <summary>
-    /// StateHandler class that controls Login and player creation.
+    /// StateHandler class that controls Login and player creation for the text client.
     /// </summary>
     public class TextLoginStateHandler : AbstractStateMachine
     {
@@ -117,7 +116,7 @@ namespace Mirage.Command
                     GetValue<Player>("player").Client = Client;
                 }
             }
-            Client.StateHandler = null;
+            Client.LoginHandler = null;
             Client = null;            
         }
 

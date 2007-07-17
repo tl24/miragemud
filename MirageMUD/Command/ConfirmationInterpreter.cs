@@ -8,7 +8,7 @@ namespace Mirage.Command
 {
     public class ConfirmationInterpreter : IInterpret
     {
-        private string _message = "Are you sure? (y\\n) ";
+        private string _message = "Are you sure? (y\r\n) ";
         private string _cancellationMessage = "Command cancelled\r\n";
         private ICommand _method;
         private IInterpret priorInterpreter;

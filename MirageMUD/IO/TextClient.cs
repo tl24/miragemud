@@ -152,9 +152,9 @@ namespace Mirage.IO
 
             if (input != null)
             {
-                if (StateHandler != null)
+                if (LoginHandler != null)
                 {
-                    StateHandler.HandleInput(input);
+                    LoginHandler.HandleInput(input);
                 }
                 else
                 {

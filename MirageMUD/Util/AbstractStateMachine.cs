@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Specialized;
 using Mirage.IO;
 using Mirage.Communication;
+using Mirage.Command;
 
 namespace Mirage.Util
 {
@@ -13,7 +14,7 @@ namespace Mirage.Util
     /// the Player/Session through a range of states.  Prompting for
     /// necessary items when needed.
     /// </summary>
-    public abstract class AbstractStateMachine
+    public abstract class AbstractStateMachine : ILoginInputHandler
     {
         /// <summary>
         /// Holds context items for the State Machine

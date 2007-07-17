@@ -57,10 +57,12 @@
     <Compile Include="Command\ConfirmationCommand.cs" />
     <Compile Include="Command\ConfirmationInterpreter.cs" />
     <Compile Include="Command\CustomParseAttribute.cs" />
+    <Compile Include="Command\ILoginInputHandler.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
     <Compile Include="Command\Movement.cs" />
     <Compile Include="Communication\BuilderMessages\AreaListMessage.cs" />
     <Compile Include="Communication\BuilderMessages\AreaMessage.cs" />
+    <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
     <Compile Include="Communication\ErrorResourceMessage.cs" />
     <Compile Include="Communication\ITemplate.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Data\Thing.cs" />
     <Compile Include="IO\AdvancedClient.cs" />
     <Compile Include="IO\AdvancedClientFactory.cs" />
+    <Compile Include="IO\BuilderLoginStateHandler.cs" />
     <Compile Include="IO\ClientBase.cs" />
     <Compile Include="IO\ClientFactoryBase.cs" />
     <Compile Include="IO\ConnectedState.cs" />
@@ -102,7 +105,7 @@
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\Interpret.cs" />
     <Compile Include="Command\MethodInvoker.cs" />
-    <Compile Include="Command\TextLoginStateHandler.cs" />
+    <Compile Include="IO\TextLoginStateHandler.cs" />
     <Compile Include="Command\ReflectedCommand.cs" />
     <Compile Include="Communication\Channel.cs" />
     <Compile Include="Communication\EchoOffMessage.cs" />
