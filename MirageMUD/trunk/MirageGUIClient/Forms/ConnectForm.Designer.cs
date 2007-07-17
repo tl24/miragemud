@@ -34,6 +34,10 @@ namespace MirageGUI.Forms
             this.RemotePort = new System.Windows.Forms.MaskedTextBox();
             this.RemoteHost = new System.Windows.Forms.TextBox();
             this.CancelButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.Login = new System.Windows.Forms.TextBox();
+            this.Password = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -56,7 +60,7 @@ namespace MirageGUI.Forms
             // 
             // ConnectButton
             // 
-            this.ConnectButton.Location = new System.Drawing.Point(47, 84);
+            this.ConnectButton.Location = new System.Drawing.Point(60, 123);
             this.ConnectButton.Name = "ConnectButton";
             this.ConnectButton.Size = new System.Drawing.Size(75, 23);
             this.ConnectButton.TabIndex = 4;
@@ -87,20 +91,57 @@ namespace MirageGUI.Forms
             // CancelButton
             // 
             this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(144, 83);
+            this.CancelButton.Location = new System.Drawing.Point(157, 122);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 6;
             this.CancelButton.Text = "Cancel";
             this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 65);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(36, 13);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Login:";
+            // 
+            // Login
+            // 
+            this.Login.Location = new System.Drawing.Point(91, 62);
+            this.Login.Name = "Login";
+            this.Login.Size = new System.Drawing.Size(100, 20);
+            this.Login.TabIndex = 8;
+            // 
+            // Password
+            // 
+            this.Password.Location = new System.Drawing.Point(91, 88);
+            this.Password.Name = "Password";
+            this.Password.Size = new System.Drawing.Size(100, 20);
+            this.Password.TabIndex = 9;
+            this.Password.UseSystemPasswordChar = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 91);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(56, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Password:";
             // 
             // ConnectForm
             // 
             this.AcceptButton = this.ConnectButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.CancelButton;
-            this.ClientSize = new System.Drawing.Size(292, 126);
+            this.ClientSize = new System.Drawing.Size(292, 168);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.Password);
+            this.Controls.Add(this.Login);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.RemotePort);
             this.Controls.Add(this.ConnectButton);
@@ -122,5 +163,9 @@ namespace MirageGUI.Forms
         private System.Windows.Forms.Button ConnectButton;
         private System.Windows.Forms.MaskedTextBox RemotePort;
         private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox Login;
+        private System.Windows.Forms.TextBox Password;
+        private System.Windows.Forms.Label label4;
     }
 }

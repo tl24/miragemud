@@ -24,7 +24,7 @@ namespace MirageGUI.Forms
         {
             InitializeComponent();
             this._handler = handler;
-            this._handler.ConnectStateChanged += new IOHandler.ConnectStateChangedHandler(handler_ConnectStateChanged);
+            this._handler.ConnectStateChanged += new EventHandler(handler_ConnectStateChanged);
             SendButton.Enabled = _handler.IsConnected;
         }
 
@@ -59,12 +59,11 @@ namespace MirageGUI.Forms
             }
         }
 
-        public void HandleResponse(MudResponse response)
+        public ProcessStatus HandleResponse(MudResponse response)
         {
             if (this.InvokeRequired)
             {
-                this.Invoke(new ResponseHandler(HandleResponse), response);
-                return;
+                return (ProcessStatus) this.Invoke(new ResponseHandler(HandleResponse), response);
             }
 
             if (response.Type == AdvancedClientTransmitType.JsonEncodedMessage)
@@ -87,7 +86,7 @@ namespace MirageGUI.Forms
             {
                 OutputText.AppendText((string)response.Data);
             }
-
+            return ProcessStatus.SuccessAbort;
         }
 
         internal void ShowFont(object sender, EventArgs e)

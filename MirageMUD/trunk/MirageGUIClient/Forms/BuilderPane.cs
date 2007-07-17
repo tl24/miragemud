@@ -16,22 +16,37 @@ namespace MirageGUI.Forms
         private IOHandler _handler;
         private ConsoleForm console;
         private MessageDispatcher _dispatcher;
+        private IDictionary<string, ResponseHandler> handlerDelegates;
 
         public BuilderPane()
         {
             InitializeComponent();
             _handler = new IOHandler();
+            InitHandlerDelegates();
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ConnectForm form = new ConnectForm(_handler);
+            _dispatcher.AddHandler(FormPriority.ConnectFormPriority, form);
             form.ShowDialog(this);
+            _dispatcher.RemoveHandler(form);
         }
 
         public IOHandler IOHandler
         {
             get { return _handler; }
+        }
+
+        /// <summary>
+        /// Initializes a map of ResponseHandler delegates for responding to
+        /// messages sent from the mud
+        /// </summary>
+        private void InitHandlerDelegates()
+        {
+            handlerDelegates = new Dictionary<string, ResponseHandler>();
+            handlerDelegates.Add("Area.List", new ResponseHandler(ProcessAreaList));
+            handlerDelegates.Add("Area.Get", new ResponseHandler(ProcessAreaGet));
         }
 
         private void BuilderPane_Load(object sender, EventArgs e)
@@ -46,8 +61,13 @@ namespace MirageGUI.Forms
             console.Dock = DockStyle.Fill;
             console.Visible = true;
 
-            _handler.ConnectStateChanged += new IOHandler.ConnectStateChangedHandler(_handler_ConnectStateChanged);
-            _dispatcher = new MessageDispatcher(this);
+            _handler.ConnectStateChanged += new EventHandler(_handler_ConnectStateChanged);
+            _handler.LoginSuccess += new EventHandler(LoginSuccess);
+
+            // create the message dispatcher
+            _dispatcher = new MessageDispatcher(IOHandler);
+            _dispatcher.AddHandler(FormPriority.MasterFormPriority, this);
+            _dispatcher.AddHandler(FormPriority.ConsoleFormPriority, this.Console);
 
             AreaTree.Nodes.Add("Areas");
         }
@@ -66,6 +86,11 @@ namespace MirageGUI.Forms
             //}
         }
 
+        void LoginSuccess(object sender, EventArgs e)
+        {
+            _handler.SendString("GetAreas");
+        }
+
         public ConsoleForm Console
         {
             get { return console; }
@@ -74,29 +99,42 @@ namespace MirageGUI.Forms
 
         #region IResponseHandler Members
 
-        public void HandleResponse(MudResponse response)
+        public ProcessStatus HandleResponse(MudResponse response)
         {
-            if (response.Name == "Area.List")
+            ProcessStatus result = ProcessStatus.NotProcessed;
+            ResponseHandler handler;
+            if (handlerDelegates.TryGetValue(response.Name, out handler))
             {
-                AreaTree.Nodes.Clear();
-                TreeNode root = AreaTree.Nodes.Add("Areas");
-                AreaListMessage areaList = (AreaListMessage)response.Data;
-                foreach (string area in areaList.Areas)
-                {
-                    TreeNode areaNode = root.Nodes.Add(area,area);
-                    areaNode.Tag = typeof(Area);
-                }
+                result = handler(response);
             }
-            else if (response.Name == "Area.Get")
-            {
-                AreaMessage message = (AreaMessage)response.Data;
-                Area area = message.Area;
-                TreeNode node = AreaTree.Nodes[0].Nodes.Find(area.Uri, false)[0];
-                node.Tag = area;
-                AddTab(area.Title, area);
-            }
+            return result;
         }
 
+        /// <summary>
+        /// Process a list of areas from the mud.  Populate the area tree.
+        /// </summary>
+        private ProcessStatus ProcessAreaList(MudResponse response)
+        {
+            AreaTree.Nodes.Clear();
+            TreeNode root = AreaTree.Nodes.Add("Areas");
+            AreaListMessage areaList = (AreaListMessage)response.Data;
+            foreach (string area in areaList.Areas)
+            {
+                TreeNode areaNode = root.Nodes.Add(area, area);
+                areaNode.Tag = typeof(Area);
+            }
+            return ProcessStatus.SuccessAbort;
+        }
+
+        private ProcessStatus ProcessAreaGet(MudResponse response)
+        {
+            AreaMessage message = (AreaMessage)response.Data;
+            Area area = message.Area;
+            TreeNode node = AreaTree.Nodes[0].Nodes.Find(area.Uri, false)[0];
+            node.Tag = area;
+            AddTab(area.Title, area);
+            return ProcessStatus.SuccessAbort;
+        }
         #endregion
 
         private void AreaTree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
