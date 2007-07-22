@@ -93,7 +93,7 @@ namespace MirageGUI.Code
                             throw new Exception("Unrecognized response: " + type);
                     }
                     //TODO: Wrap in exception handler so it doesn't kill the thread
-                    OnResponseReceived(new MudResponse((AdvancedClientTransmitType)type, name, data));
+                    OnResponseReceived((Mirage.Communication.Message) data);
                 }
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace MirageGUI.Code
             }
         }
 
-        protected void OnResponseReceived(MudResponse response)
+        protected void OnResponseReceived(Mirage.Communication.Message response)
         {
             if (ResponseReceived != null)
                 ResponseReceived(response);

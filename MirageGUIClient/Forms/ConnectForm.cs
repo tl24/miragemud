@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using MirageGUI.Code;
 using Mirage.Communication;
 using Mirage.Communication.BuilderMessages;
+
 namespace MirageGUI.Forms
 {
     public partial class ConnectForm : Form, IResponseHandler
@@ -54,26 +55,25 @@ namespace MirageGUI.Forms
 
         #region IResponseHandler Members
 
-        public ProcessStatus HandleResponse(MudResponse response)
+        public ProcessStatus HandleResponse(Mirage.Communication.Message msg)
         {
-            if (response.Data is Mirage.Communication.Message)
+            if (msg.IsMatch(Namespaces.Authentication))
             {
-                if (response.Data is ErrorMessage)
+                if (msg.MessageType == MessageType.PlayerError || msg.MessageType == MessageType.SystemError)
                 {
-                    ErrorMessage emsg = (ErrorMessage)response.Data;
-                    MessageBox.Show(emsg.MessageString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    StringMessage emsg = (StringMessage)msg;
+                    MessageBox.Show(emsg.Text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     LoginMode();
                     return ProcessStatus.SuccessAbort;
                 }
                 else
                 {
-                    Mirage.Communication.Message msg = (Mirage.Communication.Message) response.Data;
-                    if (msg.MessageType == MessageType.Prompt && msg.Name == "Nanny.Challenge")
+                    if (msg.IsMatch(Namespaces.Authentication, "Nanny.Challenge"))
                     {
                         DoLogin();
                         return ProcessStatus.SuccessAbort;
                     }
-                    else if (msg.MessageType == MessageType.Confirmation && msg.Name == "Login")
+                    else if (msg.IsMatch(Namespaces.Authentication, "Login"))
                     {
                         // success
                         handler.OnLogin();

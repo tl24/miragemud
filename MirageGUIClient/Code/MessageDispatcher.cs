@@ -24,7 +24,7 @@ namespace MirageGUI.Code
             _ioHandler.ResponseReceived += new ResponseHandler(HandleResponse);            
         }
 
-        public ProcessStatus HandleResponse(MudResponse response)
+        public ProcessStatus HandleResponse(Mirage.Communication.Message msg)
         {
             ProcessStatus result = ProcessStatus.NotProcessed;
             //Call each handler until one of them handles it
@@ -33,9 +33,9 @@ namespace MirageGUI.Code
                 IResponseHandler responseHandler = handler.handler;
                 
                 if (responseHandler is Form)
-                    result = SendToForm((Form)responseHandler, response);
+                    result = SendToForm((Form)responseHandler, msg);
                 else
-                    result = responseHandler.HandleResponse(response);
+                    result = responseHandler.HandleResponse(msg);
 
                 if (result == ProcessStatus.SuccessAbort)
                     break;
@@ -43,12 +43,12 @@ namespace MirageGUI.Code
             return result;
         }
 
-        private ProcessStatus SendToForm(Form form, MudResponse response)
+        private ProcessStatus SendToForm(Form form, Mirage.Communication.Message msg)
         {
             if (form.InvokeRequired)
-                return (ProcessStatus) form.Invoke(new ResponseHandler(((IResponseHandler)form).HandleResponse), response);
+                return (ProcessStatus)form.Invoke(new ResponseHandler(((IResponseHandler)form).HandleResponse), msg);
             else
-                return ((IResponseHandler)form).HandleResponse(response);
+                return ((IResponseHandler)form).HandleResponse(msg);
         }
 
         /// <summary>

@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Mirage.Communication.BuilderMessages;
 using Mirage.Data;
 using MirageGUI.Code;
+using Mirage.Communication;
+using System.Collections;
 
 namespace MirageGUI.Forms
 {
@@ -45,8 +47,8 @@ namespace MirageGUI.Forms
         private void InitHandlerDelegates()
         {
             handlerDelegates = new Dictionary<string, ResponseHandler>();
-            handlerDelegates.Add("Area.List", new ResponseHandler(ProcessAreaList));
-            handlerDelegates.Add("Area.Get", new ResponseHandler(ProcessAreaGet));
+            handlerDelegates.Add(new Uri(Namespaces.Area, "Area.List").ToString(), new ResponseHandler(ProcessAreaList));
+            handlerDelegates.Add(new Uri(Namespaces.Area, "Area.Get").ToString(), new ResponseHandler(ProcessAreaGet));
         }
 
         private void BuilderPane_Load(object sender, EventArgs e)
@@ -80,14 +82,14 @@ namespace MirageGUI.Forms
                 return;
             }
             ConnectedLabel.Text = _handler.IsConnected ? "Connected " + _handler.Host + "@" + _handler.Port : "Not Connected";
-            //if (_handler.IsConnected)
-            //{
-            //    _handler.SendString("GetAreas");
-            //}
+            if (!_handler.IsConnected)
+                connectMenuItem.Enabled = true;
+            disconnectMenuItem.Enabled = _handler.IsConnected;
         }
 
         void LoginSuccess(object sender, EventArgs e)
         {
+            connectMenuItem.Enabled = false;
             _handler.SendString("GetAreas");
         }
 
@@ -99,11 +101,11 @@ namespace MirageGUI.Forms
 
         #region IResponseHandler Members
 
-        public ProcessStatus HandleResponse(MudResponse response)
+        public ProcessStatus HandleResponse(Mirage.Communication.Message response)
         {
             ProcessStatus result = ProcessStatus.NotProcessed;
             ResponseHandler handler;
-            if (handlerDelegates.TryGetValue(response.Name, out handler))
+            if (handlerDelegates.TryGetValue(response.QualifiedName, out handler))
             {
                 result = handler(response);
             }
@@ -113,12 +115,11 @@ namespace MirageGUI.Forms
         /// <summary>
         /// Process a list of areas from the mud.  Populate the area tree.
         /// </summary>
-        private ProcessStatus ProcessAreaList(MudResponse response)
+        private ProcessStatus ProcessAreaList(Mirage.Communication.Message response)
         {
             AreaTree.Nodes.Clear();
             TreeNode root = AreaTree.Nodes.Add("Areas");
-            AreaListMessage areaList = (AreaListMessage)response.Data;
-            foreach (string area in areaList.Areas)
+            foreach (string area in (IEnumerable)((DataMessage)response).Data)
             {
                 TreeNode areaNode = root.Nodes.Add(area, area);
                 areaNode.Tag = typeof(Area);
@@ -126,10 +127,9 @@ namespace MirageGUI.Forms
             return ProcessStatus.SuccessAbort;
         }
 
-        private ProcessStatus ProcessAreaGet(MudResponse response)
+        private ProcessStatus ProcessAreaGet(Mirage.Communication.Message response)
         {
-            AreaMessage message = (AreaMessage)response.Data;
-            Area area = message.Area;
+            Area area = (Area)((DataMessage)response).Data;
             TreeNode node = AreaTree.Nodes[0].Nodes.Find(area.Uri, false)[0];
             node.Tag = area;
             AddTab(area.Title, area);
@@ -184,6 +184,14 @@ namespace MirageGUI.Forms
         private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Console.ShowBackgroundColor(sender, e);
+        }
+
+        private void disconnectMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to disconnect?", "Disconnect", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                IOHandler.SendString("quit");
+            }
         }
     }
 }
