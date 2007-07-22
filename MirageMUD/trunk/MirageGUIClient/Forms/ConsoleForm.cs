@@ -59,32 +59,24 @@ namespace MirageGUI.Forms
             }
         }
 
-        public ProcessStatus HandleResponse(MudResponse response)
+        public ProcessStatus HandleResponse(Mirage.Communication.Message msg)
         {
             if (this.InvokeRequired)
             {
-                return (ProcessStatus) this.Invoke(new ResponseHandler(HandleResponse), response);
+                return (ProcessStatus) this.Invoke(new ResponseHandler(HandleResponse), msg);
             }
 
-            if (response.Type == AdvancedClientTransmitType.JsonEncodedMessage)
+            if (msg.IsMatch(Namespaces.System, "EchoOn"))
             {
-                Mirage.Communication.Message msg = (Mirage.Communication.Message)response.Data;
-                if (msg is EchoOnMessage)
-                {
-                    this.InputText.UseSystemPasswordChar = false;
-                }
-                else if (msg is EchoOffMessage)
-                {
-                    this.InputText.UseSystemPasswordChar = true;
-                }
-                else
-                {
-                    OutputText.AppendText(msg.ToString());
-                }
+                this.InputText.UseSystemPasswordChar = false;
+            }
+            else if (msg.IsMatch(Namespaces.System, "EchoOff"))
+            {
+                this.InputText.UseSystemPasswordChar = true;
             }
             else
             {
-                OutputText.AppendText((string)response.Data);
+                OutputText.AppendText(msg.ToString());
             }
             return ProcessStatus.SuccessAbort;
         }

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Communication;
 
 namespace MirageGUI.Code
 {
-    public delegate ProcessStatus ResponseHandler(MudResponse response);
+    public delegate ProcessStatus ResponseHandler(Message response);
 
     /// <summary>
     /// Status of the processing of the event
@@ -27,6 +28,6 @@ namespace MirageGUI.Code
 
     public interface IResponseHandler
     {
-        ProcessStatus HandleResponse(MudResponse response);
+        ProcessStatus HandleResponse(Message response);
     }
 }
