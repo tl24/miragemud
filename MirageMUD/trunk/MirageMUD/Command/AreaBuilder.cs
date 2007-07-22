@@ -25,7 +25,7 @@ namespace Mirage.Command
         {
             IDictionary<string, Area> areas = GlobalLists.GetInstance().Areas;
             List<string> areaList = new List<string>(areas.Keys);
-            return new AreaListMessage(areaList);
+            return new DataMessage(Namespaces.Area, "Area.List", areaList);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Mirage.Command
         public static Message GetArea(string name)
         {
             Area area = GlobalLists.GetInstance().Areas[name];
-            return new AreaMessage(area);
+            return new DataMessage(Namespaces.Area, "Area.Get", area);
         }
 
     }

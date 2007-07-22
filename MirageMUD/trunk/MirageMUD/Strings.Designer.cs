@@ -61,92 +61,11 @@ namespace Mirage {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ${player} says &apos;${message}&apos;..
-        /// </summary>
-        internal static string Comm_Say_Others {
-            get {
-                return ResourceManager.GetString("Comm.Say.Others", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You said &apos;${message}&apos;..
-        /// </summary>
-        internal static string Comm_Say_Self {
-            get {
-                return ResourceManager.GetString("Comm.Say.Self", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ${player} tells you &apos;${message}&apos;..
-        /// </summary>
-        internal static string Comm_Tell_Others {
-            get {
-                return ResourceManager.GetString("Comm.Tell.Others", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You tell ${target} &apos;${message}&apos;..
-        /// </summary>
-        internal static string Comm_Tell_Self {
-            get {
-                return ResourceManager.GetString("Comm.Tell.Self", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This command can not be executed by a ${ActorType}..
-        /// </summary>
-        internal static string Error_InvalidActor {
-            get {
-                return ResourceManager.GetString("Error.InvalidActor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Huh?.
-        /// </summary>
-        internal static string Error_InvalidCommand {
-            get {
-                return ResourceManager.GetString("Error.InvalidCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ${target} is not here..
-        /// </summary>
-        internal static string Error_NotHere {
-            get {
-                return ResourceManager.GetString("Error.NotHere", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ${player} is not playing right now..
-        /// </summary>
-        internal static string Error_PlayerNotPlaying {
-            get {
-                return ResourceManager.GetString("Error.PlayerNotPlaying", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to I&apos;m inside ${otherTemplate}..
         /// </summary>
         internal static string IncludedTemplate {
             get {
                 return ResourceManager.GetString("IncludedTemplate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Goodbye!.
-        /// </summary>
-        internal static string Info_Goodbye {
-            get {
-                return ResourceManager.GetString("Info.Goodbye", resourceCulture);
             }
         }
         
@@ -160,11 +79,92 @@ namespace Mirage {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This template contains ( @{IncludedTemplate} ) custom = ${custom}.
+        ///   Looks up a localized string similar to This command can not be executed by a ${ActorType}..
         /// </summary>
-        internal static string TestTemplateInclude {
+        internal static string msg__common_error_InvalidActor {
             get {
-                return ResourceManager.GetString("TestTemplateInclude", resourceCulture);
+                return ResourceManager.GetString("msg:/common/error/InvalidActor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Huh?.
+        /// </summary>
+        internal static string msg__common_error_InvalidCommand {
+            get {
+                return ResourceManager.GetString("msg:/common/error/InvalidCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${target} is not here..
+        /// </summary>
+        internal static string msg__common_error_NotHere {
+            get {
+                return ResourceManager.GetString("msg:/common/error/NotHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${player} is not playing right now..
+        /// </summary>
+        internal static string msg__common_error_PlayerNotPlaying {
+            get {
+                return ResourceManager.GetString("msg:/common/error/PlayerNotPlaying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${player} says &apos;${message}&apos;..
+        /// </summary>
+        internal static string msg__communication_say_others {
+            get {
+                return ResourceManager.GetString("msg:/communication/say.others", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You said &apos;${message}&apos;..
+        /// </summary>
+        internal static string msg__communication_say_self {
+            get {
+                return ResourceManager.GetString("msg:/communication/say.self", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${player} tells you &apos;${message}&apos;..
+        /// </summary>
+        internal static string msg__communication_tell_others {
+            get {
+                return ResourceManager.GetString("msg:/communication/tell.others", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You tell ${target} &apos;${message}&apos;..
+        /// </summary>
+        internal static string msg__communication_tell_self {
+            get {
+                return ResourceManager.GetString("msg:/communication/tell.self", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Namespace test message.
+        /// </summary>
+        internal static string msg__namespace_test {
+            get {
+                return ResourceManager.GetString("msg:/namespace/test", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to That player is already playing..
+        /// </summary>
+        internal static string msg__negotiation_authentication_player_already_playing {
+            get {
+                return ResourceManager.GetString("msg:/negotiation/authentication/player.already.playing", resourceCulture);
             }
         }
         
@@ -185,9 +185,36 @@ namespace Mirage {
         ///$$$    $$$$    III      III  OOO     OOO    OOO     OOO    OOO     OOO
         ///$$$  $$$$      III     [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string Welcome {
+        internal static string msg__negotiation_splash {
             get {
-                return ResourceManager.GetString("Welcome", resourceCulture);
+                return ResourceManager.GetString("msg:/negotiation/splash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to MirageMUD 0.1.  Still in development..
+        /// </summary>
+        internal static string msg__negotiation_welcome {
+            get {
+                return ResourceManager.GetString("msg:/negotiation/welcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Goodbye!.
+        /// </summary>
+        internal static string msg__system_goodbye {
+            get {
+                return ResourceManager.GetString("msg:/system/goodbye", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This template contains ( @{IncludedTemplate} ) custom = ${custom}.
+        /// </summary>
+        internal static string TestTemplateInclude {
+            get {
+                return ResourceManager.GetString("TestTemplateInclude", resourceCulture);
             }
         }
     }

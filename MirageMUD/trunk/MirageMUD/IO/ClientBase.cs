@@ -7,6 +7,8 @@ using System.IO;
 using Mirage.Data;
 using Mirage.Util;
 using Mirage.Command;
+using log4net;
+using log4net.Repository.Hierarchy;
 
 namespace Mirage.IO
 {
@@ -15,6 +17,7 @@ namespace Mirage.IO
     /// </summary>
     public abstract class ClientBase : IClient
     {
+        protected static ILog log = LogManager.GetLogger(typeof(ClientBase));
         /// <summary>
         ///     The player object attached to this descriptor
         /// </summary>
@@ -153,9 +156,11 @@ namespace Mirage.IO
         /// </summary>
         public virtual void Close()
         {
+            string remote = _client.Client.RemoteEndPoint.ToString();
             FlushOutput();
             _client.Close();
             _state = ConnectedState.Disconnected;
+            log.Info("Client connection closed: " + remote);
         }
 
         public IClientFactory ClientFactory

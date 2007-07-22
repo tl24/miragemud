@@ -9,29 +9,35 @@ namespace Mirage.Communication
     /// </summary>
     public class StringMessage : Message
     {
-       private string _messageString;
+       private string _text;
 
         public StringMessage()
         {
         }
 
-        public StringMessage(MessageType messageType, string name, string message)
+        public StringMessage(MessageType messageType, string name, string text)
             : base(messageType, name)
         {
-            this._messageString = message;
+            this._text = text;
+        }
+
+        public StringMessage(MessageType messageType, Uri Namespace, string name, string text)
+            : base(messageType, Namespace, name)
+        {
+            this._text = text;
         }
 
         public override string ToString() {
-            return _messageString;
+            return _text;
         }
 
         /// <summary>
         /// The message string to send to the text client
         /// </summary>
-        public string MessageString
+        public string Text
         {
-            get { return this._messageString; }
-            set { this._messageString = value; }
+            get { return this._text; }
+            set { this._text = value; }
         }
 
     }

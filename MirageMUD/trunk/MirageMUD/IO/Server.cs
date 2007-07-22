@@ -46,6 +46,7 @@ namespace Mirage.IO
         public void Run()
         {
             _shutdown = false;
+            logger.Info("Starting up");
             ClientManager manager = new ClientManager();
             manager.AddFactory(new TextClientFactory(_port));
             manager.AddFactory(new GuiClientFactory(_port + 1));

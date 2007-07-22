@@ -125,7 +125,7 @@ namespace Mirage.IO
                 }
                 AdvancedMessage advMsg = new AdvancedMessage();
                 advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;
-                advMsg.name = msg.Name;
+                advMsg.name = msg.QualifiedName.ToString();
                 Serializer serializer = Serializer.GetSerializer(typeof(object));
                 serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
                 advMsg.data = serializer.Serialize(msg);

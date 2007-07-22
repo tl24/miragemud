@@ -117,45 +117,55 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Comm.Say.Others" xml:space="preserve">
-    <value>${player} says '${message}'.</value>
-  </data>
-  <data name="Comm.Say.Self" xml:space="preserve">
-    <value>You said '${message}'.</value>
-  </data>
-  <data name="Comm.Tell.Others" xml:space="preserve">
-    <value>${player} tells you '${message}'.</value>
-  </data>
-  <data name="Comm.Tell.Self" xml:space="preserve">
-    <value>You tell ${target} '${message}'.</value>
-  </data>
-  <data name="Error.InvalidActor" xml:space="preserve">
-    <value>This command can not be executed by a ${ActorType}.</value>
-  </data>
-  <data name="Error.InvalidCommand" xml:space="preserve">
-    <value>Huh?</value>
-  </data>
-  <data name="Error.NotHere" xml:space="preserve">
-    <value>${target} is not here.</value>
-    <comment>Error message when a lookup fails.</comment>
-  </data>
-  <data name="Error.PlayerNotPlaying" xml:space="preserve">
-    <value>${player} is not playing right now.</value>
-  </data>
   <data name="IncludedTemplate" xml:space="preserve">
     <value>I'm inside ${otherTemplate}.</value>
-  </data>
-  <data name="Info.Goodbye" xml:space="preserve">
-    <value>Goodbye!</value>
   </data>
   <data name="Movement.Arrival" xml:space="preserve">
     <value>${player} has arrived.</value>
   </data>
-  <data name="TestTemplateInclude" xml:space="preserve">
-    <value>This template contains ( @{IncludedTemplate} ) custom = ${custom}</value>
+  <data name="msg:/common/error/InvalidActor" xml:space="preserve">
+    <value>This command can not be executed by a ${ActorType}.</value>
+  </data>
+  <data name="msg:/common/error/InvalidCommand" xml:space="preserve">
+    <value>Huh?</value>
+  </data>
+  <data name="msg:/common/error/NotHere" xml:space="preserve">
+    <value>${target} is not here.</value>
+    <comment>Error message when a lookup fails.</comment>
+  </data>
+  <data name="msg:/common/error/PlayerNotPlaying" xml:space="preserve">
+    <value>${player} is not playing right now.</value>
+  </data>
+  <data name="msg:/communication/say.others" xml:space="preserve">
+    <value>${player} says '${message}'.</value>
+  </data>
+  <data name="msg:/communication/say.self" xml:space="preserve">
+    <value>You said '${message}'.</value>
+  </data>
+  <data name="msg:/communication/tell.others" xml:space="preserve">
+    <value>${player} tells you '${message}'.</value>
+  </data>
+  <data name="msg:/communication/tell.self" xml:space="preserve">
+    <value>You tell ${target} '${message}'.</value>
+  </data>
+  <data name="msg:/namespace/test" xml:space="preserve">
+    <value>Namespace test message</value>
+  </data>
+  <data name="msg:/negotiation/authentication/player.already.playing" xml:space="preserve">
+    <value>That player is already playing.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Welcome" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="msg:/negotiation/splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Includes\Welcome.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="msg:/negotiation/welcome" xml:space="preserve">
+    <value>
+Welcome to MirageMUD 0.1.  Still in development.</value>
+  </data>
+  <data name="msg:/system/goodbye" xml:space="preserve">
+    <value>Goodbye!</value>
+  </data>
+  <data name="TestTemplateInclude" xml:space="preserve">
+    <value>This template contains ( @{IncludedTemplate} ) custom = ${custom}</value>
   </data>
 </root>

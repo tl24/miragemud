@@ -102,6 +102,22 @@ namespace NUnitTests.Communication
             string actual = testTemplate.Render();
             Assert.AreEqual(expected, actual, "Template did not render correctly");
         }
+
+        [Test]
+        public void SpecialCharactersTest()
+        {
+            string templateName = "msg:/namespace/test";
+            string expected = "Namespace test message";
+            Uri nmspc = new Uri("msg:/namespace/");
+            Uri combined = new Uri(nmspc, "test");
+
+            Uri testBase = Namespaces.Authentication;
+            Uri testName = new Uri(testBase, "Challenge");
+
+            ITemplate template = TemplateManager.GetTemplate(combined.ToString());
+            string actual = template.Render();
+            Assert.AreEqual(expected, actual);
+        }
     }
 
 

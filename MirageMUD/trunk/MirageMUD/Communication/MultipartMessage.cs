@@ -16,10 +16,10 @@ namespace Mirage.Communication
         {
         }
 
-        public MultipartMessage(MessageType messageType, string name) : this(messageType, name, null) { }
+        public MultipartMessage(MessageType messageType, Uri Namespace, string name) : this(messageType, Namespace, name, null) { }
 
-        public MultipartMessage(MessageType messageType, string name, ICollection parts)
-            : base(messageType, name)
+        public MultipartMessage(MessageType messageType, Uri Namespace, string name, ICollection parts)
+            : base(messageType, Namespace, name)
         {
             if (parts != null)
             {

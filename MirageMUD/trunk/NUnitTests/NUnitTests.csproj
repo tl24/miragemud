@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\MessageTest.cs" />
     <Compile Include="Communication\TemplateManagerTest.cs" />
     <Compile Include="Data\PlayerTest.cs" />
     <Compile Include="Data\Query\IURINameableTest.cs" />

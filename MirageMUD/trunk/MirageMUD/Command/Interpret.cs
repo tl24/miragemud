@@ -63,7 +63,7 @@ namespace Mirage.Command
             {
                 if (!player.Interpreter.Execute(actor, input))
                 {
-                    actor.Write(new ErrorResourceMessage("InvalidCommand", "Error.InvalidCommand"));
+                    actor.Write(new ErrorResourceMessage("InvalidCommand"));
                 }
             }
             else
@@ -95,7 +95,7 @@ namespace Mirage.Command
         public static Message say([Actor] Living actor, [CustomParse] string message)
         {
             //speak to all others in the room
-            ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, "Comm.Say", "Comm.Say.Others");
+            ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, Namespaces.Communication, "say.others");
             msgToOthers.Parameters["player"] = actor.Title;
             msgToOthers.Parameters["message"] = message;
             foreach (Living am in actor.Container.Contents(typeof(Living)))
@@ -107,7 +107,7 @@ namespace Mirage.Command
             }
 
             //repeat message to yourself as confirmation
-            ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, "Command.Say", "Comm.Say.Self");
+            ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, Namespaces.Communication, "say.self");
             msgToSelf.Parameters["message"] = message;
             return msgToSelf;
         }
@@ -120,19 +120,19 @@ namespace Mirage.Command
             if (p == null)
             {
                 // couldn't find them, send an error
-                ErrorResourceMessage errorMsg = new ErrorResourceMessage("Error.PlayerNotPlaying", "Error.PlayerNotPlaying");
+                ErrorResourceMessage errorMsg = new ErrorResourceMessage("PlayerNotPlaying");
                 errorMsg.Parameters["player"] = target;
                 return errorMsg;
             }
             else
             {
                 // format the messages
-                ResourceMessage msgToTarget = new ResourceMessage(MessageType.Communication, "Comm.Tell", "Comm.Tell.Others");
+                ResourceMessage msgToTarget = new ResourceMessage(MessageType.Communication, Namespaces.Communication, "tell.others");
                 msgToTarget.Parameters["player"] = actor.Title;
                 msgToTarget.Parameters["message"] = message;
                 p.Write(msgToTarget);
 
-                ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, "Command.Tell", "Comm.Tell.Self");
+                ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, Namespaces.Communication, "tell.self");
                 msgToSelf.Parameters["message"] = message;
                 msgToSelf.Parameters["target"] = p.Title;
 
@@ -143,7 +143,7 @@ namespace Mirage.Command
         [Command]
         public static void quit([Actor] Player player)
         {
-            player.Write(new ResourceMessage(MessageType.Information, "Goodbye", "Info.Goodbye"));
+            player.Write(new ResourceMessage(MessageType.Information, Namespaces.System, "goodbye"));
             if (player.Client.State == ConnectedState.Playing)
             {
                 player.save();
