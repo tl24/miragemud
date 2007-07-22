@@ -20,7 +20,7 @@ namespace Mirage.Communication
         }
 
         public MovementMessage(string direction, MovementType movementType, string actorName)
-            : base(MessageType.Notification, "Movement." + direction, "Animate.Movement")
+            : base(MessageType.Notification, Namespaces.Movement, direction, "Animate.Movement")
         {
             this._direction = direction ?? "";
             this._movementType = movementType;

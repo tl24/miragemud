@@ -133,7 +133,7 @@ namespace Mirage.Command
                     }
                     else
                     {
-                        errorMessage = new ErrorResourceMessage("Error.InvalidActor", "Error.InvalidActor");
+                        errorMessage = new ErrorResourceMessage("InvalidActor");
                         ((ErrorResourceMessage)errorMessage).Parameters["ActorType"] = self.GetType().Name;
                         convertedArguments = null;
                         return false;
@@ -155,7 +155,7 @@ namespace Mirage.Command
                     }
                     if (result == null && attr.IsRequired)
                     {
-                        errorMessage = new ErrorResourceMessage("Error.NotHere", "Error.NotHere");
+                        errorMessage = new ErrorResourceMessage("NotHere");
                         ((ErrorResourceMessage)errorMessage).Parameters["target"] = target;
                         convertedArguments = null;
                         return false;

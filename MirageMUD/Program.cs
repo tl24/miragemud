@@ -10,6 +10,7 @@ namespace Mirage
     {
         static void Main(string[] args)
         {
+            log4net.Config.XmlConfigurator.Configure();
             Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Data.Player));
             Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Command.Interpreter));
             Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Command.Movement));

@@ -31,17 +31,17 @@ namespace Mirage.IO
         {
             if (input == null)
             {
-                Client.Write(new Message(MessageType.Prompt, "Nanny.Challenge"));
+                Client.Write(new Message(MessageType.Prompt, Namespaces.Authentication, "Nanny.Challenge"));
             }
             else if (input is LoginMessage)
             {
                 LoginMessage login = (LoginMessage)input;
                 Player p = Player.Load(login.Login);
-                if (p == null)
+                if (p == null || !p.ComparePassword(login.Password))
                 {
-                    Client.Write(new ErrorMessage("Error.Login", "Invalid Login, Please try again"));
+                    Client.Write(new StringMessage(MessageType.PlayerError, Namespaces.Authentication, "Error.Login", "Invalid Login or password, Please try again"));
                 }
-                else if (p.ComparePassword(login.Password))
+                else
                 {
                     // should put this in an event to be triggered
                     //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
@@ -65,13 +65,8 @@ namespace Mirage.IO
                     p.Client = Client;
 
                     Client.LoginHandler = null;
-                    Client.Write(new StringMessage(MessageType.Confirmation, "Login", "Login successful"));
-                    Client.Write(new StringMessage(MessageType.Information, "Welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
-                }
-                else
-                {
-                    Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.WrongPassword", "\r\nWrong password.\r\n"));
-                    Client.Write(new Message(MessageType.Prompt, "Nanny.Challenge"));
+                    Client.Write(new StringMessage(MessageType.Confirmation, Namespaces.Authentication, "Login", "Login successful"));
+                    Client.Write(new StringMessage(MessageType.Information, Namespaces.Negotiation, "Welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
                 }
             }
         }

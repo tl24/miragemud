@@ -33,17 +33,17 @@ namespace Mirage.IO
                     Require("Nanny.ConfirmNewName", "Is that right, " + GetValue<Player>("player").Title + " (Y/N)? ", new ValidateDelegate(this.ConfirmName));
                 else if (!Contains("password"))
                 {
-                    MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
-                    message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "New character.\r\nEnter a password for " + GetValue<Player>("player").Title + ": "));
-                    message.Parts.Add(new EchoOffMessage());
+                    MultipartMessage message = new MultipartMessage(MessageType.Multiple, Namespaces.Authentication, "password");
+                    message.Parts.Add(new StringMessage(MessageType.Prompt, Namespaces.Authentication, "password", "New character.\r\nEnter a password for " + GetValue<Player>("player").Title + ": "));
+                    message.Parts.Add(MessageFactory.GetMessage(MessageFactory.EchoOff));
 
                     Require(message, new ValidateDelegate(this.ValidateNewPassword));
                 }
                 else if (!Contains("confirmPassword"))
                 {
-                    MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.ConfirmPassword");
-                    message.Parts.Add(new StringMessage(MessageType.Prompt, "Nanny.ConfirmPassword", "Confirm password: "));
-                    message.Parts.Add(new EchoOffMessage());
+                    MultipartMessage message = new MultipartMessage(MessageType.Multiple, Namespaces.Authentication, "confirmPassword");
+                    message.Parts.Add(new StringMessage(MessageType.Prompt, Namespaces.Authentication, "confirmPassword", "Confirm password: "));
+                    message.Parts.Add(MessageFactory.GetMessage(MessageFactory.EchoOff));
 
                     Require(message, new ValidateDelegate(this.ConfirmPassword));
                 }
@@ -56,8 +56,8 @@ namespace Mirage.IO
                 {
                     List<Message> message = new List<Message>();
                     //MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
-                    message.Add(new StringMessage(MessageType.Prompt, "Nanny.Password", "Password: "));
-                    message.Add(new EchoOffMessage());
+                    message.Add(new StringMessage(MessageType.Prompt, Namespaces.Authentication, "password", "Password: "));
+                    message.Add(MessageFactory.GetMessage(MessageFactory.EchoOff));
                     _echoOn = false;
                     Require(message, new ValidateDelegate(this.ValidateOldPassword));
                 }
@@ -70,8 +70,7 @@ namespace Mirage.IO
 
         protected override void InitialState()
         {
-            //Client.Write(new StringMessage(MessageType.Information, "Welcome", "Welcome to the mud\r\n"));
-            Client.Write(new ResourceMessage(MessageType.Information, "Welcome", "Welcome"));
+            Client.Write(new ResourceMessage(MessageType.Information, Namespaces.Negotiation, "splash"));
         }
 
         protected override void FinalState()
@@ -85,7 +84,7 @@ namespace Mirage.IO
                 Player isPlaying = (Player)QueryManager.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(GetValue<Player>("player").Uri)));
                 if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
                 {
-                    Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.AlreadyPlaying", "That player is already playing.\r\n"));
+                    Client.Write(new ResourceMessage(MessageType.PlayerError, Namespaces.Authentication, "player.already.playing"));
                     Client.Player = null;
                     Client.State = ConnectedState.Connecting;
                     Client.Close();
@@ -107,7 +106,7 @@ namespace Mirage.IO
                         player.Container.Add(player);
                     }
 
-                    Client.Write(new StringMessage(MessageType.Information, "Welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
+                    Client.Write(new StringMessage(MessageType.Information, Namespaces.Negotiation, "welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
                     //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\r\n");
                     Client.State = ConnectedState.Playing;
                     //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\r\n",  $desc);	
@@ -232,7 +231,7 @@ namespace Mirage.IO
         private void ValidateOldPassword(object data)
         {
             string input = (string)data;
-            Client.Write(new EchoOnMessage());
+            Client.Write(MessageFactory.GetMessage(MessageFactory.EchoOn));
             if (!GetValue<Player>("player").ComparePassword(input))
             {
                 Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.WrongPassword", "\r\nWrong password.\r\n"));
@@ -256,7 +255,7 @@ namespace Mirage.IO
         private void ValidateNewPassword(object data)
         {
             string input = (string)data;
-            Client.Write(new EchoOnMessage());
+            Client.Write(MessageFactory.GetMessage(MessageFactory.EchoOn));
             if (input.Length < 5)
             {
                 Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.InvalidPassword", "Password must be at least five characters long.\n\r"));
@@ -274,7 +273,7 @@ namespace Mirage.IO
         private void ConfirmPassword(object data)
         {
             string input = (string)data;
-            Client.Write(new EchoOnMessage());
+            Client.Write(MessageFactory.GetMessage(MessageFactory.EchoOn));
             _echoOn = true;
             Client.Write(new StringMessage(MessageType.UIControl, "Newline", "\n\r"));
             if (!GetValue<Player>("player").ComparePassword(input))

@@ -10,15 +10,15 @@ namespace Mirage.Communication
     /// </summary>
     public class ErrorResourceMessage : ResourceMessage
     {
-        public ErrorResourceMessage(string messageName, string resourceName)
+        public ErrorResourceMessage(string messageName)
             :
-            this(MessageType.PlayerError, messageName, resourceName)
+            this(MessageType.PlayerError, Namespaces.CommonError, messageName)
         {
         }
 
-        public ErrorResourceMessage(MessageType messageType, string messageName, string resourceName)
+        public ErrorResourceMessage(MessageType messageType, Uri Namespace, string messageName)
             :
-            base(messageType, messageName, resourceName)
+            base(messageType, Namespace, messageName)
         {
         }
 

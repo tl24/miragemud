@@ -60,13 +60,14 @@
     <Compile Include="Command\ILoginInputHandler.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
     <Compile Include="Command\Movement.cs" />
-    <Compile Include="Communication\BuilderMessages\AreaListMessage.cs" />
-    <Compile Include="Communication\BuilderMessages\AreaMessage.cs" />
     <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
+    <Compile Include="Communication\DataMessage.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
     <Compile Include="Communication\ErrorResourceMessage.cs" />
     <Compile Include="Communication\ITemplate.cs" />
+    <Compile Include="Communication\MessageFactory.cs" />
     <Compile Include="Communication\MovementMessage.cs" />
+    <Compile Include="Communication\Namespace.cs" />
     <Compile Include="Communication\ResourceMessage.cs" />
     <Compile Include="Communication\TemplateDefinition.cs" />
     <Compile Include="Communication\TemplateManager.cs" />
@@ -108,8 +109,6 @@
     <Compile Include="IO\TextLoginStateHandler.cs" />
     <Compile Include="Command\ReflectedCommand.cs" />
     <Compile Include="Communication\Channel.cs" />
-    <Compile Include="Communication\EchoOffMessage.cs" />
-    <Compile Include="Communication\EchoOnMessage.cs" />
     <Compile Include="Communication\Message.cs" />
     <Compile Include="Communication\MultipartMessage.cs" />
     <Compile Include="Communication\StringMessage.cs" />
