@@ -28,7 +28,29 @@ The "Actor" attribute indicates that this argument should be the player that inv
 
 The "Lookup" attribute looks up the argument within the mud using the QueryManager.  In this case it tries to find a player by the name the invoker specified.
 
-There is also another attribute not shown here.  That is the "CustomParse" attribute.  This indicates that the command will do its own argument parsing and the unparsed arguments should be passed to this parameter as a string.  You can also have the interpreter parse some of the arguments for you.  The "CustomParse" attribute should be on the last argument in the list.
+There is also another attribute, the "CustomParse" attribute.  This indicates that the command will do its own argument parsing and the unparsed arguments should be passed to this parameter as a string.  You can also have the interpreter parse some of the arguments for you.  The "CustomParse" attribute should be on the last argument in the list.  For example, the say command takes the remaining text on the input as the text to speak:
+{{{
+[Command(Aliases=new string[]{"'", "say"})]
+public static Message say([Actor] Living actor, [CustomParse] string message)
+{
+	//speak to all others in the room
+	ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, Namespaces.Communication, "say.others");
+	msgToOthers.Parameters["player"] = actor.Title;
+	msgToOthers.Parameters["message"] = message;
+	foreach (Living am in actor.Container.Contents(typeof(Living)))
+	{
+		if (am != actor)
+		{
+			am.Write(msgToOthers);
+		}
+	}
+
+	//repeat message to yourself as confirmation
+	ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, Namespaces.Communication, "say.self");
+	msgToSelf.Parameters["message"] = message;
+	return msgToSelf;
+}
+}}}
 
 === Return Value ===
 Any return value is sent to the invoker of the command.  It can be a Message, string, or any other object.  Anything that is not a Message object will have ToString called on it and then be converted to a StringMessage before sending to the player.  You're also free to write to the actor using the Write method and return nothing as well.
