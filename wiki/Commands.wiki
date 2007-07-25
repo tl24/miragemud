@@ -33,22 +33,22 @@ There is also another attribute, the "CustomParse" attribute.  This indicates th
 [Command(Aliases=new string[]{"'", "say"})]
 public static Message say([Actor] Living actor, [CustomParse] string message)
 {
-	//speak to all others in the room
-	ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, Namespaces.Communication, "say.others");
-	msgToOthers.Parameters["player"] = actor.Title;
-	msgToOthers.Parameters["message"] = message;
-	foreach (Living am in actor.Container.Contents(typeof(Living)))
-	{
-		if (am != actor)
-		{
-			am.Write(msgToOthers);
-		}
-	}
+   //speak to all others in the room
+   ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, Namespaces.Communication, "say.others");
+   msgToOthers.Parameters["player"] = actor.Title;
+   msgToOthers.Parameters["message"] = message;
+   foreach (Living am in actor.Container.Contents(typeof(Living)))
+   {
+      if (am != actor)
+      {
+         am.Write(msgToOthers);
+      }
+   }
 
-	//repeat message to yourself as confirmation
-	ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, Namespaces.Communication, "say.self");
-	msgToSelf.Parameters["message"] = message;
-	return msgToSelf;
+   //repeat message to yourself as confirmation
+   ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, Namespaces.Communication, "say.self");
+   msgToSelf.Parameters["message"] = message;
+   return msgToSelf;
 }
 }}}
 
