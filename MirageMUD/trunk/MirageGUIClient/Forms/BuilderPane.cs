@@ -166,6 +166,7 @@ namespace MirageGUI.Forms
             form.TopLevel = false;
             TabPage page = new TabPage(name);
             page.Controls.Add(form);
+            page.ContextMenuStrip.Items.Add("Close");
             EditorTabs.TabPages.Add(page);
             form.Dock = DockStyle.Fill;
             form.Visible = true;

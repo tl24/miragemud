@@ -19,6 +19,8 @@ namespace MirageGUI.Forms
         {
             this.handler = handler;
             InitializeComponent();
+            if (MirageGUI.Default.RememberPassword)
+                Password.Text = MirageGUI.Default.Password;
         }
 
         private void ConnectButton_Click(object sender, EventArgs e)
@@ -77,6 +79,15 @@ namespace MirageGUI.Forms
                     {
                         // success
                         handler.OnLogin();
+                        if (RememberPassword.Checked)
+                        {
+                            MirageGUI.Default.Password = Password.Text;
+                        }
+                        else
+                        {
+                            MirageGUI.Default.Password = "";
+                        }
+                        MirageGUI.Default.Save();
                         // we're done, close the form
                         this.Close();
                         return ProcessStatus.SuccessAbort;
