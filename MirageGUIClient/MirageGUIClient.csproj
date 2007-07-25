@@ -71,6 +71,9 @@
     </Compile>
     <Compile Include="Code\IOHandler.cs" />
     <Compile Include="Code\MessageDispatcher.cs" />
+    <Compile Include="ItemEditor\ControlAdapterBase.cs">
+    </Compile>
+    <Compile Include="ItemEditor\EditorControlFactory.cs" />
     <Compile Include="MirageGUI.cs" />
     <Compile Include="MirageGUI.Designer.cs">
       <AutoGen>True</AutoGen>

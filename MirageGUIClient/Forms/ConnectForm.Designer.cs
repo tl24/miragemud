@@ -38,6 +38,8 @@ namespace MirageGUI.Forms
             this.Login = new System.Windows.Forms.TextBox();
             this.Password = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.RememberPassword = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -60,7 +62,7 @@ namespace MirageGUI.Forms
             // 
             // ConnectButton
             // 
-            this.ConnectButton.Location = new System.Drawing.Point(60, 123);
+            this.ConnectButton.Location = new System.Drawing.Point(60, 150);
             this.ConnectButton.Name = "ConnectButton";
             this.ConnectButton.Size = new System.Drawing.Size(75, 23);
             this.ConnectButton.TabIndex = 4;
@@ -91,7 +93,7 @@ namespace MirageGUI.Forms
             // CancelButton
             // 
             this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(157, 122);
+            this.CancelButton.Location = new System.Drawing.Point(157, 149);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 6;
@@ -110,10 +112,12 @@ namespace MirageGUI.Forms
             // 
             // Login
             // 
+            this.Login.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.MirageGUI.Default, "Login", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.Login.Location = new System.Drawing.Point(91, 62);
             this.Login.Name = "Login";
             this.Login.Size = new System.Drawing.Size(100, 20);
             this.Login.TabIndex = 8;
+            this.Login.Text = global::MirageGUI.MirageGUI.Default.Login;
             // 
             // Password
             // 
@@ -132,12 +136,34 @@ namespace MirageGUI.Forms
             this.label4.TabIndex = 10;
             this.label4.Text = "Password:";
             // 
+            // RememberPassword
+            // 
+            this.RememberPassword.AutoSize = true;
+            this.RememberPassword.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.RememberPassword.Checked = global::MirageGUI.MirageGUI.Default.RememberPassword;
+            this.RememberPassword.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::MirageGUI.MirageGUI.Default, "RememberPassword", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.RememberPassword.Location = new System.Drawing.Point(91, 114);
+            this.RememberPassword.Name = "RememberPassword";
+            this.RememberPassword.Size = new System.Drawing.Size(15, 14);
+            this.RememberPassword.TabIndex = 11;
+            this.RememberPassword.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(12, 115);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(72, 32);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "Remember Password?";
+            // 
             // ConnectForm
             // 
             this.AcceptButton = this.ConnectButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 168);
+            this.ClientSize = new System.Drawing.Size(291, 184);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.RememberPassword);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.Password);
             this.Controls.Add(this.Login);
@@ -167,5 +193,7 @@ namespace MirageGUI.Forms
         private System.Windows.Forms.TextBox Login;
         private System.Windows.Forms.TextBox Password;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox RememberPassword;
+        private System.Windows.Forms.Label label5;
     }
 }

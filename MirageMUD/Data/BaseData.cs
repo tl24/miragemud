@@ -18,12 +18,14 @@ namespace Mirage.Data
 
         #region IQueryable Members
 
+        [Editor(IsKey=true, Priority=1)]
         public string Uri
         {
             get { return _uri; }
             set { _uri = value ?? value.ToLower(); }
         }
 
+        [Editor(Priority=2, IsReadonly=true)]
         public virtual string FullUri
         {
             get { return this.Uri; }

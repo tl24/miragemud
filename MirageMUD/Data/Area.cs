@@ -26,22 +26,25 @@ namespace Mirage.Data
             }
         }
 
-        public string LongDescription
+        [Editor(Priority = 3)]
+        public string Title
         {
-            get { return this._longDescription; }
-            set { this._longDescription = value; }
+            get { return this._title; }
+            set { this._title = value; }
         }
 
+        [Editor(Priority = 4)]
         public string ShortDescription
         {
             get { return this._shortDescription; }
             set { this._shortDescription = value; }
         }
 
-        public string Title
+        [Editor(Priority = 5, EditorType="Multiline")]
+        public string LongDescription
         {
-            get { return this._title; }
-            set { this._title = value; }
+            get { return this._longDescription; }
+            set { this._longDescription = value; }
         }
 
         public override string FullUri
