@@ -24,7 +24,7 @@ The Command attribute lets the mud know that this is a player command.  It can s
 === Arguments ===
 You specify arguments as you normally would do for a method.  Normally you are working with strings, but you can also specify other primitive types.  The Command Invoker will attempt to convert the player's arguments to that type before calling the method.  You can also specify complex types such as a Player class.  These arguments need special attributes to let the mud know how to convert the player's string argument into a Player object.  Two examples are shown here.  
 
-The "Actor" attribute indicates that this argument should be the player that invoked the command.  It can decorate any instance of the Living class, the base class for players and mobiles (_Mobiles can execute commands too!_).  The Actor argument can be at any position in the list or not there at all if you don't need it.
+The "Actor" attribute indicates that this argument should be the player that invoked the command.  It can decorate any instance of the Living class, the base class for players and mobiles (_Mobiles can execute commands too!_).  The Actor argument can be at any position in the list or not there at all if you don't need it.  This argument is supplied by the mud and does not come from the player arguments.
 
 The "Lookup" attribute looks up the argument within the mud using the QueryManager.  In this case it tries to find a player by the name the invoker specified.
 
