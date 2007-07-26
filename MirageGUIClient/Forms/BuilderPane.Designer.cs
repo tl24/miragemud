@@ -28,11 +28,13 @@ namespace MirageGUI.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
             this.ConnectedLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.fileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disconnectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,7 +42,8 @@ namespace MirageGUI.Forms
             this.InnerSplit = new System.Windows.Forms.SplitContainer();
             this.AreaTree = new System.Windows.Forms.TreeView();
             this.EditorTabs = new System.Windows.Forms.TabControl();
-            this.disconnectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AreasContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.newAreaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusStrip.SuspendLayout();
             this.MainMenu.SuspendLayout();
             this.OuterSplit.Panel1.SuspendLayout();
@@ -48,6 +51,7 @@ namespace MirageGUI.Forms
             this.InnerSplit.Panel1.SuspendLayout();
             this.InnerSplit.Panel2.SuspendLayout();
             this.InnerSplit.SuspendLayout();
+            this.AreasContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // StatusStrip
@@ -92,6 +96,14 @@ namespace MirageGUI.Forms
             this.connectMenuItem.Size = new System.Drawing.Size(152, 22);
             this.connectMenuItem.Text = "Connect";
             this.connectMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
+            // 
+            // disconnectMenuItem
+            // 
+            this.disconnectMenuItem.Enabled = false;
+            this.disconnectMenuItem.Name = "disconnectMenuItem";
+            this.disconnectMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.disconnectMenuItem.Text = "Disconnect";
+            this.disconnectMenuItem.Click += new System.EventHandler(this.disconnectMenuItem_Click);
             // 
             // consoleToolStripMenuItem
             // 
@@ -165,13 +177,19 @@ namespace MirageGUI.Forms
             this.EditorTabs.Size = new System.Drawing.Size(425, 158);
             this.EditorTabs.TabIndex = 0;
             // 
-            // disconnectMenuItem
+            // AreasContextMenu
             // 
-            this.disconnectMenuItem.Enabled = false;
-            this.disconnectMenuItem.Name = "disconnectMenuItem";
-            this.disconnectMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.disconnectMenuItem.Text = "Disconnect";
-            this.disconnectMenuItem.Click += new System.EventHandler(this.disconnectMenuItem_Click);
+            this.AreasContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newAreaToolStripMenuItem});
+            this.AreasContextMenu.Name = "AreasContextMenu";
+            this.AreasContextMenu.Size = new System.Drawing.Size(153, 48);
+            // 
+            // newAreaToolStripMenuItem
+            // 
+            this.newAreaToolStripMenuItem.Name = "newAreaToolStripMenuItem";
+            this.newAreaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newAreaToolStripMenuItem.Text = "New Area";
+            this.newAreaToolStripMenuItem.Click += new System.EventHandler(this.newAreaToolStripMenuItem_Click);
             // 
             // BuilderPane
             // 
@@ -195,6 +213,7 @@ namespace MirageGUI.Forms
             this.InnerSplit.Panel1.ResumeLayout(false);
             this.InnerSplit.Panel2.ResumeLayout(false);
             this.InnerSplit.ResumeLayout(false);
+            this.AreasContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -215,5 +234,7 @@ namespace MirageGUI.Forms
         private System.Windows.Forms.ToolStripMenuItem fontToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem backgroundColorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disconnectMenuItem;
+        private System.Windows.Forms.ContextMenuStrip AreasContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem newAreaToolStripMenuItem;
     }
 }

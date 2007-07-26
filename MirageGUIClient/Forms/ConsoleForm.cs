@@ -74,6 +74,21 @@ namespace MirageGUI.Forms
             {
                 this.InputText.UseSystemPasswordChar = true;
             }
+            else if (msg.IsMatch(MessageType.SystemError))
+            {
+                string text;
+                if (msg is ExceptionMessage)
+                {
+                    ExceptionMessage excMsg = (ExceptionMessage)msg;
+                    text = excMsg.Text;
+                    text += "\r\n" + excMsg.Inner.StackTrace;
+                }
+                else
+                {
+                    text = msg.ToString();
+                }
+                MessageBox.Show(text, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             else
             {
                 OutputText.AppendText(msg.ToString());

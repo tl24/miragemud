@@ -14,12 +14,16 @@ namespace MirageGUI.Code
     }
     public class MessageDispatcher : IDisposable
     {
-        private SortedList<Handler> _handlers;
+        private Handler[] _handlers;
+        private int _handlerCount;
+        private bool _isDirty;
+
         private IOHandler _ioHandler;
 
         public MessageDispatcher(IOHandler ioHandler)
         {
-            this._handlers = new SortedList<Handler>();
+            this._handlers = new Handler[10];
+
             this._ioHandler = ioHandler;
             _ioHandler.ResponseReceived += new ResponseHandler(HandleResponse);            
         }
@@ -27,22 +31,35 @@ namespace MirageGUI.Code
         public ProcessStatus HandleResponse(Mirage.Communication.Message msg)
         {
             ProcessStatus result = ProcessStatus.NotProcessed;
+            ProcessUpdates();
             //Call each handler until one of them handles it
-            foreach (Handler handler in _handlers)
+            //Copy the array reference in case a resize occurs during the loop
+            Handler[] tmpHandlers = _handlers;
+            int count = _handlerCount;
+            for (int i = 0; i < count; i++)
             {
-                IResponseHandler responseHandler = handler.handler;
-                
-                if (responseHandler is Form)
-                    result = SendToForm((Form)responseHandler, msg);
-                else
-                    result = responseHandler.HandleResponse(msg);
+                if (tmpHandlers[i] != null)
+                {
+                    IResponseHandler responseHandler = tmpHandlers[i].handler;
 
-                if (result == ProcessStatus.SuccessAbort)
-                    break;
+                    if (responseHandler is Form)
+                        result = SendToForm((Form)responseHandler, msg);
+                    else
+                        result = responseHandler.HandleResponse(msg);
+
+                    if (result == ProcessStatus.SuccessAbort)
+                        break;
+                }
             }
             return result;
         }
 
+        /// <summary>
+        /// Send a message to a form object.  Handles the logic for cross-thread calls.
+        /// </summary>
+        /// <param name="form">the form to receive the message</param>
+        /// <param name="msg">the message</param>
+        /// <returns>the processing status</returns>
         private ProcessStatus SendToForm(Form form, Mirage.Communication.Message msg)
         {
             if (form.InvokeRequired)
@@ -52,28 +69,69 @@ namespace MirageGUI.Code
         }
 
         /// <summary>
-        /// Adds a handler to this instance that will receive messages.  The priority will affect
-        /// the order that it receives messages comparable to other handlers.
+        /// Process any updates that occurred with the handler list
+        /// </summary>
+        private void ProcessUpdates()
+        {
+            if (_isDirty)
+            {
+                Array.Sort<Handler>(_handlers, new Comparison<Handler>(Handler.Compare));
+            }
+            _isDirty = false;
+        }
+
+        /// <summary>
+        /// Adds a response handler to this dispatcher instance with the given 
+        /// message handler priority.  The priority controls the order in which
+        /// handlers recieve a message.
         /// </summary>
         /// <param name="priority">its priority for receiving messages</param>
         /// <param name="responseHandler">the response handler</param>
         public void AddHandler(int priority, IResponseHandler responseHandler) {
-            _handlers.Add(new Handler(priority, responseHandler));
+            _isDirty = true;
+            for (int i = _handlerCount; i < _handlers.Length; i++)
+            {
+                if (_handlers[i] == null)
+                {
+                    _handlers[i] = new Handler(priority, responseHandler);
+                    _handlerCount++;
+                    _isDirty = true;
+                    return;
+                }
+            }
+            // not enough room in the array, make more room
+            Handler[] tmpHandlers = new Handler[_handlers.Length * 2];
+            Array.Copy(_handlers, tmpHandlers, _handlers.Length);
+            _handlers = tmpHandlers;
         }
 
+        /// <summary>
+        /// Adds a response handler to this dispatcher instance with the given 
+        /// message handler priority.  The priority controls the order in which
+        /// handlers recieve a message.
+        /// </summary>
+        /// <param name="priority">handler priority</param>
+        /// <param name="responseHandler">response handler</param>
         public void AddHandler(FormPriority priority, IResponseHandler responseHandler)
         {
             AddHandler((int)priority, responseHandler);
         }
 
+        /// <summary>
+        /// Removes a response handler from the dispatcher.  The dispatcher
+        /// will no longer dispatch messages to this handler
+        /// </summary>
+        /// <param name="responseHandler">the handler to remove</param>
         public void RemoveHandler(IResponseHandler responseHandler)
         {
-            for (int i = 0; i < _handlers.Count; i++)
+            for (int i = 0; i < _handlers.Length; i++)
             {
-                if (_handlers[i].handler == responseHandler)
+                if (_handlers[i] != null && _handlers[i].handler == responseHandler)
                 {
-                    _handlers.RemoveAt(i);
-                    break;
+                    _handlers[i] = null;
+                    _handlerCount--;
+                    _isDirty = true;
+                    return;
                 }
             }
         }
@@ -83,12 +141,12 @@ namespace MirageGUI.Code
         public void Dispose()
         {
             _ioHandler.ResponseReceived -= new ResponseHandler(HandleResponse);
-            _handlers.Clear();
+            _handlers = null;
         }
 
         #endregion
 
-        private class Handler : IComparable<Handler>
+        private class Handler
         {
             public int priority;
             public IResponseHandler handler;
@@ -101,9 +159,12 @@ namespace MirageGUI.Code
 
             #region IComparable<Handler> Members
 
-            public int CompareTo(Handler other)
+            public static int Compare(Handler a, Handler b)
             {
-                return other.priority - priority;
+                int ap = a == null ? 0 : a.priority;
+                int bp = b == null ? 0 : b.priority;
+
+                return bp - ap;
             }
 
             #endregion

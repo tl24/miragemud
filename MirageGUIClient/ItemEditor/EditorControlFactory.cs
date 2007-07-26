@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
+using Mirage.Data;
 
 namespace MirageGUI.ItemEditor
 {
@@ -29,6 +30,37 @@ namespace MirageGUI.ItemEditor
         {
             this._instanceType = instanceType;
             _controlAdapters = new List<ControlAdapterBase>();
+            InitControls();
+        }
+
+        private void InitControls() {
+            foreach (PropertyInfo prop in _instanceType.GetProperties())
+            {
+                string EditorType = "";
+                bool IsReadonly = false;
+                if (prop.IsDefined(typeof(EditorAttribute), false))
+                {
+                    EditorAttribute eAttr = (EditorAttribute)prop.GetCustomAttributes(typeof(EditorAttribute), false)[0];
+                    EditorType = eAttr.EditorType;
+                    IsReadonly = eAttr.IsReadonly;
+                }
+                if (prop.CanRead && (prop.CanWrite || IsReadonly) && (prop.PropertyType.IsPrimitive || prop.PropertyType == typeof(string)))
+                {
+                    _controlAdapters.Add(CreateControlAdapter(prop, EditorType));
+                }
+            }
+            _controlAdapters.Sort();
+        }
+
+        private ControlAdapterBase CreateControlAdapter(PropertyInfo property, string ControlType)
+        {
+            Type adapterType;
+            if ("Multiline" == ControlType)
+                adapterType = typeof(MultilineTextBoxAdapter);
+            else
+                adapterType = typeof(StringTextBoxAdapter);
+
+            return (ControlAdapterBase) Activator.CreateInstance(adapterType, property);
         }
 
         /// <summary>

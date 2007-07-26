@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using JsonExSerializer;
 using Mirage.IO;
+using Mirage.Communication;
 
 namespace MirageGUI.Code
 {
@@ -17,6 +18,8 @@ namespace MirageGUI.Code
         private object syncObject = new object();
         private string _host;
         private int _port;
+        private bool _isClosing = false;
+        private string closeError = null;
 
         public delegate void ConnectStateChangedHandler(object sender, EventArgs e);
         
@@ -53,6 +56,20 @@ namespace MirageGUI.Code
 
         public void Close()
         {
+            Close(null);
+        }
+
+        /// <summary>
+        /// Closes the connection and sends out the closeReasonMessage
+        /// if applicable.
+        /// </summary>
+        /// <param name="closeReasonMessage">The reason the connection was closed</param>
+        private void Close(string closeReasonMessage)
+        {
+            if (_isClosing)
+                return;
+            _isClosing = true;
+            bool wasConnected = reader != null || writer != null;
             if (IsConnected)
                 client.Close();
             if (reader != null)
@@ -64,7 +81,11 @@ namespace MirageGUI.Code
             writer = null;
             _host = null;
             _port = 0;
-            OnConnectStateChanged();
+            if (wasConnected)
+                OnConnectStateChanged();
+            if (closeReasonMessage != null)
+                OnResponseReceived(new StringMessage(MessageType.SystemError, new Uri(Namespaces.CommonError, "GuiError/"), "ConnectionError", closeReasonMessage));
+            _isClosing = false;
         }
 
         private void Run()
@@ -72,6 +93,8 @@ namespace MirageGUI.Code
             string name;
             object data;
             Serializer serializer = Serializer.GetSerializer(typeof(object));
+            string closeError = null;
+
             try
             {
                 while (true)
@@ -86,24 +109,43 @@ namespace MirageGUI.Code
                         case AdvancedClientTransmitType.JsonEncodedMessage:
                             name = reader.ReadString();
                             data = reader.ReadString();
-                            //TODO: Wrap in exception handler so it doesn't kill the thread
-                            data = (Mirage.Communication.Message)serializer.Deserialize((string)data);
+                            try
+                            {
+                                data = (Mirage.Communication.Message)serializer.Deserialize((string)data);
+                            }
+                            catch (Exception e)
+                            {
+                                data = new ExceptionMessage("JsonParseError", e, data);
+                            }
                             break;
                         default:
                             throw new Exception("Unrecognized response: " + type);
                     }
-                    //TODO: Wrap in exception handler so it doesn't kill the thread
-                    OnResponseReceived((Mirage.Communication.Message) data);
+                    try
+                    {
+                        OnResponseReceived((Mirage.Communication.Message)data);
+                    }
+                    catch (Exception e)
+                    {
+                        // event handler errored out, try to send out the error
+                        Mirage.Communication.Message error = new ExceptionMessage("ResponseHandlerException", e, data);
+                        OnResponseReceived(error);
+                    }
                 }
+            }
+            catch (EndOfStreamException ex)
+            {
+                // do nothing, the mud closed the connection
+                closeError = null;
             }
             catch (Exception ex)
             {
 
-                string msg = ex.Message;
+                closeError = ex.Message;
             }
             finally
             {
-                Close();
+                Close(closeError);
             }
         }
 

@@ -10,6 +10,7 @@ using Mirage.Data;
 using MirageGUI.Code;
 using Mirage.Communication;
 using System.Collections;
+using MirageGUI.ItemEditor;
 
 namespace MirageGUI.Forms
 {
@@ -119,6 +120,8 @@ namespace MirageGUI.Forms
         {
             AreaTree.Nodes.Clear();
             TreeNode root = AreaTree.Nodes.Add("Areas");
+            root.ContextMenuStrip = AreasContextMenu;
+
             foreach (string area in (IEnumerable)((DataMessage)response).Data)
             {
                 TreeNode areaNode = root.Nodes.Add(area, area);
@@ -132,7 +135,7 @@ namespace MirageGUI.Forms
             Area area = (Area)((DataMessage)response).Data;
             TreeNode node = AreaTree.Nodes[0].Nodes.Find(area.Uri, false)[0];
             node.Tag = area;
-            AddTab(area.Title, area);
+            AddTab(area.Title, area, EditMode.EditMode);
             return ProcessStatus.SuccessAbort;
         }
         #endregion
@@ -152,26 +155,33 @@ namespace MirageGUI.Forms
             {
                 if (tag is Area)
                 {
-                    AddTab(((Area)tag).Title, tag);
+                    AddTab(((Area)tag).Title, tag, EditMode.EditMode);
                 }
             }
         }
 
-        private void AddTab(string name, object data)
+        private void AddTab(string name, object data, EditMode Mode)
         {
-            EditorForm form = new EditorForm(data);
+            EditorForm form = new EditorForm(data, Mode);
             form.TopMost = false;
             form.FormBorderStyle = FormBorderStyle.None;
             form.ShowInTaskbar = false;
             form.TopLevel = false;
             TabPage page = new TabPage(name);
             page.Controls.Add(form);
-            page.ContextMenuStrip.Items.Add("Close");
             EditorTabs.TabPages.Add(page);
+            form.FormClosing += new FormClosingEventHandler(EditorForm_FormClosing);
             form.Dock = DockStyle.Fill;
             form.Visible = true;
+
         }
 
+        void EditorForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            EditorTabs.TabPages.Remove((TabPage) ((Form)sender).Parent);
+        }
+
+        
         private void BuilderPane_FormClosing(object sender, FormClosingEventArgs e)
         {
             _handler.Close();
@@ -193,6 +203,11 @@ namespace MirageGUI.Forms
             {
                 IOHandler.SendString("quit");
             }
+        }
+
+        private void newAreaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddTab("New Area", new Area(), EditMode.NewMode);
         }
     }
 }
