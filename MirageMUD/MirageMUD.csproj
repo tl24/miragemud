@@ -124,7 +124,6 @@
     <Compile Include="IO\TextClient.cs" />
     <Compile Include="IO\IClient.cs" />
     <Compile Include="IO\Server.cs" />
-    <Compile Include="IO\Serialization\JSONSerializerAdapter.cs" />
     <Compile Include="IO\Serialization\ObjectSerializer.cs" />
     <Compile Include="IO\Serialization\XmlSerializerAdapter.cs" />
     <Compile Include="IO\TextClientFactory.cs" />

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using Mirage.Communication;
-using Newtonsoft.Json;
 using System.Xml.Serialization;
 using Mirage.Data.Query;
 using JsonExSerializer;
@@ -102,7 +101,6 @@ namespace Mirage.Data
 
         #region IContainable Members
 
-        [JsonIgnore]
         [XmlIgnore]
         [JsonExIgnore]
         public IContainer Container
