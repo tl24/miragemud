@@ -12,7 +12,7 @@ namespace Mirage.Data
 
         protected BaseData()
         {
-            _uri = this.ToString();
+            _uri = "";
             _uriChildCollections = new Dictionary<string, ChildCollectionPair>();
         }
 

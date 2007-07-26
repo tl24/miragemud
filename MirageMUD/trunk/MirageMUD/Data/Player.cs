@@ -10,7 +10,6 @@ using Mirage.IO;
 using Mirage.Command;
 
 using Mirage.IO.Serialization;
-using Newtonsoft.Json;
 using Mirage.Data.Query;
 using Mirage.Communication;
 using System.Security.Principal;
@@ -120,7 +119,6 @@ namespace Mirage.Data
         ///    Gets or sets the descriptor for this player
         /// </summary>
         [XmlIgnore]
-        [JsonIgnore]
         [JsonExIgnore]
         public IClient Client
         {
@@ -132,7 +130,6 @@ namespace Mirage.Data
         ///     The Command interpreters in effect for this player
         /// </summary>
         [XmlIgnore]
-        [JsonIgnore]
         [JsonExIgnore]
         public IInterpret Interpreter
         {
@@ -172,7 +169,6 @@ namespace Mirage.Data
             }
         }
 
-        [JsonIgnore]
         [XmlIgnore]
         [JsonExIgnore]
         public override string FullUri
