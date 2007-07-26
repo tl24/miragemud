@@ -6,56 +6,93 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
+using MirageGUI.ItemEditor;
 
 namespace MirageGUI.Forms
 {
     public partial class EditorForm : Form
     {
         private object data;
-        public EditorForm(object data)
+        private EditMode initialMode;
+
+        private EditorControlFactory controlFactory;
+
+        public EditorForm(object data, EditMode initialMode)
         {
             this.data = data;
+            this.initialMode = initialMode;
             InitializeComponent();
         }
 
         private void EditorForm_Load(object sender, EventArgs e)
         {
             // build the form
-            Type t = data.GetType();
-            bool first = true;
-            foreach (PropertyInfo prop in t.GetProperties())
-            {
-                if (prop.CanRead && prop.CanWrite && (prop.PropertyType.IsPrimitive || prop.PropertyType == typeof(string)))
-                {
-                    Label lbl = new Label();
-                    lbl.Text = prop.Name;
-                    TextBox tb = new TextBox();
-                    if (prop.Name == "LongDescription") {
-                        tb.Multiline = true;
-                        tb.Height *=3;
-                    }
-                    tb.Text = prop.GetValue(data, null).ToString();
+            controlFactory = new EditorControlFactory(data.GetType());
 
-                    int row = 0;
-                    if (first)
-                    {
-                        row = 0;
-                        first = false;
-                    }
-                    else
-                    {
-                        row = TableLayout.RowCount;
-                        TableLayout.RowCount = row + 1;
-                    }
-
-                    TableLayout.Controls.Add(lbl, 0, row);
-                    TableLayout.Controls.Add(tb, 1, row);
-                    tb.Dock = DockStyle.Fill;                    
-                }
+            TableLayout.RowCount = controlFactory.ControlCount;
+            for (int i = 0; i < controlFactory.ControlCount; i++) {
+                TableLayout.Controls.Add(controlFactory.LabelControl(i), 0, i);
+                TableLayout.Controls.Add(controlFactory.EditControl(i), 1, i);
+                controlFactory.EditControl(i).Dock = DockStyle.Fill;                    
             }
-            Button btn = new Button();
-            btn.Text = "Save";
-            TableLayout.Controls.Add(btn, 1, TableLayout.RowCount);
+            controlFactory.Mode = initialMode;
+            controlFactory.Instance = data;
+            controlFactory.UpdateControlsFromObject();
+        }
+
+        private void SaveClose_Click(object sender, EventArgs e)
+        {
+            Save();
+            Close();
+        }
+
+        private void Save_Click(object sender, EventArgs e)
+        {
+            Save();
+            SetMode(EditMode.ViewMode);
+        }
+
+        private void Save()
+        {
+            controlFactory.UpdateObjectFromControls();
+        }
+
+        private void Cancel_Click(object sender, EventArgs e)
+        {
+            controlFactory.UpdateControlsFromObject();
+            SetMode(EditMode.ViewMode);
+        }
+
+        private void Edit_Click(object sender, EventArgs e)
+        {
+            SetMode(EditMode.EditMode);
+        }
+
+        private void Close_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void SetMode(EditMode Mode)
+        {
+            controlFactory.Mode = Mode;
+            if (Mode == EditMode.EditMode)
+            {
+                SaveButton.Visible = true;
+                SaveCloseButton.Visible = true;
+                CancelButton.Text = "Cancel";
+                CancelButton.Click -= new EventHandler(Edit_Click);
+                CancelButton.Click += new EventHandler(Cancel_Click);
+            }
+            else
+            {
+                SaveButton.Visible = false;
+                SaveCloseButton.Visible = false;
+                CancelButton.Text = "Edit";
+                CancelButton.Click += new EventHandler(Edit_Click);
+                CancelButton.Click -= new EventHandler(Cancel_Click);
+            }
+
         }
     }
 }

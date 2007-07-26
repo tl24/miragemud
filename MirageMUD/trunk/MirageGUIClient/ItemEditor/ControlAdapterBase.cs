@@ -82,6 +82,7 @@ namespace MirageGUI.ItemEditor
         {
             Label l = new Label();
             l.Text = labelText;
+            l.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             return l;
         }
 
@@ -223,7 +224,7 @@ namespace MirageGUI.ItemEditor
             }
             set
             {
-                EditControl.Text = value.ToString();
+                EditControl.Text = value == null ? "" : value.ToString();
             }
         }
     }

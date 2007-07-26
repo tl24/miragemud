@@ -32,6 +32,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\lib\JsonExSerializer.dll</HintPath>
     </Reference>
+    <Reference Include="MirageMUD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\MirageMUD\bin\Debug\MirageMUD.exe</HintPath>
+    </Reference>
     <Reference Include="NGenerics, Version=1.2.0.0, Culture=neutral, PublicKeyToken=e4b41be133ea7faf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\NGenerics.dll</HintPath>
@@ -44,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\ExceptionMessage.cs" />
     <Compile Include="Code\RealSortedList.cs" />
     <Compile Include="Forms\BuilderPane.cs">
       <SubType>Form</SubType>
@@ -124,12 +130,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Code\ResponseHandler.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MirageMUD\MirageMUD.csproj">
-      <Project>{EFADF99D-5747-445E-9FC7-94CB2A17BE45}</Project>
-      <Name>MirageMUD</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
