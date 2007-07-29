@@ -51,6 +51,7 @@ namespace MirageGUI.Forms
             handlerDelegates = new Dictionary<string, ResponseHandler>();
             handlerDelegates.Add(new Uri(Namespaces.Area, "AreaList").ToString(), new ResponseHandler(ProcessAreaList));
             handlerDelegates.Add(new Uri(Namespaces.Area, "Area").ToString(), new ResponseHandler(ProcessAreaGet));
+            handlerDelegates.Add(new Uri(Namespaces.Area, "AreaRooms").ToString(), new ResponseHandler(ProcessAreaRooms));
         }
 
         private void BuilderPane_Load(object sender, EventArgs e)
@@ -127,6 +128,28 @@ namespace MirageGUI.Forms
             {
                 TreeNode areaNode = root.Nodes.Add(area, area);
                 areaNode.Tag = typeof(Area);
+                TreeNode rooms = areaNode.Nodes.Add("Rooms", "Rooms");
+                IOHandler.SendString("GetAreaRooms " + area);                
+            }
+            return ProcessStatus.SuccessAbort;
+        }
+
+        /// <summary>
+        /// Process a list of areas from the mud.  Populate the area tree.
+        /// </summary>
+        private ProcessStatus ProcessAreaRooms(Mirage.Communication.Message response)
+        {
+
+            ChildItemsMessage childMessage = (ChildItemsMessage)response;
+            string parent = (string) childMessage.Parent;
+            TreeNode parentArea = AreaTree.Nodes[0].Nodes.Find(parent, false)[0];
+            TreeNode rooms = parentArea.Nodes["Rooms"];
+            rooms.Nodes.Clear();
+
+            foreach (string room in (IEnumerable)((ChildItemsMessage)response).Items)
+            {
+                TreeNode roomNode = rooms.Nodes.Add(room, room);
+                roomNode.Tag = typeof(Room);
             }
             return ProcessStatus.SuccessAbort;
         }
@@ -150,7 +173,7 @@ namespace MirageGUI.Forms
                 if (typeof(Area).IsAssignableFrom(t))
                 {
                     _handler.SendString("GetArea " + e.Node.Name);
-                }
+                }                
             }
             else
             {
