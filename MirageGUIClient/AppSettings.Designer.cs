@@ -13,11 +13,11 @@ namespace MirageGUI {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class MirageGUI : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class AppSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static MirageGUI defaultInstance = ((MirageGUI)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new MirageGUI())));
+        private static AppSettings defaultInstance = ((AppSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AppSettings())));
         
-        public static MirageGUI Default {
+        public static AppSettings Default {
             get {
                 return defaultInstance;
             }
@@ -116,6 +116,18 @@ namespace MirageGUI {
             }
             set {
                 this["RememberPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("566, 397")]
+        public global::System.Drawing.Size FormSize {
+            get {
+                return ((global::System.Drawing.Size)(this["FormSize"]));
+            }
+            set {
+                this["FormSize"] = value;
             }
         }
     }

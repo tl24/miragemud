@@ -11,6 +11,7 @@ using MirageGUI.Code;
 using Mirage.Communication;
 using System.Collections;
 using MirageGUI.ItemEditor;
+using Mirage.Data.Query;
 
 namespace MirageGUI.Forms
 {
@@ -48,8 +49,8 @@ namespace MirageGUI.Forms
         private void InitHandlerDelegates()
         {
             handlerDelegates = new Dictionary<string, ResponseHandler>();
-            handlerDelegates.Add(new Uri(Namespaces.Area, "Area.List").ToString(), new ResponseHandler(ProcessAreaList));
-            handlerDelegates.Add(new Uri(Namespaces.Area, "Area.Get").ToString(), new ResponseHandler(ProcessAreaGet));
+            handlerDelegates.Add(new Uri(Namespaces.Area, "AreaList").ToString(), new ResponseHandler(ProcessAreaList));
+            handlerDelegates.Add(new Uri(Namespaces.Area, "Area").ToString(), new ResponseHandler(ProcessAreaGet));
         }
 
         private void BuilderPane_Load(object sender, EventArgs e)
@@ -122,7 +123,7 @@ namespace MirageGUI.Forms
             TreeNode root = AreaTree.Nodes.Add("Areas");
             root.ContextMenuStrip = AreasContextMenu;
 
-            foreach (string area in (IEnumerable)((DataMessage)response).Data)
+            foreach (string area in (IEnumerable)((ChildItemsMessage)response).Items)
             {
                 TreeNode areaNode = root.Nodes.Add(area, area);
                 areaNode.Tag = typeof(Area);
@@ -162,7 +163,7 @@ namespace MirageGUI.Forms
 
         private void AddTab(string name, object data, EditMode Mode)
         {
-            EditorForm form = new EditorForm(data, Mode);
+            EditorForm form = new EditorForm(data, Mode, IOHandler);
             form.TopMost = false;
             form.FormBorderStyle = FormBorderStyle.None;
             form.ShowInTaskbar = false;
@@ -171,9 +172,42 @@ namespace MirageGUI.Forms
             page.Controls.Add(form);
             EditorTabs.TabPages.Add(page);
             form.FormClosing += new FormClosingEventHandler(EditorForm_FormClosing);
+            form.ItemChanged += new ItemChangedHandler(EditorForm_ItemChanged);
             form.Dock = DockStyle.Fill;
             form.Visible = true;
 
+        }
+
+        void EditorForm_ItemChanged(object sender, global::MirageGUI.Code.ItemChangedEventArgs e)
+        {
+            EditorForm form = (EditorForm)sender;
+            TabPage page = (TabPage) form.Parent;
+            if (e.Data is IUri)
+            {
+                page.Name = ((IUri)e.Data).Uri;
+            }
+            if (e.Data is Area)
+            {
+                Area area = (Area)e.Data;
+                TreeNode AreasNode = AreaTree.Nodes[0];
+                if (e.ChangeType == ChangeType.ItemAdded)
+                {
+                    TreeNode areaNode = AreasNode.Nodes.Add(area.Uri, area.Uri);
+                    areaNode.Tag = area;
+                }
+                else
+                {
+                    TreeNode[] nodes = AreasNode.Nodes.Find(area.Uri, false);
+                    if (nodes.Length == 1)
+                    {
+                        nodes[0].Tag = area;
+                    }
+                    else
+                    {
+                        throw new ApplicationException("Duplicate area found: " + area.Uri);
+                    }
+                }
+            }
         }
 
         void EditorForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -185,6 +219,7 @@ namespace MirageGUI.Forms
         private void BuilderPane_FormClosing(object sender, FormClosingEventArgs e)
         {
             _handler.Close();
+            AppSettings.Default.Save();
         }
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
@@ -208,6 +243,11 @@ namespace MirageGUI.Forms
         private void newAreaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddTab("New Area", new Area(), EditMode.NewMode);
+        }
+
+        private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            IOHandler.SendString("SaveArea all");
         }
     }
 }

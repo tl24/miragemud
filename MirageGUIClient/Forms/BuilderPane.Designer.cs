@@ -44,6 +44,7 @@ namespace MirageGUI.Forms
             this.EditorTabs = new System.Windows.Forms.TabControl();
             this.AreasContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newAreaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusStrip.SuspendLayout();
             this.MainMenu.SuspendLayout();
             this.OuterSplit.Panel1.SuspendLayout();
@@ -58,9 +59,9 @@ namespace MirageGUI.Forms
             // 
             this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ConnectedLabel});
-            this.StatusStrip.Location = new System.Drawing.Point(0, 341);
+            this.StatusStrip.Location = new System.Drawing.Point(0, 375);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(558, 22);
+            this.StatusStrip.Size = new System.Drawing.Size(566, 22);
             this.StatusStrip.TabIndex = 2;
             this.StatusStrip.Text = "statusStrip1";
             // 
@@ -77,7 +78,7 @@ namespace MirageGUI.Forms
             this.consoleToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
-            this.MainMenu.Size = new System.Drawing.Size(558, 24);
+            this.MainMenu.Size = new System.Drawing.Size(566, 24);
             this.MainMenu.TabIndex = 3;
             this.MainMenu.Text = "menuStrip1";
             // 
@@ -93,7 +94,7 @@ namespace MirageGUI.Forms
             // connectMenuItem
             // 
             this.connectMenuItem.Name = "connectMenuItem";
-            this.connectMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.connectMenuItem.Size = new System.Drawing.Size(137, 22);
             this.connectMenuItem.Text = "Connect";
             this.connectMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
@@ -101,7 +102,7 @@ namespace MirageGUI.Forms
             // 
             this.disconnectMenuItem.Enabled = false;
             this.disconnectMenuItem.Name = "disconnectMenuItem";
-            this.disconnectMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.disconnectMenuItem.Size = new System.Drawing.Size(137, 22);
             this.disconnectMenuItem.Text = "Disconnect";
             this.disconnectMenuItem.Click += new System.EventHandler(this.disconnectMenuItem_Click);
             // 
@@ -138,8 +139,8 @@ namespace MirageGUI.Forms
             // OuterSplit.Panel1
             // 
             this.OuterSplit.Panel1.Controls.Add(this.InnerSplit);
-            this.OuterSplit.Size = new System.Drawing.Size(558, 317);
-            this.OuterSplit.SplitterDistance = 158;
+            this.OuterSplit.Size = new System.Drawing.Size(566, 351);
+            this.OuterSplit.SplitterDistance = 174;
             this.OuterSplit.TabIndex = 4;
             // 
             // InnerSplit
@@ -155,8 +156,8 @@ namespace MirageGUI.Forms
             // InnerSplit.Panel2
             // 
             this.InnerSplit.Panel2.Controls.Add(this.EditorTabs);
-            this.InnerSplit.Size = new System.Drawing.Size(558, 158);
-            this.InnerSplit.SplitterDistance = 129;
+            this.InnerSplit.Size = new System.Drawing.Size(566, 174);
+            this.InnerSplit.SplitterDistance = 130;
             this.InnerSplit.TabIndex = 1;
             // 
             // AreaTree
@@ -164,7 +165,7 @@ namespace MirageGUI.Forms
             this.AreaTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AreaTree.Location = new System.Drawing.Point(0, 0);
             this.AreaTree.Name = "AreaTree";
-            this.AreaTree.Size = new System.Drawing.Size(129, 158);
+            this.AreaTree.Size = new System.Drawing.Size(130, 174);
             this.AreaTree.TabIndex = 0;
             this.AreaTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.AreaTree_NodeMouseDoubleClick);
             // 
@@ -174,31 +175,40 @@ namespace MirageGUI.Forms
             this.EditorTabs.Location = new System.Drawing.Point(0, 0);
             this.EditorTabs.Name = "EditorTabs";
             this.EditorTabs.SelectedIndex = 0;
-            this.EditorTabs.Size = new System.Drawing.Size(425, 158);
+            this.EditorTabs.Size = new System.Drawing.Size(432, 174);
             this.EditorTabs.TabIndex = 0;
             // 
             // AreasContextMenu
             // 
             this.AreasContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newAreaToolStripMenuItem});
+            this.newAreaToolStripMenuItem,
+            this.saveAllToolStripMenuItem});
             this.AreasContextMenu.Name = "AreasContextMenu";
-            this.AreasContextMenu.Size = new System.Drawing.Size(153, 48);
+            this.AreasContextMenu.Size = new System.Drawing.Size(153, 70);
             // 
             // newAreaToolStripMenuItem
             // 
             this.newAreaToolStripMenuItem.Name = "newAreaToolStripMenuItem";
-            this.newAreaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newAreaToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.newAreaToolStripMenuItem.Text = "New Area";
             this.newAreaToolStripMenuItem.Click += new System.EventHandler(this.newAreaToolStripMenuItem_Click);
+            // 
+            // saveAllToolStripMenuItem
+            // 
+            this.saveAllToolStripMenuItem.Name = "saveAllToolStripMenuItem";
+            this.saveAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAllToolStripMenuItem.Text = "Save All";
+            this.saveAllToolStripMenuItem.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
             // 
             // BuilderPane
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(558, 363);
+            this.ClientSize = global::MirageGUI.AppSettings.Default.FormSize;
             this.Controls.Add(this.OuterSplit);
             this.Controls.Add(this.StatusStrip);
             this.Controls.Add(this.MainMenu);
+            this.DataBindings.Add(new System.Windows.Forms.Binding("ClientSize", global::MirageGUI.AppSettings.Default, "FormSize", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.MainMenuStrip = this.MainMenu;
             this.Name = "BuilderPane";
             this.Text = "BuilderPane";
@@ -236,5 +246,6 @@ namespace MirageGUI.Forms
         private System.Windows.Forms.ToolStripMenuItem disconnectMenuItem;
         private System.Windows.Forms.ContextMenuStrip AreasContextMenu;
         private System.Windows.Forms.ToolStripMenuItem newAreaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
     }
 }

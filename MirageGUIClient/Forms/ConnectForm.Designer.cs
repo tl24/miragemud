@@ -72,23 +72,23 @@ namespace MirageGUI.Forms
             // 
             // RemotePort
             // 
-            this.RemotePort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.MirageGUI.Default, "RemotePort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.RemotePort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.AppSettings.Default, "RemotePort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.RemotePort.Location = new System.Drawing.Point(91, 36);
             this.RemotePort.Mask = "00000";
             this.RemotePort.Name = "RemotePort";
             this.RemotePort.Size = new System.Drawing.Size(100, 20);
             this.RemotePort.TabIndex = 5;
-            this.RemotePort.Text = global::MirageGUI.MirageGUI.Default.RemotePort;
+            this.RemotePort.Text = global::MirageGUI.AppSettings.Default.RemotePort;
             this.RemotePort.ValidatingType = typeof(int);
             // 
             // RemoteHost
             // 
-            this.RemoteHost.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.MirageGUI.Default, "RemoteHost", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.RemoteHost.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.AppSettings.Default, "RemoteHost", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.RemoteHost.Location = new System.Drawing.Point(91, 9);
             this.RemoteHost.Name = "RemoteHost";
             this.RemoteHost.Size = new System.Drawing.Size(189, 20);
             this.RemoteHost.TabIndex = 2;
-            this.RemoteHost.Text = global::MirageGUI.MirageGUI.Default.RemoteHost;
+            this.RemoteHost.Text = global::MirageGUI.AppSettings.Default.RemoteHost;
             // 
             // CancelButton
             // 
@@ -112,12 +112,12 @@ namespace MirageGUI.Forms
             // 
             // Login
             // 
-            this.Login.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.MirageGUI.Default, "Login", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.Login.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::MirageGUI.AppSettings.Default, "Login", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.Login.Location = new System.Drawing.Point(91, 62);
             this.Login.Name = "Login";
             this.Login.Size = new System.Drawing.Size(100, 20);
             this.Login.TabIndex = 8;
-            this.Login.Text = global::MirageGUI.MirageGUI.Default.Login;
+            this.Login.Text = global::MirageGUI.AppSettings.Default.Login;
             // 
             // Password
             // 
@@ -140,8 +140,8 @@ namespace MirageGUI.Forms
             // 
             this.RememberPassword.AutoSize = true;
             this.RememberPassword.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.RememberPassword.Checked = global::MirageGUI.MirageGUI.Default.RememberPassword;
-            this.RememberPassword.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::MirageGUI.MirageGUI.Default, "RememberPassword", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.RememberPassword.Checked = global::MirageGUI.AppSettings.Default.RememberPassword;
+            this.RememberPassword.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::MirageGUI.AppSettings.Default, "RememberPassword", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.RememberPassword.Location = new System.Drawing.Point(91, 114);
             this.RememberPassword.Name = "RememberPassword";
             this.RememberPassword.Size = new System.Drawing.Size(15, 14);
