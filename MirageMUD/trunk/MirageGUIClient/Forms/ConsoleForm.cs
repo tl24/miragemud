@@ -89,6 +89,10 @@ namespace MirageGUI.Forms
                 }
                 MessageBox.Show(text, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            else if (msg.IsMatch(MessageType.Confirmation) && msg.ToString() == string.Empty)
+            {
+                MessageBox.Show(msg.Name, "Confirmation", MessageBoxButtons.OK);
+            }
             else
             {
                 OutputText.AppendText(msg.ToString());
@@ -112,7 +116,7 @@ namespace MirageGUI.Forms
             OutputText.ForeColor = fontDialog1.Color;
             InputText.Font = fontDialog1.Font;
             InputText.ForeColor = fontDialog1.Color;
-            MirageGUI.Default.Save();
+            AppSettings.Default.Save();
         }
 
         internal void ShowBackgroundColor(object sender, EventArgs e)
@@ -122,7 +126,7 @@ namespace MirageGUI.Forms
             {
                 OutputText.BackColor = colorDialog1.Color;
                 InputText.BackColor = colorDialog1.Color;
-                MirageGUI.Default.Save();
+                AppSettings.Default.Save();
             }
         }
     }

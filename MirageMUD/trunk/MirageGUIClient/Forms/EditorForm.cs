@@ -7,20 +7,27 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using MirageGUI.ItemEditor;
+using MirageGUI.Code;
+using Mirage.Communication;
 
 namespace MirageGUI.Forms
 {
-    public partial class EditorForm : Form
+    public partial class EditorForm : Form, IResponseHandler
     {
         private object data;
         private EditMode initialMode;
+        private IOHandler _ioHandler;
+        private bool closeFlag = false;
 
         private EditorControlFactory controlFactory;
 
-        public EditorForm(object data, EditMode initialMode)
+        public event ItemChangedHandler ItemChanged;
+
+        public EditorForm(object data, EditMode initialMode, IOHandler IOHandler)
         {
             this.data = data;
             this.initialMode = initialMode;
+            this._ioHandler = IOHandler;
             InitializeComponent();
         }
 
@@ -43,18 +50,20 @@ namespace MirageGUI.Forms
         private void SaveClose_Click(object sender, EventArgs e)
         {
             Save();
-            Close();
+            closeFlag = true;
         }
 
         private void Save_Click(object sender, EventArgs e)
         {
             Save();
+            closeFlag = false;
             SetMode(EditMode.ViewMode);
         }
 
         private void Save()
         {
             controlFactory.UpdateObjectFromControls();
+            _ioHandler.SendObject(initialMode == EditMode.EditMode ? "UpdateArea" : "AddArea", new object[] { data });
         }
 
         private void Cancel_Click(object sender, EventArgs e)
@@ -94,5 +103,51 @@ namespace MirageGUI.Forms
             }
 
         }
+
+        protected void OnItemChanged(MirageGUI.Code.ItemChangedEventArgs args)
+        {
+            if (ItemChanged != null)
+                ItemChanged.Invoke(this, args);
+
+        }
+        #region IResponseHandler Members
+
+        public ProcessStatus HandleResponse(Mirage.Communication.Message response)
+        {
+            if (response.IsMatch(Namespaces.Area))
+            {
+                if (response.IsMatch(MessageType.PlayerError) || response.IsMatch(MessageType.SystemError))
+                {
+                    MessageBox.Show(response.ToString(), "Error occurred", MessageBoxButtons.OK);
+                    return ProcessStatus.SuccessAbort;
+                }
+                else if (response.IsMatch(Namespaces.Area, "AreaUpdated"))
+                {
+                    OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(ChangeType.ItemUpdated, data));
+                    if (closeFlag)
+                        Close();
+                    else
+                        SetMode(EditMode.ViewMode);
+                    return ProcessStatus.SuccessAbort;
+                }
+                else if (response.IsMatch(Namespaces.Area, "AreaAdded"))
+                {
+                    OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(ChangeType.ItemAdded, data));
+                    if (closeFlag)
+                        Close();
+                    else
+                    {
+                        initialMode = EditMode.EditMode;
+                        SetMode(EditMode.ViewMode);
+                    }
+                    return ProcessStatus.SuccessAbort;
+                }
+            }
+            return ProcessStatus.NotProcessed;
+
+
+        }
+
+        #endregion
     }
 }

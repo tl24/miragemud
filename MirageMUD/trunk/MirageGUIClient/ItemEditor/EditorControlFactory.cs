@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using Mirage.Data;
+using JsonExSerializer;
 
 namespace MirageGUI.ItemEditor
 {
@@ -44,6 +45,9 @@ namespace MirageGUI.ItemEditor
                     EditorType = eAttr.EditorType;
                     IsReadonly = eAttr.IsReadonly;
                 }
+                if (prop.IsDefined(typeof(JsonExIgnoreAttribute), false))
+                    continue;
+
                 if (prop.CanRead && (prop.CanWrite || IsReadonly) && (prop.PropertyType.IsPrimitive || prop.PropertyType == typeof(string)))
                 {
                     _controlAdapters.Add(CreateControlAdapter(prop, EditorType));

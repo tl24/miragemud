@@ -6,9 +6,9 @@ namespace MirageGUI {
     //  The PropertyChanged event is raised after a setting's value is changed.
     //  The SettingsLoaded event is raised after the setting values are loaded.
     //  The SettingsSaving event is raised before the setting values are saved.
-    internal sealed partial class MirageGUI {
+    internal sealed partial class AppSettings {
         
-        public MirageGUI() {
+        public AppSettings() {
             // // To add event handlers for saving and changing settings, uncomment the lines below:
             //
             // this.SettingChanging += this.SettingChangingEventHandler;

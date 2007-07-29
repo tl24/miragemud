@@ -62,6 +62,9 @@ namespace MirageGUI.Code
         /// <returns>the processing status</returns>
         private ProcessStatus SendToForm(Form form, Mirage.Communication.Message msg)
         {
+            if (form.IsDisposed)
+                return ProcessStatus.NotProcessed;
+
             if (form.InvokeRequired)
                 return (ProcessStatus)form.Invoke(new ResponseHandler(((IResponseHandler)form).HandleResponse), msg);
             else
