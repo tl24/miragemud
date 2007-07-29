@@ -20,7 +20,7 @@ namespace Mirage.Data
     /// <summary>
     ///     A player is controlled by a live person and a participant in
     /// the game (as opposed to a Mobile which is a game object controlled by AI).
-    /// It is a descendant of Animate, the base-class for living breating things
+    /// It is a descendant of Living, the base-class for living breating things
     /// </summary>
     public class Player : Living
     {

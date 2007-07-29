@@ -66,7 +66,7 @@ namespace NUnitTests.Data
             target.LongDescription = "target Description line 1\r\ntargeDescriptionon line 2";
             target.SetPassword("targetPassword");
             target.Level = 23;
-            target.Sex = SexType.Female;
+            target.Gender = GenderType.Female;
 
             Player.Save(target);
             Player loaded = Player.Load(target.Uri);

@@ -54,13 +54,38 @@ namespace Mirage.Command
             _name = methInfo.Name;
             _methodInfo = methInfo;
 
+            // set defaults
+            this._level = 1;
+            this._roles = new string[0];
+
+            // Check for defaults at the class level
+            if (methInfo.DeclaringType.IsDefined(typeof(CommandDefaultsAttribute), false))
+            {
+                CommandDefaultsAttribute defaults = (CommandDefaultsAttribute) methInfo.DeclaringType.GetCustomAttributes(typeof(CommandDefaultsAttribute), false)[0];
+                if (defaults.Level != -1)
+                    this._level = defaults.Level;
+
+                if (defaults.Roles != null && defaults.Roles != "")
+                    this._roles = defaults.Roles.Split(',', ' ');
+
+                if (defaults.ClientTypes != null)
+                    this._clientTypes = defaults.ClientTypes;
+            }
             CommandAttribute cmdAttr = (CommandAttribute) methInfo.GetCustomAttributes(typeof(CommandAttribute), false)[0];
 
-            this._level = cmdAttr.Level;
+            if (cmdAttr.Level != -1)
+                this._level = cmdAttr.Level;
+
             this._description = cmdAttr.Description;
-            this._roles = cmdAttr.Roles ?? new string[0];
+
+
+            if (cmdAttr.Roles != null && cmdAttr.Roles != "")
+                this._roles = cmdAttr.Roles.Split(',', ' ');
+
+            if (cmdAttr.ClientTypes != null)
+                this._clientTypes = cmdAttr.ClientTypes;
+
             this._aliases = cmdAttr.Aliases ?? new string[0];
-            this._clientTypes = cmdAttr.ClientTypes;
 
             _argCount = 0;
             foreach (ParameterInfo param in methInfo.GetParameters())

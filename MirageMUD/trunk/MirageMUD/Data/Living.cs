@@ -10,9 +10,9 @@ using JsonExSerializer;
 namespace Mirage.Data
 {
     /// <summary>
-    ///     The sex for an animate
+    ///     The gender for a Living (Player or Mobile)
     /// </summary>
-    public enum SexType {
+    public enum GenderType {
         /// <summary>
         ///     Male
         /// </summary>
@@ -37,7 +37,7 @@ namespace Mirage.Data
     {
         private string _title;
         private int _level;
-        private SexType _sex;
+        private GenderType _gender;
         private string _shortDescription;
         private string _longDescription;
         private Room _room;
@@ -45,10 +45,10 @@ namespace Mirage.Data
         public Living()
         {
             _level = 1;
-            _sex = SexType.Other;
+            _gender = GenderType.Other;
         }
         /// <summary>
-        ///     The level of this animate
+        ///     The player or mobile's level
         /// </summary>
 
         public int Level
@@ -58,12 +58,12 @@ namespace Mirage.Data
         }
 
         /// <summary>
-        ///     The sex of this animate
+        ///     The object's gender
         /// </summary>
-        public SexType Sex
+        public GenderType Gender
         {
-            get { return _sex; }
-            set { _sex = value; }
+            get { return _gender; }
+            set { _gender = value; }
         }
 
         public abstract void Write(Message message);

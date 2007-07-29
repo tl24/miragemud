@@ -57,6 +57,7 @@
     <Compile Include="Command\LookupAttribute.cs" />
     <Compile Include="Command\Movement.cs" />
     <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
+    <Compile Include="Communication\ChildItemsMessage.cs" />
     <Compile Include="Communication\DataMessage.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
     <Compile Include="Communication\ErrorResourceMessage.cs" />
@@ -80,8 +81,10 @@
     <Compile Include="Data\ContainerAddException.cs" />
     <Compile Include="Data\Containers.cs" />
     <Compile Include="Data\EditorAttribute.cs" />
+    <Compile Include="Data\EditorTreePropertyAttribute.cs" />
     <Compile Include="Data\IContainable.cs" />
     <Compile Include="Data\IContainer.cs" />
+    <Compile Include="Data\ObjectUpdater.cs" />
     <Compile Include="Data\Query\IURI.cs" />
     <Compile Include="Data\Query\IUriContainer.cs" />
     <Compile Include="Data\Query\QueryManager.cs" />

@@ -58,21 +58,21 @@ namespace Mirage.Command
             }
         }
 
-        public static bool Interpret(Living actor, string command)
+        public static bool Interpret(Living actor, string commandString)
         {
             ArgumentParser parser;
             string commandName;
             string args;
 
             //TODO: Come up with a better method for single character commands
-            if (command.StartsWith("'"))
+            if (commandString.StartsWith("'"))
             {
                 commandName = "'";
-                args = command.Substring(1);
+                args = commandString.Substring(1);
             }
             else
             {
-                parser = new ArgumentParser(command);
+                parser = new ArgumentParser(commandString);
                 commandName = parser.getNextArgument();
                 args = parser.getRest().TrimStart(null);
             }
@@ -160,6 +160,69 @@ namespace Mirage.Command
             return fCommandInvoked;
         }
 
+        public static bool Interpret(Living actor, string commandName, object[] arguments)
+        {
+
+            IList<ICommand> methods = GetAvailableMethods(commandName);
+            bool fCommandInvoked = false;
+            List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
+
+            Type clientType = null;
+            if (actor is Player && ((Player)actor).Client != null)
+            {
+                clientType = ((Player)actor).Client.GetType();
+            }
+
+            foreach (ICommand method in methods)
+            {
+                if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes))
+                {
+                    if (arguments.Length != method.ArgCount)
+                    {
+                        continue;
+                    }
+                    int argCount = 0;
+                    bool nextMethod = false;
+
+                    //TODO: commandName is not really the invokedName...could just be a partial name
+                    CanidateCommand canidate = new CanidateCommand(method, commandName);
+                    canidateCommands.Add(canidate);
+                    object[] convertedArguments;
+                    Message errorMessage;
+                    if (method.ConvertArguments(canidate.InvokedName, actor, arguments, out convertedArguments, out errorMessage))
+                    {
+                        canidate.Arguments = convertedArguments;
+                        canidate.Validated = true;
+                    }
+                    else
+                    {
+                        canidate.ErrorMessage = errorMessage;
+                    }
+                }
+            }
+
+            if (canidateCommands.Count > 0)
+            {
+                canidateCommands.Sort();
+                CanidateCommand first = canidateCommands[0];
+                if (first.Validated)
+                {
+                    Message result = first.Command.Invoke(first.InvokedName, actor, first.Arguments);
+                    fCommandInvoked = true;
+                    if (result != null)
+                        actor.Write(result);
+                }
+                else
+                {
+                    actor.Write(first.ErrorMessage);
+                }
+            }
+            else
+            {
+                actor.Write(new StringMessage(MessageType.PlayerError, "NoCommandFound", "Huh?\r\n"));
+            }
+            return fCommandInvoked;
+        }
 
         /// <summary>
         /// Checks to see if the type of the player's client is within the allowed list

@@ -72,7 +72,8 @@ namespace Mirage.IO
                         }
                         else
                         {
-                            throw new NotSupportedException("Advanced Client can't handle object data yet");
+                            //throw new NotSupportedException("Advanced Client can't handle object data yet");
+                            MethodInvoker.Interpret(this.Player, msg.name, (object[])msg.data);
                         }
                     }
                 }

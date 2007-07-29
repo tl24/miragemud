@@ -5,7 +5,7 @@ using Mirage.Data.Query;
 
 namespace Mirage.Data
 {
-    public class BaseData : IUriContainer, IUri
+    public class BaseData : Thing, IUriContainer, IUri
     {
         protected string _uri;
         protected Dictionary<string, ChildCollectionPair> _uriChildCollections;
