@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Mirage.Data.Query;
+using JsonExSerializer;
 
 namespace Mirage.Data
 {
@@ -11,12 +12,14 @@ namespace Mirage.Data
         private string _shortDescription;
         private string _longDescription;
         private IDictionary<string, Room> _rooms;
+        private bool _isDirty;
 
         public Area()
         {
-            Rooms = new Dictionary<string, Room>();            
+            Rooms = new Dictionary<string, Room>(StringComparer.CurrentCultureIgnoreCase);            
         }
 
+        [EditorTreeProperty("GetAreaRooms", "msg:/builder/area/AreaRooms")]
         public IDictionary<string, Room> Rooms
         {
             get { return this._rooms; }
@@ -45,6 +48,13 @@ namespace Mirage.Data
         {
             get { return this._longDescription; }
             set { this._longDescription = value; }
+        }
+
+        [JsonExIgnore]
+        public bool IsDirty
+        {
+            get { return this._isDirty; }
+            set { this._isDirty = value; }
         }
 
         public override string FullUri
