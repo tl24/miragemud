@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Data.Query;
 
 namespace Mirage.Communication
 {
@@ -9,6 +10,7 @@ namespace Mirage.Communication
     /// </summary>
     public class DataMessage : Message
     {
+        private string _itemUri;
         private object _data;
 
         public DataMessage()
@@ -19,6 +21,15 @@ namespace Mirage.Communication
         public DataMessage(Uri Namespace, string name, object data)
             : base(MessageType.Data, Namespace, name)
         {
+            if (_data is IUri)
+                this._itemUri = ((IUri) _data).FullUri;
+            this._data = data;
+        }
+
+        public DataMessage(Uri Namespace, string name, string itemUri, object data)
+            : base(MessageType.Data, Namespace, name)
+        {
+            this._itemUri = itemUri;
             this._data = data;
         }
 
@@ -31,6 +42,12 @@ namespace Mirage.Communication
         {
             get { return this._data; }
             set { this._data = value; }
+        }
+
+        public string ItemUri
+        {
+            get { return this._itemUri; }
+            set { this._itemUri = value; }
         }
 
     }

@@ -93,7 +93,8 @@ namespace Mirage.IO
                 {
 
                     Player player = GetValue<Player>("player");
-                    //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
+                    Client.Logger.Info(string.Format("{0}@{1} has connected.", player.Uri, Client.TcpClient.Client.LocalEndPoint));
+
                     GlobalLists globalLists = GlobalLists.GetInstance();
                     globalLists.AddPlayer(player);
                     if (player.Container == null)

@@ -57,6 +57,7 @@
     <Compile Include="Command\LookupAttribute.cs" />
     <Compile Include="Command\Movement.cs" />
     <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
+    <Compile Include="Communication\BuilderMessages\UpdateConfirmationMessage.cs" />
     <Compile Include="Communication\ChildItemsMessage.cs" />
     <Compile Include="Communication\DataMessage.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Data\Query\QueryManager.cs" />
     <Compile Include="Data\RoomExit.cs" />
     <Compile Include="Data\Thing.cs" />
+    <Compile Include="Data\World.cs" />
     <Compile Include="IO\GuiClient.cs" />
     <Compile Include="IO\GuiClientFactory.cs" />
     <Compile Include="IO\GuiLoginHandler.cs" />

@@ -45,6 +45,7 @@ namespace Mirage.IO
                 {
                     // should put this in an event to be triggered
                     //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
+                    Client.Logger.Info(string.Format("{0}@{1} has connected.", p.Uri, Client.TcpClient.Client.RemoteEndPoint));
                     GlobalLists globalLists = GlobalLists.GetInstance();
                     globalLists.AddPlayer(p);
                     if (p.Container == null)
@@ -60,7 +61,7 @@ namespace Mirage.IO
                     //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\r\n");
                     Client.State = ConnectedState.Playing;
                     //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\r\n",  $desc);	
-
+                    
                     Client.Player = p;
                     p.Client = Client;
 
