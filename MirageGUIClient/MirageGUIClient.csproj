@@ -57,8 +57,13 @@
     <Compile Include="Code\ExceptionMessage.cs" />
     <Compile Include="Code\ItemChanged.cs" />
     <Compile Include="Code\RealSortedList.cs" />
-    <Compile Include="Controls\AreaTreeView.cs">
+    <Compile Include="Controls\BaseTag.cs" />
+    <Compile Include="Controls\ItemTag.cs" />
+    <Compile Include="Controls\ITreeViewTagData.cs">
     </Compile>
+    <Compile Include="Controls\ListTag.cs" />
+    <Compile Include="Controls\RootTag.cs" />
+    <Compile Include="Controls\TreeViewHandler.cs" />
     <Compile Include="Forms\BuilderPane.cs">
       <SubType>Form</SubType>
     </Compile>
