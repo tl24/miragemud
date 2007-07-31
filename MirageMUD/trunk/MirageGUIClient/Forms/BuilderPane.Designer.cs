@@ -167,7 +167,6 @@ namespace MirageGUI.Forms
             this.AreaTree.Name = "AreaTree";
             this.AreaTree.Size = new System.Drawing.Size(130, 174);
             this.AreaTree.TabIndex = 0;
-            this.AreaTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.AreaTree_NodeMouseDoubleClick);
             // 
             // EditorTabs
             // 

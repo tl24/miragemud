@@ -42,8 +42,8 @@ namespace MirageGUI.Code
                 {
                     IResponseHandler responseHandler = tmpHandlers[i].handler;
 
-                    if (responseHandler is Form)
-                        result = SendToForm((Form)responseHandler, msg);
+                    if (responseHandler is Control)
+                        result = SendToControl((Control)responseHandler, msg);
                     else
                         result = responseHandler.HandleResponse(msg);
 
@@ -55,20 +55,20 @@ namespace MirageGUI.Code
         }
 
         /// <summary>
-        /// Send a message to a form object.  Handles the logic for cross-thread calls.
+        /// Send a message to a control object.  Handles the logic for cross-thread calls.
         /// </summary>
         /// <param name="form">the form to receive the message</param>
         /// <param name="msg">the message</param>
         /// <returns>the processing status</returns>
-        private ProcessStatus SendToForm(Form form, Mirage.Communication.Message msg)
+        private ProcessStatus SendToControl(Control ctrl, Mirage.Communication.Message msg)
         {
-            if (form.IsDisposed)
+            if (ctrl.IsDisposed)
                 return ProcessStatus.NotProcessed;
 
-            if (form.InvokeRequired)
-                return (ProcessStatus)form.Invoke(new ResponseHandler(((IResponseHandler)form).HandleResponse), msg);
+            if (ctrl.InvokeRequired)
+                return (ProcessStatus)ctrl.Invoke(new ResponseHandler(((IResponseHandler)ctrl).HandleResponse), msg);
             else
-                return ((IResponseHandler)form).HandleResponse(msg);
+                return ((IResponseHandler)ctrl).HandleResponse(msg);
         }
 
         /// <summary>

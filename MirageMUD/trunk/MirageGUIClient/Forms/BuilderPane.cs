@@ -12,6 +12,7 @@ using Mirage.Communication;
 using System.Collections;
 using MirageGUI.ItemEditor;
 using Mirage.Data.Query;
+using MirageGUI.Controls;
 
 namespace MirageGUI.Forms
 {
@@ -21,12 +22,12 @@ namespace MirageGUI.Forms
         private ConsoleForm console;
         private MessageDispatcher _dispatcher;
         private IDictionary<string, ResponseHandler> handlerDelegates;
+        private TreeViewHandler _treeHandler;
 
         public BuilderPane()
         {
             InitializeComponent();
             _handler = new IOHandler();
-            InitHandlerDelegates();
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -42,17 +43,7 @@ namespace MirageGUI.Forms
             get { return _handler; }
         }
 
-        /// <summary>
-        /// Initializes a map of ResponseHandler delegates for responding to
-        /// messages sent from the mud
-        /// </summary>
-        private void InitHandlerDelegates()
-        {
-            handlerDelegates = new Dictionary<string, ResponseHandler>();
-            handlerDelegates.Add(new Uri(Namespaces.Area, "AreaList").ToString(), new ResponseHandler(ProcessAreaList));
-            handlerDelegates.Add(new Uri(Namespaces.Area, "Area").ToString(), new ResponseHandler(ProcessAreaGet));
-            handlerDelegates.Add(new Uri(Namespaces.Area, "AreaRooms").ToString(), new ResponseHandler(ProcessAreaRooms));
-        }
+
 
         private void BuilderPane_Load(object sender, EventArgs e)
         {
@@ -74,7 +65,7 @@ namespace MirageGUI.Forms
             _dispatcher.AddHandler(FormPriority.MasterFormPriority, this);
             _dispatcher.AddHandler(FormPriority.ConsoleFormPriority, this.Console);
 
-            AreaTree.Nodes.Add("Areas");
+            _treeHandler = new TreeViewHandler(AreaTree, IOHandler, _dispatcher);            
         }
 
         void _handler_ConnectStateChanged(object sender, EventArgs e)
@@ -93,7 +84,8 @@ namespace MirageGUI.Forms
         void LoginSuccess(object sender, EventArgs e)
         {
             connectMenuItem.Enabled = false;
-            _handler.SendString("GetAreas");
+            _treeHandler.Fill();
+            
         }
 
         public ConsoleForm Console
@@ -102,87 +94,11 @@ namespace MirageGUI.Forms
         }
 
 
-        #region IResponseHandler Members
-
         public ProcessStatus HandleResponse(Mirage.Communication.Message response)
         {
-            ProcessStatus result = ProcessStatus.NotProcessed;
-            ResponseHandler handler;
-            if (handlerDelegates.TryGetValue(response.QualifiedName, out handler))
-            {
-                result = handler(response);
-            }
-            return result;
+            return ProcessStatus.NotProcessed;
         }
 
-        /// <summary>
-        /// Process a list of areas from the mud.  Populate the area tree.
-        /// </summary>
-        private ProcessStatus ProcessAreaList(Mirage.Communication.Message response)
-        {
-            AreaTree.Nodes.Clear();
-            TreeNode root = AreaTree.Nodes.Add("Areas");
-            root.ContextMenuStrip = AreasContextMenu;
-
-            foreach (string area in (IEnumerable)((ChildItemsMessage)response).Items)
-            {
-                TreeNode areaNode = root.Nodes.Add(area, area);
-                areaNode.Tag = typeof(Area);
-                TreeNode rooms = areaNode.Nodes.Add("Rooms", "Rooms");
-                IOHandler.SendString("GetAreaRooms " + area);                
-            }
-            return ProcessStatus.SuccessAbort;
-        }
-
-        /// <summary>
-        /// Process a list of areas from the mud.  Populate the area tree.
-        /// </summary>
-        private ProcessStatus ProcessAreaRooms(Mirage.Communication.Message response)
-        {
-
-            ChildItemsMessage childMessage = (ChildItemsMessage)response;
-            string parent = (string) childMessage.Parent;
-            TreeNode parentArea = AreaTree.Nodes[0].Nodes.Find(parent, false)[0];
-            TreeNode rooms = parentArea.Nodes["Rooms"];
-            rooms.Nodes.Clear();
-
-            foreach (string room in (IEnumerable)((ChildItemsMessage)response).Items)
-            {
-                TreeNode roomNode = rooms.Nodes.Add(room, room);
-                roomNode.Tag = typeof(Room);
-            }
-            return ProcessStatus.SuccessAbort;
-        }
-
-        private ProcessStatus ProcessAreaGet(Mirage.Communication.Message response)
-        {
-            Area area = (Area)((DataMessage)response).Data;
-            TreeNode node = AreaTree.Nodes[0].Nodes.Find(area.Uri, false)[0];
-            node.Tag = area;
-            AddTab(area.Title, area, EditMode.EditMode);
-            return ProcessStatus.SuccessAbort;
-        }
-        #endregion
-
-        private void AreaTree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            object tag = e.Node.Tag;
-            if (tag is Type)
-            {
-                Type t = (Type)tag;
-                if (typeof(Area).IsAssignableFrom(t))
-                {
-                    _handler.SendString("GetArea " + e.Node.Name);
-                }                
-            }
-            else
-            {
-                if (tag is Area)
-                {
-                    AddTab(((Area)tag).Title, tag, EditMode.EditMode);
-                }
-            }
-        }
 
         private void AddTab(string name, object data, EditMode Mode)
         {
