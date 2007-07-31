@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using Mirage.Data;
 using Mirage.Command;
 using Mirage.Util;
+using log4net;
 
 namespace Mirage.IO
 {
@@ -93,5 +94,6 @@ namespace Mirage.IO
         /// </summary>
         TcpClient TcpClient { get; }
 
+        ILog Logger { get; }
     }
 }

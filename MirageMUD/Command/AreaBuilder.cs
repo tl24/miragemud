@@ -6,9 +6,21 @@ using Mirage.Communication;
 using Mirage.Data;
 using Mirage.IO;
 using Mirage.IO.Serialization;
+using Mirage.Data.Query;
 
 namespace Mirage.Command
 {
+    /// <summary>
+    /// Type of edit occurring
+    /// </summary>
+    public enum ChangeType
+    {
+        None,
+        Add,
+        Edit,
+        Delete
+    }
+
     /// <summary>
     /// Contains the area level commands for the builder
     /// </summary>
@@ -18,15 +30,25 @@ namespace Mirage.Command
     public class AreaBuilder
     {
         /// <summary>
+        /// Get the top node of the area hierarchy
+        /// </summary>
+        /// <returns></returns>
+        [Command]
+        public static Message GetWorld()
+        {
+            return new DataMessage(Namespaces.Area, "World", new World());
+        }
+
+        /// <summary>
         /// Retrieves the names of all the areas in the mud
         /// </summary>
         /// <returns>area list</returns>
         [Command]
-        public static Message GetAreas()
+        public static Message GetAreas(string itemUri)
         {
             IDictionary<string, Area> areas = GlobalLists.GetInstance().Areas;
             List<string> areaList = new List<string>(areas.Keys);
-            return new ChildItemsMessage(Namespaces.Area, "AreaList", GlobalLists.GetInstance().FullUri, areaList);
+            return new DataMessage(Namespaces.Area, "AreaList", "Areas", areaList);
         }
 
         /// <summary>
@@ -34,26 +56,24 @@ namespace Mirage.Command
         /// </summary>
         /// <returns>confirmation</returns>
         [Command]
-        public static Message AddArea(Area newArea)
+        public static Message UpdateItem(ChangeType changeType, Area area)
         {
             IDictionary<string, Area> areas = GlobalLists.GetInstance().Areas;
-            areas[newArea.Uri] = newArea;
-            newArea.IsDirty = true;
-            return new Message(MessageType.Confirmation, Namespaces.Area, "AreaAdded");
-        }
-
-        /// <summary>
-        /// Updates an existing area
-        /// </summary>
-        /// <returns>confirmation</returns>
-        [Command]
-        public static Message UpdateArea(Area updatedArea)
-        {
-            IDictionary<string, Area> areas = GlobalLists.GetInstance().Areas;
-            Area dest = areas[updatedArea.Uri];
-            ObjectUpdater.CopyObject(updatedArea, dest);
-            dest.IsDirty = true;
-            return new Message(MessageType.Confirmation, Namespaces.Area, "AreaUpdated");
+            switch (changeType)
+            {
+                case ChangeType.Add:                    
+                    areas[area.Uri] = area;
+                    area.IsDirty = true;
+                    return new UpdateConfirmationMessage(Namespaces.Area, "AreaAdded", area.FullUri, changeType);
+                case ChangeType.Edit:
+                    Area dest = areas[area.Uri];
+                    ObjectUpdater.CopyObject(area, dest);
+                    dest.IsDirty = true;
+                    return new UpdateConfirmationMessage(Namespaces.Area, "AreaUpdated", area.FullUri, changeType);
+                default:
+                    throw new ArgumentException("Invalid changeType: " + changeType);
+            }
+            
         }
 
         [Command]
@@ -84,18 +104,24 @@ namespace Mirage.Command
         /// <param name="builder">the builder player doing the request</param>
         /// <returns>area</returns>
         [Command]
-        public static Message GetArea(string areaName)
+        public static Message GetArea(string itemUri)
         {
-            Area area = GlobalLists.GetInstance().Areas[areaName];
-            return new DataMessage(Namespaces.Area, "Area", area);
+            Area area = (Area) QueryManager.GetInstance().Find(itemUri);
+            return new DataMessage(Namespaces.Area, "Area", itemUri, area);
         }
 
+        /// <summary>
+        /// Get the rooms for an area.  The itemUri should be in the form
+        /// /Areas/AreaName/Rooms
+        /// </summary>
+        /// <param name="itemUri">Uri to the rooms collection of an area</param>
+        /// <returns>list of rooms</returns>
         [Command]
-        public static Message GetAreaRooms(string areaName)
+        public static Message GetRooms(string itemUri)
         {
-            Area area = GlobalLists.GetInstance().Areas[areaName];
-            List<string> roomList = new List<string>(area.Rooms.Keys);
-            return new ChildItemsMessage(Namespaces.Area, "AreaRooms", area.FullUri, roomList);
+            IDictionary<string, Room> rooms = (IDictionary<string, Room>) QueryManager.GetInstance().Find(itemUri);
+            List<string> roomList = new List<string>(rooms.Keys);
+            return new DataMessage(Namespaces.Area, "Rooms", itemUri, roomList);
         }
     }
 }

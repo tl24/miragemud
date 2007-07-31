@@ -5,51 +5,72 @@ using System.Text;
 namespace Mirage.Data
 {
     [global::System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    sealed class EditorTreePropertyAttribute : System.Attribute
+    public sealed class EditorTreePropertyAttribute : System.Attribute
     {
         // See the attribute guidelines at 
         //  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconusingattributeclasses.asp
 
-        private string _getCommand;
-        private string _returnMessage;
-
-        /// <summary>
-        /// Tags a property to show in the tree view of the editor
-        /// </summary>
-        /// <param name="GetCommand">The server command to get the children</param>
-        public EditorTreePropertyAttribute(string GetCommand)
-        {
-            this._getCommand = GetCommand;
-        }
+        private string _getListCommand;
+        private string _listReturnMessage;
+        private string _getItemCommand;
+        private string _itemReturnMessage;
+        private Type _itemType;
 
         /// <summary>
         /// Tags a property to show in the tree view of the editor
         /// </summary>
         /// <param name="GetCommand">The server command to get the children</param>
         /// <param name="returnMessage">The fully qualified name of the message that the items will return with</param>
-        public EditorTreePropertyAttribute(string GetCommand, string ReturnMessage)
+        /// <param name="itemType">The type of the items within the list</param>
+        public EditorTreePropertyAttribute(string GetListCommand, string ListReturnMessage, string GetItemCommand, string ItemReturnMessage, Type itemType)
         {
-            this._getCommand = GetCommand;
-            this._returnMessage = ReturnMessage;
+            this._getListCommand = GetListCommand;
+            this._listReturnMessage = ListReturnMessage;
+            this._getItemCommand = GetItemCommand;
+            this._itemReturnMessage = ItemReturnMessage;
         }
 
         /// <summary>
-        /// The server command used to get the items
+        /// The server command used to get the list of items
         /// </summary>
-        public string GetCommand
+        public string GetListCommand
         {
             get
             {
-                return this._getCommand;
+                return this._getListCommand;
             }
         }
 
         /// <summary>
-        /// The name of the message that will be returned with the items
+        /// The namespace and name of the message that will be returned for a list request
         /// </summary>
-        public string ReturnMessage
+        public string ListReturnMessage
         {
-            get { return this._returnMessage; }
+            get { return this._listReturnMessage; }
+        }
+
+        /// <summary>
+        /// The type of the items within the list
+        /// </summary>
+        public System.Type ItemType
+        {
+            get { return this._itemType; }
+        }
+
+        /// <summary>
+        /// Command to get a single item from the server
+        /// </summary>
+        public string GetItemCommand
+        {
+            get { return this._getItemCommand; }
+        }
+
+        /// <summary>
+        /// The namespace and name of the response for a single item request
+        /// </summary>
+        public string ItemReturnMessage
+        {
+            get { return this._itemReturnMessage; }
         }
 
 

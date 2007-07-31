@@ -19,7 +19,8 @@ namespace Mirage.Data
             Rooms = new Dictionary<string, Room>(StringComparer.CurrentCultureIgnoreCase);            
         }
 
-        [EditorTreeProperty("GetAreaRooms", "msg:/builder/area/AreaRooms")]
+        [EditorTreeProperty("GetRooms", "msg:/builder/area/Rooms", 
+            "GetRoom", "msg:/builder/area/Room", typeof(Room))]
         public IDictionary<string, Room> Rooms
         {
             get { return this._rooms; }

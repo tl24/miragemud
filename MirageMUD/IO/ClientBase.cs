@@ -173,5 +173,10 @@ namespace Mirage.IO
         {
             get { return _client; }
         }
+
+        public ILog Logger
+        {
+            get { return log; }
+        }
     }
 }
