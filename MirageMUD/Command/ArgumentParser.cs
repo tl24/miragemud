@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Mirage.Command
 {
@@ -10,12 +11,15 @@ namespace Mirage.Command
     /// splits on whitespace except when embedded within single or
     /// double quotes.
     /// </summary>
-    public class ArgumentParser
+    /// <example>
+    ///   <para>"arg1 arg2 arg2" => "arg1", "arg2", "arg3"</para>
+    ///   <para>"arg1 'space in arg2' arg3" => "arg1", "space in arg2", "arg3"</para>
+    /// </example>
+    public class ArgumentParser : IEnumerable<string>
     {
         private string current;
-        private Regex parser;
         private bool isDone;
-
+        private Regex parser;
         /// <summary>
         ///     Create an ArgumentParser to parse the given input
         /// </summary>
@@ -23,20 +27,29 @@ namespace Mirage.Command
         public ArgumentParser(string input)
         {
             this.current = input;
-            //this.parser = new Regex("('[^']*')|(\"[^\"]*\")|\\w+");
-            this.parser = new Regex(@" |\b");
             isDone = false;
+            parser = new Regex(
+                @"^                       # match at begginning
+                   \s*                    # ignore leading whitespace
+                   (                      # start alternation
+                     '(?<value>[^']*)'    # single quoted (inside quotes only)
+                     |                    # or
+                     ""(?<value>[^""]*)"" # double quoted value
+                     |                    # or
+                     (?<value>\S+)        # non-whitespace
+                   )                      # end alternation
+                 ", RegexOptions.IgnorePatternWhitespace);
         }
 
         /// <summary>
-        /// Gets the next argument in the list
+        /// Parses the next argument from the input string
         /// </summary>
         /// <returns>the next argument</returns>
-        public string getNextArgument()
+        public string GetNextArgument()
         {
 
-            string value;
-            if (current == string.Empty)
+            string value = null;
+            if (current == string.Empty || current == null)
             {
                 isDone = true;
                 current = null;
@@ -48,14 +61,14 @@ namespace Mirage.Command
             }
             else
             {
-                string[] results = parser.Split(current, 3);
-                value = results[1];
-                if (results.Length > 2)
+
+                Match matcher = parser.Match(current);
+                if (matcher.Success)
                 {
-                    current = results[2];
-                }
-                else
-                {
+                    value = matcher.Groups["value"].Value;
+                    current = matcher.Result("$'");
+                } else {
+                    value = current;
                     current = null;
                     isDone = true;
                 }
@@ -68,7 +81,7 @@ namespace Mirage.Command
         ///     Returns true if there are no remaining arguments
         /// </summary>
         /// <returns>true/false</returns>
-        public bool isEmpty()
+        public bool IsEmpty()
         {
             return isDone || current == null || current.Trim().Length == 0;
         }
@@ -77,7 +90,7 @@ namespace Mirage.Command
         /// Get the rest of the input, disregarding any spaces or quotes
         /// </summary>
         /// <returns>the remaining input</returns>
-        public string getRest()
+        public string GetRest()
         {
             string value = null;
             if (!isDone)
@@ -88,5 +101,23 @@ namespace Mirage.Command
             current = null;
             return value;
         }
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            ArgumentParser newParser = new ArgumentParser(current);
+            while (!newParser.IsEmpty())
+            {
+                yield return newParser.GetNextArgument();
+            }
+        }
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
     }
 }
