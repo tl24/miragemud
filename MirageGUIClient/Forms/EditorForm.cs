@@ -9,6 +9,7 @@ using System.Reflection;
 using MirageGUI.ItemEditor;
 using MirageGUI.Code;
 using Mirage.Communication;
+using Mirage.Command;
 
 namespace MirageGUI.Forms
 {
@@ -63,13 +64,20 @@ namespace MirageGUI.Forms
         private void Save()
         {
             controlFactory.UpdateObjectFromControls();
-            _ioHandler.SendObject(initialMode == EditMode.EditMode ? "UpdateArea" : "AddArea", new object[] { data });
+            _ioHandler.SendObject("UpdateItem", new object[] { initialMode == EditMode.NewMode ? ChangeType.Add : ChangeType.Edit, data });
         }
 
         private void Cancel_Click(object sender, EventArgs e)
         {
-            controlFactory.UpdateControlsFromObject();
-            SetMode(EditMode.ViewMode);
+            if (initialMode == EditMode.NewMode)
+            {
+                Close();
+            }
+            else
+            {
+                controlFactory.UpdateControlsFromObject();
+                SetMode(EditMode.ViewMode);
+            }
         }
 
         private void Edit_Click(object sender, EventArgs e)
@@ -123,7 +131,7 @@ namespace MirageGUI.Forms
                 }
                 else if (response.IsMatch(Namespaces.Area, "AreaUpdated"))
                 {
-                    OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(ChangeType.ItemUpdated, data));
+                    OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(ChangeType.Edit, data));
                     if (closeFlag)
                         Close();
                     else
@@ -132,7 +140,7 @@ namespace MirageGUI.Forms
                 }
                 else if (response.IsMatch(Namespaces.Area, "AreaAdded"))
                 {
-                    OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(ChangeType.ItemAdded, data));
+                    OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(ChangeType.Add, data));
                     if (closeFlag)
                         Close();
                     else

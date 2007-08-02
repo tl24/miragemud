@@ -34,6 +34,7 @@ namespace MirageGUI.Code
             reader = new BinaryReader(stm);
             writer = new BinaryWriter(stm);
             Thread t = new Thread(new ThreadStart(this.Run));
+            t.IsBackground = true;
             t.Start();
             _host = remoteHost;
             _port = port;

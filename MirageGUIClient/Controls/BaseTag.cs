@@ -13,6 +13,7 @@ namespace MirageGUI.Controls
         protected string _getCommand;
         protected string _getResponse;
         protected TreeNode _node;
+        private ContextMenuStrip _menuStrip;
 
         public BaseTag(TreeNode node)
         {
@@ -39,6 +40,11 @@ namespace MirageGUI.Controls
         public virtual object Data
         {
             get { return _data; }
+            set
+            {
+                _data = value;
+                _loaded = value != null;
+            }
         }
 
         public virtual string GetCommand
@@ -54,6 +60,47 @@ namespace MirageGUI.Controls
         public abstract ProcessStatus HandleResponse(Mirage.Communication.Message message);
 
         public virtual void OnNodeClick(TreeNodeMouseClickEventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// Returns the context menustrip for this node
+        /// </summary>
+        protected ContextMenuStrip MenuStrip
+        {
+            get
+            {
+                return _menuStrip;
+            }
+        }
+
+        protected void CreateMenu() {
+            this._menuStrip = new System.Windows.Forms.ContextMenuStrip();
+            //this._menuStrip.Size = new System.Drawing.Size(153, 70);
+            this.Node.ContextMenuStrip = _menuStrip;
+        }
+
+        protected ToolStripItem AddMenuItem(string Name, System.EventHandler handler)
+        {
+            if (MenuStrip == null)
+                CreateMenu();
+
+
+            
+            ToolStripItem menuItem = MenuStrip.Items.Add(Name, null, handler);
+            /*
+            menuItem.Name = "MenuItem" + MenuStrip.Items.Count;
+            menuItem.Size = new System.Drawing.Size(132, 22);
+            menuItem.Text = Name;
+            if (handler != null)
+                menuItem.Click += handler;
+
+            MenuStrip.Items.Add(menuItem);
+             */
+            return menuItem;
+        }
+
+        protected virtual void ItemChanged(object sender, global::MirageGUI.Code.ItemChangedEventArgs e)
         {
         }
         #endregion

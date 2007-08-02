@@ -1,17 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Command;
 
 namespace MirageGUI.Code
 {
-    /// <summary>
-    /// The type of change that occured
-    /// </summary>
-    public enum ChangeType {
-        ItemAdded,
-        ItemUpdated,
-        ItemDeleted
-    }
 
     /// <summary>
     /// Event args for the item changed event
