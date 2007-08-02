@@ -11,6 +11,7 @@ namespace MirageGUI.Controls
     public class ItemTag : BaseTag
     {
         private Type _itemType;
+        private bool startEdit; // flag on asynchronous get
 
         public ItemTag(TreeNode node, Type itemType, string GetCommand, string GetResponse)
             : base(node)
@@ -31,7 +32,10 @@ namespace MirageGUI.Controls
             if (IsLoaded)
                 TreeHandler.StartEdit(Node.FullPath, Data, EditMode.EditMode);
             else
+            {
+                startEdit = true;
                 TreeHandler.NodeGet(this);
+            }
         }
 
         /// <summary>
@@ -41,9 +45,14 @@ namespace MirageGUI.Controls
         {
             if (response.MessageType == MessageType.Data)
             {
-                this._data = ((DataMessage)response).Data;
-                TreeHandler.StartEdit(Node.FullPath, Data, EditMode.EditMode);
+                this._data = ((DataMessage)response).Data;                
                 _loaded = true;
+                if (startEdit)
+                {
+                    TreeHandler.StartEdit(Node.FullPath, Data, EditMode.EditMode);
+                    startEdit = false;
+                }
+                
             }
             return ProcessStatus.SuccessAbort;
         }

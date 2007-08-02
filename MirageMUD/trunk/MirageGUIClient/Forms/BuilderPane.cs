@@ -65,7 +65,7 @@ namespace MirageGUI.Forms
             _dispatcher.AddHandler(FormPriority.MasterFormPriority, this);
             _dispatcher.AddHandler(FormPriority.ConsoleFormPriority, this.Console);
 
-            _treeHandler = new TreeViewHandler(AreaTree, IOHandler, _dispatcher);            
+            _treeHandler = new TreeViewHandler(AreaTree, this, IOHandler, _dispatcher);            
         }
 
         void _handler_ConnectStateChanged(object sender, EventArgs e)
@@ -100,7 +100,7 @@ namespace MirageGUI.Forms
         }
 
 
-        private void AddTab(string name, object data, EditMode Mode)
+        public EditorForm AddTab(string name, object data, EditMode Mode)
         {
             EditorForm form = new EditorForm(data, Mode, IOHandler);
             form.TopMost = false;
@@ -114,38 +114,17 @@ namespace MirageGUI.Forms
             form.ItemChanged += new ItemChangedHandler(EditorForm_ItemChanged);
             form.Dock = DockStyle.Fill;
             form.Visible = true;
+            return form;
 
         }
 
         void EditorForm_ItemChanged(object sender, global::MirageGUI.Code.ItemChangedEventArgs e)
         {
             EditorForm form = (EditorForm)sender;
-            TabPage page = (TabPage) form.Parent;
+            TabPage page = (TabPage)form.Parent;
             if (e.Data is IUri)
             {
                 page.Name = ((IUri)e.Data).Uri;
-            }
-            if (e.Data is Area)
-            {
-                Area area = (Area)e.Data;
-                TreeNode AreasNode = AreaTree.Nodes[0];
-                if (e.ChangeType == ChangeType.ItemAdded)
-                {
-                    TreeNode areaNode = AreasNode.Nodes.Add(area.Uri, area.Uri);
-                    areaNode.Tag = area;
-                }
-                else
-                {
-                    TreeNode[] nodes = AreasNode.Nodes.Find(area.Uri, false);
-                    if (nodes.Length == 1)
-                    {
-                        nodes[0].Tag = area;
-                    }
-                    else
-                    {
-                        throw new ApplicationException("Duplicate area found: " + area.Uri);
-                    }
-                }
             }
         }
 

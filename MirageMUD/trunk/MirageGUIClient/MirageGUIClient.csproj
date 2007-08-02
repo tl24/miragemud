@@ -40,6 +40,7 @@
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\MirageMUD\bin\Debug\MirageMUD.exe</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="NGenerics, Version=1.2.0.0, Culture=neutral, PublicKeyToken=e4b41be133ea7faf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -62,6 +63,7 @@
     <Compile Include="Controls\ITreeViewTagData.cs">
     </Compile>
     <Compile Include="Controls\ListTag.cs" />
+    <Compile Include="Controls\NodeFactory.cs" />
     <Compile Include="Controls\RootTag.cs" />
     <Compile Include="Controls\TreeViewHandler.cs" />
     <Compile Include="Forms\BuilderPane.cs">
