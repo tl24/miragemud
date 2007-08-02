@@ -22,12 +22,13 @@ namespace Mirage.Data
         /// <param name="GetCommand">The server command to get the children</param>
         /// <param name="returnMessage">The fully qualified name of the message that the items will return with</param>
         /// <param name="itemType">The type of the items within the list</param>
-        public EditorTreePropertyAttribute(string GetListCommand, string ListReturnMessage, string GetItemCommand, string ItemReturnMessage, Type itemType)
+        public EditorTreePropertyAttribute(string GetListCommand, string ListReturnMessage, string GetItemCommand, string ItemReturnMessage, Type ItemType)
         {
             this._getListCommand = GetListCommand;
             this._listReturnMessage = ListReturnMessage;
             this._getItemCommand = GetItemCommand;
             this._itemReturnMessage = ItemReturnMessage;
+            this._itemType = ItemType;
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace Mirage.Data
         {
             get { return this._listReturnMessage; }
         }
-
+         
         /// <summary>
         /// The type of the items within the list
         /// </summary>

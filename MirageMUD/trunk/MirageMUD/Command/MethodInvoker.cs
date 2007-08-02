@@ -73,8 +73,8 @@ namespace Mirage.Command
             else
             {
                 parser = new ArgumentParser(commandString);
-                commandName = parser.getNextArgument();
-                args = parser.getRest().TrimStart(null);
+                commandName = parser.GetNextArgument();
+                args = parser.GetRest().TrimStart(null);
             }
 
             IList<ICommand> methods = GetAvailableMethods(commandName);
@@ -94,26 +94,26 @@ namespace Mirage.Command
                     parser = new ArgumentParser(args);
                     string[] commandArgs = new string[method.ArgCount];
                     int parsedArgs = 0;
-                    for (parsedArgs = 0; parsedArgs < commandArgs.Length && !parser.isEmpty(); parsedArgs++)
+                    for (parsedArgs = 0; parsedArgs < commandArgs.Length && !parser.IsEmpty(); parsedArgs++)
                     {
                         if (parsedArgs == commandArgs.Length - 1)
                         {
                             if (method.CustomParse)
                             {
-                                commandArgs[parsedArgs] = parser.getRest();
+                                commandArgs[parsedArgs] = parser.GetRest();
                             }
                             else
                             {
-                                commandArgs[parsedArgs] = parser.getNextArgument();
+                                commandArgs[parsedArgs] = parser.GetNextArgument();
                             }
                         }
                         else
                         {
-                            commandArgs[parsedArgs] = parser.getNextArgument();
+                            commandArgs[parsedArgs] = parser.GetNextArgument();
                         }
                     }
 
-                    if (parsedArgs != method.ArgCount || !parser.isEmpty())
+                    if (parsedArgs != method.ArgCount || !parser.IsEmpty())
                     {
                         continue;
                     }
