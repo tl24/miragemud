@@ -156,20 +156,15 @@ namespace Mirage.Data.Query
                 {
                     IUriContainer cont = (IUriContainer)searched;
                     object child = cont.GetChild(query.UriName);
-                    if (IsCollection(child))
+
+                    ArrayList al = new ArrayList();
+                    // if they aren't starting at first item, there are no matches then
+                    if (start == 0)
                     {
-                        return SearchCollection(child, new ObjectQuery("*"), start, count, cont.GetChildHints(query.UriName));
+                        al.Add(child);
                     }
-                    else
-                    {
-                        ArrayList al = new ArrayList();
-                        // if they aren't starting at first item, there are no matches then
-                        if (start == 0)
-                        {
-                            al.Add(child);
-                        }
-                        return al;
-                    }
+                    return al;
+
                 }
                 else if (IsCollection(searched))
                 {
