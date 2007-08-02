@@ -123,5 +123,18 @@ namespace Mirage.Command
             List<string> roomList = new List<string>(rooms.Keys);
             return new DataMessage(Namespaces.Area, "Rooms", itemUri, roomList);
         }
+
+        /// <summary>
+        /// Get a given room for an area.  The itemUri should be in the form
+        /// /Areas/AreaName/Rooms/RoomName
+        /// </summary>
+        /// <param name="itemUri">Uri to the room of an area</param>
+        /// <returns>room</returns>
+        [Command]
+        public static Message GetRoom(string itemUri)
+        {
+            Room room = (Room)QueryManager.GetInstance().Find(itemUri);
+            return new DataMessage(Namespaces.Area, "Room", itemUri, room);
+        }
     }
 }
