@@ -1,1 +1,1 @@
-[http://miragemud.googlecode.com/svn/wiki/gui_screenshots.png Screen Shots]
+http://miragemud.googlecode.com/svn/wiki/gui_screenshots.png
