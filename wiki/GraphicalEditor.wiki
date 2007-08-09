@@ -1,1 +1,1 @@
-[gui_screenshots.png Screen Shots]
+[http://code.google.com/p/miragemud/wiki/gui_screenshots.png Screen Shots]
