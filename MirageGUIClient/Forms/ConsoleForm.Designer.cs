@@ -125,6 +125,7 @@ namespace MirageGUI.Forms
             this.MinimumSize = new System.Drawing.Size(225, 150);
             this.Name = "ConsoleForm";
             this.Text = "Mirage Builder Console";
+            this.Load += new System.EventHandler(this.ConsoleForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

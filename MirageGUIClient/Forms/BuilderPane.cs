@@ -16,13 +16,15 @@ using MirageGUI.Controls;
 
 namespace MirageGUI.Forms
 {
-    public partial class BuilderPane : Form, IResponseHandler
+    public partial class BuilderPane : Form, IResponseHandler, IMasterPresenter
     {
         private IOHandler _handler;
         private ConsoleForm console;
         private MessageDispatcher _dispatcher;
         private IDictionary<string, ResponseHandler> handlerDelegates;
         private TreeViewHandler _treeHandler;
+        private TreeViewController _treeController;
+        private NewTreeModel _treeModel;
 
         public BuilderPane()
         {
@@ -65,7 +67,7 @@ namespace MirageGUI.Forms
             _dispatcher.AddHandler(FormPriority.MasterFormPriority, this);
             _dispatcher.AddHandler(FormPriority.ConsoleFormPriority, this.Console);
 
-            _treeHandler = new TreeViewHandler(AreaTree, this, IOHandler, _dispatcher);            
+            //_treeHandler = new TreeViewHandler(AreaTree, this, IOHandler, _dispatcher);
         }
 
         void _handler_ConnectStateChanged(object sender, EventArgs e)
@@ -84,8 +86,8 @@ namespace MirageGUI.Forms
         void LoginSuccess(object sender, EventArgs e)
         {
             connectMenuItem.Enabled = false;
-            _treeHandler.Fill();
-            
+            _treeModel = new NewTreeModel(IOHandler, _dispatcher, this);
+            _treeController = new TreeViewController(AreaTree, _treeModel, new ObjectNodeRenderer(this));            
         }
 
         public ConsoleForm Console
@@ -100,9 +102,9 @@ namespace MirageGUI.Forms
         }
 
 
-        public EditorForm AddTab(string name, object data, EditMode Mode)
+        public EditorForm AddTab(string name, object data, EditMode Mode, ItemChangedHandler changeHandler)
         {
-            EditorForm form = new EditorForm(data, Mode, IOHandler);
+            EditorForm form = new EditorForm(data, Mode);
             form.TopMost = false;
             form.FormBorderStyle = FormBorderStyle.None;
             form.ShowInTaskbar = false;
@@ -112,6 +114,9 @@ namespace MirageGUI.Forms
             EditorTabs.TabPages.Add(page);
             form.FormClosing += new FormClosingEventHandler(EditorForm_FormClosing);
             form.ItemChanged += new ItemChangedHandler(EditorForm_ItemChanged);
+            if (changeHandler != null)
+                form.ItemChanged += changeHandler;
+
             form.Dock = DockStyle.Fill;
             form.Visible = true;
             return form;
@@ -160,12 +165,21 @@ namespace MirageGUI.Forms
 
         private void newAreaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddTab("New Area", new Area(), EditMode.NewMode);
+            //AddTab("New Area", new Area(), EditMode.NewMode);
         }
 
         private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IOHandler.SendString("SaveArea all");
         }
+
+        #region IMasterPresenter Members
+
+        public void StartEditItem(object data, EditMode mode, string name, ItemChangedHandler changeHandler)
+        {
+            AddTab(name, data, mode, changeHandler);
+        }
+
+        #endregion
     }
 }

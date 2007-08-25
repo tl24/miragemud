@@ -15,6 +15,7 @@ namespace MirageGUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            log4net.Config.XmlConfigurator.Configure();
             Application.Run(new BuilderPane());
         }
     }

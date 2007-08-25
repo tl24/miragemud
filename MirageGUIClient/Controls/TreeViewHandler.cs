@@ -153,8 +153,9 @@ namespace MirageGUI.Controls
 
         public EditorForm StartEdit(string itemPath, object data, EditMode mode)
         {
-            EditorForm form = builder.AddTab(itemPath, data, mode);
-            return form;
+            //EditorForm form = builder.AddTab(itemPath, data, mode);
+            //return form;
+            throw new Exception("Method not implemented");
         }
 
         /// <summary>

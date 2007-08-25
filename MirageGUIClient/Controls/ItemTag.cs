@@ -46,7 +46,7 @@ namespace MirageGUI.Controls
             if (response.MessageType == MessageType.Data)
             {
                 this._data = ((DataMessage)response).Data;                
-                _loaded = true;
+                _loaded = true;                
                 if (startEdit)
                 {
                     TreeHandler.StartEdit(Node.FullPath, Data, EditMode.EditMode);

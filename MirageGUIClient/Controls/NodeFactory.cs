@@ -59,7 +59,7 @@ namespace MirageGUI.Controls
                     string GetItemCommand = treeAttr.GetItemCommand;
                     string GetItemResponse = treeAttr.ItemReturnMessage;
                     Type itemType = treeAttr.ItemType;
-                    SubItems.Add(new SubItem(prop.Name, GetListCommand, GetListResponse, GetItemCommand, GetItemResponse, itemType));
+                    SubItems.Add(new SubItem(prop.Name, GetListCommand, GetListResponse, GetItemCommand, GetItemResponse, itemType, treeAttr.LazyLoad));
                 }
             }
         }
@@ -100,8 +100,9 @@ namespace MirageGUI.Controls
             public string GetItemResponse;
             public Type itemType;
             public string Name;
+            public bool IsLazyLoad;
 
-            public SubItem(string Name, string GetCommand, string GetResponse, string GetItemCommand, string GetItemResponse, Type itemType)
+            public SubItem(string Name, string GetCommand, string GetResponse, string GetItemCommand, string GetItemResponse, Type itemType, bool IsLazyLoad)
             {
                 this.Name = Name;
                 this.GetCommand = GetCommand;
@@ -109,6 +110,7 @@ namespace MirageGUI.Controls
                 this.GetItemCommand = GetItemCommand;
                 this.GetItemResponse = GetItemResponse;
                 this.itemType = itemType;
+                this.IsLazyLoad = IsLazyLoad;
             }
         }
     }    

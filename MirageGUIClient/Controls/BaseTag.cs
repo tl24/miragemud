@@ -57,6 +57,26 @@ namespace MirageGUI.Controls
             get { return _getResponse; }
         }
 
+        public virtual void Load()
+        {
+            if (_loaded)
+                this.TreeHandler.NodeGet(this);
+        }
+
+        public virtual BaseTag Parent
+        {
+            get
+            {
+                if (_node != null && _node.Parent != null && _node.Parent.Tag is BaseTag)
+                {
+                    return (BaseTag)_node.Parent.Tag;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
         public abstract ProcessStatus HandleResponse(Mirage.Communication.Message message);
 
         public virtual void OnNodeClick(TreeNodeMouseClickEventArgs e)

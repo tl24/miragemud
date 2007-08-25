@@ -13,10 +13,12 @@ using System.Threading;
 using JsonExSerializer;
 using Mirage.Communication;
 using MirageGUI.Code;
+using log4net.Appender;
+using log4net.Repository;
 
 namespace MirageGUI.Forms
 {
-    public partial class ConsoleForm : Form, IResponseHandler
+    public partial class ConsoleForm : Form, IResponseHandler, IAppender
     {
         private IOHandler _handler;
 
@@ -25,7 +27,7 @@ namespace MirageGUI.Forms
             InitializeComponent();
             this._handler = handler;
             this._handler.ConnectStateChanged += new EventHandler(handler_ConnectStateChanged);
-            SendButton.Enabled = _handler.IsConnected;
+            SendButton.Enabled = _handler.IsConnected;           
         }
 
         void handler_ConnectStateChanged(object sender, EventArgs e)
@@ -128,6 +130,34 @@ namespace MirageGUI.Forms
                 InputText.BackColor = colorDialog1.Color;
                 AppSettings.Default.Save();
             }
+        }
+
+        #region IAppender Members
+
+        private delegate void AppendTextHandler(string text);
+        private void AppendText(string text)
+        {
+            OutputText.AppendText(text);
+        }
+
+        public void DoAppend(log4net.Core.LoggingEvent loggingEvent)
+        {
+            string text = loggingEvent.RenderedMessage;
+            text += "\r\n";
+
+            if (loggingEvent.ExceptionObject != null) 
+                text += loggingEvent.ExceptionObject.StackTrace;
+
+            if (this.InvokeRequired)
+                this.Invoke(new AppendTextHandler(AppendText), text);
+        }
+
+        #endregion
+
+        private void ConsoleForm_Load(object sender, EventArgs e)
+        {
+
+            ((log4net.Repository.Hierarchy.Hierarchy)log4net.LogManager.GetLoggerRepository()).Root.AddAppender(this);
         }
     }
 }
