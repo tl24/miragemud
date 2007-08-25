@@ -74,10 +74,24 @@ namespace Mirage.Data
             }
         }
 
+        [EditorTreeProperty(typeof(RoomExit))]
         public IDictionary<DirectionType, RoomExit> Exits
         {
             get { return this._exits; }
             set { this._exits = value; }
+        }
+
+        public void CopyTo(Room newRoom)
+        {
+            if (this != newRoom)
+            {
+                // read from a copy so we can modify the list inside the loop
+                foreach (Living living in new List<Living>(Animates))
+                {
+                    //TODO: Catch exceptions and exit gracefully?
+                    Containers.Transfer(living, newRoom);
+                }
+            }
         }
 
         #region IContainer Members

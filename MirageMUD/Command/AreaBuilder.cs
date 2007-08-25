@@ -66,9 +66,13 @@ namespace Mirage.Command
                     area.IsDirty = true;
                     return new UpdateConfirmationMessage(Namespaces.Area, "AreaAdded", area.FullUri, changeType);
                 case ChangeType.Edit:
-                    Area dest = areas[area.Uri];
-                    ObjectUpdater.CopyObject(area, dest);
-                    dest.IsDirty = true;
+                    //TODO: need to do room contents copy
+                    Area old = areas[area.Uri];
+                    old.CopyTo(area);
+                    areas[area.Uri] = area;
+
+                    //ObjectUpdater.CopyObject(area, dest);
+                    area.IsDirty = true;
                     return new UpdateConfirmationMessage(Namespaces.Area, "AreaUpdated", area.FullUri, changeType);
                 default:
                     throw new ArgumentException("Invalid changeType: " + changeType);

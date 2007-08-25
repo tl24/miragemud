@@ -15,6 +15,7 @@ namespace Mirage.Data
         private string _getItemCommand;
         private string _itemReturnMessage;
         private Type _itemType;
+        private bool _lazyLoad;
 
         /// <summary>
         /// Tags a property to show in the tree view of the editor
@@ -29,6 +30,17 @@ namespace Mirage.Data
             this._getItemCommand = GetItemCommand;
             this._itemReturnMessage = ItemReturnMessage;
             this._itemType = ItemType;
+            this._lazyLoad = true;
+        }
+
+        /// <summary>
+        /// Tags a property to show in the tree view of the editor
+        /// </summary>
+        /// <param name="itemType">The type of the items within the list</param>
+        public EditorTreePropertyAttribute(Type ItemType)
+        {
+            this._itemType = ItemType;
+            this._lazyLoad = false;
         }
 
         /// <summary>
@@ -74,7 +86,13 @@ namespace Mirage.Data
             get { return this._itemReturnMessage; }
         }
 
-
+        /// <summary>
+        /// If true the property should be loaded on demand
+        /// </summary>
+        public bool LazyLoad
+        {
+            get { return _lazyLoad; }
+        }
     }
 
 }

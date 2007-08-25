@@ -83,6 +83,13 @@ namespace Mirage.Data.Attribute
             return keyObj.FullUri.Equals(_key, StringComparison.CurrentCultureIgnoreCase);
         }
 
+        public override string ToString()
+        {
+            if (Key != string.Empty)
+                return "Lockable(" + Key + ")";
+            else
+                return "Lockable";
+        }
         #endregion
     }
 }

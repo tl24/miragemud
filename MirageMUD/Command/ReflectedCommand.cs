@@ -5,6 +5,7 @@ using System.Reflection;
 using Mirage.Data;
 using Mirage.Communication;
 using Mirage.Data.Query;
+using log4net;
 
 
 namespace Mirage.Command
@@ -14,6 +15,8 @@ namespace Mirage.Command
     /// </summary>
     public class ReflectedCommand : CommandBase, ICommand
     {
+        private static ILog logger = LogManager.GetLogger(typeof(ReflectedCommand));
+
         #region Member Variables
 
         private string _description;
@@ -211,18 +214,38 @@ namespace Mirage.Command
 
         public override Message Invoke(string invokedName, Living actor, object[] arguments)
         {
-            object result = _methodInfo.Invoke(actor, arguments);
-            if (result is Message)
+            try
             {
-                return (Message) result;
-            }
-            else if (result != null)
-            {
-                return new StringMessage(MessageType.Information, invokedName, result.ToString());
-            }
-            else
-            {
-                return null;
+                object result = _methodInfo.Invoke(actor, arguments);
+                if (result is Message)
+                {
+                    return (Message)result;
+                }
+                else if (result != null)
+                {
+                    return new StringMessage(MessageType.Information, invokedName, result.ToString());
+                }
+                else
+                {
+                    return null;
+                }
+            } catch (Exception e) {
+                string error = "Error during execution of command '{0}' arguments: [";
+                foreach(object o in arguments) {
+                    if (o == null)
+                        error += "null";
+                    else
+                        error += o.ToString();
+                    error += ",";
+                }
+                if (arguments.Length > 0)
+                    error = error.Substring(0, error.Length - 1);
+                error += "]";
+                error += " invoked by {1}.";
+                logger.Error(string.Format(error, invokedName, actor.Title), e);
+                // send generic message to player
+                ErrorResourceMessage msg = new ErrorResourceMessage(MessageType.SystemError, Namespaces.SystemError, "SystemError");
+                return msg;
             }
         }
 
