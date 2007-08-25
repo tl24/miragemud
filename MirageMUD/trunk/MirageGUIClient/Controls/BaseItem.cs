@@ -105,7 +105,7 @@ namespace MirageGUI.Controls
                 return new TreePath(_parent.CreatePath(), this);
         }
 
-        public virtual NewTreeModel FindModel()
+        public virtual AreaTreeModel FindModel()
         {
             if (this is RootItem)
                 return ((RootItem)this).Model;

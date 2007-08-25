@@ -22,9 +22,8 @@ namespace MirageGUI.Forms
         private ConsoleForm console;
         private MessageDispatcher _dispatcher;
         private IDictionary<string, ResponseHandler> handlerDelegates;
-        private TreeViewHandler _treeHandler;
         private TreeViewController _treeController;
-        private NewTreeModel _treeModel;
+        private AreaTreeModel _treeModel;
 
         public BuilderPane()
         {
@@ -86,7 +85,7 @@ namespace MirageGUI.Forms
         void LoginSuccess(object sender, EventArgs e)
         {
             connectMenuItem.Enabled = false;
-            _treeModel = new NewTreeModel(IOHandler, _dispatcher, this);
+            _treeModel = new AreaTreeModel(IOHandler, _dispatcher, this);
             _treeController = new TreeViewController(AreaTree, _treeModel, new ObjectNodeRenderer(this));            
         }
 
