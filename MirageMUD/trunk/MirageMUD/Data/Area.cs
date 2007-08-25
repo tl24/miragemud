@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Data.Query;
 using JsonExSerializer;
+using System.Configuration;
 
 namespace Mirage.Data
 {
@@ -63,6 +64,46 @@ namespace Mirage.Data
             get
             {
                 return "Areas/" + this.Uri;
+            }
+        }
+
+        /// <summary>
+        /// Copies the contents, players, mobiles, objects to the
+        /// new area
+        /// </summary>
+        /// <param name="newArea">the new area</param>
+        public void CopyTo(Area newArea)
+        {
+            Room defaultRoom = (Room)QueryManager.GetInstance().Find(ConfigurationManager.AppSettings["default.room"]);
+            if (defaultRoom.Area.Uri == this.Uri)
+            {
+                // check to see if it still exists
+                if (newArea.Rooms.ContainsKey(defaultRoom.Uri))
+                {
+                    // it does, use the new room
+                    defaultRoom = newArea.Rooms[defaultRoom.Uri];
+                }
+                else
+                {
+                    // it doesn't, pick an arbitrary room to move to
+                    foreach (Room r in newArea.Rooms.Values)
+                    {
+                        defaultRoom = r;
+                        break;
+                    }
+                }            
+            }
+
+            foreach (Room room in Rooms.Values)
+            {
+                if (newArea.Rooms.ContainsKey(room.Uri))
+                {
+                    room.CopyTo(newArea.Rooms[room.Uri]);
+                }
+                else
+                {
+                    room.CopyTo(defaultRoom);
+                }
             }
         }
     }

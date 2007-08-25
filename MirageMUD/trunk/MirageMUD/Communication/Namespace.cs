@@ -18,10 +18,11 @@ namespace Mirage.Communication
         // NOTE: These must end in "/" in order to combine properly
         public static readonly Uri Root = new Uri("msg:/");
         public static readonly Uri System = new Uri(Root, "system/");
+        public static readonly Uri SystemError = new Uri(System, "error/");
         public static readonly Uri Movement = new Uri(Root, "movement/");
         public static readonly Uri Communication = new Uri(Root, "communication/");
         public static readonly Uri Common = new Uri(Root, "common/");
-        public static readonly Uri CommonError = new Uri(Root, "error/");
+        public static readonly Uri CommonError = new Uri(Common, "error/");
 
         public static readonly Uri Negotiation = new Uri(Root, "negotiation/");
 

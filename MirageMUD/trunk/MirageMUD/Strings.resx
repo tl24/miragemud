@@ -162,6 +162,9 @@
     <value>
 Welcome to MirageMUD 0.1.  Still in development.</value>
   </data>
+  <data name="msg:/system/error/SystemError" xml:space="preserve">
+    <value>A system error has occurred executing your command.</value>
+  </data>
   <data name="msg:/system/goodbye" xml:space="preserve">
     <value>Goodbye!</value>
   </data>
