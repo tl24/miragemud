@@ -13,7 +13,7 @@ using Mirage.Command;
 
 namespace MirageGUI.Forms
 {
-    public partial class EditorForm : Form, IResponseHandler
+    public partial class EditorForm : Form
     {
         private object data;
         private EditMode initialMode;
@@ -24,11 +24,10 @@ namespace MirageGUI.Forms
 
         public event ItemChangedHandler ItemChanged;
 
-        public EditorForm(object data, EditMode initialMode, IOHandler IOHandler)
+        public EditorForm(object data, EditMode initialMode)
         {
             this.data = data;
             this.initialMode = initialMode;
-            this._ioHandler = IOHandler;
             InitializeComponent();
         }
 
@@ -64,7 +63,7 @@ namespace MirageGUI.Forms
         private void Save()
         {
             controlFactory.UpdateObjectFromControls();
-            _ioHandler.SendObject("UpdateItem", new object[] { initialMode == EditMode.NewMode ? ChangeType.Add : ChangeType.Edit, data });
+            OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(initialMode == EditMode.NewMode ? ChangeType.Add : ChangeType.Edit, data));
         }
 
         private void Cancel_Click(object sender, EventArgs e)
@@ -116,46 +115,6 @@ namespace MirageGUI.Forms
         {
             if (ItemChanged != null)
                 ItemChanged.Invoke(this, args);
-
         }
-        #region IResponseHandler Members
-
-        public ProcessStatus HandleResponse(Mirage.Communication.Message response)
-        {
-            if (response.IsMatch(Namespaces.Area))
-            {
-                if (response.IsMatch(MessageType.PlayerError) || response.IsMatch(MessageType.SystemError))
-                {
-                    MessageBox.Show(response.ToString(), "Error occurred", MessageBoxButtons.OK);
-                    return ProcessStatus.SuccessAbort;
-                }
-                else if (response.IsMatch(Namespaces.Area, "AreaUpdated"))
-                {
-                    OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(ChangeType.Edit, data));
-                    if (closeFlag)
-                        Close();
-                    else
-                        SetMode(EditMode.ViewMode);
-                    return ProcessStatus.SuccessAbort;
-                }
-                else if (response.IsMatch(Namespaces.Area, "AreaAdded"))
-                {
-                    OnItemChanged(new MirageGUI.Code.ItemChangedEventArgs(ChangeType.Add, data));
-                    if (closeFlag)
-                        Close();
-                    else
-                    {
-                        initialMode = EditMode.EditMode;
-                        SetMode(EditMode.ViewMode);
-                    }
-                    return ProcessStatus.SuccessAbort;
-                }
-            }
-            return ProcessStatus.NotProcessed;
-
-
-        }
-
-        #endregion
     }
 }

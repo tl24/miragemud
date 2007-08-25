@@ -17,6 +17,7 @@ namespace MirageGUI.Controls
         private string _getItemCommand;
         private string _getItemResponse;
         private Type _itemType;
+        protected bool _lazyLoad = false;
 
         public ListTag(TreeNode node, string GetCommand, string GetResponse, string GetItemCommand, string GetItemResponse, Type itemType)
             : base(node)
@@ -26,11 +27,19 @@ namespace MirageGUI.Controls
             this._getItemCommand = GetItemCommand;
             this._getItemResponse = GetItemResponse;
             this._itemType = itemType;
+            _lazyLoad = true;
+        }
 
-            if (node.Nodes.Count == 0)
+        public ListTag(TreeNode node, Type itemType) :base(node) {
+            this._itemType = itemType;            
+            _lazyLoad = false;
+        }
+
+        private void Initialize() {
+            if (Node.Nodes.Count == 0)
             {
-                node.Nodes.Add("Loading...");
-                node.TreeView.BeforeExpand += new TreeViewCancelEventHandler(TreeView_BeforeExpand);
+                Node.Nodes.Add("Loading...");
+                Node.TreeView.BeforeExpand += new TreeViewCancelEventHandler(TreeView_BeforeExpand);
             }
             AddMenuItem("Add New", new EventHandler(AddNew));
         }
@@ -39,7 +48,12 @@ namespace MirageGUI.Controls
         {
             if (e.Node == this.Node && !IsLoaded)
             {
-                this.TreeHandler.NodeGet(this);
+                if (_lazyLoad) {
+                    this.TreeHandler.NodeGet(this);
+                }
+                else {
+                    this.Parent.Load();
+                }            
             }
         }
 

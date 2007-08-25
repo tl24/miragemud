@@ -28,13 +28,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Aga.Controls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Aga.Controls.dll</HintPath>
-    </Reference>
     <Reference Include="JsonExSerializer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\lib\JsonExSerializer.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MirageMUD\lib\log4net.dll</HintPath>
     </Reference>
     <Reference Include="MirageMUD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,15 +56,27 @@
   <ItemGroup>
     <Compile Include="AppSettings.cs" />
     <Compile Include="Code\ExceptionMessage.cs" />
+    <Compile Include="Code\IMasterPresenter.cs" />
     <Compile Include="Code\ItemChanged.cs" />
     <Compile Include="Code\RealSortedList.cs" />
+    <Compile Include="Controls\AreaItem.cs" />
+    <Compile Include="Controls\BaseItem.cs" />
     <Compile Include="Controls\BaseTag.cs" />
+    <Compile Include="Controls\CollectionItem.cs" />
+    <Compile Include="Controls\INodeRenderer.cs" />
     <Compile Include="Controls\ItemTag.cs" />
+    <Compile Include="Controls\ITreeModel.cs" />
     <Compile Include="Controls\ITreeViewTagData.cs">
     </Compile>
     <Compile Include="Controls\ListTag.cs" />
+    <Compile Include="Controls\NewTreeModel.cs" />
     <Compile Include="Controls\NodeFactory.cs" />
+    <Compile Include="Controls\ObjectItem.cs" />
+    <Compile Include="Controls\ObjectNodeRenderer.cs" />
+    <Compile Include="Controls\RootItem.cs" />
     <Compile Include="Controls\RootTag.cs" />
+    <Compile Include="Controls\TreePath.cs" />
+    <Compile Include="Controls\TreeViewController.cs" />
     <Compile Include="Controls\TreeViewHandler.cs" />
     <Compile Include="Forms\BuilderPane.cs">
       <SubType>Form</SubType>
