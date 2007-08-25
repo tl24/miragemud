@@ -11,9 +11,9 @@ namespace MirageGUI.Controls
 {
     public class RootItem : CollectionItem
     {
-        private NewTreeModel model;
+        private AreaTreeModel model;
 
-        public RootItem(NewTreeModel model)
+        public RootItem(AreaTreeModel model)
             : base(null, null, "Areas")
         {
             this.model = model;
@@ -22,7 +22,7 @@ namespace MirageGUI.Controls
         /// <summary>
         /// Gets the model associated with this item
         /// </summary>
-        public NewTreeModel Model
+        public AreaTreeModel Model
         {
             get { return model; }
         }
