@@ -14,16 +14,11 @@ namespace Mirage.IO
     /// The IClient interface specifies the interface for reading input and
     /// writing output to the remote client connected to the mud.
     /// </summary>
-    public interface IClient
+    public interface IClient : IClientIO
     {
-        /// <summary>
-        /// Initialize the client with its TCP client socket connection.
-        /// </summary>
-        /// <param name="client">The TcpClient that this client will be connected to</param>
-        void Open(TcpClient client);
 
         /// <summary>
-        /// Close the connection and its underlying connection
+        /// Close the client and its underlying connection
         /// </summary>
         void Close();
 
@@ -44,16 +39,13 @@ namespace Mirage.IO
         /// </summary>
         void WritePrompt();
 
-        /// <summary>
-        /// Process all messages in the output buffer and write them to the client
-        /// </summary>
-        void FlushOutput();
+
 
         /// <summary>
-        /// Returns true if the client has output waiting to be sent
+        /// Returns true if the client had a message written to its queue during this execution loop
         /// </summary>
         /// <returns></returns>
-        bool HasOutput();
+        bool OutputWritten { get; set; }
 
         /// <summary>
         ///     Indicates that a Command was read this cycle
@@ -79,20 +71,12 @@ namespace Mirage.IO
         ILoginInputHandler LoginHandler { get; set; }
 
         /// <summary>
-        /// Gets or sets a reference to the ClientFactory that created this client
-        /// </summary>
-        IClientFactory ClientFactory { get; set; }
-
-        /// <summary>
         /// Checks to see if the client socket is still open
         /// </summary>
         /// <returns></returns>
         bool IsOpen { get; }
 
-        /// <summary>
-        /// Gets the underlying TcpClient socket
-        /// </summary>
-        TcpClient TcpClient { get; }
+
 
         ILog Logger { get; }
     }

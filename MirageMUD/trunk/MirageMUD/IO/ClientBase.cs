@@ -9,6 +9,7 @@ using Mirage.Util;
 using Mirage.Command;
 using log4net;
 using log4net.Repository.Hierarchy;
+using System.Threading;
 
 namespace Mirage.IO
 {
@@ -17,6 +18,12 @@ namespace Mirage.IO
     /// </summary>
     public abstract class ClientBase : IClient
     {
+
+        /// <summary>
+        /// closed flag, 0 = open, 1 = closed
+        /// </summary>
+        protected int _closed;
+
         protected static ILog log = LogManager.GetLogger(typeof(ClientBase));
         /// <summary>
         ///     The player object attached to this descriptor
@@ -51,6 +58,10 @@ namespace Mirage.IO
         /// </summary>
         protected bool _commandRead;
 
+        /// <summary>
+        /// Indicates that output was written this cycle
+        /// </summary>
+        protected bool _outputWritten;
         /// <summary>
         /// The client factory that created this client
         /// </summary>
@@ -94,6 +105,9 @@ namespace Mirage.IO
             set { _loginHandler = value; }
         }
 
+        public abstract void ReadInput();
+
+
         /// <summary>
         /// Process the input from the connection and Execute a command
         /// </summary>
@@ -108,12 +122,10 @@ namespace Mirage.IO
             set { _commandRead = value; }
         }
 
-        /// <summary>
-        /// Write the specified text to the descriptors output buffer. 
-        /// </summary>
-        public void Write(Message message)
+        public virtual bool OutputWritten
         {
-            outputQueue.Enqueue(message);
+            get { return _outputWritten; }
+            set { _outputWritten = value; }
         }
 
         /// <summary>
@@ -134,30 +146,27 @@ namespace Mirage.IO
         /// </summary>
         public abstract void FlushOutput();
 
-        /// <summary>
-        /// Checks to see if there is any output waiting to be written to the client
-        /// </summary>
-        /// <returns></returns>
-        public bool HasOutput()
-        {
-            return outputQueue.Count > 0;
-        }
+        public abstract void Write(Message message);
 
         /// <summary>
         /// Indicates if this client is still open or connected
         /// </summary>
         public bool IsOpen
         {
-            get { return _client.Connected; }
+            get { return _closed == 0; }
         }
 
         /// <summary>
         ///     Closes the underlying connection
         /// </summary>
-        public virtual void Close()
+        public void Close()
+        {
+            Interlocked.Exchange(ref _closed, 1);
+        }
+
+        public virtual void Dispose()
         {
             string remote = _client.Client.RemoteEndPoint.ToString();
-            FlushOutput();
             _client.Close();
             _state = ConnectedState.Disconnected;
             log.Info("Client connection closed: " + remote);

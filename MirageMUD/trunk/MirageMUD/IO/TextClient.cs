@@ -30,7 +30,7 @@ namespace Mirage.IO
         /// <summary>
         ///     The lines that have been read from the socket
         /// </summary>
-        protected Queue<string> inputQueue;
+        protected ISynchronizedQueue<string> inputQueue;
 
         /// <summary>
         ///     The incomming line to be processed
@@ -54,6 +54,11 @@ namespace Mirage.IO
         protected string lastRead;
 
         /// <summary>
+        ///     The lines that are waiting to be written to the socket
+        /// </summary>
+        protected ISynchronizedQueue<string> outputQueue;
+
+        /// <summary>
         ///     Create a descriptor to read and write to the given
         /// tcp client (Socket)
         /// </summary>
@@ -64,8 +69,9 @@ namespace Mirage.IO
             NetworkStream stm = _client.GetStream();
             reader = new StreamReader(stm);
             writer = new StreamWriter(stm);
-            inputQueue = new Queue<string>();
-            outputQueue.Enqueue(new StringMessage(MessageType.UIControl, "Newline", "\r\n"));
+            inputQueue = new SynchronizedQueue<string>();
+            outputQueue = new SynchronizedQueue<string>();
+            Write(new StringMessage(MessageType.UIControl, "Newline", "\r\n"));
             inputBuffer = new char[512];
             bufferLength = 0;
         }
@@ -74,14 +80,15 @@ namespace Mirage.IO
         ///     Read from the descriptor.  Returns True if successful.
         ///     Populates an internal buffer, which can be read by read_from_buffer.
         /// </summary>
-        private bool ReadClient() {
+        public override void ReadInput() {
             int available = _client.Available;
 
             if (bufferLength == inputBuffer.Length)
             {
-                char[] newBuffer = new char[inputBuffer.Length * 2];
-                Array.Copy(inputBuffer, newBuffer, bufferLength);
-                inputBuffer = newBuffer;
+                Array.Resize<char>(ref inputBuffer, inputBuffer.Length * 2);
+                //char[] newBuffer = new char[inputBuffer.Length * 2];
+                //Array.Copy(inputBuffer, newBuffer, bufferLength);
+                //inputBuffer = newBuffer;
             }
 
             int nRead = reader.ReadBlock(inputBuffer, bufferLength, Math.Min(inputBuffer.Length - bufferLength, _client.Available));
@@ -124,39 +131,26 @@ namespace Mirage.IO
             //string line = new string(buf, 0, nRead);
             if (line == null)
             {
-                return false;
+                return;
             }
             // Insert space for Command holder if necessary
             if (line.Length == 0)
             {
                 line = " ";
             }
-            inputQueue.Enqueue(line);
-            return true;
-        }
-
-        private string Read() {
-            if (ReadClient()) {
-                ReadFromBuffer();
-                string input = _inputLine;
-                _inputLine = null;
-                return input;
-            } else {
-                return null;
-            }
+            inputQueue.Enqueue(line);            
         }
 
         public override void ProcessInput()
         {
-            string input = this.Read();
-
-            if (input != null)
-            {
+            string input;
+            if (inputQueue.TryDequeue(out input)) {
+                CommandRead = true;
                 if (LoginHandler != null)
                 {
                     LoginHandler.HandleInput(input);
                 }
-                else
+                else if (input.Trim().Length > 0)
                 {
                     Interpreter.ExecuteCommand(Player, input);
                 }
@@ -192,6 +186,15 @@ namespace Mirage.IO
         }
 
         /// <summary>
+        /// Write the specified text to the descriptors output buffer. 
+        /// </summary>
+        public override void Write(Message message)
+        {
+            outputQueue.Enqueue(message.ToString());
+            OutputWritten = true;
+        }
+
+        /// <summary>
         ///     Process the output waiting in the output buffer.  This
         /// Data will be sent to the socket.
         /// </summary>
@@ -199,8 +202,8 @@ namespace Mirage.IO
         {
             bool bProcess = false;
             while (outputQueue.Count > 0) {
-                Message msg = outputQueue.Dequeue();
-                writer.Write(msg.ToString());
+                string msg = outputQueue.Dequeue();
+                writer.Write(msg);
                 bProcess = true;
             }
             if (bProcess)
@@ -209,11 +212,11 @@ namespace Mirage.IO
             }
         }
 
-        public override void Close()
+        public override void Dispose()
         {
-            base.Close();
-            reader.Close();
-            writer.Close();
+            base.Dispose();
+            reader.Dispose();
+            writer.Dispose();
         }
     }
 }
