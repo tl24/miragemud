@@ -148,7 +148,8 @@ namespace Mirage.Command
             {
                 player.save();
             }
-            player.FirePlayerEvent(Player.PlayerEventType.Quiting);
+            // comment out for now
+            //player.FirePlayerEvent(Player.PlayerEventType.Quiting);
             player.Client.Close();
         }
 

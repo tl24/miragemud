@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Util;
+using System.Net.Sockets;
 
 namespace Mirage.IO
 {
@@ -14,42 +16,31 @@ namespace Mirage.IO
     public interface IClientFactory
     {
         /// <summary>
-        /// Polls the clients managed by this factory to see if any are ready to be read,
-        /// written, or have errors.  If true is returned then at least one client matches those states
-        /// and at least one of the calls to ReadableClients, WritableClients, or GetErrored should return a non-empty
-        /// list.
+        /// Starts this factory listening for connections
         /// </summary>
-        /// <param name="timeout">The timeout to wait for events</param>
-        /// <returns>true if any clients are ready for reading, writing or in error state</returns>
-        bool Poll(int timeout);
+        void Start();
 
         /// <summary>
-        /// Get the clients that are ready to be read from for the last call to Poll.
+        /// Accepts a socket from the listener and creates a client object from it and
+        /// returns it
         /// </summary>
-        /// <returns>a list of readable clients</returns>
-        IList<IClient> ReadableClients { get; }
+        /// <returns></returns>
+        IClient Accept();
 
         /// <summary>
-        /// Get the clients that are ready to be written to from the last call to Poll.
+        /// Determines if there are connections waiting to be read
         /// </summary>
-        /// <returns>list of writable clients</returns>
-        IList<IClient> WritableClients { get; }
+        /// <returns></returns>
+        bool Pending();
 
         /// <summary>
-        /// Get the clients that are in an error state from the last call to Poll.
+        /// Stop this factory, close any listeners and any connected clients.
         /// </summary>
-        /// <returns>list of errored clients</returns>
-        IList<IClient> ErroredClients { get; }
+        void Stop();
 
         /// <summary>
-        /// Shutdown this factory, close any listeners and any connected clients.
+        /// Gets the underlying socket for the listener
         /// </summary>
-        void Shutdown();
-
-        /// <summary>
-        /// Remove this client from the factory's managed clients
-        /// </summary>
-        /// <param name="client"></param>
-        void Remove(IClient client);
+        Socket Socket { get; }
     }
 }

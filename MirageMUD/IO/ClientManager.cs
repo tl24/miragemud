@@ -7,6 +7,9 @@ using System.Net;
 using Mirage.Command;
 using System.Diagnostics;
 using Mirage.Communication;
+using Mirage.Util;
+using System.Threading;
+using System.IO;
 
 namespace Mirage.IO
 {
@@ -15,12 +18,17 @@ namespace Mirage.IO
     /// Manages client factorys and polls them all for readable, writeable and errored clients.
     /// Follows the same calling sequence as a normal IClientFactory instance.
     /// </summary>
-    public class ClientManager : IClientFactory
+    public class ClientManager
     {
         private List<IClientFactory> _factories;
-        private List<IClient> _readable;
-        private List<IClient> _writable;
-        private List<IClient> _errored;
+        private ISynchronizedQueue<IClient> _newClients;
+        private bool _started = false;
+        private BlockingQueue<ClientOperation> workItems;
+        protected ISynchronizedQueue<IClient> _internalNewClients;
+
+        protected IList<Thread> threads;
+        protected IList<Socket> _sockets;
+        protected Hashtable _clientMap;
 
         /// <summary>
         /// Creates a new instance of the ClientManager
@@ -28,6 +36,11 @@ namespace Mirage.IO
         public ClientManager()
         {
             _factories = new List<IClientFactory>();
+            workItems = new BlockingQueue<ClientOperation>(15);
+            _internalNewClients = new SynchronizedQueue<IClient>();
+            threads = new List<Thread>();
+            _sockets = new List<Socket>();
+            _clientMap = new Hashtable();
         }
 
         /// <summary>
@@ -39,60 +52,209 @@ namespace Mirage.IO
             _factories.Add(factory);
         }
 
-        public bool Poll(int timeout)
-        {
-            bool result = false;
-            _readable = new List<IClient>();
-            _writable = new List<IClient>();
-            _errored = new List<IClient>();
 
-            if (timeout != 0 && _factories.Count > 0)
+
+        /// <summary>
+        /// Polls the listening clients to see which ones are ready to read, ready to be written
+        /// to and have errors.  These lists can then be access through the ReadableClients,
+        /// WritableClients, and ErroredClients properties.
+        /// </summary>
+        /// <param name="timeout">time to wait for a client event</param>
+        /// <returns>true if any clients are ready to be read, written or errored</returns>
+        public virtual void Run()
+        {
+            // start some threads
+            for (int i = 0; i < 1; i++)
             {
-                timeout /= _factories.Count;
-                if (timeout == 0)
-                    timeout = 1;
+                Thread t = new Thread(new ThreadStart(ProcessIO));
+                t.IsBackground = true;
+                t.Start();
+                threads.Add(t);
             }
 
-            foreach (IClientFactory factory in _factories)
+            _sockets.Clear();
+            _clientMap.Clear();
+
+            // start the factories
+            foreach(IClientFactory factory in _factories) {
+                factory.Start();
+                _sockets.Add(factory.Socket);
+                _clientMap.Add(factory.Socket, factory);
+            }
+
+            DateTime startTime;
+            TimeSpan elapsed;
+            while (true)
             {
-                if (factory.Poll(timeout))
+                startTime = DateTime.Now;
+
+                RemoveClosedConnections();               
+                List<Socket> checkRead = new List<Socket>(_sockets);
+                List<Socket> checkWrite = new List<Socket>(_sockets);
+                List<Socket> checkError = new List<Socket>(_sockets);
+
+                Socket.Select(checkRead, checkWrite, checkError, 100000);
+
+                foreach (Socket s in checkRead)
                 {
-                    result = true;
-                    _readable.AddRange(factory.ReadableClients);
-                    _writable.AddRange(factory.WritableClients);
-                    _errored.AddRange(factory.ErroredClients);
+                    object client = _clientMap[s];
+                    if (client is IClientFactory)
+                        workItems.Enqueue(new ClientOperation(client, OpType.Accept));
+                    else
+                        workItems.Enqueue(new ClientOperation(client, OpType.Read));
+                }
+                foreach (Socket s in checkWrite)
+                {
+                    object client = _clientMap[s];
+                    workItems.Enqueue(new ClientOperation(client, OpType.Write));
+                }
+                foreach (Socket s in checkError)
+                {
+                    object client = _clientMap[s];
+                    workItems.Enqueue(new ClientOperation(client, OpType.Error));
+                }
+                while (workItems.Count > 0)
+                    Thread.Sleep(100);
+
+                // add any new clients
+                IClient newClient;
+                while (_internalNewClients.TryDequeue(out newClient))
+                {
+                    _sockets.Add(newClient.TcpClient.Client);
+                    _clientMap.Add(newClient.TcpClient.Client, newClient);
+                    _newClients.Enqueue(newClient);
+                }
+
+                // make sure there's some time between polls so we don't burn up all the cpu
+                elapsed = DateTime.Now.Subtract(startTime);
+                if (elapsed.TotalMilliseconds < 50)
+                {
+                    Thread.Sleep(50 - (int) elapsed.TotalMilliseconds);
                 }
             }
-            return result;
         }
 
-        public IList<IClient> ReadableClients
+        /// <summary>
+        /// Removes and cleans up any closed or errored connections
+        /// </summary>
+        private void RemoveClosedConnections()
         {
-            get { return _readable; }
-        }
+            Queue<Socket> removeItems = new Queue<Socket>();
 
-        public IList<IClient> WritableClients
-        {
-            get { return _writable; }
-        }
-
-        public IList<IClient> ErroredClients
-        {
-            get { return _errored; }
-        }
-
-        public void Shutdown() {
-            foreach (IClientFactory factory in _factories)
+            foreach (DictionaryEntry entry in _clientMap)
             {
-                factory.Shutdown();
+                Socket skey = (Socket) entry.Key;
+                IClient client = entry.Value as IClient;
+                if (client != null)
+                {
+                    if (!client.IsOpen)
+                    {
+                        // close the connection
+                        client.Dispose();
+                        // remove from the list
+                        removeItems.Enqueue(skey);
+                    }
+                }
+            }
+
+            while (removeItems.Count > 0)
+            {
+                Socket sck = removeItems.Dequeue();
+                _clientMap.Remove(sck);
+                _sockets.Remove(sck);
             }
         }
 
-        public void Remove(IClient client)
+        private void ProcessIO()
         {
+            while (true)
+            {
+                ClientOperation op = workItems.Dequeue();  // blocks until something is ready
+                try
+                {
+                    switch (op.Type)
+                    {
+                        case OpType.Accept:
+                            IClient client = ((IClientFactory)op.Client).Accept();
+                            _internalNewClients.Enqueue(client);
+                            break;
+                        case OpType.Read:
+                            ((IClient)op.Client).ReadInput();
+                            break;
+                        case OpType.Write:
+                            ((IClient)op.Client).FlushOutput();
+                            break;
+                        case OpType.Error:
+                            ((IClient)op.Client).Close();
+                            break;
+                    }
+                }
+                catch (IOException e)
+                {
+                    if (op.Client is IClient)
+                    // error, close the connection, main thread will clean it up
+                        ((IClient)op.Client).Close();
+                }
+            }
+        }
+
+        private enum OpType
+        {
+            Accept,
+            Read,
+            Write,
+            Error
+        }
+
+        private struct ClientOperation
+        {
+            private object _client;
+            private OpType _type;
+
+            public ClientOperation(object client, OpType type)
+            {
+                _client = client;
+                _type = type;
+            }
+
+            public object Client
+            {
+                get { return this._client; }
+            }
+
+            public OpType Type
+            {
+                get { return this._type; }
+            }
+        }
+
+
+
+        public void Start()
+        {
+            Thread t = new Thread(new ThreadStart(Run));
+            t.IsBackground = true;
+            t.Start();
+            _started = true;
+        }
+
+        public void Stop() {
             foreach (IClientFactory factory in _factories)
             {
-                factory.Remove(client);
+                factory.Stop();
+            }
+            _started = false;
+        }
+
+        public ISynchronizedQueue<IClient> NewClients
+        {
+            get { return this._newClients; }
+            set {
+                if (_started)
+                {
+                    throw new InvalidOperationException("NewClients can not be set while the factory is running");
+                }
+                this._newClients = value; 
             }
         }
     }

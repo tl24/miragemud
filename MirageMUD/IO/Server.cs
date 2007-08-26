@@ -9,6 +9,7 @@ using Mirage.Command;
 using Mirage.Communication;
 using System.Threading;
 using log4net;
+using Mirage.Util;
 
 namespace Mirage.IO
 {
@@ -22,7 +23,7 @@ namespace Mirage.IO
         private int _port;
 
         /// <summary>
-        ///     Shutdown flag to cause the Server loop to stop
+        ///     Stop flag to cause the Server loop to stop
         /// </summary>
         private bool _shutdown;
 
@@ -51,6 +52,9 @@ namespace Mirage.IO
             manager.AddFactory(new TextClientFactory(_port));
             manager.AddFactory(new GuiClientFactory(_port + 1));
             GlobalLists globalLists = GlobalLists.GetInstance();
+            List<IClient> NannyClients = new List<IClient>();
+            // These are the new connections waiting to be put in the nanny list
+            BlockingQueue<IClient> NannyQueue = new BlockingQueue<IClient>(15);
 
             DateTime lastTime = DateTime.Now;
             DateTime currentTime = DateTime.Now;
@@ -60,33 +64,60 @@ namespace Mirage.IO
             //TODO: Read this from config
             int PulsePerSecond = 4;
 
+            manager.NewClients = NannyQueue;
+            manager.Start();
+
             while(!_shutdown) {
                 loopCount++;
-                if (manager.Poll(100))
+                IClient newClient;
+
+                while (NannyQueue.TryDequeue(out newClient))
                 {
-                    foreach (IClient client in manager.ErroredClients)
-                    {
-                        if (client.Player != null)
-                        {
-                            if (client.State == ConnectedState.Playing)
-                            {
-                                Player.Save(client.Player);
-                                globalLists.Players.Remove(client.Player);
-                            }
-                        }
-                        client.Close();
-                        client.ClientFactory.Remove(client);
-                    }
+                    NannyClients.Add(newClient);
+                }
 
-                    foreach (IClient client in manager.ReadableClients)
+                for (int i = NannyClients.Count - 1; i >= 0; i--)
+                {
+                    NannyClients[i].ProcessInput();
+                    if (NannyClients[i].Player != null && NannyClients[i].State == ConnectedState.Playing)
                     {
-                        client.ProcessInput();
+                        // graduated...remove from the list
+                        NannyClients[i].WritePrompt();
+                        NannyClients.RemoveAt(i);
+                        
                     }
+                }
 
-                    foreach (IClient client in manager.WritableClients)
+                Queue<Player> removePlayers = new Queue<Player>();
+
+                // reset state
+                foreach (Player player in globalLists.Players)
+                {
+                    player.Client.CommandRead = false;
+                    player.Client.OutputWritten = false;
+                    if (!player.Client.IsOpen)
                     {
-                        WriteClient(client);
+                        player.save();
+                        removePlayers.Enqueue(player);
                     }
+                }
+
+                while (removePlayers.Count > 0)
+                {
+                    removePlayers.Dequeue().FirePlayerEvent(Player.PlayerEventType.Quiting);
+                    //globalLists.RemovePlayer(removePlayers.Dequeue());                    
+                }
+
+                foreach (Player player in globalLists.Players)
+                {
+                    player.Client.ProcessInput();
+                }
+
+                foreach (Player player in globalLists.Players)
+                {
+                    if (player.Client.CommandRead || player.Client.OutputWritten)
+                        player.Client.WritePrompt();
+
                 }
 
                 currentTime = DateTime.Now;
@@ -98,15 +129,7 @@ namespace Mirage.IO
 	            lastTime = currentTime;
 
             }
+            manager.Stop();
         }
-
-        private void WriteClient(IClient client)
-        {
-            if ((client.CommandRead || client.HasOutput()))
-            {
-                client.WritePrompt();
-            }
-            client.FlushOutput();
-        }        
     }
 }

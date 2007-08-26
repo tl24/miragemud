@@ -26,11 +26,18 @@ namespace Mirage.IO
         protected BinaryReader reader;
         protected BinaryWriter writer;
 
-        protected Queue<AdvancedMessage> inputQueue;
+        protected ISynchronizedQueue<AdvancedMessage> inputQueue;
+
+        /// <summary>
+        ///     The lines that are waiting to be written to the socket
+        /// </summary>
+        protected ISynchronizedQueue<AdvancedMessage> outputQueue;
+
 
         public GuiClient()
         {
-            inputQueue = new Queue<AdvancedMessage>();
+            inputQueue = new SynchronizedQueue<AdvancedMessage>();
+            outputQueue = new SynchronizedQueue<AdvancedMessage>();
         }
 
         public override void Open(TcpClient client)
@@ -40,41 +47,39 @@ namespace Mirage.IO
             reader = new BinaryReader(stm);
             writer = new BinaryWriter(stm);
         }
+
         public override void ProcessInput()
         {
-            if (ReadClient())
+            AdvancedMessage msg = null;
+            if (inputQueue.TryDequeue(out msg))
             {
-                AdvancedMessage msg = inputQueue.Dequeue();
-                if (msg != null)
+                CommandRead = true;
+                if (msg.type == AdvancedClientTransmitType.JsonEncodedMessage)
                 {
-                    if (msg.type == AdvancedClientTransmitType.JsonEncodedMessage)
+                    Serializer serializer = Serializer.GetSerializer(typeof(object));
+                    serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
+                    msg.data = serializer.Deserialize((string)msg.data);
+                }
+                if (msg.type == AdvancedClientTransmitType.StringMessage)
+                {
+                    if (LoginHandler != null)
                     {
-                        Serializer serializer = Serializer.GetSerializer(typeof(object));
-                        serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
-                        msg.data = serializer.Deserialize((string)msg.data);
+                        LoginHandler.HandleInput((string)msg.data);
                     }
-                    if (msg.type == AdvancedClientTransmitType.StringMessage)
+                    else if (((string)msg.data).Trim().Length > 0)
                     {
-                        if (LoginHandler != null)
-                        {
-                            LoginHandler.HandleInput((string)msg.data);
-                        }
-                        else
-                        {
-                            Interpreter.ExecuteCommand(Player, (string)msg.data);
-                        }
+                        Interpreter.ExecuteCommand(Player, (string)msg.data);
+                    }
+                }
+                else
+                {
+                    if (LoginHandler != null)
+                    {
+                        LoginHandler.HandleInput(msg.data);
                     }
                     else
                     {
-                        if (LoginHandler != null)
-                        {
-                            LoginHandler.HandleInput(msg.data);
-                        }
-                        else
-                        {
-                            //throw new NotSupportedException("Advanced Client can't handle object data yet");
-                            MethodInvoker.Interpret(this.Player, msg.name, (object[])msg.data);
-                        }
+                        MethodInvoker.Interpret(this.Player, msg.name, (object[])msg.data);
                     }
                 }
             }
@@ -84,7 +89,7 @@ namespace Mirage.IO
         ///     Read from the descriptor.  Returns True if successful.
         ///     Populates an internal buffer, which can be read by read_from_buffer.
         /// </summary>
-        private bool ReadClient()
+        public override void ReadInput()
         {
             int available = _client.Available;
             if (available > 0)
@@ -104,14 +109,28 @@ namespace Mirage.IO
                     default:
                         throw new Exception("Unrecognized message type: " + type);
                 }
-                CommandRead = true;
                 inputQueue.Enqueue(msg);
-                return true;
             }
-            else
+        }
+
+        /// <summary>
+        /// Write the specified text to the descriptors output buffer. 
+        /// </summary>
+        public override void Write(Message message)
+        {
+            if (message is ResourceMessage)
             {
-                return false;
+                message = new StringMessage(message.MessageType, message.Name, message.ToString());
             }
+            AdvancedMessage advMsg = new AdvancedMessage();
+            advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;
+            advMsg.name = message.QualifiedName.ToString();
+            Serializer serializer = Serializer.GetSerializer(typeof(object));
+            serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
+            advMsg.data = serializer.Serialize(message);
+
+            outputQueue.Enqueue(advMsg);
+            OutputWritten = true;
         }
 
         public override void FlushOutput()
@@ -119,17 +138,7 @@ namespace Mirage.IO
             bool bProcess = false;
             while (outputQueue.Count > 0)
             {
-                Message msg = outputQueue.Dequeue();
-                if (msg is ResourceMessage)
-                {
-                    msg = new StringMessage(msg.MessageType, msg.Name, msg.ToString());
-                }
-                AdvancedMessage advMsg = new AdvancedMessage();
-                advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;
-                advMsg.name = msg.QualifiedName.ToString();
-                Serializer serializer = Serializer.GetSerializer(typeof(object));
-                serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
-                advMsg.data = serializer.Serialize(msg);
+                AdvancedMessage advMsg = outputQueue.Dequeue();
                 writer.Write((int)advMsg.type);
                 writer.Write(advMsg.name);
                 writer.Write((string)advMsg.data);
@@ -139,6 +148,13 @@ namespace Mirage.IO
             {
                 writer.Flush();
             }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            ((IDisposable)reader).Dispose();
+            ((IDisposable)writer).Dispose();
         }
 
         protected class AdvancedMessage
