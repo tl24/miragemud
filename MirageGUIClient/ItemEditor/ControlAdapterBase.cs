@@ -245,4 +245,43 @@ namespace MirageGUI.ItemEditor
             return tb;
         }
     }
+
+    public class EnumComboAdapter : ControlAdapterBase
+    {
+        
+        public EnumComboAdapter(PropertyInfo property)
+            : base(property)
+        {
+        }
+
+        protected override Control CreateEditControl()
+        {
+            ComboBox cb = new ComboBox();
+            Array enumValues = Enum.GetValues(_property.PropertyType);
+            foreach (object o in enumValues)
+            {
+                cb.Items.Add(o);
+            }
+            cb.DropDownStyle = ComboBoxStyle.DropDownList;
+            return cb;
+        }
+
+        protected override object ControlValue
+        {
+            get
+            {
+                object value = EditControl.SelectedItem;
+                return Enum.Parse(_property.PropertyType, value.ToString(), true);
+            }
+            set
+            {
+                EditControl.SelectedItem = value;
+            }
+        }
+
+        public new ComboBox EditControl
+        {
+            get { return (ComboBox)base.EditControl; }
+        }
+    }
 }
