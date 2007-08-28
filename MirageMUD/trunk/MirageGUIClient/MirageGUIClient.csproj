@@ -40,7 +40,7 @@
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\MirageMUD\bin\Debug\MirageMUD.exe</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="NGenerics, Version=1.2.0.0, Culture=neutral, PublicKeyToken=e4b41be133ea7faf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -62,11 +62,13 @@
     <Compile Include="Controls\AreaItem.cs" />
     <Compile Include="Controls\BaseItem.cs" />
     <Compile Include="Controls\CollectionItem.cs" />
+    <Compile Include="Controls\DictionaryItem.cs" />
     <Compile Include="Controls\INodeRenderer.cs" />
     <Compile Include="Controls\ITreeModel.cs" />
     <Compile Include="Controls\AreaTreeModel.cs" />
     <Compile Include="Controls\ObjectItem.cs" />
     <Compile Include="Controls\ObjectNodeRenderer.cs" />
+    <Compile Include="Controls\ReflectionUtils.cs" />
     <Compile Include="Controls\RootItem.cs" />
     <Compile Include="Controls\TreePath.cs" />
     <Compile Include="Controls\TreeViewController.cs" />

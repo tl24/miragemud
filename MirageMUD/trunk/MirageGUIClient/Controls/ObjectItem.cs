@@ -6,6 +6,7 @@ using JsonExSerializer;
 using System.Collections;
 using Mirage.Data.Query;
 using Mirage.Command;
+using Mirage.Data;
 
 namespace MirageGUI.Controls
 {
@@ -113,8 +114,29 @@ namespace MirageGUI.Controls
                     if (prop.IsDefined(typeof(JsonExIgnoreAttribute), false))
                         continue;
 
-                    if (prop.PropertyType != typeof(string) && prop.PropertyType.GetInterface("IEnumerable", true) != null)
-                        children.Add(new CollectionItem(this, prop.GetValue(_data, null), prop.Name));
+                    EditorCollectionAttribute attr = ReflectionUtils.GetSingleAttribute<EditorCollectionAttribute>(prop);
+                    if (typeof(IDictionary).IsAssignableFrom(prop.PropertyType)
+                        || prop.PropertyType.GetInterface(typeof(IDictionary<,>).FullName, false) != null
+                        || (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                    {
+                        string keyProp = null;
+                        Type itemType = null;
+                        if (attr != null)
+                        {
+                            keyProp = attr.KeyProperty;
+                            itemType = attr.ItemType;
+                        }
+                        children.Add(new DictionaryItem(this, prop.GetValue(_data, null), prop.Name, itemType, keyProp));
+                    }
+                    else if (prop.PropertyType != typeof(string) && prop.PropertyType.GetInterface("IEnumerable", true) != null)
+                    {
+                        Type itemType = null;
+                        if (attr != null)
+                        {
+                            itemType = attr.ItemType;
+                        }
+                        children.Add(new CollectionItem(this, prop.GetValue(_data, null), prop.Name, itemType));
+                    }
                 }
             }
             _dataProcessed = true;

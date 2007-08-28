@@ -48,7 +48,11 @@ namespace MirageGUI.ItemEditor
                 if (prop.IsDefined(typeof(JsonExIgnoreAttribute), false))
                     continue;
 
-                if (prop.CanRead && (prop.CanWrite || IsReadonly) && (prop.PropertyType.IsPrimitive || prop.PropertyType == typeof(string)))
+                if (prop.CanRead 
+                    && (prop.CanWrite || IsReadonly) 
+                    && (prop.PropertyType.IsPrimitive 
+                    || prop.PropertyType == typeof(string)
+                    || prop.PropertyType.IsEnum))
                 {
                     _controlAdapters.Add(CreateControlAdapter(prop, EditorType));
                 }
@@ -61,6 +65,8 @@ namespace MirageGUI.ItemEditor
             Type adapterType;
             if ("Multiline" == ControlType)
                 adapterType = typeof(MultilineTextBoxAdapter);
+            else if (property.PropertyType.IsEnum)
+                adapterType = typeof(EnumComboAdapter);
             else
                 adapterType = typeof(StringTextBoxAdapter);
 
