@@ -16,6 +16,7 @@ namespace Mirage.Data
         private string _editorType;
         private bool _isReadonly;
         private bool _isKey;
+        private bool _visible = true;
 
         // This is a positional argument.
         public EditorAttribute()
@@ -50,6 +51,12 @@ namespace Mirage.Data
         {
             get { return this._isKey; }
             set { this._isKey = value; }
+        }
+
+        public bool Visible
+        {
+            get { return this._visible; }
+            set { this._visible = value; }
         }
 
 

@@ -82,7 +82,8 @@
     <Compile Include="Data\ContainerAddException.cs" />
     <Compile Include="Data\Containers.cs" />
     <Compile Include="Data\EditorAttribute.cs" />
-    <Compile Include="Data\EditorTreePropertyAttribute.cs" />
+    <Compile Include="Data\EditorCollectionAttribute.cs" />
+    <Compile Include="Data\EditorParentAttribute.cs" />
     <Compile Include="Data\IContainable.cs" />
     <Compile Include="Data\IContainer.cs" />
     <Compile Include="Data\ObjectUpdater.cs" />

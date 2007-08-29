@@ -38,6 +38,7 @@ namespace Mirage.Data
         public RoomExit(DirectionType direction, string targetRoomURI) : this(direction, targetRoomURI, null) {
         }
 
+        [Editor(Priority=1)]
         public Mirage.Data.DirectionType Direction
         {
             get { return this._direction; }
@@ -49,7 +50,8 @@ namespace Mirage.Data
             get { return this._toRoomURI; }
             set { this._toRoomURI = value; }
         }
-        
+
+        [EditorParent(2)]
         public Room ParentRoom
         {
             get { return this._parentRoom; }

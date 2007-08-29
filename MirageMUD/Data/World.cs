@@ -12,8 +12,7 @@ namespace Mirage.Data
     public class World
     {
         [JsonExIgnore]
-        [EditorTreeProperty("GetAreas", "msg:/builder/area/AreaList", 
-            "GetArea", "msg:builder/area/Area", typeof(Area))]
+        [EditorCollection(typeof(Area))]
         public IDictionary<string, Area> Areas
         {
             get { return new Dictionary<string, Area>(); }
