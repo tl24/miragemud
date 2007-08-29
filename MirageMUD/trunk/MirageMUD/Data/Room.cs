@@ -24,6 +24,7 @@ namespace Mirage.Data
             _exits = new Dictionary<DirectionType, RoomExit>();
         }
 
+        [EditorParent(2)]
         public Mirage.Data.Area Area
         {
             get { return this._area; }
@@ -74,7 +75,7 @@ namespace Mirage.Data
             }
         }
 
-        [EditorTreeProperty(typeof(RoomExit))]
+        [EditorCollection(typeof(RoomExit), KeyProperty="Direction")]
         public IDictionary<DirectionType, RoomExit> Exits
         {
             get { return this._exits; }

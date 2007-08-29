@@ -49,7 +49,7 @@ namespace Mirage.IO
             _shutdown = false;
             logger.Info("Starting up");
             ClientManager manager = new ClientManager();
-            manager.AddFactory(new TextClientFactory(_port));
+            manager.AddFactory(new TextClientFactory(new System.Net.IPEndPoint(System.Net.Dns.GetHostByAddress("192.168.1.103").AddressList[0], _port)));
             manager.AddFactory(new GuiClientFactory(_port + 1));
             GlobalLists globalLists = GlobalLists.GetInstance();
             List<IClient> NannyClients = new List<IClient>();

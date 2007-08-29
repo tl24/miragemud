@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using MirageGUI.Code;
 using MirageGUI.ItemEditor;
 using Mirage.Data;
+using MirageGUI.Forms;
 
 namespace MirageGUI.Controls
 {
@@ -96,6 +97,13 @@ namespace MirageGUI.Controls
                         object newItem = Activator.CreateInstance(itemType);
                         EditHandler handler = new EditHandler(c);
                         presenter.StartEditItem(newItem, EditMode.NewMode, "New " + itemType.Name, new ItemChangedHandler(handler.ItemChanged));
+                    }
+                    else
+                    {
+                        SelectTypeDialog dlg = new SelectTypeDialog();
+                        if (dlg.ShowDialog() == DialogResult.OK)
+                        {
+                        }
                     }
                     break;
 

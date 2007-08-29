@@ -4,6 +4,8 @@ using System.Text;
 using System.Collections;
 using Mirage.Command;
 using Mirage.Data.Query;
+using System.Reflection;
+using Mirage.Data;
 
 namespace MirageGUI.Controls
 {
@@ -68,6 +70,7 @@ namespace MirageGUI.Controls
                     // should fail if it already exists
                     dict.Add(newKey, itemData);
                     child = new KeyValueItem(newKey, this, itemData);
+                    OnNewItem(child, itemData);
                     children.Add(child);
                     this.OnStructureChanged();
                     break;
@@ -92,5 +95,35 @@ namespace MirageGUI.Controls
             child.SetDirty();
         }
 
+        /// <summary>
+        /// Check to see if the property for the object can be handled by this class,
+        /// if so create a new instance and return through the newItem parameter;
+        /// </summary>
+        /// <param name="ParentType">The parent type for the property</param>
+        /// <param name="property">the property</param>
+        /// <param name="parent">the parent node</param>
+        /// <param name="ParentData">data for the parent node</param>
+        /// <param name="newItem">the new item</param>
+        /// <returns>true if the new item was created, false if this class does not handle it</returns>
+        public static bool IsType(Type ParentType, PropertyInfo property, BaseItem parent, object ParentData, out BaseItem newItem)
+        {
+            newItem = null;
+            EditorCollectionAttribute attr = ReflectionUtils.GetSingleAttribute<EditorCollectionAttribute>(property);
+            if (typeof(IDictionary).IsAssignableFrom(property.PropertyType)
+                || property.PropertyType.GetInterface(typeof(IDictionary<,>).FullName, false) != null
+                || (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+            {
+                string keyProp = null;
+                Type itemType = null;
+                if (attr != null)
+                {
+                    keyProp = attr.KeyProperty;
+                    itemType = attr.ItemType;
+                }
+                newItem = new DictionaryItem(parent, property.GetValue(ParentData, null), property.Name, itemType, keyProp);
+                return true;
+            }
+            return false;
+        }
     }
 }

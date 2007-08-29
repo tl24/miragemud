@@ -117,6 +117,11 @@ namespace MirageGUI.Controls
             }
             return base.HandleResponse(response);
         }
+
+        public override void SetDirty()
+        {
+            
+        }
     }
 
     public class LeafItem : BaseItem {

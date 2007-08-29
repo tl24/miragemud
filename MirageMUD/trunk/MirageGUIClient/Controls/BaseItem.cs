@@ -137,7 +137,10 @@ namespace MirageGUI.Controls
             get { return _isDirty; }
         }
 
-        public void SetDirty()
+        /// <summary>
+        /// Sets a flag indicating that data has changed but not been committed yet
+        /// </summary>
+        public virtual void SetDirty()
         {
             _isDirty = true;
             OnDataChanged(false);

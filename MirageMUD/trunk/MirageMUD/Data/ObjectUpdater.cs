@@ -56,7 +56,7 @@ namespace Mirage.Data
         {
             foreach (System.Attribute attr in property.GetCustomAttributes(false))
             {
-                if (attr is JsonExIgnoreAttribute || attr is EditorTreePropertyAttribute)
+                if (attr is JsonExIgnoreAttribute || attr is EditorCollectionAttribute)
                     return;
             }
             // we got here, we must be able to update

@@ -29,7 +29,7 @@ namespace MirageGUI.Code
 
         public void Connect(string remoteHost, int port)
         {
-            client = new TcpClient("localhost", 4501);
+            client = new TcpClient(remoteHost, port);
             NetworkStream stm = client.GetStream();
             reader = new BinaryReader(stm);
             writer = new BinaryWriter(stm);
