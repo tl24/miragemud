@@ -6,6 +6,7 @@ using Mirage.IO;
 
 using Mirage.Communication;
 using Mirage.Data.Query;
+using Mirage.Data.Attribute;
 
 namespace Mirage.Command
 {
@@ -182,10 +183,13 @@ namespace Mirage.Command
                 if (room.Exits.Count > 0)
                 {
                     result += "Available Exits: [ ";
-                    foreach (DirectionType direction in room.Exits.Keys)
+                    foreach (RoomExit exit in room.Exits.Values)
                     {
-                        result += direction;
-                        result += " ";
+                        if (OpenableAttribute.IsOpen(exit))
+                        {
+                            result += exit.Direction;
+                            result += " ";
+                        }
                     }
                     result += "]\r\n";
                 }

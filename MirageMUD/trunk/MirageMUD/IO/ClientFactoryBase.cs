@@ -27,8 +27,9 @@ namespace Mirage.IO
         }
 
         public ClientFactoryBase(int port, ILog log)
-            : this(new IPEndPoint(IPAddress.Loopback, port), log)
         {
+            this.log = log;
+            _listener = new TcpListener(port);
         }
 
         public bool Pending()

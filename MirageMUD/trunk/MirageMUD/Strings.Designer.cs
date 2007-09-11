@@ -151,6 +151,60 @@ namespace Mirage {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A door closes..
+        /// </summary>
+        internal static string msg__movement_anonymous_close_door {
+            get {
+                return ResourceManager.GetString("msg:/movement/anonymous.close.door", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A door opens..
+        /// </summary>
+        internal static string msg__movement_anonymous_open_door {
+            get {
+                return ResourceManager.GetString("msg:/movement/anonymous.open.door", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${player} closes the ${direction} door..
+        /// </summary>
+        internal static string msg__movement_player_close_door_others {
+            get {
+                return ResourceManager.GetString("msg:/movement/player.close.door.others", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You close the ${direction} door..
+        /// </summary>
+        internal static string msg__movement_player_close_door_self {
+            get {
+                return ResourceManager.GetString("msg:/movement/player.close.door.self", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ${player} opens the ${direction} door..
+        /// </summary>
+        internal static string msg__movement_player_open_door_others {
+            get {
+                return ResourceManager.GetString("msg:/movement/player.open.door.others", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You open the ${direction} door..
+        /// </summary>
+        internal static string msg__movement_player_open_door_self {
+            get {
+                return ResourceManager.GetString("msg:/movement/player.open.door.self", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Namespace test message.
         /// </summary>
         internal static string msg__namespace_test {

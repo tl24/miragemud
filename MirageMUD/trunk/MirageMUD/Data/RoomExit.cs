@@ -99,6 +99,7 @@ namespace Mirage.Data
             return o != null;
         }
 
+        [EditorTypeSelector(typeof(BaseAttribute), "Mirage.Data.Attribute")]
         public ArrayList Attributes
         {
             get { return _attributes; }

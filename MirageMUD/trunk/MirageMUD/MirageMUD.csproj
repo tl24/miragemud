@@ -52,6 +52,7 @@
     <Compile Include="Command\ConfirmationAttribute.cs" />
     <Compile Include="Command\ConfirmationCommand.cs" />
     <Compile Include="Command\ConfirmationInterpreter.cs" />
+    <Compile Include="Command\ConstAttribute.cs" />
     <Compile Include="Command\CustomParseAttribute.cs" />
     <Compile Include="Command\ILoginInputHandler.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Data\EditorAttribute.cs" />
     <Compile Include="Data\EditorCollectionAttribute.cs" />
     <Compile Include="Data\EditorParentAttribute.cs" />
+    <Compile Include="Data\EditorTypeSelectorAttribute.cs" />
     <Compile Include="Data\IContainable.cs" />
     <Compile Include="Data\IContainer.cs" />
     <Compile Include="Data\ObjectUpdater.cs" />
