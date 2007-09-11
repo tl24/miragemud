@@ -148,6 +148,24 @@
   <data name="msg:/communication/tell.self" xml:space="preserve">
     <value>You tell ${target} '${message}'.</value>
   </data>
+  <data name="msg:/movement/anonymous.close.door" xml:space="preserve">
+    <value>A door closes.</value>
+  </data>
+  <data name="msg:/movement/anonymous.open.door" xml:space="preserve">
+    <value>A door opens.</value>
+  </data>
+  <data name="msg:/movement/player.close.door.others" xml:space="preserve">
+    <value>${player} closes the ${direction} door.</value>
+  </data>
+  <data name="msg:/movement/player.close.door.self" xml:space="preserve">
+    <value>You close the ${direction} door.</value>
+  </data>
+  <data name="msg:/movement/player.open.door.others" xml:space="preserve">
+    <value>${player} opens the ${direction} door.</value>
+  </data>
+  <data name="msg:/movement/player.open.door.self" xml:space="preserve">
+    <value>You open the ${direction} door.</value>
+  </data>
   <data name="msg:/namespace/test" xml:space="preserve">
     <value>Namespace test message</value>
   </data>

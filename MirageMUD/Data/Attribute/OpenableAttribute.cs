@@ -56,5 +56,22 @@ namespace Mirage.Data.Attribute
         }
 
         #endregion
+
+        /// <summary>
+        /// Checks to see if the object is open, if the the object does not
+        /// support IOpenable interace, then true is returned, otherwise the
+        /// IsOpen property is checked.
+        /// </summary>
+        /// <param name="target">the object to check</param>
+        /// <returns>true if open or not supported, false otherwise</returns>
+        public static bool IsOpen(object target)
+        {
+            if (target is IAttributable)
+            {
+                IOpenable o = (IOpenable) ((IAttributable)target).TryGetAttribute(typeof(IOpenable));
+                return o == null ? true : o.IsOpen();
+            }
+            return true;
+        }
     }
 }

@@ -193,6 +193,20 @@ namespace Mirage.Command
                         convertedArguments[i] = result;
                     }
                 }
+                else if (param.IsDefined(typeof(ConstAttribute), true))
+                {
+                    object target = arguments[argIndex++];
+                    object result = null;
+                    ConstAttribute attr = (ConstAttribute)param.GetCustomAttributes(typeof(ConstAttribute), true)[0];
+                    if (attr.Constant.Equals(target.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                        result = attr.Constant;
+                    else
+                    {
+                        errorMessage = new StringMessage(MessageType.PlayerError, "NoCommandFound", "Huh?\r\n");
+                        convertedArguments = null;
+                        return false;
+                    }
+                }
                 else
                 {
                     try
