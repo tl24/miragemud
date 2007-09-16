@@ -188,9 +188,9 @@ namespace Mirage.IO
         /// <summary>
         /// Write the specified text to the descriptors output buffer. 
         /// </summary>
-        public override void Write(Message message)
+        public override void Write(IMessage message)
         {
-            outputQueue.Enqueue(message.ToString());
+            outputQueue.Enqueue(message.Render());
             OutputWritten = true;
         }
 

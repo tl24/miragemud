@@ -34,7 +34,7 @@ namespace Mirage.Command
         /// </summary>
         /// <returns></returns>
         [Command]
-        public static Message GetWorld()
+        public static IMessage GetWorld()
         {
             return new DataMessage(Namespaces.Area, "World", new World());
         }
@@ -44,7 +44,7 @@ namespace Mirage.Command
         /// </summary>
         /// <returns>area list</returns>
         [Command]
-        public static Message GetAreas(string itemUri)
+        public static IMessage GetAreas(string itemUri)
         {
             IDictionary<string, Area> areas = MudRepository.GetInstance().Areas;
             List<string> areaList = new List<string>(areas.Keys);
@@ -56,7 +56,7 @@ namespace Mirage.Command
         /// </summary>
         /// <returns>confirmation</returns>
         [Command]
-        public static Message UpdateItem(ChangeType changeType, Area area)
+        public static IMessage UpdateItem(ChangeType changeType, Area area)
         {
             IDictionary<string, Area> areas = MudRepository.GetInstance().Areas;
             switch (changeType)
@@ -81,7 +81,7 @@ namespace Mirage.Command
         }
 
         [Command]
-        public static Message SaveArea(string areaName)
+        public static IMessage SaveArea(string areaName)
         {
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
             IDictionary<string, Area> areas = MudRepository.GetInstance().Areas;
@@ -108,7 +108,7 @@ namespace Mirage.Command
         /// <param name="builder">the builder player doing the request</param>
         /// <returns>area</returns>
         [Command]
-        public static Message GetArea(string itemUri)
+        public static IMessage GetArea(string itemUri)
         {
             Area area = (Area) QueryManager.GetInstance().Find(itemUri);
             return new DataMessage(Namespaces.Area, "Area", itemUri, area);
@@ -121,7 +121,7 @@ namespace Mirage.Command
         /// <param name="itemUri">Uri to the rooms collection of an area</param>
         /// <returns>list of rooms</returns>
         [Command]
-        public static Message GetRooms(string itemUri)
+        public static IMessage GetRooms(string itemUri)
         {
             IDictionary<string, Room> rooms = (IDictionary<string, Room>) QueryManager.GetInstance().Find(itemUri);
             List<string> roomList = new List<string>(rooms.Keys);
@@ -135,7 +135,7 @@ namespace Mirage.Command
         /// <param name="itemUri">Uri to the room of an area</param>
         /// <returns>room</returns>
         [Command]
-        public static Message GetRoom(string itemUri)
+        public static IMessage GetRoom(string itemUri)
         {
             Room room = (Room)QueryManager.GetInstance().Find(itemUri);
             return new DataMessage(Namespaces.Area, "Room", itemUri, room);

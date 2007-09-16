@@ -116,11 +116,11 @@ namespace Mirage.IO
         /// <summary>
         /// Write the specified text to the descriptors output buffer. 
         /// </summary>
-        public override void Write(Message message)
+        public override void Write(IMessage message)
         {
-            if (message is ResourceMessage)
+            if (!message.CanTransferMessage)
             {
-                message = new StringMessage(message.MessageType, message.Name, message.ToString());
+                message = message.GetTransferMessage();
             }
             AdvancedMessage advMsg = new AdvancedMessage();
             advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;

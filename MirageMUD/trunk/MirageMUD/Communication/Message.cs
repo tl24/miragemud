@@ -67,7 +67,7 @@ namespace Mirage.Communication
     /// <summary>
     /// Base class for messages that are sent to the client
     /// </summary>
-    public class Message
+    public class Message : Mirage.Communication.IMessage
     {
         private MessageType _messageType;
         private Uri _namespace;
@@ -200,12 +200,27 @@ namespace Mirage.Communication
 
         public override bool Equals(object obj)
         {
-            if (!base.Equals(obj) && obj is Message)
+            if (!base.Equals(obj) && obj is IMessage)
             {
-                Message other = (Message)obj;
+                IMessage other = (IMessage)obj;
                 return IsMatch(other.MessageType, other.Namespace, other.Name);
             }
             return false;
+        }
+
+        public virtual bool CanTransferMessage
+        {
+            get { return true; }
+        }
+
+        public virtual IMessage GetTransferMessage()
+        {
+            return this;
+        }
+
+        public virtual string RenderMessage()
+        {
+            return this.ToString();
         }
     }
 }

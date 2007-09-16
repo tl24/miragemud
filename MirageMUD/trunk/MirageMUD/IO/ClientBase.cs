@@ -42,12 +42,6 @@ namespace Mirage.IO
         /// </summary>
         protected TcpClient _client;
 
-
-        /// <summary>
-        ///     The lines that are waiting to be written to the socket
-        /// </summary>
-        protected Queue<Message> outputQueue;
-
         /// <summary>
         ///     The stage of connection that this descriptor is at
         /// </summary>
@@ -75,7 +69,6 @@ namespace Mirage.IO
         public virtual void Open(TcpClient client)
         {
             this._client = client;
-            outputQueue = new Queue<Message>();
         }
 
         /// <summary>
@@ -146,7 +139,7 @@ namespace Mirage.IO
         /// </summary>
         public abstract void FlushOutput();
 
-        public abstract void Write(Message message);
+        public abstract void Write(IMessage message);
 
         /// <summary>
         /// Indicates if this client is still open or connected

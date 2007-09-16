@@ -179,7 +179,7 @@ namespace Mirage.Data
             }
         }
 
-        public override void Write(Message message)
+        public override void Write(IMessage message)
         {
             if (Client != null)
                 Client.Write(message);

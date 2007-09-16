@@ -163,15 +163,15 @@ namespace Mirage.Util
         /// </summary>
         /// <param name="prompt">The prompt</param>
         /// <param name="nextStep">The next step in the state machine</param>
-        public void Require(Message prompt, ValidateDelegate nextStep)
+        public void Require(IMessage prompt, ValidateDelegate nextStep)
         {
             _client.Write(prompt);
             _nextState = nextStep;
         }
 
-        public void Require(IList<Message> messages, ValidateDelegate nextStep)
+        public void Require(IList<IMessage> messages, ValidateDelegate nextStep)
         {
-            foreach (Message m in messages)
+            foreach (IMessage m in messages)
             {
                 _client.Write(m);
             }

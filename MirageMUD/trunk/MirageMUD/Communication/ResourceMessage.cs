@@ -9,7 +9,7 @@ namespace Mirage.Communication
     /// <summary>
     /// Consructs a message from the resource template
     /// </summary>
-    public class ResourceMessage : Message, IJsonTypeConverter
+    public class ResourceMessage : Message /*, IJsonTypeConverter*/
     {
         private IDictionary<string, object> _parameters;
 
@@ -58,6 +58,11 @@ namespace Mirage.Communication
         /// <returns>string representation of the message</returns>
         public override string ToString()
         {
+            return RenderMessage();
+        }
+
+        public override string RenderMessage()
+        {
             ITemplate template = TemplateManager.GetTemplate(QualifiedName);
             if (Parameters != null && Parameters.Count > 0)
             {
@@ -69,7 +74,17 @@ namespace Mirage.Communication
             return template.Render();
         }
 
+        public override bool CanTransferMessage
+        {
+            get { return false; }
+        }
 
+        public override IMessage GetTransferMessage()
+        {
+            return new StringMessage(this.MessageType, this.Namespace, this.Name, this.RenderMessage());
+        }
+
+        /*
         #region IJsonTypeConverter Members
 
         public object Context
@@ -94,5 +109,6 @@ namespace Mirage.Communication
         }
 
         #endregion
+         */ 
     }
 }

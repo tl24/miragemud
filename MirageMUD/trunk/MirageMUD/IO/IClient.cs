@@ -32,7 +32,7 @@ namespace Mirage.IO
         /// client until FlushOutput is called.
         /// </summary>
         /// <param name="message">The message to write</param>
-        void Write(Message message);
+        void Write(IMessage message);
 
         /// <summary>
         /// Write the prompt for the client to the output buffer

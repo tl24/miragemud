@@ -93,7 +93,7 @@ namespace Mirage.Command
         /// <param name="args">the message to speak</param>
         /// <param name="extraArgs"></param>
         [Command(Aliases=new string[]{"'", "say"})]
-        public static Message say([Actor] Living actor, [CustomParse] string message)
+        public static IMessage say([Actor] Living actor, [CustomParse] string message)
         {
             //speak to all others in the room
             ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, Namespaces.Communication, "say.others");
@@ -114,7 +114,7 @@ namespace Mirage.Command
         }
 
         [Command]
-        public static Message tell([Actor] Living actor, string target, [CustomParse] string message)
+        public static IMessage tell([Actor] Living actor, string target, [CustomParse] string message)
         {
             // look up the target
             Player p = (Player) QueryManager.GetInstance().Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));

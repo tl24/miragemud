@@ -54,9 +54,9 @@ namespace Mirage.Command
                 object st = _method.Invoke(_invokedName, actor, args);
                 if (st != null)
                 {
-                    if (st is Message)
+                    if (st is IMessage)
                     {
-                        actor.Write((Message)st);
+                        actor.Write((IMessage)st);
                     }
                     else
                     {

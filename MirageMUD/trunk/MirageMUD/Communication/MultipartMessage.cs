@@ -41,7 +41,7 @@ namespace Mirage.Communication
         {
             StringBuilder sb = new StringBuilder();
             
-            foreach (Message part in _parts)
+            foreach (IMessage part in _parts)
             {
                 sb.Append(part.ToString());
                 //TODO: Add Line Endings?

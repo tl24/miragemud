@@ -66,7 +66,7 @@ namespace Mirage.Data
             set { _gender = value; }
         }
 
-        public abstract void Write(Message message);
+        public abstract void Write(IMessage message);
 
         #region IViewable Members
 

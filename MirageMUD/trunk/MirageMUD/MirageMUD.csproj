@@ -63,6 +63,7 @@
     <Compile Include="Communication\DataMessage.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
     <Compile Include="Communication\ErrorResourceMessage.cs" />
+    <Compile Include="Communication\IMessage.cs" />
     <Compile Include="Communication\ITemplate.cs" />
     <Compile Include="Communication\MessageFactory.cs" />
     <Compile Include="Communication\MovementMessage.cs" />
