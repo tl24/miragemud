@@ -49,8 +49,7 @@ namespace Mirage.IO
             _shutdown = false;
             logger.Info("Starting up");
             ClientManager manager = new ClientManager();
-            manager.AddFactory(new TextClientFactory(_port));
-            manager.AddFactory(new GuiClientFactory(_port + 1));
+            manager.Configure();
             GlobalLists globalLists = GlobalLists.GetInstance();
             List<IClient> NannyClients = new List<IClient>();
             // These are the new connections waiting to be put in the nanny list

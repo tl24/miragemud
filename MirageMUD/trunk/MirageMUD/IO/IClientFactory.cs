@@ -7,40 +7,19 @@ using System.Net.Sockets;
 namespace Mirage.IO
 {
     /// <summary>
-    /// A client factory is responsible for create IClient instances and
-    /// managing their lifetime.  Calls to the factory are expected to go
-    /// in this order:
-    /// Poll
-    /// Any one of: ReadableClients, GetWriteable, GetErrored
+    /// A client factory is responsible for create IClient instances from
+    /// a tcpclient socket.  The client handles the implementation details
+    /// of converting from on-the-wire protocol to commands and messages based
+    /// on the type of client connected.
     /// </summary>
     public interface IClientFactory
     {
         /// <summary>
-        /// Starts this factory listening for connections
+        /// Creates an IClient instance from the TcpClient client.  Each client factory
+        /// is responsible for configuring the newly created client
         /// </summary>
-        void Start();
-
-        /// <summary>
-        /// Accepts a socket from the listener and creates a client object from it and
-        /// returns it
-        /// </summary>
-        /// <returns></returns>
-        IClient Accept();
-
-        /// <summary>
-        /// Determines if there are connections waiting to be read
-        /// </summary>
-        /// <returns></returns>
-        bool Pending();
-
-        /// <summary>
-        /// Stop this factory, close any listeners and any connected clients.
-        /// </summary>
-        void Stop();
-
-        /// <summary>
-        /// Gets the underlying socket for the listener
-        /// </summary>
-        Socket Socket { get; }
+        /// <param name="client">the tcp client</param>
+        /// <returns>mud client instance</returns>
+        IClient CreateClient(TcpClient client);
     }
 }

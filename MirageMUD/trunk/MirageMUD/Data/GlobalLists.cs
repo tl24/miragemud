@@ -11,18 +11,13 @@ namespace Mirage.Data
         private ICollection<Player> _players;
         private IDictionary<string, Area> _areas;
 
+        static GlobalLists()
+        {
+            _instance = new GlobalLists();
+        }
+
         public static GlobalLists GetInstance()
         {
-            if (_instance == null)
-            {
-                lock (typeof(GlobalLists))
-                {
-                    if (_instance == null)
-                    {
-                        _instance = new GlobalLists();
-                    }
-                }
-            }
             return _instance;
         }
 

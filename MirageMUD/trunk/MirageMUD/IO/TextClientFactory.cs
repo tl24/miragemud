@@ -10,25 +10,17 @@ using log4net;
 
 namespace Mirage.IO
 {
-    public class TextClientFactory : ClientFactoryBase
+    /// <summary>
+    /// Creates a client that can read/write text-based commands
+    /// and messages from a socket
+    /// </summary>
+    public class TextClientFactory : IClientFactory
     {
-        private static ILog log = LogManager.GetLogger(typeof(TextClientFactory));
-
-        public TextClientFactory(IPEndPoint listeningEndPoint) : base(listeningEndPoint, log)
-        {
-        }
-
-        public TextClientFactory(int port) : base(port, log)
-        {
-        }
-
-        #region IClientFactory Members
-
         /// <summary>
         ///     creates a new client from the TcpClient
         /// </summary>
         /// <param name="client"></param>
-        protected override IClient CreateClient(TcpClient client)
+        public IClient CreateClient(TcpClient client)
         {
             IClient mudClient = new TextClient();
             mudClient.Open(client);
@@ -36,9 +28,5 @@ namespace Mirage.IO
             mudClient.LoginHandler.HandleInput(null);
             return mudClient;
         }
-
-
-        
-        #endregion
     }
 }

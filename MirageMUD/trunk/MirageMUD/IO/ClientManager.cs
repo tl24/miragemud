@@ -10,6 +10,7 @@ using Mirage.Communication;
 using Mirage.Util;
 using System.Threading;
 using System.IO;
+using System.Configuration;
 
 namespace Mirage.IO
 {
@@ -20,7 +21,7 @@ namespace Mirage.IO
     /// </summary>
     public class ClientManager
     {
-        private List<IClientFactory> _factories;
+        private List<ClientListener> _listeners;
         private ISynchronizedQueue<IClient> _newClients;
         private bool _started = false;
         private BlockingQueue<ClientOperation> workItems;
@@ -35,7 +36,7 @@ namespace Mirage.IO
         /// </summary>
         public ClientManager()
         {
-            _factories = new List<IClientFactory>();
+            _listeners = new List<ClientListener>();
             workItems = new BlockingQueue<ClientOperation>(15);
             _internalNewClients = new SynchronizedQueue<IClient>();
             threads = new List<Thread>();
@@ -44,12 +45,12 @@ namespace Mirage.IO
         }
 
         /// <summary>
-        /// Add a client factory to be managed by this instance of the client manager.
+        /// Add a client listener to be managed by this instance of the client manager.
         /// </summary>
-        /// <param name="factory">the factory to be managed</param>
-        public void AddFactory(IClientFactory factory)
+        /// <param name="factory">the listener to be managed</param>
+        public void AddListener(ClientListener listener)
         {
-            _factories.Add(factory);
+            _listeners.Add(listener);
         }
 
 
@@ -76,10 +77,11 @@ namespace Mirage.IO
             _clientMap.Clear();
 
             // start the factories
-            foreach(IClientFactory factory in _factories) {
-                factory.Start();
-                _sockets.Add(factory.Socket);
-                _clientMap.Add(factory.Socket, factory);
+            foreach (ClientListener listener in _listeners)
+            {
+                listener.Start();
+                _sockets.Add(listener.Socket);
+                _clientMap.Add(listener.Socket, listener);
             }
 
             DateTime startTime;
@@ -88,7 +90,7 @@ namespace Mirage.IO
             {
                 startTime = DateTime.Now;
 
-                RemoveClosedConnections();               
+                RemoveClosedConnections();
                 List<Socket> checkRead = new List<Socket>(_sockets);
                 List<Socket> checkWrite = new List<Socket>(_sockets);
                 List<Socket> checkError = new List<Socket>(_sockets);
@@ -98,7 +100,7 @@ namespace Mirage.IO
                 foreach (Socket s in checkRead)
                 {
                     object client = _clientMap[s];
-                    if (client is IClientFactory)
+                    if (client is ClientListener)
                         workItems.Enqueue(new ClientOperation(client, OpType.Accept));
                     else
                         workItems.Enqueue(new ClientOperation(client, OpType.Read));
@@ -129,7 +131,7 @@ namespace Mirage.IO
                 elapsed = DateTime.Now.Subtract(startTime);
                 if (elapsed.TotalMilliseconds < 50)
                 {
-                    Thread.Sleep(50 - (int) elapsed.TotalMilliseconds);
+                    Thread.Sleep(50 - (int)elapsed.TotalMilliseconds);
                 }
             }
         }
@@ -143,7 +145,7 @@ namespace Mirage.IO
 
             foreach (DictionaryEntry entry in _clientMap)
             {
-                Socket skey = (Socket) entry.Key;
+                Socket skey = (Socket)entry.Key;
                 IClient client = entry.Value as IClient;
                 if (client != null)
                 {
@@ -175,7 +177,7 @@ namespace Mirage.IO
                     switch (op.Type)
                     {
                         case OpType.Accept:
-                            IClient client = ((IClientFactory)op.Client).Accept();
+                            IClient client = ((ClientListener)op.Client).Accept();
                             _internalNewClients.Enqueue(client);
                             break;
                         case OpType.Read:
@@ -192,7 +194,7 @@ namespace Mirage.IO
                 catch (IOException e)
                 {
                     if (op.Client is IClient)
-                    // error, close the connection, main thread will clean it up
+                        // error, close the connection, main thread will clean it up
                         ((IClient)op.Client).Close();
                 }
             }
@@ -238,10 +240,11 @@ namespace Mirage.IO
             _started = true;
         }
 
-        public void Stop() {
-            foreach (IClientFactory factory in _factories)
+        public void Stop()
+        {
+            foreach (ClientListener listener in _listeners)
             {
-                factory.Stop();
+                listener.Stop();
             }
             _started = false;
         }
@@ -249,17 +252,124 @@ namespace Mirage.IO
         public ISynchronizedQueue<IClient> NewClients
         {
             get { return this._newClients; }
-            set {
+            set
+            {
                 if (_started)
                 {
                     throw new InvalidOperationException("NewClients can not be set while the factory is running");
                 }
-                this._newClients = value; 
+                this._newClients = value;
+            }
+        }
+
+        public void Configure()
+        {
+            ClientManagerConfiguration section = (ClientManagerConfiguration)ConfigurationManager.GetSection("ClientManager");
+            foreach (ListenerConfiguration listener in section.Listeners)
+            {                
+                if (string.IsNullOrEmpty(listener.Host))
+                    AddListener(new ClientListener(listener.Port, (IClientFactory) Activator.CreateInstance(Type.GetType(listener.ClientFactory))));
+                else {
+                    IPAddress[] addresses = System.Net.Dns.GetHostAddresses(listener.Host);
+                    if (addresses.Length > 0)
+                    {
+                        AddListener(new ClientListener(
+                            new IPEndPoint(addresses[0], listener.Port),
+                            (IClientFactory) Activator.CreateInstance(Type.GetType(listener.ClientFactory))));
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Invalid host name: " + listener.Host, "host");
+                    }
+                }
             }
         }
     }
 
+    public class ClientManagerConfiguration : ConfigurationSection
+    {
+        [ConfigurationProperty("Listeners", IsDefaultCollection = true)]
+        public ListenersCollectionConfiguration Listeners
+        {
+            get { return this["Listeners"] as ListenersCollectionConfiguration; }
+        }
+    }
 
+    public class ListenersCollectionConfiguration : ConfigurationElementCollection
+    {
+        public ListenerConfiguration this[int index]
+        {
+            get
+            {
+                return base.BaseGet(index) as ListenerConfiguration;
+            }
+            set
+            {
+                if (base.BaseGet(index) != null)
+                {
+                    base.BaseRemoveAt(index);
+                }
+                this.BaseAdd(index, value);
+            }
+        }
 
+        public ListenerConfiguration this[string key]
+        {
+            get
+            {
+                return base.BaseGet(key) as ListenerConfiguration;
+            }
+            set
+            {
+                if (base.BaseGet(key) != null)
+                {
+                    base.BaseRemove(key);
+                }
+                this.BaseAdd(value);
+            }
+        }
 
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new ListenerConfiguration();
+        }
+
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((ListenerConfiguration)element).Key;
+        }
+    }
+
+    public class ListenerConfiguration : ConfigurationElement
+    {
+        [ConfigurationProperty("host")]
+        public string Host
+        {
+            get { return base["host"] as string; }
+        }
+
+        [ConfigurationProperty("port", IsRequired=true)]
+        public int Port
+        {
+            get { return int.Parse(base["port"].ToString()); }
+        }
+
+        [ConfigurationProperty("client-factory", IsRequired=true)]
+        public string ClientFactory
+        {
+            get { return base["client-factory"] as string; }
+        }
+
+        [ConfigurationProperty("key", IsKey=true)]
+        public string Key
+        {
+            get {
+                string host = Host;
+                if (string.IsNullOrEmpty(host))
+                    host = "localhost";
+
+                return host + ":" + Port;
+            }
+        }
+    }
 }
