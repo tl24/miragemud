@@ -8,20 +8,13 @@ using Mirage.Command;
 
 namespace Mirage.IO
 {
-    public class GuiClientFactory : ClientFactoryBase
+    /// <summary>
+    /// Creates a client that is capable of sending complex messages and commands
+    /// containing objects and data structures as well as text to/from a socket.
+    /// </summary>
+    public class GuiClientFactory : IClientFactory
     {
-        private static ILog log = LogManager.GetLogger(typeof(GuiClientFactory));
-
-        public GuiClientFactory(IPEndPoint listeningEndPoint) : base(listeningEndPoint, log) {
-        }
-
-        public GuiClientFactory(int port)
-            : base(port, log)
-        {
-        }
-
-
-        protected override IClient CreateClient(TcpClient client)
+        public IClient CreateClient(TcpClient client)
         {
             IClient mudClient = new GuiClient();
             mudClient.Open(client);
