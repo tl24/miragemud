@@ -46,7 +46,7 @@ namespace Mirage.IO
                     // should put this in an event to be triggered
                     //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
                     Client.Logger.Info(string.Format("{0}@{1} has connected.", p.Uri, Client.TcpClient.Client.RemoteEndPoint));
-                    GlobalLists globalLists = GlobalLists.GetInstance();
+                    MudRepository globalLists = MudRepository.GetInstance();
                     globalLists.AddPlayer(p);
                     if (p.Container == null)
                     {

@@ -50,7 +50,7 @@ namespace Mirage.IO
             logger.Info("Starting up");
             ClientManager manager = new ClientManager();
             manager.Configure();
-            GlobalLists globalLists = GlobalLists.GetInstance();
+            MudRepository globalLists = MudRepository.GetInstance();
             List<IClient> NannyClients = new List<IClient>();
             // These are the new connections waiting to be put in the nanny list
             BlockingQueue<IClient> NannyQueue = new BlockingQueue<IClient>(15);
