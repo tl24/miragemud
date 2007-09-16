@@ -10,7 +10,7 @@ namespace Mirage.Data
     {
         public void LoadAll()
         {
-            GlobalLists globalLists = GlobalLists.GetInstance();
+            MudRepository globalLists = MudRepository.GetInstance();
             Area defaultArea = null;
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
             defaultArea = (Area) persister.Load("DefaultArea");
