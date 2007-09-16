@@ -60,7 +60,7 @@ namespace Mirage.Command
         /// <param name="convertedArguments">The converted arguments</param>
         /// <param name="errorMessage">an error message if conversion fails</param>
         /// <returns>true if types were converted successfully</returns>
-        bool ConvertArguments(string invokedName, Living actor, object[] arguments, out object[] convertedArguments, out Message errorMessage);
+        bool ConvertArguments(string invokedName, Living actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage);
 
         /// <summary>
         /// Invoke the given command
@@ -69,6 +69,6 @@ namespace Mirage.Command
         /// <param name="self">the entity invoking the command (Player or Mobile)</param>
         /// <param name="arguments">the arguments to the command</param>
         /// <returns>A message to be returned to the player if any</returns>
-        Message Invoke(string invokedName, Living actor, object[] arguments);
+        IMessage Invoke(string invokedName, Living actor, object[] arguments);
     }
 }

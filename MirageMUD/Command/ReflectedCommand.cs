@@ -135,7 +135,7 @@ namespace Mirage.Command
 
         #region Methods
 
-        public override bool ConvertArguments(string invokedName, Living self, object[] arguments, out object[] convertedArguments, out Message errorMessage)
+        public override bool ConvertArguments(string invokedName, Living self, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
         {
             ParameterInfo[] parms = _methodInfo.GetParameters();
             convertedArguments = new object[parms.Length];
@@ -226,14 +226,14 @@ namespace Mirage.Command
             return true;            
         }
 
-        public override Message Invoke(string invokedName, Living actor, object[] arguments)
+        public override IMessage Invoke(string invokedName, Living actor, object[] arguments)
         {
             try
             {
                 object result = _methodInfo.Invoke(actor, arguments);
-                if (result is Message)
+                if (result is IMessage)
                 {
-                    return (Message)result;
+                    return (IMessage)result;
                 }
                 else if (result != null)
                 {

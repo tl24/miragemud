@@ -124,7 +124,7 @@ namespace Mirage.Command
                     CanidateCommand canidate = new CanidateCommand(method, commandName);
                     canidateCommands.Add(canidate);
                     object[] convertedArguments;
-                    Message errorMessage;
+                    IMessage errorMessage;
                     if (method.ConvertArguments(canidate.InvokedName, actor, commandArgs, out convertedArguments, out errorMessage))
                     {
                         canidate.Arguments = convertedArguments;
@@ -143,7 +143,7 @@ namespace Mirage.Command
                 CanidateCommand first = canidateCommands[0];
                 if (first.Validated)
                 {
-                    Message result = first.Command.Invoke(first.InvokedName, actor, first.Arguments);
+                    IMessage result = first.Command.Invoke(first.InvokedName, actor, first.Arguments);
                     fCommandInvoked = true;
                     if (result != null)
                         actor.Write(result);
@@ -188,7 +188,7 @@ namespace Mirage.Command
                     CanidateCommand canidate = new CanidateCommand(method, commandName);
                     canidateCommands.Add(canidate);
                     object[] convertedArguments;
-                    Message errorMessage;
+                    IMessage errorMessage;
                     if (method.ConvertArguments(canidate.InvokedName, actor, arguments, out convertedArguments, out errorMessage))
                     {
                         canidate.Arguments = convertedArguments;
@@ -207,7 +207,7 @@ namespace Mirage.Command
                 CanidateCommand first = canidateCommands[0];
                 if (first.Validated)
                 {
-                    Message result = first.Command.Invoke(first.InvokedName, actor, first.Arguments);
+                    IMessage result = first.Command.Invoke(first.InvokedName, actor, first.Arguments);
                     fCommandInvoked = true;
                     if (result != null)
                         actor.Write(result);
@@ -268,7 +268,7 @@ namespace Mirage.Command
             private string _invokedName;
             private object[] _arguments;
             private object context;
-            private Message _errorMessage;
+            private IMessage _errorMessage;
             private bool _validated;
 
             public CanidateCommand(ICommand command, string invokedName)
@@ -295,7 +295,7 @@ namespace Mirage.Command
                 set { this._arguments = value; }
             }
 
-            public Message ErrorMessage
+            public IMessage ErrorMessage
             {
                 get { return this._errorMessage; }
                 set { this._errorMessage = value; }

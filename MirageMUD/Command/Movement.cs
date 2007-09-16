@@ -10,38 +10,38 @@ namespace Mirage.Command
     public class Movement
     {
         [Command]
-        public static Message north([Actor]Living actor)
+        public static IMessage north([Actor]Living actor)
         {
             return Go(actor, DirectionType.North);
         }
 
         [Command]
-        public static Message south([Actor]Living actor)
+        public static IMessage south([Actor]Living actor)
         {
             return Go(actor, DirectionType.South);
         }
         [Command]
-        public static Message east([Actor]Living actor)
+        public static IMessage east([Actor]Living actor)
         {
             return Go(actor, DirectionType.East);
         }
         [Command]
-        public static Message west([Actor]Living actor)
+        public static IMessage west([Actor]Living actor)
         {
             return Go(actor, DirectionType.West);
         }
         [Command]
-        public static Message up([Actor]Living actor)
+        public static IMessage up([Actor]Living actor)
         {
             return Go(actor, DirectionType.Up);
         }
         [Command]
-        public static Message down([Actor]Living actor)
+        public static IMessage down([Actor]Living actor)
         {
             return Go(actor, DirectionType.Down);
         }
 
-        public static Message Go(Living actor, DirectionType direction)
+        public static IMessage Go(Living actor, DirectionType direction)
         {
             if (actor.Container is Room)
             {
@@ -118,18 +118,18 @@ namespace Mirage.Command
         }
 
         [Command(Aliases = new string[] { "open" })]
-        public static Message OpenDoor([Actor] Living actor, [Const("door")] string door, string direction)
+        public static IMessage OpenDoor([Actor] Living actor, [Const("door")] string door, string direction)
         {
             return OpenCloseDoorHelper(actor, direction, true);
         }
 
         [Command(Aliases = new string[] { "close" })]
-        public static Message CloseDoor([Actor] Living actor, [Const("door")] string door, string direction)
+        public static IMessage CloseDoor([Actor] Living actor, [Const("door")] string door, string direction)
         {
             return OpenCloseDoorHelper(actor, direction, false);
         }
 
-        private static Message OpenCloseDoorHelper(Living actor, string directionName, bool open)
+        private static IMessage OpenCloseDoorHelper(Living actor, string directionName, bool open)
         {
             int dir = ParseDirection(directionName);
             if (dir == -1)

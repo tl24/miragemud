@@ -10,11 +10,11 @@ namespace Mirage.Communication
     /// </summary>
     public static class MessageFactory
     {
-        private static IDictionary<string, Message> _messages;
+        private static IDictionary<string, IMessage> _messages;
 
         static MessageFactory()
         {
-            _messages = new Dictionary<string, Message>(StringComparer.CurrentCultureIgnoreCase);
+            _messages = new Dictionary<string, IMessage>(StringComparer.CurrentCultureIgnoreCase);
             _messages[EchoOn] = new StringMessage(MessageType.UIControl, Namespaces.System, EchoOn, "\x1B[0m");
             _messages[EchoOff] = new StringMessage(MessageType.UIControl, Namespaces.System, EchoOff, "\x1B[0;30;40m");
         }
@@ -24,7 +24,7 @@ namespace Mirage.Communication
         /// </summary>
         /// <param name="key">the key of the message</param>
         /// <returns>the message</returns>
-        public static Message GetMessage(string key)
+        public static IMessage GetMessage(string key)
         {
             return _messages[key];
         }

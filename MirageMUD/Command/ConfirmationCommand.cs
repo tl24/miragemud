@@ -55,12 +55,12 @@ namespace Mirage.Command
             get { return _innerCommand.CustomParse; }
         }
 
-        public bool ConvertArguments(string invokedName, Living actor, object[] arguments, out object[] convertedArguments, out Message errorMessage)
+        public bool ConvertArguments(string invokedName, Living actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
         {
             return _innerCommand.ConvertArguments(invokedName, actor, arguments, out convertedArguments, out errorMessage);
         }
 
-        public Message Invoke(string invokedName, Living actor, object[] arguments)
+        public IMessage Invoke(string invokedName, Living actor, object[] arguments)
         {
             if (actor is Player)
             {

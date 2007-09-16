@@ -54,7 +54,7 @@ namespace Mirage.IO
             } else {
                 if (!Contains("password"))
                 {
-                    List<Message> message = new List<Message>();
+                    List<IMessage> message = new List<IMessage>();
                     //MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
                     message.Add(new StringMessage(MessageType.Prompt, Namespaces.Authentication, "password", "Password: "));
                     message.Add(MessageFactory.GetMessage(MessageFactory.EchoOff));

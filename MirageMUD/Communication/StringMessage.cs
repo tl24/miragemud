@@ -28,9 +28,13 @@ namespace Mirage.Communication
         }
 
         public override string ToString() {
-            return _text;
+            return RenderMessage();
         }
 
+        public override string RenderMessage()
+        {
+            return _text;
+        }
         /// <summary>
         /// The message string to send to the text client
         /// </summary>
