@@ -12,11 +12,13 @@ namespace MirageGUI.Controls
     public class CollectionItem : KeyValueItem
     {
         protected Type itemType;
+        protected PropertyInfo property;
 
-        public CollectionItem(BaseItem parent, object data, string name, Type itemType)
+        public CollectionItem(BaseItem parent, object data, string name, Type itemType, PropertyInfo property)
             : base(name, parent, data)
         {
             this.itemType = itemType;
+            this.property = property;
         }
 
         protected override void ProcessData()
@@ -51,6 +53,22 @@ namespace MirageGUI.Controls
             return itemType;
         }
 
+        public virtual TypeSelectionArgs GetTypeSelectionArgs()
+        {
+            EditorTypeSelectorAttribute attr = ReflectionUtils.GetSingleAttribute<EditorTypeSelectorAttribute>(property);
+            if (attr != null)
+            {
+                if (attr.BaseType != null)
+                    return new TypeSelectionArgs(attr.BaseType, attr.DefaultNamespace);
+                else
+                    return new TypeSelectionArgs(attr.BaseTypeName, attr.DefaultNamespace);
+            }
+            else
+            {
+                return new TypeSelectionArgs();
+            }
+        }
+
         public override void UpdateChild(BaseItem child, object itemData, ChangeType changeType)
         {
             switch (changeType)
@@ -65,12 +83,19 @@ namespace MirageGUI.Controls
                     OnNewItem(child, itemData);
                     children.Add(child);
                     this.OnStructureChanged();
+                    child.SetDirty();
                     break;
                 case ChangeType.Edit:
                     child.Data = itemData;
+                    child.SetDirty();
+                    break;
+                case ChangeType.Delete:
+                    children.Remove(child);
+                    ((IList)Data).Remove(child.Data);
+                    this.OnStructureChanged();
+                    this.SetDirty();
                     break;
             }
-            child.SetDirty();
         }
 
         protected virtual void OnNewItem(BaseItem item, object data) {
@@ -114,7 +139,7 @@ namespace MirageGUI.Controls
                 {
                     itemType = attr.ItemType;
                 }
-                newItem = new CollectionItem(parent, property.GetValue(ParentData, null), property.Name, itemType);
+                newItem = new CollectionItem(parent, property.GetValue(ParentData, null), property.Name, itemType, property);
                 return true;
             }
             return false;
@@ -140,5 +165,40 @@ namespace MirageGUI.Controls
         {
             return _key.ToString() + (IsDirty ? " *" : "");
         }
+    }
+
+    public class TypeSelectionArgs
+    {
+        private Type _baseType;
+        private string _defaultNamespace;
+
+        public TypeSelectionArgs() {
+        }
+
+        public TypeSelectionArgs(Type baseType, string defaultNamespace)
+        {
+            _baseType = baseType;
+            _defaultNamespace = defaultNamespace;
+        }
+
+        public TypeSelectionArgs(string baseType, string defaultNamespace)
+        {
+            if (baseType != null && baseType != string.Empty)
+                _baseType = Type.GetType(baseType);
+
+            _defaultNamespace = defaultNamespace;
+        }
+
+        public Type BaseType
+        {
+            get { return this._baseType; }
+        }
+
+        public string DefaultNamespace
+        {
+            get { return this._defaultNamespace; }
+        }
+
+        
     }
 }

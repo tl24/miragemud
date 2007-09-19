@@ -14,7 +14,7 @@ namespace MirageGUI.Controls
         private AreaTreeModel model;
 
         public RootItem(AreaTreeModel model)
-            : base(null, null, "Areas", typeof(Area))
+            : base(null, null, "Areas", typeof(Area), null)
         {
             this.model = model;
         }

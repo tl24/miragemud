@@ -6,6 +6,7 @@ using MirageGUI.Code;
 using MirageGUI.ItemEditor;
 using Mirage.Data;
 using MirageGUI.Forms;
+using Mirage.Data.Attribute;
 
 namespace MirageGUI.Controls
 {
@@ -101,8 +102,18 @@ namespace MirageGUI.Controls
                     else
                     {
                         SelectTypeDialog dlg = new SelectTypeDialog();
+                        dlg.TypeFilterFlags = TypeFilterFlags.NoArgConstructor | TypeFilterFlags.Instantiable;
+                        dlg.Assemblies.Add("MirageMUD");
+                        TypeSelectionArgs targs = c.GetTypeSelectionArgs();
+
+                        dlg.BaseType = targs.BaseType;
+                        dlg.DefaultNamespace = targs.DefaultNamespace;
                         if (dlg.ShowDialog() == DialogResult.OK)
                         {
+                            itemType = dlg.SelectedType;
+                            object newItem = Activator.CreateInstance(itemType);
+                            EditHandler handler = new EditHandler(c);
+                            presenter.StartEditItem(newItem, EditMode.NewMode, "New " + itemType.Name, new ItemChangedHandler(handler.ItemChanged));
                         }
                     }
                     break;
@@ -126,6 +137,13 @@ namespace MirageGUI.Controls
                     {
                         EditHandler handler = new EditHandler(oi.Parent, oi);
                         presenter.StartEditItem(oi.Data, EditMode.EditMode, oi.ToString(), new ItemChangedHandler(handler.ItemChanged));
+                    }
+                    break;
+                case "Delete":
+                    string text = string.Format("Are you sure you want to delete {0} ({1})?", oi.ToString(), oi.Data.GetType().Name);
+                    if (MessageBox.Show(text, "Delete Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        oi.Parent.UpdateChild(oi, oi.Data, Mirage.Command.ChangeType.Delete);
                     }
                     break;
                 case "Save":
