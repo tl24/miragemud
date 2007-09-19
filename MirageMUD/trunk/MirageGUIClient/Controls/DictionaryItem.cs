@@ -13,8 +13,8 @@ namespace MirageGUI.Controls
     {
         private string _keyProperty;
 
-        public DictionaryItem(BaseItem parent, object data, string name, Type itemType, string keyProp)
-            : base(parent, data, name, itemType)
+        public DictionaryItem(BaseItem parent, object data, string name, Type itemType, string keyProp, PropertyInfo property)
+            : base(parent, data, name, itemType, property)
         {
             this.itemType = itemType;
             _keyProperty = keyProp;
@@ -73,6 +73,7 @@ namespace MirageGUI.Controls
                     OnNewItem(child, itemData);
                     children.Add(child);
                     this.OnStructureChanged();
+                    child.SetDirty();
                     break;
                 case ChangeType.Edit:
                     KeyValueItem keyChild = child as KeyValueItem;
@@ -89,10 +90,15 @@ namespace MirageGUI.Controls
                         dict.Add(newKey, itemData);
                         this.OnDataChanged(keyChild.CreatePath(), false);
                     }
-                    
+                    child.SetDirty();
+                    break;
+                case ChangeType.Delete:
+                    children.Remove(child);
+                    dict.Remove(newKey);
+                    this.OnStructureChanged();
+                    this.SetDirty();
                     break;
             }
-            child.SetDirty();
         }
 
         /// <summary>
@@ -120,7 +126,7 @@ namespace MirageGUI.Controls
                     keyProp = attr.KeyProperty;
                     itemType = attr.ItemType;
                 }
-                newItem = new DictionaryItem(parent, property.GetValue(ParentData, null), property.Name, itemType, keyProp);
+                newItem = new DictionaryItem(parent, property.GetValue(ParentData, null), property.Name, itemType, keyProp, property);
                 return true;
             }
             return false;

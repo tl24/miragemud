@@ -13,6 +13,7 @@ using System.Collections;
 using MirageGUI.ItemEditor;
 using Mirage.Data.Query;
 using MirageGUI.Controls;
+using System.Threading;
 
 namespace MirageGUI.Forms
 {
@@ -24,6 +25,7 @@ namespace MirageGUI.Forms
         private IDictionary<string, ResponseHandler> handlerDelegates;
         private TreeViewController _treeController;
         private AreaTreeModel _treeModel;
+        private bool _loggedIn;
 
         public BuilderPane()
         {
@@ -80,13 +82,18 @@ namespace MirageGUI.Forms
             if (!_handler.IsConnected)
                 connectMenuItem.Enabled = true;
             disconnectMenuItem.Enabled = _handler.IsConnected;
+            _loggedIn = false;
         }
 
         void LoginSuccess(object sender, EventArgs e)
         {
+            _loggedIn = true;
             connectMenuItem.Enabled = false;
-            _treeModel = new AreaTreeModel(IOHandler, _dispatcher, this);
-            _treeController = new TreeViewController(AreaTree, _treeModel, new ObjectNodeRenderer(this));            
+            if (_treeModel == null)
+            {
+                _treeModel = new AreaTreeModel(IOHandler, _dispatcher, this);
+                _treeController = new TreeViewController(AreaTree, _treeModel, new ObjectNodeRenderer(this));
+            }
         }
 
         public ConsoleForm Console
@@ -140,6 +147,11 @@ namespace MirageGUI.Forms
         
         private void BuilderPane_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (_loggedIn)
+            {
+                _handler.SendString("Quit");
+                Thread.Sleep(100);
+            }
             _handler.Close();
             AppSettings.Default.Save();
         }
