@@ -4,9 +4,9 @@ using System.Text;
 using System.Reflection;
 using JsonExSerializer;
 using System.Collections;
-using Mirage.Data.Query;
-using Mirage.Command;
-using Mirage.Data;
+using Mirage.Core.Data.Query;
+using Mirage.Core.Command;
+using Mirage.Core.Data;
 
 namespace MirageGUI.Controls
 {

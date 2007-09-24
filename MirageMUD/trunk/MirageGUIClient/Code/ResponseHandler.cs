@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Communication;
+using Mirage.Core.Communication;
 
 namespace MirageGUI.Code
 {

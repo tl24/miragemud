@@ -8,8 +8,8 @@ using System.Windows.Forms;
 using System.Reflection;
 using MirageGUI.ItemEditor;
 using MirageGUI.Code;
-using Mirage.Communication;
-using Mirage.Command;
+using Mirage.Core.Communication;
+using Mirage.Core.Command;
 
 namespace MirageGUI.Forms
 {

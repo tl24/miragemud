@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.IO;
-using Mirage.Communication;
+using Mirage.Core.IO;
+using Mirage.Core.Communication;
 
 namespace MirageGUI.Code
 {

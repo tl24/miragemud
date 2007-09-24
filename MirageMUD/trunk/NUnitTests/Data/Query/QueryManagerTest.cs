@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Mirage.Data;
+using Mirage.Core.Data;
 using NUnitTests.Mock;
-using Mirage.Data.Query;
+using Mirage.Core.Data.Query;
 
 namespace NUnitTests.Data.Query
 {

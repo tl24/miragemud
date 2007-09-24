@@ -5,13 +5,13 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Mirage.Communication.BuilderMessages;
-using Mirage.Data;
+using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Core.Data;
 using MirageGUI.Code;
-using Mirage.Communication;
+using Mirage.Core.Communication;
 using System.Collections;
 using MirageGUI.ItemEditor;
-using Mirage.Data.Query;
+using Mirage.Core.Data.Query;
 using MirageGUI.Controls;
 using System.Threading;
 
@@ -102,7 +102,7 @@ namespace MirageGUI.Forms
         }
 
 
-        public ProcessStatus HandleResponse(Mirage.Communication.Message response)
+        public ProcessStatus HandleResponse(Mirage.Core.Communication.Message response)
         {
             return ProcessStatus.NotProcessed;
         }
