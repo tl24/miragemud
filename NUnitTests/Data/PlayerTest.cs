@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using Mirage.Data;
+using Mirage.Core.Data;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;

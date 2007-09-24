@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
-using Mirage.Communication;
+using Mirage.Core.Communication;
 using MirageGUI.Code;
-using Mirage.Data;
-using Mirage.Communication.BuilderMessages;
+using Mirage.Core.Data;
+using Mirage.Core.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls
 {
@@ -60,7 +60,7 @@ namespace MirageGUI.Controls
             return typeof(Area);
         }
 
-        public override MirageGUI.Code.ProcessStatus HandleResponse(Mirage.Communication.Message response)
+        public override MirageGUI.Code.ProcessStatus HandleResponse(Mirage.Core.Communication.Message response)
         {
             if (response.IsMatch(Namespaces.Area, "AreaList"))
             {
@@ -147,7 +147,7 @@ namespace MirageGUI.Controls
             return data.ToString();
         }
 
-        public override void UpdateChild(BaseItem child, object data, Mirage.Command.ChangeType changeType)
+        public override void UpdateChild(BaseItem child, object data, Mirage.Core.Command.ChangeType changeType)
         {
             // no children
         }

@@ -5,7 +5,7 @@ using System.Collections;
 using MirageGUI.Code;
 using log4net;
 using MirageGUI.ItemEditor;
-using Mirage.Command;
+using Mirage.Core.Command;
 
 namespace MirageGUI.Controls
 {
@@ -122,7 +122,7 @@ namespace MirageGUI.Controls
             get { return _level; }
         }
 
-        public virtual ProcessStatus HandleResponse(Mirage.Communication.Message response)
+        public virtual ProcessStatus HandleResponse(Mirage.Core.Communication.Message response)
         {
             return ProcessStatus.NotProcessed;
         }

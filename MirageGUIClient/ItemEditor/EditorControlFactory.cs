@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
-using Mirage.Data;
+using Mirage.Core.Data;
 using JsonExSerializer;
 
 namespace MirageGUI.ItemEditor

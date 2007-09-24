@@ -36,6 +36,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\lib\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Mirage.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MirageMUD\bin\Debug\Mirage.Core.dll</HintPath>
+    </Reference>
     <Reference Include="MirageMUD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>

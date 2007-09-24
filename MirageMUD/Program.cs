@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.IO;
-using Mirage.Data;
+using Mirage.Core.IO;
+using Mirage.Core.Data;
 
 namespace Mirage
 {
@@ -11,10 +11,10 @@ namespace Mirage
         static void Main(string[] args)
         {
             log4net.Config.XmlConfigurator.Configure();
-            Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Data.Player));
-            Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Command.Interpreter));
-            Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Command.Movement));
-            Mirage.Command.MethodInvoker.RegisterType(typeof(Mirage.Command.AreaBuilder));
+            Mirage.Core.Command.MethodInvoker.RegisterType(typeof(Mirage.Core.Data.Player));
+            Mirage.Core.Command.MethodInvoker.RegisterType(typeof(Mirage.Core.Command.Interpreter));
+            Mirage.Core.Command.MethodInvoker.RegisterType(typeof(Mirage.Core.Command.Movement));
+            Mirage.Core.Command.MethodInvoker.RegisterType(typeof(Mirage.Core.Command.AreaBuilder));
             Server listener = new Server(4500);
             AreaLoader loader = new AreaLoader();
             loader.LoadAll();

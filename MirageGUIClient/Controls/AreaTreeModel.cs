@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MirageGUI.Code;
 using MirageGUI.Forms;
-using Mirage.Communication;
+using Mirage.Core.Communication;
 
 namespace MirageGUI.Controls
 {
@@ -22,7 +22,7 @@ namespace MirageGUI.Controls
             _root = new RootItem(this);
         }
 
-        public ProcessStatus HandleResponse(Mirage.Communication.Message response)
+        public ProcessStatus HandleResponse(Mirage.Core.Communication.Message response)
         {
             ProcessStatus result = ProcessStatus.NotProcessed;
             if (response.IsMatch(Namespaces.Area, "AreaList"))

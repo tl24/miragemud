@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
-using Mirage.Command;
-using Mirage.Data.Query;
+using Mirage.Core.Command;
+using Mirage.Core.Data.Query;
 using System.Reflection;
-using Mirage.Data;
+using Mirage.Core.Data;
 
 namespace MirageGUI.Controls
 {

@@ -1,0 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Mirage.Core.Command
+{
+    [AttributeUsageAttribute(System.AttributeTargets.Parameter)]
+    public class CustomParseAttribute : BaseArgumentAttribute
+    {
+    }
+}
