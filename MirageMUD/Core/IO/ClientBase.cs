@@ -28,7 +28,7 @@ namespace Mirage.Core.IO
         /// <summary>
         ///     The player object attached to this descriptor
         /// </summary>
-        protected Player _player;
+        protected IPlayer _player;
 
         /// <summary>
         /// State Handler for this client.  If this is present it takes
@@ -83,7 +83,7 @@ namespace Mirage.Core.IO
         /// <summary>
         ///     The player object attached to this descriptor
         /// </summary>
-        public virtual Player Player
+        public virtual IPlayer Player
         {
             get { return _player; }
             set { _player = value; }
@@ -128,7 +128,7 @@ namespace Mirage.Core.IO
         {
             if (Player != null && State == ConnectedState.Playing)
             {
-                string clientName = Player.Title;
+                string clientName = Player.Uri;
                 Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
             }
         }

@@ -66,7 +66,7 @@ namespace Mirage.Core.Data
             }
         }
 
-        void player_PlayerEvent(object sender, Player.PlayerEventArgs eventArgs)
+        void player_PlayerEvent(object sender, PlayerEventArgs eventArgs)
         {
             Player player = (Player)sender;
             if (player.Container != null)
@@ -107,7 +107,7 @@ namespace Mirage.Core.Data
                     this._animates.AddLast((Living) item);
                     item.Container = this;
                     if (item is Player)
-                        ((Player)item).PlayerEvent += new Player.PlayerEventHandler(player_PlayerEvent);
+                        ((Player)item).PlayerEvent += new PlayerEventHandler(player_PlayerEvent);
 
                 }
             }

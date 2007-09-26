@@ -135,7 +135,7 @@ namespace Mirage.Core.Command
 
         #region Methods
 
-        public override bool ConvertArguments(string invokedName, Living self, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
+        public override bool ConvertArguments(string invokedName, IActor actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
         {
             ParameterInfo[] parms = _methodInfo.GetParameters();
             convertedArguments = new object[parms.Length];
@@ -155,14 +155,14 @@ namespace Mirage.Core.Command
                     // most of the time players are executing the command,
                     // but sometimes it might be a mobile, make sure the command can
                     // accept the type of actor
-                    if (param.ParameterType.IsAssignableFrom(self.GetType()))
+                    if (param.ParameterType.IsAssignableFrom(actor.GetType()))
                     {
-                        convertedArguments[i] = self;
+                        convertedArguments[i] = actor;
                     }
                     else
                     {
                         errorMessage = new ErrorResourceMessage("InvalidActor");
-                        ((ErrorResourceMessage)errorMessage).Parameters["ActorType"] = self.GetType().Name;
+                        ((ErrorResourceMessage)errorMessage).Parameters["ActorType"] = actor.GetType().Name;
                         convertedArguments = null;
                         return false;
                     }                    
@@ -179,7 +179,7 @@ namespace Mirage.Core.Command
                     else if (target is string)
                     {                        
                         ObjectQuery query = attr.ConstructQuery((string) target);
-                        result = QueryManager.GetInstance().Find(self, query);
+                        result = QueryManager.GetInstance().Find(actor, query);
                     }
                     if (result == null && attr.IsRequired)
                     {
@@ -226,7 +226,7 @@ namespace Mirage.Core.Command
             return true;            
         }
 
-        public override IMessage Invoke(string invokedName, Living actor, object[] arguments)
+        public override IMessage Invoke(string invokedName, IActor actor, object[] arguments)
         {
             try
             {
@@ -256,7 +256,7 @@ namespace Mirage.Core.Command
                     error = error.Substring(0, error.Length - 1);
                 error += "]";
                 error += " invoked by {1}.";
-                logger.Error(string.Format(error, invokedName, actor.Title), e);
+                logger.Error(string.Format(error, invokedName, actor), e);
                 // send generic message to player
                 ErrorResourceMessage msg = new ErrorResourceMessage(MessageType.SystemError, Namespaces.SystemError, "SystemError");
                 return msg;

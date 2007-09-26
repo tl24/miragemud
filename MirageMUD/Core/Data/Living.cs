@@ -33,7 +33,7 @@ namespace Mirage.Core.Data
     ///     A base class for living breathing things such as players
     /// and mobiles.
     /// </summary>
-    public abstract class Living : BaseData, IViewable, IContainable
+    public abstract class Living : BaseData, IViewable, IContainable, IActor
     {
         private string _title;
         private int _level;

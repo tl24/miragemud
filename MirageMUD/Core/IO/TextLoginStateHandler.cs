@@ -95,7 +95,7 @@ namespace Mirage.Core.IO
                     Player player = GetValue<Player>("player");
                     Client.Logger.Info(string.Format("{0}@{1} has connected.", player.Uri, Client.TcpClient.Client.LocalEndPoint));
 
-                    MudRepository globalLists = MudRepository.GetInstance();
+                    MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
                     globalLists.AddPlayer(player);
                     if (player.Container == null)
                     {

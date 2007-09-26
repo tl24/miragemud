@@ -46,7 +46,7 @@ namespace Mirage.Core.Command
         [Command]
         public static IMessage GetAreas(string itemUri)
         {
-            IDictionary<string, Area> areas = MudRepository.GetInstance().Areas;
+            IDictionary<string, Area> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
             List<string> areaList = new List<string>(areas.Keys);
             return new DataMessage(Namespaces.Area, "AreaList", "Areas", areaList);
         }
@@ -58,7 +58,7 @@ namespace Mirage.Core.Command
         [Command]
         public static IMessage UpdateItem(ChangeType changeType, Area area)
         {
-            IDictionary<string, Area> areas = MudRepository.GetInstance().Areas;
+            IDictionary<string, Area> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
             switch (changeType)
             {
                 case ChangeType.Add:                    
@@ -84,7 +84,7 @@ namespace Mirage.Core.Command
         public static IMessage SaveArea(string areaName)
         {
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
-            IDictionary<string, Area> areas = MudRepository.GetInstance().Areas;
+            IDictionary<string, Area> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
             if (areaName == null || areaName == string.Empty || areaName == "all")
             {
                 foreach (Area area in areas.Values)

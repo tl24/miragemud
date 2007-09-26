@@ -55,17 +55,17 @@ namespace Mirage.Core.Command
             get { return _innerCommand.CustomParse; }
         }
 
-        public bool ConvertArguments(string invokedName, Living actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
+        public bool ConvertArguments(string invokedName, IActor actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
         {
             return _innerCommand.ConvertArguments(invokedName, actor, arguments, out convertedArguments, out errorMessage);
         }
 
-        public IMessage Invoke(string invokedName, Living actor, object[] arguments)
+        public IMessage Invoke(string invokedName, IActor actor, object[] arguments)
         {
-            if (actor is Player)
+            if (actor is IPlayer)
             {
                 // create the interpreter
-                ConfirmationInterpreter interp = new ConfirmationInterpreter((Player) actor, _innerCommand, invokedName, arguments);
+                ConfirmationInterpreter interp = new ConfirmationInterpreter((IPlayer) actor, _innerCommand, invokedName, arguments);
                 if (_promptMessage != null)
                     interp.Message = _promptMessage;
                 if (_cancellationMessage != null)

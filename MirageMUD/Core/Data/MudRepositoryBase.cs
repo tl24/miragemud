@@ -5,52 +5,46 @@ using Mirage.Core.Data.Query;
 
 namespace Mirage.Core.Data
 {
-    public class MudRepository : BaseData
+    public class MudRepositoryBase : BaseData
     {
-        private static MudRepository _instance;
-        private ICollection<Player> _players;
+        private ICollection<IPlayer> _players;
         private IDictionary<string, Area> _areas;
 
-        static MudRepository()
-        {
-            _instance = new MudRepository();
-        }
-
-        public static MudRepository GetInstance()
-        {
-            return _instance;
-        }
-
-        private MudRepository() : base()
+        /// <summary>
+        /// Creates the mud repository.  NOTE: this is not meant to be called directly.
+        /// This class should be accessed through MudFactory.GetObject<MudRepositoryBase>();
+        /// </summary>
+        public MudRepositoryBase()
+            : base()
         {
             _uri = "global";
-            _players = new LinkedList<Player>();
+            _players = new LinkedList<IPlayer>();
             _areas = new Dictionary<string, Area>();
             _uriChildCollections.Add("Players", new BaseData.ChildCollectionPair(_players, QueryHints.DefaultPartialMatch));
             _uriChildCollections.Add("Areas", new BaseData.ChildCollectionPair(_areas, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems));
         }
 
-        public ICollection<Player> Players
+        public ICollection<IPlayer> Players
         {
             get { return this._players; }
         }
 
-        public void AddPlayer(Player p)
+        public void AddPlayer(IPlayer p)
         {
             this._players.Add(p);
-            p.PlayerEvent += new Player.PlayerEventHandler(OnPlayerEvent);
+            p.PlayerEvent += new PlayerEventHandler(OnPlayerEvent);
         }
 
-        public void RemovePlayer(Player p)
+        public void RemovePlayer(IPlayer p)
         {
             this._players.Remove(p);            
             p.PlayerEvent -= OnPlayerEvent;
         }
 
-        private void OnPlayerEvent(object sender, Player.PlayerEventArgs eventArgs)
+        private void OnPlayerEvent(object sender, PlayerEventArgs eventArgs)
         {
-            Player player = (Player)sender;
-            if (eventArgs.EventType == Player.PlayerEventType.Quiting)
+            IPlayer player = (IPlayer)sender;
+            if (eventArgs.EventType == PlayerEventType.Quiting)
             {
                 RemovePlayer(player);
             }

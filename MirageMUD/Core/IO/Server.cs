@@ -10,6 +10,7 @@ using Mirage.Core.Communication;
 using System.Threading;
 using log4net;
 using Mirage.Core.Util;
+using Mirage.Core.IO.Serialization;
 
 namespace Mirage.Core.IO
 {
@@ -50,7 +51,7 @@ namespace Mirage.Core.IO
             logger.Info("Starting up");
             ClientManager manager = new ClientManager();
             manager.Configure();
-            MudRepository globalLists = MudRepository.GetInstance();
+            MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
             List<IClient> NannyClients = new List<IClient>();
             // These are the new connections waiting to be put in the nanny list
             BlockingQueue<IClient> NannyQueue = new BlockingQueue<IClient>(15);
@@ -87,32 +88,32 @@ namespace Mirage.Core.IO
                     }
                 }
 
-                Queue<Player> removePlayers = new Queue<Player>();
+                Queue<IPlayer> removePlayers = new Queue<IPlayer>();
 
                 // reset state
-                foreach (Player player in globalLists.Players)
+                foreach (IPlayer player in globalLists.Players)
                 {
                     player.Client.CommandRead = false;
                     player.Client.OutputWritten = false;
                     if (!player.Client.IsOpen)
                     {
-                        player.save();
+                        SavePlayer(player);
                         removePlayers.Enqueue(player);
                     }
                 }
 
                 while (removePlayers.Count > 0)
                 {
-                    removePlayers.Dequeue().FirePlayerEvent(Player.PlayerEventType.Quiting);
+                    removePlayers.Dequeue().FirePlayerEvent(PlayerEventType.Quiting);
                     //globalLists.RemovePlayer(removePlayers.Dequeue());                    
                 }
 
-                foreach (Player player in globalLists.Players)
+                foreach (IPlayer player in globalLists.Players)
                 {
                     player.Client.ProcessInput();
                 }
 
-                foreach (Player player in globalLists.Players)
+                foreach (IPlayer player in globalLists.Players)
                 {
                     if (player.Client.CommandRead || player.Client.OutputWritten)
                         player.Client.WritePrompt();
@@ -129,6 +130,12 @@ namespace Mirage.Core.IO
 
             }
             manager.Stop();
+        }
+
+        protected void SavePlayer(IPlayer player)
+        {
+            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(player.GetType());
+            persister.Save(player, player.Uri);
         }
     }
 }

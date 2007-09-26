@@ -58,7 +58,7 @@ namespace Mirage.Core.Command
             }
         }
 
-        public static bool Interpret(Living actor, string commandString)
+        public static bool Interpret(IActor actor, string commandString)
         {
             ArgumentParser parser;
             string commandName;
@@ -82,9 +82,9 @@ namespace Mirage.Core.Command
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
             
             Type clientType = null;
-            if (actor is Player && ((Player)actor).Client != null)
+            if (actor is IPlayer && ((IPlayer)actor).Client != null)
             {
-                clientType = ((Player)actor).Client.GetType();
+                clientType = ((IPlayer)actor).Client.GetType();
             }
 
             foreach (ICommand method in methods)
@@ -160,7 +160,7 @@ namespace Mirage.Core.Command
             return fCommandInvoked;
         }
 
-        public static bool Interpret(Living actor, string commandName, object[] arguments)
+        public static bool Interpret(IActor actor, string commandName, object[] arguments)
         {
 
             IList<ICommand> methods = GetAvailableMethods(commandName);
@@ -168,9 +168,9 @@ namespace Mirage.Core.Command
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
 
             Type clientType = null;
-            if (actor is Player && ((Player)actor).Client != null)
+            if (actor is IPlayer && ((IPlayer)actor).Client != null)
             {
-                clientType = ((Player)actor).Client.GetType();
+                clientType = ((IPlayer)actor).Client.GetType();
             }
 
             foreach (ICommand method in methods)
