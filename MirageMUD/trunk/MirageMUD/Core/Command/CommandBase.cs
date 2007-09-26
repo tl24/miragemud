@@ -92,14 +92,14 @@ namespace Mirage.Core.Command
             get { return _customParse; }
         }
 
-        public virtual bool ConvertArguments(string invokedName, Living actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
+        public virtual bool ConvertArguments(string invokedName, IActor actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
         {
             convertedArguments = arguments;
             errorMessage = null;
             return true;
         }
 
-        public abstract IMessage Invoke(string invokedName, Living actor, object[] arguments);
+        public abstract IMessage Invoke(string invokedName, IActor actor, object[] arguments);
 
         #endregion
     }

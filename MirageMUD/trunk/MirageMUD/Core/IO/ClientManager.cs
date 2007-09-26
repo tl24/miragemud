@@ -264,7 +264,7 @@ namespace Mirage.Core.IO
 
         public void Configure()
         {
-            ClientManagerConfiguration section = (ClientManagerConfiguration)ConfigurationManager.GetSection("ClientManager");
+            ClientManagerConfiguration section = (ClientManagerConfiguration)ConfigurationManager.GetSection("MirageMUD/ClientManager");
             foreach (ListenerConfiguration listener in section.Listeners)
             {                
                 if (string.IsNullOrEmpty(listener.Host))

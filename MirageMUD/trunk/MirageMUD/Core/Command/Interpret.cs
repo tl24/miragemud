@@ -51,7 +51,7 @@ namespace Mirage.Core.Command
         /// <param name="actor">the player</param>
         /// <param name="input">Command and arguments</param>
         /// <returns>true if a Command was executed</returns>
-        public static void ExecuteCommand(Living actor, string input)
+        public static void ExecuteCommand(IActor actor, string input)
         {
             if (actor == null)
             {
@@ -59,12 +59,12 @@ namespace Mirage.Core.Command
             }
 
             bool success = false;
-            Player player = actor as Player;
+            IPlayer player = actor as IPlayer;
             if (player != null && player.Interpreter != null)
             {
                 if (!player.Interpreter.Execute(actor, input))
                 {
-                    actor.Write(new ErrorResourceMessage("InvalidCommand"));
+                    player.Write(new ErrorResourceMessage("InvalidCommand"));
                 }
             }
             else
@@ -81,7 +81,7 @@ namespace Mirage.Core.Command
         /// <param name="actor">The player executing the Command</param>
         /// <param name="input">the Command and arguments</param>
         /// <returns>true if executed successfully</returns>
-        public bool Execute(Living actor, string input)
+        public bool Execute(IActor actor, string input)
         {
             return MethodInvoker.Interpret(actor, input);
         }
@@ -210,7 +210,7 @@ namespace Mirage.Core.Command
         /// <param name="actor">The player</param>
         /// <param name="input">the input string of arguments</param>
         /// <returns>true if the Command was executed</returns>
-        bool Execute(Living actor, string input);
+        bool Execute(IActor actor, string input);
     }
 
 }

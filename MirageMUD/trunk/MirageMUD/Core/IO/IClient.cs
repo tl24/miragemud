@@ -60,7 +60,7 @@ namespace Mirage.Core.IO
         /// <summary>
         /// The player object associated with this client
         /// </summary>
-        Player Player { get; set; }
+        IPlayer Player { get; set; }
 
         /// <summary>
         /// The state handler for the client that will receive a series of

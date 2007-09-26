@@ -12,7 +12,7 @@ namespace Mirage.Core.Command
         private string _cancellationMessage = "Command cancelled\r\n";
         private ICommand _method;
         private IInterpret priorInterpreter;
-        private Player _actor;
+        private IPlayer _actor;
         private string _invokedName;
         private object[] args;
 
@@ -28,7 +28,7 @@ namespace Mirage.Core.Command
             set { _cancellationMessage = value; }
         }
 
-        public ConfirmationInterpreter(Player player, ICommand method, string invokedName, object[] arguments)
+        public ConfirmationInterpreter(IPlayer player, ICommand method, string invokedName, object[] arguments)
         {
             SetActor(player);
             this._method = method;
@@ -36,7 +36,7 @@ namespace Mirage.Core.Command
             this.args = arguments;
         }
 
-        private void SetActor(Player actor)
+        private void SetActor(IPlayer actor)
         {
             this._actor = actor;
             priorInterpreter = actor.Interpreter;
@@ -45,7 +45,7 @@ namespace Mirage.Core.Command
 
         #region IInterpret Members
 
-        public bool Execute(Living actor, string input)
+        public bool Execute(IActor actor, string input)
         {
             bool success = false;
             input = input.ToLower();
@@ -74,9 +74,9 @@ namespace Mirage.Core.Command
             {
                 success = false;
             }
-            if (actor is Player)
+            if (actor is IPlayer)
             {
-                ((Player)actor).Interpreter = priorInterpreter;
+                ((IPlayer)actor).Interpreter = priorInterpreter;
             }
             return success;
         }

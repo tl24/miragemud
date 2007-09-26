@@ -22,30 +22,11 @@ namespace Mirage.Core.Data
     /// the game (as opposed to a Mobile which is a game object controlled by AI).
     /// It is a descendant of Living, the base-class for living breating things
     /// </summary>
-    public class Player : Living
+    public class Player : Living, IPlayer
     {
-        private static string _playerDir;
-        private static bool _initted;
-
         private string _password;
         private IClient _client;
         private IInterpret _interpreter;
-
-        public enum PlayerEventType {
-            Disconnected,
-            Quiting
-        }
-
-        public class PlayerEventArgs : EventArgs {
-            public PlayerEventType EventType;
-
-            public PlayerEventArgs(PlayerEventType eventType) {
-                this.EventType = eventType;
-            }
-
-        }
-
-        public delegate void PlayerEventHandler(object sender, PlayerEventArgs eventArgs);
 
         public event PlayerEventHandler PlayerEvent;
 
@@ -103,7 +84,7 @@ namespace Mirage.Core.Data
         private string EncryptPassword(string password)
         {
             byte[] salt = Encoding.ASCII.GetBytes("encryptPassword");
-            Rfc2898DeriveBytes passwordKey = new Rfc2898DeriveBytes("ROMHashPassword", salt);
+            Rfc2898DeriveBytes passwordKey = new Rfc2898DeriveBytes("MirageHashPassword", salt);
             byte[] secretKey = passwordKey.GetBytes(64);
             HMACSHA1 hash = new HMACSHA1(secretKey);
 
@@ -186,26 +167,12 @@ namespace Mirage.Core.Data
         }
 
         /// <summary>
-        ///     Retrieve configuration settings
-        /// </summary>
-        private static void InitConfigSettings()
-        {
-            if (!_initted)
-            {
-                NameValueCollection allAppSettings = ConfigurationManager.AppSettings;
-                _playerDir = allAppSettings.Get("player.dir");
-                _initted = true;
-            }
-        }
-
-        /// <summary>
         ///     Loads a player object from a file
         /// </summary>
         /// <param name="name">the name of the player to load</param>
         /// <returns></returns>
         public static Player Load(string uri)
         {
-            InitConfigSettings();
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Player));
             try
             {
@@ -224,7 +191,6 @@ namespace Mirage.Core.Data
         /// <param name="p">the player to save</param>
         public static void Save(Player p)
         {
-            InitConfigSettings();
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(p.GetType());
             persister.Save(p, p.Uri);
         }

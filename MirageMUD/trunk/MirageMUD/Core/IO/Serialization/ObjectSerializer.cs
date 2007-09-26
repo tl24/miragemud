@@ -14,7 +14,7 @@ namespace Mirage.Core.IO.Serialization
 
         static ObjectStorageFactory()
         {
-            config = (ObjectStorageConfiguration)ConfigurationManager.GetSection("ObjectStorageFactory");
+            config = (ObjectStorageConfiguration)ConfigurationManager.GetSection("MirageMUD/ObjectStorageFactory");
 
         }
 

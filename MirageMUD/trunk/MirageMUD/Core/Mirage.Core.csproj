@@ -87,8 +87,12 @@
     <Compile Include="Data\EditorCollectionAttribute.cs" />
     <Compile Include="Data\EditorParentAttribute.cs" />
     <Compile Include="Data\EditorTypeSelectorAttribute.cs" />
+    <Compile Include="Data\IActor.cs" />
     <Compile Include="Data\IContainable.cs" />
     <Compile Include="Data\IContainer.cs" />
+    <Compile Include="Data\IMudRepository.cs" />
+    <Compile Include="Data\IPlayer.cs" />
+    <Compile Include="Data\MudFactory.cs" />
     <Compile Include="Data\ObjectUpdater.cs" />
     <Compile Include="Data\Query\IURI.cs" />
     <Compile Include="Data\Query\IUriContainer.cs" />
@@ -118,7 +122,7 @@
     <Compile Include="Data\Area.cs" />
     <Compile Include="Data\AreaLoader.cs" />
     <Compile Include="Data\BaseData.cs" />
-    <Compile Include="Data\MudRepository.cs" />
+    <Compile Include="Data\MudRepositoryBase.cs" />
     <Compile Include="Data\IViewable.cs" />
     <Compile Include="Data\ObjectNotFoundException.cs" />
     <Compile Include="Data\Player.cs" />

@@ -77,7 +77,7 @@ namespace Mirage.Core.Data.Query
         /// <returns>the first matching object</returns>
         public object Find(ObjectQuery query)
         {
-            return Find(MudRepository.GetInstance(), query);
+            return Find(MudFactory.GetObject<MudRepositoryBase>(), query);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Mirage.Core.Data.Query
         
         public object Find(ObjectQuery query, int index)
         {
-            return Find(MudRepository.GetInstance(), query, index);
+            return Find(MudFactory.GetObject<MudRepositoryBase>(), query, index);
         }
 
         public object Find(object searched, string query, int index)
@@ -113,7 +113,7 @@ namespace Mirage.Core.Data.Query
 
         public object Find(string query, int index)
         {
-            return Find(MudRepository.GetInstance(), ObjectQuery.parse(query), index);
+            return Find(MudFactory.GetObject<MudRepositoryBase>(), ObjectQuery.parse(query), index);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Mirage.Core.Data.Query
         {
             if (query.IsAbsolute)
             {
-                searched = MudRepository.GetInstance();
+                searched = MudFactory.GetObject<MudRepositoryBase>();
             }
             if (searched == null)
                 return emptyList;
