@@ -6,6 +6,7 @@ using Mirage.Core.Communication;
 using MirageGUI.Code;
 using Mirage.Core.Data;
 using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Stock.Data;
 
 namespace MirageGUI.Controls
 {
@@ -147,7 +148,7 @@ namespace MirageGUI.Controls
             return data.ToString();
         }
 
-        public override void UpdateChild(BaseItem child, object data, Mirage.Core.Command.ChangeType changeType)
+        public override void UpdateChild(BaseItem child, object data, ChangeType changeType)
         {
             // no children
         }

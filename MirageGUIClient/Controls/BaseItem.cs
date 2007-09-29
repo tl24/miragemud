@@ -6,6 +6,7 @@ using MirageGUI.Code;
 using log4net;
 using MirageGUI.ItemEditor;
 using Mirage.Core.Command;
+using Mirage.Core.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls
 {

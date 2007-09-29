@@ -7,6 +7,8 @@ using MirageGUI.ItemEditor;
 using MirageGUI.Forms;
 using Mirage.Core.Data;
 using Mirage.Core.Data.Attribute;
+using Mirage.Stock.Data;
+using Mirage.Core.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls
 {
@@ -143,7 +145,7 @@ namespace MirageGUI.Controls
                     string text = string.Format("Are you sure you want to delete {0} ({1})?", oi.ToString(), oi.Data.GetType().Name);
                     if (MessageBox.Show(text, "Delete Item", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        oi.Parent.UpdateChild(oi, oi.Data, Mirage.Core.Command.ChangeType.Delete);
+                        oi.Parent.UpdateChild(oi, oi.Data, ChangeType.Delete);
                     }
                     break;
                 case "Save":

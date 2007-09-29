@@ -10,6 +10,7 @@ using MirageGUI.ItemEditor;
 using MirageGUI.Code;
 using Mirage.Core.Communication;
 using Mirage.Core.Command;
+using Mirage.Core.Communication.BuilderMessages;
 
 namespace MirageGUI.Forms
 {
