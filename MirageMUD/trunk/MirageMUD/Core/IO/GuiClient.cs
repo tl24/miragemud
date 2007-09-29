@@ -91,26 +91,22 @@ namespace Mirage.Core.IO
         /// </summary>
         public override void ReadInput()
         {
-            int available = _client.Available;
-            if (available > 0)
+            int type = reader.ReadInt32();
+            AdvancedMessage msg = new AdvancedMessage();
+            msg.type = (AdvancedClientTransmitType)type;
+            switch ((AdvancedClientTransmitType)type)
             {
-                int type = reader.ReadInt32();
-                AdvancedMessage msg = new AdvancedMessage();
-                msg.type = (AdvancedClientTransmitType)type;
-                switch ((AdvancedClientTransmitType)type)
-                {
-                    case AdvancedClientTransmitType.StringMessage:
-                        msg.data = reader.ReadString();
-                        break;
-                    case AdvancedClientTransmitType.JsonEncodedMessage:
-                        msg.name = reader.ReadString();
-                        msg.data = reader.ReadString();
-                        break;
-                    default:
-                        throw new Exception("Unrecognized message type: " + type);
-                }
-                inputQueue.Enqueue(msg);
+                case AdvancedClientTransmitType.StringMessage:
+                    msg.data = reader.ReadString();
+                    break;
+                case AdvancedClientTransmitType.JsonEncodedMessage:
+                    msg.name = reader.ReadString();
+                    msg.data = reader.ReadString();
+                    break;
+                default:
+                    throw new Exception("Unrecognized message type: " + type);
             }
+            inputQueue.Enqueue(msg);
         }
 
         /// <summary>
