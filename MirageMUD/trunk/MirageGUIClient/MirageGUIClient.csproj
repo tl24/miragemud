@@ -40,6 +40,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\bin\Debug\Mirage.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Mirage.Stock, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MirageMUD\Stock\bin\Debug\Mirage.Stock.dll</HintPath>
+    </Reference>
     <Reference Include="MirageMUD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
