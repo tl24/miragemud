@@ -7,19 +7,11 @@ using Mirage.Core.Data;
 using Mirage.Core.IO;
 using Mirage.Core.IO.Serialization;
 using Mirage.Core.Data.Query;
+using Mirage.Core.Command;
+using Mirage.Stock.Data;
 
-namespace Mirage.Core.Command
+namespace Mirage.Stock.Command
 {
-    /// <summary>
-    /// Type of edit occurring
-    /// </summary>
-    public enum ChangeType
-    {
-        None,
-        Add,
-        Edit,
-        Delete
-    }
 
     /// <summary>
     /// Contains the area level commands for the builder
@@ -46,7 +38,7 @@ namespace Mirage.Core.Command
         [Command]
         public static IMessage GetAreas(string itemUri)
         {
-            IDictionary<string, Area> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
+            IDictionary<string, IArea> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
             List<string> areaList = new List<string>(areas.Keys);
             return new DataMessage(Namespaces.Area, "AreaList", "Areas", areaList);
         }
@@ -58,7 +50,7 @@ namespace Mirage.Core.Command
         [Command]
         public static IMessage UpdateItem(ChangeType changeType, Area area)
         {
-            IDictionary<string, Area> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
+            IDictionary<string, IArea> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
             switch (changeType)
             {
                 case ChangeType.Add:                    
@@ -67,7 +59,7 @@ namespace Mirage.Core.Command
                     return new UpdateConfirmationMessage(Namespaces.Area, "AreaAdded", area.FullUri, changeType);
                 case ChangeType.Edit:
                     //TODO: need to do room contents copy
-                    Area old = areas[area.Uri];
+                    Area old = (Area) areas[area.Uri];
                     old.CopyTo(area);
                     areas[area.Uri] = area;
 
@@ -84,7 +76,7 @@ namespace Mirage.Core.Command
         public static IMessage SaveArea(string areaName)
         {
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
-            IDictionary<string, Area> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
+            IDictionary<string, IArea> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
             if (areaName == null || areaName == string.Empty || areaName == "all")
             {
                 foreach (Area area in areas.Values)
@@ -96,7 +88,7 @@ namespace Mirage.Core.Command
             }
             else
             {
-                Area area = areas[areaName];
+                Area area = (Area) areas[areaName];
                 persister.Save(area, area.Uri);
                 return new Message(MessageType.Confirmation, Namespaces.Area, "AreaSaved");
             }

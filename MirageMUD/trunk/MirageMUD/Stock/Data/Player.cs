@@ -14,8 +14,9 @@ using Mirage.Core.Data.Query;
 using Mirage.Core.Communication;
 using System.Security.Principal;
 using JsonExSerializer;
+using Mirage.Core.Data;
 
-namespace Mirage.Core.Data
+namespace Mirage.Stock.Data
 {
     /// <summary>
     ///     A player is controlled by a live person and a participant in
@@ -64,8 +65,8 @@ namespace Mirage.Core.Data
         public bool ComparePassword(string otherPassword)
         {
             // allow empty password to compare
-            if ((otherPassword == null || otherPassword == string.Empty) &&
-                (_password == null || _password == string.Empty))
+            if (string.IsNullOrEmpty(otherPassword) &&
+                string.IsNullOrEmpty(_password))
             {
                 return true;
             }

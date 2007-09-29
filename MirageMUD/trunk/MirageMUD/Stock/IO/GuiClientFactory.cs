@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Net;
+using Mirage.Core.IO;
 using System.Net.Sockets;
-using log4net;
-using Mirage.Core.Command;
 
-namespace Mirage.Core.IO
+namespace Mirage.Stock.IO
 {
     /// <summary>
     /// Creates a client that is capable of sending complex messages and commands

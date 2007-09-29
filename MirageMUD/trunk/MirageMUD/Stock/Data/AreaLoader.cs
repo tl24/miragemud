@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.Data.Attribute;
 using Mirage.Core.IO.Serialization;
+using Mirage.Core;
+using Mirage.Core.Data;
 
-namespace Mirage.Core.Data
+namespace Mirage.Stock.Data
 {
-    public class AreaLoader
+    public class AreaLoader : IInitializer
     {
-        public void LoadAll()
+        public void Execute()
         {
             MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
             Area defaultArea = null;

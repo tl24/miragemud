@@ -6,8 +6,9 @@ using Mirage.Core.Communication;
 using System.Xml.Serialization;
 using Mirage.Core.Data.Query;
 using JsonExSerializer;
+using Mirage.Core.Data;
 
-namespace Mirage.Core.Data
+namespace Mirage.Stock.Data
 {
     /// <summary>
     ///     The gender for a Living (Player or Mobile)

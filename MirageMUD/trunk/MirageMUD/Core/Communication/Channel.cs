@@ -80,12 +80,13 @@ namespace Mirage.Core.Communication
         */
 
         [Command(Aliases=new string[]{"test"})]
-        public static void Send(string name, [Actor] Player player) {
+        public static void Send(string name, [Actor] IActor player) {
             
         }        
 
         [Command]
-        public static void Send(string name, [Actor] Player player, [CustomParse] string message) {
+        public static void Send(string name, [Actor] IActor player, [CustomParse] string message)
+        {
            
         }        
     }

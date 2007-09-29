@@ -17,6 +17,7 @@ namespace Mirage.Core.Communication
             _messages = new Dictionary<string, IMessage>(StringComparer.CurrentCultureIgnoreCase);
             _messages[EchoOn] = new StringMessage(MessageType.UIControl, Namespaces.System, EchoOn, "\x1B[0m");
             _messages[EchoOff] = new StringMessage(MessageType.UIControl, Namespaces.System, EchoOff, "\x1B[0;30;40m");
+            _messages[NoOp] = new StringMessage(MessageType.UIControl, Namespaces.System, NoOp, "");
         }
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace Mirage.Core.Communication
 
         public const string EchoOn = "EchoOn";
         public const string EchoOff = "EchoOff";
+        public const string NoOp = "NoOp";
 
     }
 }

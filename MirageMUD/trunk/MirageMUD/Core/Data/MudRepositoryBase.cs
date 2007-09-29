@@ -8,7 +8,7 @@ namespace Mirage.Core.Data
     public class MudRepositoryBase : BaseData
     {
         private ICollection<IPlayer> _players;
-        private IDictionary<string, Area> _areas;
+        private IDictionary<string, IArea> _areas;
 
         /// <summary>
         /// Creates the mud repository.  NOTE: this is not meant to be called directly.
@@ -19,7 +19,7 @@ namespace Mirage.Core.Data
         {
             _uri = "global";
             _players = new LinkedList<IPlayer>();
-            _areas = new Dictionary<string, Area>();
+            _areas = new Dictionary<string, IArea>();
             _uriChildCollections.Add("Players", new BaseData.ChildCollectionPair(_players, QueryHints.DefaultPartialMatch));
             _uriChildCollections.Add("Areas", new BaseData.ChildCollectionPair(_areas, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems));
         }
@@ -50,7 +50,7 @@ namespace Mirage.Core.Data
             }
         }
 
-        public IDictionary<string, Area> Areas
+        public IDictionary<string, IArea> Areas
         {
             get { return this._areas; }
         }

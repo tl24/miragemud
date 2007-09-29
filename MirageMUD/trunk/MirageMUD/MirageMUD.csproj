@@ -69,6 +69,10 @@
       <Project>{05371036-8F2F-40B8-B306-462EFAAF67C8}</Project>
       <Name>Mirage.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="Stock\Mirage.Stock.csproj">
+      <Project>{BC32299B-763F-4A3C-9FD8-2176CD1366C9}</Project>
+      <Name>Mirage.Stock</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -55,6 +55,10 @@
       <Project>{EFADF99D-5747-445E-9FC7-94CB2A17BE45}</Project>
       <Name>MirageMUD</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MirageMUD\Stock\Mirage.Stock.csproj">
+      <Project>{BC32299B-763F-4A3C-9FD8-2176CD1366C9}</Project>
+      <Name>Mirage.Stock</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

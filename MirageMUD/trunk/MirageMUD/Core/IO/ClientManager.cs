@@ -151,6 +151,7 @@ namespace Mirage.Core.IO
                 {
                     if (!client.IsOpen)
                     {
+                        client.FlushOutput();
                         // close the connection
                         client.Dispose();
                         // remove from the list

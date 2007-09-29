@@ -4,8 +4,10 @@ using System.Text;
 using Mirage.Core.Data;
 using Mirage.Core.Communication;
 using Mirage.Core.Data.Attribute;
+using Mirage.Stock.Data;
+using Mirage.Core.Command;
 
-namespace Mirage.Core.Command
+namespace Mirage.Stock.Command
 {
     public class Movement
     {

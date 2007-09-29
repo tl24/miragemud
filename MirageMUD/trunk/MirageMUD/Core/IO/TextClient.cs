@@ -58,6 +58,8 @@ namespace Mirage.Core.IO
         /// </summary>
         protected ISynchronizedQueue<string> outputQueue;
 
+        protected bool checkDisconnect = false;
+
         /// <summary>
         ///     Create a descriptor to read and write to the given
         /// tcp client (Socket)
@@ -86,12 +88,14 @@ namespace Mirage.Core.IO
             if (bufferLength == inputBuffer.Length)
             {
                 Array.Resize<char>(ref inputBuffer, inputBuffer.Length * 2);
-                //char[] newBuffer = new char[inputBuffer.Length * 2];
-                //Array.Copy(inputBuffer, newBuffer, bufferLength);
-                //inputBuffer = newBuffer;
             }
+            if (available == 0)
+                available = 1;
 
-            int nRead = reader.ReadBlock(inputBuffer, bufferLength, Math.Min(inputBuffer.Length - bufferLength, _client.Available));
+            int nRead = reader.ReadBlock(inputBuffer, bufferLength, Math.Min(inputBuffer.Length - bufferLength, available));
+
+            // if we're trying to read, the socket told us there is something to read so there shouldn't be 0 bytes
+            checkDisconnect = nRead == 0;
 
             char prev = '\0';
             int endPos = -1;
@@ -134,17 +138,17 @@ namespace Mirage.Core.IO
                 return;
             }
             // Insert space for Command holder if necessary
-            if (line.Length == 0)
-            {
-                line = " ";
-            }
+            //if (line.Length == 0)
+            //{
+            //    line = " ";
+            //}
             inputQueue.Enqueue(line);            
         }
 
         public override void ProcessInput()
         {
             string input;
-            if (inputQueue.TryDequeue(out input)) {
+            if (_closed == 0 && inputQueue.TryDequeue(out input)) {
                 CommandRead = true;
                 if (LoginHandler != null)
                 {
@@ -190,8 +194,11 @@ namespace Mirage.Core.IO
         /// </summary>
         public override void Write(IMessage message)
         {
-            outputQueue.Enqueue(message.Render());
-            OutputWritten = true;
+            if (_closed == 0)
+            {
+                outputQueue.Enqueue(message.Render());
+                OutputWritten = true;
+            }
         }
 
         /// <summary>
@@ -209,6 +216,17 @@ namespace Mirage.Core.IO
             if (bProcess)
             {
                 writer.Flush();
+            }
+            else
+            {
+                if (IsOpen && checkDisconnect)
+                {
+                    // if we read 0 bytes in the Read function, then try to send something to see if
+                    // the connection is closed
+                    this._client.Client.Send(new byte[1]);
+                    if (!this._client.Connected)
+                        Close();
+                }
             }
         }
 

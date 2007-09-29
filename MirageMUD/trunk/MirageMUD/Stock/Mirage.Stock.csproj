@@ -28,12 +28,41 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JsonExSerializer, Version=1.2.0.75, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\JsonExSerializer.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\MiscCommands.cs" />
+    <Compile Include="Command\AreaBuilder.cs" />
+    <Compile Include="Command\Movement.cs" />	
+    <Compile Include="IO\GuiClientFactory.cs" />
+    <Compile Include="IO\GuiLoginHandler.cs" />
+    <Compile Include="IO\TextLoginStateHandler.cs" />
+    <Compile Include="IO\TextClientFactory.cs" />
+    <Compile Include="Data\Player.cs" />
+    <Compile Include="Data\RoomExit.cs" />
+    <Compile Include="Data\Living.cs" />
+    <Compile Include="Data\Area.cs" />
+    <Compile Include="Data\AreaLoader.cs" />
+    <Compile Include="Data\Room.cs" />
+    <Compile Include="Data\World.cs" />	
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Mirage.Core.csproj">
+      <Project>{05371036-8F2F-40B8-B306-462EFAAF67C8}</Project>
+      <Name>Mirage.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

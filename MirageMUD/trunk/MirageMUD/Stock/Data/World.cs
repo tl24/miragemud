@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using JsonExSerializer;
+using Mirage.Core.Data;
 
-namespace Mirage.Core.Data
+namespace Mirage.Stock.Data
 {
     /// <summary>
     /// Container class to represent the top-level object sent to
