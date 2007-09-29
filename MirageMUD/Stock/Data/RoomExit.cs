@@ -5,8 +5,9 @@ using Mirage.Core.Data.Query;
 using Mirage.Core.Data.Attribute;
 using JsonExSerializer;
 using System.Collections;
+using Mirage.Core.Data;
 
-namespace Mirage.Core.Data
+namespace Mirage.Stock.Data
 {
     public enum DirectionType {
         North,
@@ -39,7 +40,7 @@ namespace Mirage.Core.Data
         }
 
         [Editor(Priority=1)]
-        public Mirage.Core.Data.DirectionType Direction
+        public DirectionType Direction
         {
             get { return this._direction; }
             set { this._direction = value; }

@@ -11,6 +11,8 @@ using System.Threading;
 using log4net;
 using Mirage.Core.Util;
 using Mirage.Core.IO.Serialization;
+using System.Configuration;
+using System.Collections.Specialized;
 
 namespace Mirage.Core.IO
 {
@@ -39,6 +41,24 @@ namespace Mirage.Core.IO
             set { _shutdown = value; }
         }
 
+        protected void Init()
+        {
+            //Configuration cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            NameValueCollection initializers = (NameValueCollection)ConfigurationManager.GetSection("MirageMUD/Initializers");
+            if (initializers != null)
+            {
+                
+                foreach (string key in initializers)
+                {
+                    string value = initializers[key];
+                    logger.Info("Loading initializer " + key + " : " + value);
+                    IInitializer initModule = (IInitializer) Activator.CreateInstance(Type.GetType(value));
+                    logger.Debug("Executing initializer " + key);
+                    initModule.Execute();                    
+                }                
+            }
+        }
+
         /// <summary>
         ///     Starts the main processing loop that listens for socket
         /// connections and then reads and writes from those that are
@@ -49,82 +69,165 @@ namespace Mirage.Core.IO
         {
             _shutdown = false;
             logger.Info("Starting up");
-            ClientManager manager = new ClientManager();
-            manager.Configure();
-            MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
-            List<IClient> NannyClients = new List<IClient>();
-            // These are the new connections waiting to be put in the nanny list
-            BlockingQueue<IClient> NannyQueue = new BlockingQueue<IClient>(15);
 
-            DateTime lastTime = DateTime.Now;
-            DateTime currentTime = DateTime.Now;
-            TimeSpan delta = new TimeSpan();
+            ClientManager manager = null;
+            MudRepositoryBase globalLists = null;
+            List<IClient> NannyClients = null;
+            BlockingQueue<IClient> NannyQueue = null;
+            DateTime lastTime;
+            DateTime currentTime;
+            TimeSpan delta;
             int loopCount = 0;
 
             //TODO: Read this from config
             int PulsePerSecond = 4;
 
-            manager.NewClients = NannyQueue;
-            manager.Start();
+            try
+            {
+                Init();
+                manager = new ClientManager();
+                manager.Configure();
+                globalLists = MudFactory.GetObject<MudRepositoryBase>();
+                NannyClients = new List<IClient>();
+                // These are the new connections waiting to be put in the nanny list
+                NannyQueue = new BlockingQueue<IClient>(15);
 
-            while(!_shutdown) {
-                loopCount++;
-                IClient newClient;
+                manager.NewClients = NannyQueue;
+                manager.Start();
+            }
+            catch (Exception e)
+            {
+                logger.Error("Exception occurred during mud startup", e);
+                logger.Error("Shutting down");
+                return;
+            }
 
-                while (NannyQueue.TryDequeue(out newClient))
+            lastTime = DateTime.Now;
+            currentTime = DateTime.Now;
+            delta = new TimeSpan();
+
+            while (!_shutdown)
+            {
+                try
                 {
-                    NannyClients.Add(newClient);
-                }
+                    loopCount++;
+                    IClient newClient;
 
-                for (int i = NannyClients.Count - 1; i >= 0; i--)
-                {
-                    NannyClients[i].ProcessInput();
-                    if (NannyClients[i].Player != null && NannyClients[i].State == ConnectedState.Playing)
+                    try
                     {
-                        // graduated...remove from the list
-                        NannyClients[i].WritePrompt();
-                        NannyClients.RemoveAt(i);
-                        
+                        while (NannyQueue.TryDequeue(out newClient))
+                        {
+                            NannyClients.Add(newClient);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error("Error trying to dequeue new client", e);
+                    }
+
+                    for (int i = NannyClients.Count - 1; i >= 0; i--)
+                    {
+                        try
+                        {
+                            if (NannyClients[i].IsOpen)
+                            {
+                                // Process input if still connected
+                                NannyClients[i].ProcessInput();
+                                if (NannyClients[i].Player != null && NannyClients[i].State == ConnectedState.Playing)
+                                {
+                                    // graduated...remove from the list
+                                    NannyClients[i].WritePrompt();
+                                    NannyClients.RemoveAt(i);
+                                }
+                            }
+                            else
+                            {
+                                // Not connected, remove them
+                                NannyClients.RemoveAt(i);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            logger.Error("Error processing nanny client", e);
+                            NannyClients[i].Write(new StringMessage(MessageType.SystemError, "ProcessError", "Error occurred processing your request." + Environment.NewLine));
+                            NannyClients[i].Close();
+                        }
+                    }
+
+                    Queue<IPlayer> removePlayers = new Queue<IPlayer>();
+
+                    // reset state
+                    foreach (IPlayer player in globalLists.Players)
+                    {
+                        player.Client.CommandRead = false;
+                        player.Client.OutputWritten = false;
+                        if (!player.Client.IsOpen)
+                        {
+                            try
+                            {
+                                SavePlayer(player);
+                            }
+                            catch (Exception e)
+                            {
+                                logger.Error("Error trying to save disconnected client before removing", e);
+                            }
+                            removePlayers.Enqueue(player);
+                        }
+                    }
+
+                    while (removePlayers.Count > 0)
+                    {
+                        try
+                        {
+                            removePlayers.Dequeue().FirePlayerEvent(PlayerEventType.Quiting);
+                        }
+                        catch (Exception e)
+                        {
+                            logger.Error("Error handling player quit event", e);
+                        }
+                    }
+
+                    foreach (IPlayer player in globalLists.Players)
+                    {
+                        try
+                        {
+                            player.Client.ProcessInput();
+                        }
+                        catch (Exception e)
+                        {
+                            logger.Error("Error processing client input for player: " + player.Uri, e);
+                        }
+                    }
+
+                    foreach (IPlayer player in globalLists.Players)
+                    {
+                        try
+                        {
+                            if (player.Client.CommandRead || player.Client.OutputWritten)
+                                player.Client.WritePrompt();
+                        }
+                        catch (Exception e)
+                        {
+                            logger.Error("Error writing prompt for player: " + player.Uri, e);
+                        }
                     }
                 }
-
-                Queue<IPlayer> removePlayers = new Queue<IPlayer>();
-
-                // reset state
-                foreach (IPlayer player in globalLists.Players)
+                catch (Exception e)
                 {
-                    player.Client.CommandRead = false;
-                    player.Client.OutputWritten = false;
-                    if (!player.Client.IsOpen)
-                    {
-                        SavePlayer(player);
-                        removePlayers.Enqueue(player);
-                    }
+                    logger.Error("Unhandled exception in main loop", e);
                 }
-
-                while (removePlayers.Count > 0)
-                {
-                    removePlayers.Dequeue().FirePlayerEvent(PlayerEventType.Quiting);
-                    //globalLists.RemovePlayer(removePlayers.Dequeue());                    
-                }
-
-                foreach (IPlayer player in globalLists.Players)
-                {
-                    player.Client.ProcessInput();
-                }
-
-                foreach (IPlayer player in globalLists.Players)
-                {
-                    if (player.Client.CommandRead || player.Client.OutputWritten)
-                        player.Client.WritePrompt();
-
-                }
-
                 currentTime = DateTime.Now;
 	            delta = lastTime + TimeSpan.FromSeconds(1.0d/PulsePerSecond) - currentTime;
 	            if (delta.Ticks > 0) {
 	                //Thread.sleep($timedelta);
-                    Thread.Sleep(delta);
+                    try
+                    {
+                        Thread.Sleep(delta);
+                    }
+                    catch (ThreadInterruptedException e)
+                    {
+                        break;
+                    }
 	            }
 	            lastTime = currentTime;
 

@@ -4,8 +4,9 @@ using System.Text;
 using Mirage.Core.Data.Query;
 using System.Collections;
 using JsonExSerializer;
+using Mirage.Core.Data;
 
-namespace Mirage.Core.Data
+namespace Mirage.Stock.Data
 {
     public class Room : BaseData, IViewable, IContainer
     {
@@ -25,7 +26,7 @@ namespace Mirage.Core.Data
         }
 
         [EditorParent(2)]
-        public Mirage.Core.Data.Area Area
+        public Area Area
         {
             get { return this._area; }
             set { this._area = value; }

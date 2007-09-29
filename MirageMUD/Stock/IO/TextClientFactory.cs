@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Core.IO;
 using System.Net.Sockets;
-using System.Net;
-using System.Diagnostics;
-using Mirage.Core.Command;
-using Mirage.Core.Communication;
-using log4net;
 
-namespace Mirage.Core.IO
+namespace Mirage.Stock.IO
 {
     /// <summary>
     /// Creates a client that can read/write text-based commands

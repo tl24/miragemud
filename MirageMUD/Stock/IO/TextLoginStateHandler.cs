@@ -7,8 +7,10 @@ using Mirage.Core.Data.Query;
 using System.Configuration;
 using System.Text.RegularExpressions;
 using Mirage.Core.Util;
+using Mirage.Core.IO;
+using Mirage.Stock.Data;
 
-namespace Mirage.Core.IO
+namespace Mirage.Stock.IO
 {
     /// <summary>
     /// StateHandler class that controls Login and player creation for the text client.

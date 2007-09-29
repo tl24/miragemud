@@ -4,10 +4,11 @@ using System.Text;
 using Mirage.Core.Data.Query;
 using JsonExSerializer;
 using System.Configuration;
+using Mirage.Core.Data;
 
-namespace Mirage.Core.Data
+namespace Mirage.Stock.Data
 {
-    public class Area : BaseData, IViewable
+    public class Area : BaseData, IViewable, IArea
     {
         private string _title;
         private string _shortDescription;

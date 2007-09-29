@@ -146,7 +146,7 @@ namespace Mirage.Core.IO
         /// </summary>
         public bool IsOpen
         {
-            get { return _closed == 0; }
+            get { return _closed == 0 && _client.Connected; }
         }
 
         /// <summary>

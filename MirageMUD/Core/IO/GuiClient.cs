@@ -51,7 +51,7 @@ namespace Mirage.Core.IO
         public override void ProcessInput()
         {
             AdvancedMessage msg = null;
-            if (inputQueue.TryDequeue(out msg))
+            if (_closed == 0 && inputQueue.TryDequeue(out msg))
             {
                 CommandRead = true;
                 if (msg.type == AdvancedClientTransmitType.JsonEncodedMessage)
@@ -118,19 +118,22 @@ namespace Mirage.Core.IO
         /// </summary>
         public override void Write(IMessage message)
         {
-            if (!message.CanTransferMessage)
+            if (_closed == 0)
             {
-                message = message.GetTransferMessage();
-            }
-            AdvancedMessage advMsg = new AdvancedMessage();
-            advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;
-            advMsg.name = message.QualifiedName.ToString();
-            Serializer serializer = Serializer.GetSerializer(typeof(object));
-            serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
-            advMsg.data = serializer.Serialize(message);
+                if (!message.CanTransferMessage)
+                {
+                    message = message.GetTransferMessage();
+                }
+                AdvancedMessage advMsg = new AdvancedMessage();
+                advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;
+                advMsg.name = message.QualifiedName.ToString();
+                Serializer serializer = Serializer.GetSerializer(typeof(object));
+                serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
+                advMsg.data = serializer.Serialize(message);
 
-            outputQueue.Enqueue(advMsg);
-            OutputWritten = true;
+                outputQueue.Enqueue(advMsg);
+                OutputWritten = true;
+            }
         }
 
         public override void FlushOutput()

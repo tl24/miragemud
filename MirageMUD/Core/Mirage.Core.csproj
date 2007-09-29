@@ -44,11 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\ActorAttribute.cs" />
-    <Compile Include="Command\AreaBuilder.cs" />
     <Compile Include="Command\ArgumentParser.cs" />
     <Compile Include="Command\BaseArgumentAttribute.cs" />
     <Compile Include="Command\CommandAttribute.cs" />
     <Compile Include="Command\CommandBase.cs" />
+    <Compile Include="Command\CommandInitializer.cs" />
     <Compile Include="Command\ConfirmationAttribute.cs" />
     <Compile Include="Command\ConfirmationCommand.cs" />
     <Compile Include="Command\ConfirmationInterpreter.cs" />
@@ -56,7 +56,6 @@
     <Compile Include="Command\CustomParseAttribute.cs" />
     <Compile Include="Command\ILoginInputHandler.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
-    <Compile Include="Command\Movement.cs" />
     <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
     <Compile Include="Communication\BuilderMessages\UpdateConfirmationMessage.cs" />
     <Compile Include="Communication\ChildItemsMessage.cs" />
@@ -88,6 +87,7 @@
     <Compile Include="Data\EditorParentAttribute.cs" />
     <Compile Include="Data\EditorTypeSelectorAttribute.cs" />
     <Compile Include="Data\IActor.cs" />
+    <Compile Include="Data\IArea.cs" />
     <Compile Include="Data\IContainable.cs" />
     <Compile Include="Data\IContainer.cs" />
     <Compile Include="Data\IMudRepository.cs" />
@@ -97,36 +97,28 @@
     <Compile Include="Data\Query\IURI.cs" />
     <Compile Include="Data\Query\IUriContainer.cs" />
     <Compile Include="Data\Query\QueryManager.cs" />
-    <Compile Include="Data\RoomExit.cs" />
     <Compile Include="Data\Thing.cs" />
-    <Compile Include="Data\World.cs" />
+    <Compile Include="IInitializer.cs" />
     <Compile Include="IO\GuiClient.cs" />
-    <Compile Include="IO\GuiClientFactory.cs" />
-    <Compile Include="IO\GuiLoginHandler.cs" />
     <Compile Include="IO\ClientBase.cs" />
     <Compile Include="IO\ClientListener.cs" />
     <Compile Include="IO\ConnectedState.cs" />
     <Compile Include="IO\IClientIO.cs" />
+    <Compile Include="IO\Serialization\FileSerializerAdapterBase.cs" />
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
     <Compile Include="Util\AbstractStateMachine.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\Interpret.cs" />
     <Compile Include="Command\MethodInvoker.cs" />
-    <Compile Include="IO\TextLoginStateHandler.cs" />
     <Compile Include="Command\ReflectedCommand.cs" />
     <Compile Include="Communication\Channel.cs" />
     <Compile Include="Communication\Message.cs" />
     <Compile Include="Communication\MultipartMessage.cs" />
     <Compile Include="Communication\StringMessage.cs" />
-    <Compile Include="Data\Living.cs" />
-    <Compile Include="Data\Area.cs" />
-    <Compile Include="Data\AreaLoader.cs" />
     <Compile Include="Data\BaseData.cs" />
     <Compile Include="Data\MudRepositoryBase.cs" />
     <Compile Include="Data\IViewable.cs" />
     <Compile Include="Data\ObjectNotFoundException.cs" />
-    <Compile Include="Data\Player.cs" />
-    <Compile Include="Data\Room.cs" />
     <Compile Include="Data\Query\ObjectQuery.cs" />
     <Compile Include="IO\ClientManager.cs" />
     <Compile Include="IO\IClientFactory.cs" />
@@ -135,7 +127,6 @@
     <Compile Include="IO\Server.cs" />
     <Compile Include="IO\Serialization\ObjectSerializer.cs" />
     <Compile Include="IO\Serialization\XmlSerializerAdapter.cs" />
-    <Compile Include="IO\TextClientFactory.cs" />
     <Compile Include="IO\TransactionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\BlockingQueue.cs" />

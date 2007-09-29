@@ -5,6 +5,18 @@ using Mirage.Core.Command;
 
 namespace Mirage.Core.Communication.BuilderMessages
 {
+
+    /// <summary>
+    /// Type of edit occurring
+    /// </summary>
+    public enum ChangeType
+    {
+        None,
+        Add,
+        Edit,
+        Delete
+    }
+
     public class UpdateConfirmationMessage : Message
     {
         private string _itemUri;

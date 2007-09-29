@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 
 namespace Mirage.Core.Data
 {
@@ -59,7 +60,7 @@ namespace Mirage.Core.Data
         private static object GetObject(MudFactoryMapping mapping)
         {
 
-            object result = Activator.CreateInstance(mapping.MappedType);
+            object result = Activator.CreateInstance(Type.GetType(mapping.MappedType));
             if (mapping.LifeCycle == "singleton")
                 singletons[mapping.Key] = result;
 
@@ -141,18 +142,18 @@ namespace Mirage.Core.Data
         /// This is the type Key for this mapping such as an interface
         /// </summary>
         [ConfigurationProperty("factory-type")]
-        public Type FactoryType
+        public string FactoryType
         {
-            get { return Type.GetType((string)base["factory-type"]); }
+            get { return base["factory-type"] as string; }
         }
 
         /// <summary>
         /// The type that will be returned when an object of this mapping is requested
         /// </summary>
         [ConfigurationProperty("mapped-type", IsRequired = true)]
-        public Type MappedType
+        public string MappedType
         {
-            get { return Type.GetType((string)base["mapped-type"]); }
+            get { return base["mapped-type"] as string; }
         }
 
         [ConfigurationProperty("key", IsKey = true)]
@@ -160,25 +161,20 @@ namespace Mirage.Core.Data
         {
             get
             {
-                Type t = FactoryType;
-                if (t != null)
-                    return t;
-                else
+                if (string.IsNullOrEmpty(FactoryType))
                     return Name;
+                else
+                    return Type.GetType(FactoryType);
             }
         }
 
-        [ConfigurationProperty("lifecycle")]
-        [RegexStringValidator("(singleton)|(dynamic)")]
+        [ConfigurationProperty("lifecycle", DefaultValue="singleton")]
+        [RegexStringValidator("singleton|dynamic")]
         public string LifeCycle
         {
             get
             {
-                string result = base["lifecycle"] as string;
-                if (string.IsNullOrEmpty(result))
-                    return "singleton";
-                else
-                    return result;
+                return base["lifecycle"] as string;
             }
         }       
     }
