@@ -67,7 +67,7 @@ namespace Mirage.Core.Communication
     /// <summary>
     /// Base class for messages that are sent to the client
     /// </summary>
-    public class Message : Mirage.Core.Communication.IMessage
+    public class Message : IMessage
     {
         private MessageType _messageType;
         private Uri _namespace;
@@ -221,6 +221,19 @@ namespace Mirage.Core.Communication
         public virtual string Render()
         {
             return this.ToString();
+        }
+
+        public IMessage Copy()
+        {
+            IMessage result = MakeCopy();
+            if (result.GetType() != this.GetType())
+                throw new Exception("Incorrect copy procedure, returned object is not of the same type it was copied from");
+            return result;
+        }
+
+        protected virtual IMessage MakeCopy()
+        {
+            return this;
         }
     }
 }

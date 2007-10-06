@@ -68,6 +68,7 @@ namespace Mirage.Core.IO
             for (int i = 0; i < 1; i++)
             {
                 Thread t = new Thread(new ThreadStart(ProcessIO));
+                t.Name = "IOWorker" + i;
                 t.IsBackground = true;
                 t.Start();
                 threads.Add(t);
@@ -236,6 +237,7 @@ namespace Mirage.Core.IO
         public void Start()
         {
             Thread t = new Thread(new ThreadStart(Run));
+            t.Name = "IOManager";
             t.IsBackground = true;
             t.Start();
             _started = true;

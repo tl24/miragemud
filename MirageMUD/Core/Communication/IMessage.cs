@@ -31,5 +31,13 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <returns>display message string</returns>
         string Render();
+
+        /// <summary>
+        /// Copies the current object or returns the current object if the object has
+        /// no mutable properties.  The message factory uses this method to create new
+        /// copies of messages.
+        /// </summary>
+        /// <returns></returns>
+        IMessage Copy();
     }
 }

@@ -49,6 +49,11 @@ namespace Mirage.Core.Communication
 
             return sb.ToString();
         }
+
+        protected override IMessage MakeCopy()
+        {
+            return new MultipartMessage(MessageType, Namespace, Name);
+        }
     }
 
 

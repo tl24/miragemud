@@ -84,31 +84,12 @@ namespace Mirage.Core.Communication
             return new StringMessage(this.MessageType, this.Namespace, this.Name, this.Render());
         }
 
-        /*
-        #region IJsonTypeConverter Members
-
-        public object Context
+        protected override IMessage MakeCopy()
         {
-            set { return; }
-        }
+            if (this.GetType() != typeof(ResourceMessage))
+                throw new Exception("Subclass must override the copy method");
 
-        public object ConvertFrom(object item, JsonExSerializer.SerializationContext serializationContext)
-        {
-            return new StringMessage(this.MessageType, this.Name, this.ToString());
+            return new ResourceMessage(MessageType, Namespace, Name);
         }
-
-        public object ConvertTo(object item, Type sourceType, JsonExSerializer.SerializationContext serializationContext)
-        {
-            // one-way conversion, just return the string message
-            return item;
-        }
-
-        public Type GetSerializedType(Type sourceType)
-        {
-            return typeof(StringMessage);
-        }
-
-        #endregion
-         */ 
     }
 }

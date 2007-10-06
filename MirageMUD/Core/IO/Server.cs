@@ -68,6 +68,7 @@ namespace Mirage.Core.IO
         public void Run()
         {
             _shutdown = false;
+            Thread.CurrentThread.Name = "Main";
             logger.Info("Starting up");
 
             ClientManager manager = null;
@@ -165,6 +166,7 @@ namespace Mirage.Core.IO
                         {
                             try
                             {
+                                logger.InfoFormat("{0} has left the game.", player.Uri);
                                 SavePlayer(player);
                             }
                             catch (Exception e)
