@@ -50,5 +50,9 @@ namespace Mirage.Core.Communication
             set { this._itemUri = value; }
         }
 
+        protected override IMessage MakeCopy()
+        {
+            return new DataMessage();
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Mirage.Core.Communication.BuilderMessages
     /// <summary>
     /// Message received from the client to authenticate
     /// </summary>
-    public class LoginMessage : Message
+    public sealed class LoginMessage : Message
     {
         private string _login;
         private string _password;
@@ -27,6 +27,11 @@ namespace Mirage.Core.Communication.BuilderMessages
         {
             get { return this._password; }
             set { this._password = value; }
+        }
+
+        protected override IMessage MakeCopy()
+        {
+            return new LoginMessage();
         }
     }
 }

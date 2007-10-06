@@ -25,5 +25,10 @@ namespace Mirage.Core.Communication
         public ErrorResourceMessage()
         {
         }
+
+        protected override IMessage MakeCopy()
+        {
+            return new ErrorResourceMessage(MessageType, Namespace, Name);
+        }
     }
 }

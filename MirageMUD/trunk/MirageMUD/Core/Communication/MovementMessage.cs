@@ -72,5 +72,10 @@ namespace Mirage.Core.Communication
             }
             return sb.ToString();
         }
+
+        protected override IMessage MakeCopy()
+        {
+            throw new Exception("Method not implemented");
+        }
     }
 }

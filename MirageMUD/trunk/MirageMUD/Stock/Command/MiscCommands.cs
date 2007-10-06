@@ -71,7 +71,7 @@ namespace Mirage.Stock.Command
         [Command]
         public static void quit([Actor] Player player)
         {
-            player.Write(new ResourceMessage(MessageType.Information, Namespaces.System, "goodbye"));
+            player.Write(MessageFactory.GetMessage("msg:/system/goodbye"));
             if (player.Client.State == ConnectedState.Playing)
             {
                 player.save();
