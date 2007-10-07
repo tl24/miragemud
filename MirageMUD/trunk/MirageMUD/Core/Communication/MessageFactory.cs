@@ -22,15 +22,24 @@ namespace Mirage.Core.Communication
         }
 
         /// <summary>
-        /// Returns the given message constant
+        /// Constructs and returns the message identified by the message uri
         /// </summary>
-        /// <param name="key">the key of the message</param>
+        /// <param name="messageUri">the uri that identifies the message</param>
         /// <returns>the message</returns>
-        public static IMessage GetMessage(string uri)
+        public static IMessage GetMessage(string messageUri)
         {
-            Uri msgUri = new Uri(uri);
+            return GetMessage(new Uri(messageUri));
+        }
+
+        /// <summary>
+        /// Constructs and returns the message identified by the message uri
+        /// </summary>
+        /// <param name="messageUri">the uri that identifies the message</param>
+        /// <returns>the message</returns>
+        public static IMessage GetMessage(Uri messageUri)
+        {            
             string name;
-            Uri nmspace = SeparateUri(msgUri, out name);
+            Uri nmspace = SeparateUri(messageUri, out name);
             NamespaceGroup ngroup = null;
             if (!_namespaces.TryGetValue(nmspace.ToString(), out ngroup))
             {

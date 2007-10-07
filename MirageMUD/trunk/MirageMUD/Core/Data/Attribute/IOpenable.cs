@@ -13,17 +13,18 @@ namespace Mirage.Core.Data.Attribute
         /// Checks to see if the object is open
         /// </summary>
         /// <returns>true if it is opened, false if it is closed</returns>
-        bool IsOpen();
+        bool Opened { get; }
 
         /// <summary>
-        /// Opens the object.  This will thrown an OperationNotSupportedException
-        /// if the object is already open.
+        /// Opens the object.
         /// </summary>
+        /// <exception cref="ValidationException">if the object is already opened or can't be opened.</exception>
         void Open();
 
         /// <summary>
         /// Closes the object.
         /// </summary>
+        /// <exception cref="ValidationException">if the object is already closed or can't be closed.</exception>
         void Close();
     }
 }

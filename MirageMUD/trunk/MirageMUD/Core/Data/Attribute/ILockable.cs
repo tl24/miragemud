@@ -14,7 +14,7 @@ namespace Mirage.Core.Data.Attribute
         /// Checks to see if the object is locked
         /// </summary>
         /// <returns>true if locked</returns>
-        bool IsLocked();
+        bool Locked { get; }
 
         /// <summary>
         /// Locks the object.  The object must first be closed.
@@ -24,11 +24,27 @@ namespace Mirage.Core.Data.Attribute
         void Lock();
 
         /// <summary>
+        /// Locks the object.  The object must first be closed.
+        /// The key parameter will be checked to see if it is the correct key, 
+        /// if so, the lock will proceed.
+        /// </summary>
+        /// <param name="key">the proposed key object for the lock</param>
+        void Lock(IUri key);
+
+        /// <summary>
         /// Unlocks the object.  The object must first be locked.
         /// The caller should check to see if the actor unlocking the object
         /// has the specified key by calling IsKey with the canidate key object.
         /// </summary>
         void Unlock();
+
+        /// <summary>
+        /// Unlocks the object.  The object must first be locked.
+        /// The key parameter will be checked to see if it is the correct key, 
+        /// if so, the unlock will proceed.
+        /// </summary>
+        /// <param name="key">the proposed key object for the lock</param>
+        void Unlock(IUri key);
 
         /// <summary>
         /// Returns the uri for the key object that locks/unlocks this object.
@@ -42,4 +58,6 @@ namespace Mirage.Core.Data.Attribute
         /// <returns>true if this is the key that unlocks the object</returns>
         bool IsKey(IUri keyObj);
     }
+
+    
 }

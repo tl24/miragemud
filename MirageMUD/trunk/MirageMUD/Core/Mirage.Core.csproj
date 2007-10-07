@@ -70,6 +70,7 @@
     <Compile Include="Communication\TemplateDefinition.cs" />
     <Compile Include="Communication\TemplateManager.cs" />
     <Compile Include="Communication\TemplateRenderer.cs" />
+    <Compile Include="Communication\ValidationException.cs" />
     <Compile Include="Data\Attribute\AttributeNotSupportedException.cs" />
     <Compile Include="Data\Attribute\BaseAttribute.cs" />
     <Compile Include="Data\Attribute\IAttributable.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Util\Collections.cs" />
     <Compile Include="Util\ISynchronizedQueue.cs" />
     <Compile Include="Util\SynchronizedQueue.cs" />
+    <Compile Include="Util\TypeSupports.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Includes\Welcome.txt" />

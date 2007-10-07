@@ -161,9 +161,10 @@ namespace Mirage.Core.Command
                     }
                     else
                     {
-                        errorMessage = new ErrorResourceMessage("InvalidActor");
-                        ((ErrorResourceMessage)errorMessage).Parameters["ActorType"] = actor.GetType().Name;
+                        ResourceMessage rmsg = (ResourceMessage) MessageFactory.GetMessage("msg:/common/error/InvalidActor");
+                        rmsg["ActorType"] = actor.GetType().Name;
                         convertedArguments = null;
+                        errorMessage = rmsg;
                         return false;
                     }                    
                 }
@@ -183,8 +184,8 @@ namespace Mirage.Core.Command
                     }
                     if (result == null && attr.IsRequired)
                     {
-                        errorMessage = new ErrorResourceMessage("NotHere");
-                        ((ErrorResourceMessage)errorMessage).Parameters["target"] = target;
+                        errorMessage = MessageFactory.GetMessage("msg:/common/error/NotHere");
+                        ((ResourceMessage)errorMessage)["target"] = target;
                         convertedArguments = null;
                         return false;
                     }
@@ -243,6 +244,8 @@ namespace Mirage.Core.Command
                 {
                     return null;
                 }
+            } catch (ValidationException ve) {
+                return ve.MessageObject;            
             } catch (Exception e) {
                 string error = "Error during execution of command '{0}' arguments: [";
                 foreach(object o in arguments) {

@@ -64,7 +64,7 @@ namespace Mirage.Core.Command
             {
                 if (!player.Interpreter.Execute(actor, input))
                 {
-                    player.Write(new ErrorResourceMessage("InvalidCommand"));
+                    player.Write(MessageFactory.GetMessage("msg:/common/error/InvalidCommand"));
                 }
             }
             else

@@ -12,6 +12,7 @@ namespace Mirage.Core.Communication
     public class ResourceMessage : Message /*, IJsonTypeConverter*/
     {
         private IDictionary<string, object> _parameters;
+        private TemplateDefinition templateDefinition;
 
         public ResourceMessage()
         {
@@ -27,6 +28,24 @@ namespace Mirage.Core.Communication
         public ResourceMessage(MessageType messageType, Uri Namespace, string messageName)
             : this(messageType, Namespace, messageName, new Dictionary<string, object>())
         {
+        }
+
+        public ResourceMessage(MessageType messageType, string messageName)
+            : this(messageType, Namespaces.Root, messageName, new Dictionary<string, object>())
+        {
+        }
+
+        /// <summary>
+        /// Creates a new resource message using the given template
+        /// </summary>
+        /// <param name="messageType">the message type</param>
+        /// <param name="Namespace">the namespace</param>
+        /// <param name="messageName">the message name</param>
+        /// <param name="template">the template to use</param>
+        protected ResourceMessage(MessageType messageType, Uri Namespace, string messageName, TemplateDefinition template)
+            :this(messageType, Namespace, messageName)
+        {
+            this.templateDefinition = template;
         }
 
         /// <summary>
@@ -46,12 +65,23 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// The replacement parameters for the template
         /// </summary>
+
         public IDictionary<string, object> Parameters
         {
             get { return this._parameters; }
             set { this._parameters = value; }
         }
 
+        /// <summary>
+        /// Gets and sets parameters for the template
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public object this[string key]
+        {
+            get { return Parameters[key]; }
+            set { Parameters[key] = value; }
+        }
         /// <summary>
         /// Renders the message
         /// </summary>
@@ -63,7 +93,13 @@ namespace Mirage.Core.Communication
 
         public override string Render()
         {
-            ITemplate template = TemplateManager.GetTemplate(QualifiedName);
+
+            ITemplate template = null;
+            if (templateDefinition != null)
+                template = new TemplateRenderer(templateDefinition, null);
+            else
+                template = TemplateManager.GetTemplate(QualifiedName);
+
             if (Parameters != null && Parameters.Count > 0)
             {
                 foreach (KeyValuePair<string, object> pair in Parameters)
@@ -89,7 +125,16 @@ namespace Mirage.Core.Communication
             if (this.GetType() != typeof(ResourceMessage))
                 throw new Exception("Subclass must override the copy method");
 
-            return new ResourceMessage(MessageType, Namespace, Name);
+            return new ResourceMessage(MessageType, Namespace, Name, templateDefinition);
+        }
+
+        /// <summary>
+        /// The template for this message
+        /// </summary>
+        public string Template
+        {
+            get { return (templateDefinition != null) ? templateDefinition.Text : null; }
+            set { templateDefinition = new TemplateDefinition(Name, value, false); }
         }
     }
 }

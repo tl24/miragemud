@@ -123,49 +123,6 @@
   <data name="Movement.Arrival" xml:space="preserve">
     <value>${player} has arrived.</value>
   </data>
-  <data name="msg:/common/error/InvalidActor" xml:space="preserve">
-    <value>This command can not be executed by a ${ActorType}.</value>
-  </data>
-  <data name="msg:/common/error/InvalidCommand" xml:space="preserve">
-    <value>Huh?</value>
-  </data>
-  <data name="msg:/common/error/NotHere" xml:space="preserve">
-    <value>${target} is not here.</value>
-    <comment>Error message when a lookup fails.</comment>
-  </data>
-  <data name="msg:/common/error/PlayerNotPlaying" xml:space="preserve">
-    <value>${player} is not playing right now.</value>
-  </data>
-  <data name="msg:/communication/say.others" xml:space="preserve">
-    <value>${player} says '${message}'.</value>
-  </data>
-  <data name="msg:/communication/say.self" xml:space="preserve">
-    <value>You said '${message}'.</value>
-  </data>
-  <data name="msg:/communication/tell.others" xml:space="preserve">
-    <value>${player} tells you '${message}'.</value>
-  </data>
-  <data name="msg:/communication/tell.self" xml:space="preserve">
-    <value>You tell ${target} '${message}'.</value>
-  </data>
-  <data name="msg:/movement/anonymous.close.door" xml:space="preserve">
-    <value>A door closes.</value>
-  </data>
-  <data name="msg:/movement/anonymous.open.door" xml:space="preserve">
-    <value>A door opens.</value>
-  </data>
-  <data name="msg:/movement/player.close.door.others" xml:space="preserve">
-    <value>${player} closes the ${direction} door.</value>
-  </data>
-  <data name="msg:/movement/player.close.door.self" xml:space="preserve">
-    <value>You close the ${direction} door.</value>
-  </data>
-  <data name="msg:/movement/player.open.door.others" xml:space="preserve">
-    <value>${player} opens the ${direction} door.</value>
-  </data>
-  <data name="msg:/movement/player.open.door.self" xml:space="preserve">
-    <value>You open the ${direction} door.</value>
-  </data>
   <data name="msg:/namespace/test" xml:space="preserve">
     <value>Namespace test message</value>
   </data>
@@ -182,9 +139,6 @@ Welcome to MirageMUD 0.1.  Still in development.</value>
   </data>
   <data name="msg:/system/error/SystemError" xml:space="preserve">
     <value>A system error has occurred executing your command.</value>
-  </data>
-  <data name="msg:/system/goodbye" xml:space="preserve">
-    <value>Goodbye!</value>
   </data>
   <data name="TestTemplateInclude" xml:space="preserve">
     <value>This template contains ( @{IncludedTemplate} ) custom = ${custom}</value>

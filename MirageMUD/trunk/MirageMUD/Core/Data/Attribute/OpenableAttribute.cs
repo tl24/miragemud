@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Core.Communication;
+using Mirage.Core.Util;
 
 namespace Mirage.Core.Data.Attribute
 {
@@ -26,16 +28,16 @@ namespace Mirage.Core.Data.Attribute
 
         #region IOpenable Members
 
-        public bool IsOpen()
+        public bool Opened
         {
-            return _isOpen;
+            get { return _isOpen; }
         }
 
-        public void Open()
+        public virtual void Open()
         {
-            if (IsOpen())
+            if (Opened)
             {
-                throw new InvalidOperationException("Object is already open.");
+                throw new ValidationException("msg:/common/error/object.already.open");
             }
             else
             {
@@ -43,11 +45,11 @@ namespace Mirage.Core.Data.Attribute
             }
         }
 
-        public void Close()
+        public virtual void Close()
         {
-            if (!IsOpen())
+            if (!Opened)
             {
-                throw new InvalidOperationException("Object is already closed.");
+                throw new ValidationException("msg:/common/error/object.already.closed");
             }
             else
             {
@@ -66,12 +68,38 @@ namespace Mirage.Core.Data.Attribute
         /// <returns>true if open or not supported, false otherwise</returns>
         public static bool IsOpen(object target)
         {
-            if (target is IAttributable)
-            {
-                IOpenable o = (IOpenable) ((IAttributable)target).TryGetAttribute(typeof(IOpenable));
-                return o == null ? true : o.IsOpen();
-            }
-            return true;
+            IOpenable o = TypeSupports.TryCastAs<IOpenable>(target);
+            return o == null ? true : o.Opened;
+        }
+
+        /// <summary>
+        /// Checks to see if the given object implements IOpenable and attempts to open it.
+        /// If it doesn't implement openable, an exception is thrown.
+        /// </summary>
+        /// <param name="target">the object to open</param>
+        /// <exception cref="ValidationException">if the object does not support IOpenable or the object can't be opened</exception>
+        public static void Open(object target)
+        {
+            IOpenable o = TypeSupports.TryCastAs<IOpenable>(target);
+            if (o != null)
+                o.Open();
+            else
+                throw new ValidationException("msg:/common/error/not.openable");
+        }
+
+        /// <summary>
+        /// Checks to see if the given object implements IOpenable and attempts to close it.
+        /// If it doesn't implement IOpenable, an exception is thrown.
+        /// </summary>
+        /// <param name="target">the object to close</param>
+        /// <exception cref="ValidationException">if the object does not support IOpenable or the object can't be closed</exception>
+        public static void Close(object target)
+        {
+            IOpenable o = TypeSupports.TryCastAs<IOpenable>(target);
+            if (o != null)
+                o.Close();
+            else
+                throw new ValidationException("msg:/common/error/not.closeable");
         }
     }
 }
