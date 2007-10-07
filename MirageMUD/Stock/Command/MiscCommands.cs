@@ -23,9 +23,9 @@ namespace Mirage.Stock.Command
         public static IMessage say([Actor] Living actor, [CustomParse] string message)
         {
             //speak to all others in the room
-            ResourceMessage msgToOthers = new ResourceMessage(MessageType.Communication, Namespaces.Communication, "say.others");
-            msgToOthers.Parameters["player"] = actor.Title;
-            msgToOthers.Parameters["message"] = message;
+            ResourceMessage msgToOthers = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/say.others");
+            msgToOthers["player"] = actor.Title;
+            msgToOthers["message"] = message;
             foreach (Living am in actor.Container.Contents(typeof(Living)))
             {
                 if (am != actor)
@@ -35,8 +35,8 @@ namespace Mirage.Stock.Command
             }
 
             //repeat message to yourself as confirmation
-            ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, Namespaces.Communication, "say.self");
-            msgToSelf.Parameters["message"] = message;
+            ResourceMessage msgToSelf = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/say.self");
+            msgToSelf["message"] = message;
             return msgToSelf;
         }
 
@@ -48,21 +48,21 @@ namespace Mirage.Stock.Command
             if (p == null)
             {
                 // couldn't find them, send an error
-                ErrorResourceMessage errorMsg = new ErrorResourceMessage("PlayerNotPlaying");
-                errorMsg.Parameters["player"] = target;
+                ResourceMessage errorMsg = (ResourceMessage) MessageFactory.GetMessage("msg:/common/error/PlayerNotPlaying");
+                errorMsg["player"] = target;
                 return errorMsg;
             }
             else
             {
                 // format the messages
-                ResourceMessage msgToTarget = new ResourceMessage(MessageType.Communication, Namespaces.Communication, "tell.others");
-                msgToTarget.Parameters["player"] = actor.Title;
-                msgToTarget.Parameters["message"] = message;
+                ResourceMessage msgToTarget = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/tell.others");
+                msgToTarget["player"] = actor.Title;
+                msgToTarget["message"] = message;
                 p.Write(msgToTarget);
 
-                ResourceMessage msgToSelf = new ResourceMessage(MessageType.Confirmation, Namespaces.Communication, "tell.self");
-                msgToSelf.Parameters["message"] = message;
-                msgToSelf.Parameters["target"] = p.Title;
+                ResourceMessage msgToSelf = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/tell.self");
+                msgToSelf["message"] = message;
+                msgToSelf["target"] = p.Title;
 
                 return msgToSelf;
             }

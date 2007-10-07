@@ -2,14 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.Data.Query;
+using Mirage.Core.Communication;
+using Mirage.Core.Util;
 
 namespace Mirage.Core.Data.Attribute
 {
+    /// <summary>
+    /// LockableAttribute is applied to an object so that it can be locked.
+    /// </summary>
     public class LockableAttribute : OpenableAttribute, ILockable
     {
         protected bool _isLocked;
         protected string _key;
 
+        /// <summary>
+        /// Constructs the lockable object with no target
+        /// </summary>
         public LockableAttribute()
             : base()
         {
@@ -17,6 +25,13 @@ namespace Mirage.Core.Data.Attribute
             _isOpen = false;
         }
 
+        /// <summary>
+        /// constructs the lockable object with the specified target and initial state parameters.
+        /// </summary>
+        /// <param name="target">the target that the lockable attribute is applied to</param>
+        /// <param name="isOpen">initial open flag</param>
+        /// <param name="isLocked">initial lock flag</param>
+        /// <param name="key">the uri that identifies the key</param>
         public LockableAttribute(IAttributable target, bool isOpen, bool isLocked, string key)
             : base(target, isOpen)
         {
@@ -28,6 +43,12 @@ namespace Mirage.Core.Data.Attribute
             _key = key;
         }
 
+        /// <summary>
+        /// Constructs the lockable object with the given target and key with the object defaulting
+        /// to closed and locked states.
+        /// </summary>
+        /// <param name="target">the target that the lockable attribute is applied to</param>
+        /// <param name="key">the uri that identifies the key</param>
         public LockableAttribute(IAttributable target, string key)
             : this(target, false, true, key)
         {
@@ -35,46 +56,82 @@ namespace Mirage.Core.Data.Attribute
 
         #region ILockable Members
 
-        public bool IsLocked()
+        /// <summary>
+        /// Indicates whether the object is currently locked
+        /// </summary>
+        public bool Locked
         {
-            return _isLocked;
+            get { return _isLocked; }
         }
+
 
         public void Lock()
         {
-            if (IsOpen())
-            {
-                throw new InvalidOperationException("Object can not be locked when it is open.");
-            }
-            else if (IsLocked())
-            {
-                throw new InvalidOperationException("Object is already locked.");
-            }
+            if (Opened)
+                throw new ValidationException("msg:/common/error/cant.lock.when.open");
+            
+            if (Locked)
+                throw new ValidationException("msg:/common/error/object.already.locked");
 
             _isLocked = true;
         }
 
+        public void Lock(IUri key)
+        {
+            ValidateKey(key);
+            Lock();
+        }
+
         public void Unlock()
         {
-            if (!IsLocked())
-            {
-                throw new InvalidOperationException("Object is already unlocked.");
-            }
+            if (!Locked)
+                throw new ValidationException("msg:/common/error/object.already.unlocked");
+
             _isLocked = false;
         }
 
-        public string Key
+        public void Unlock(IUri key)
         {
-            get
-            {
-                return _key;
-            }
-            set
-            {
-                _key = value;
-            }
+            ValidateKey(key);
+            Unlock();
         }
 
+        /// <summary>
+        /// Checks to see if the key is the key for this lock.  If not, it will
+        /// throw a validation exception
+        /// </summary>
+        /// <param name="key">the key object to compare to this lock's key</param>
+        /// <exception cref="ValidationException">if the key is not the right key</exception>
+        private void ValidateKey(IUri key)
+        {
+            if (!IsKey(key))
+                throw new ValidationException("msg:/common/error/wrong.key");
+        }
+
+        /// <summary>
+        /// Gets or Sets the uri for the key that opens this object
+        /// </summary>
+        public string Key
+        {
+            get { return _key; }
+            set { _key = value; }
+        }
+
+        /// <summary>
+        /// Check to see if the object is locked before opening it
+        /// </summary>
+        public override void Open()
+        {
+            if (Locked)
+                throw new ValidationException("msg:/common/error/object.locked");
+            base.Open();
+        }
+
+        /// <summary>
+        /// Checks to see if the given object can unlock the object
+        /// </summary>
+        /// <param name="keyObj"></param>
+        /// <returns></returns>
         public bool IsKey(IUri keyObj)
         {
             if (_key == null || _key.Length == 0)
@@ -90,6 +147,22 @@ namespace Mirage.Core.Data.Attribute
             else
                 return "Lockable";
         }
+        #endregion
+
+        #region static helper methods
+
+        /// <summary>
+        /// If the target implements ILockable, check to see if it is locked,
+        /// otherwise return true if its not lockable
+        /// </summary>
+        /// <param name="target">the target object to check</param>
+        /// <returns>true if locked, otherwise false</returns>
+        public static bool IsLocked(object target)
+        {
+            ILockable l = TypeSupports.TryCastAs<ILockable>(target);
+            return l == null ? false : l.Locked;
+        }
+
         #endregion
     }
 }

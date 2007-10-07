@@ -3,13 +3,59 @@ namespace Mirage.Core.Communication
 {
     public interface IMessage
     {
+        /// <summary>
+        /// Checks to see if the message matches on namespace or qualified name
+        /// </summary>
+        /// <param name="baseNamespace">namespace or qualified name to check</param>
+        /// <returns>true if it matches</returns>
         bool IsMatch(Uri baseNamespace);
+
+        /// <summary>
+        /// Checks to see if the message matches the specified namespace and name
+        /// </summary>
+        /// <param name="baseNamespace">the base namespace to check</param>
+        /// <param name="name">the message name</param>
+        /// <returns>true if it matches</returns>
         bool IsMatch(Uri baseNamespace, string name);
+
+        /// <summary>
+        /// Checks to see if the message matches the specified type, namespace and name
+        /// </summary>
+        /// <param name="type">the message type to check</param>
+        /// <param name="baseNamespace">the base namespace to check</param>
+        /// <param name="name">the message name</param>
+        /// <returns>true if it matches</returns>
         bool IsMatch(MessageType type, Uri baseNamespace, string name);
+
+        /// <summary>
+        /// Checks to see if the message matches the specified type
+        /// </summary>
+        /// <param name="type">the message type to check</param>
+        /// <returns>true if it matches</returns>
         bool IsMatch(MessageType type);
+
+        /// <summary>
+        /// The general type of the message such as error or confirmation
+        /// </summary>
         MessageType MessageType { get; set; }
+
+        /// <summary>
+        /// The name of the message which does not include the namespace
+        /// </summary>
         string Name { get; set; }
+
+        /// <summary>
+        /// The namespace for the message, which groups the messages into
+        /// logical categories
+        /// </summary>
+        /// <example>msg:/system/</example>
         Uri Namespace { get; set; }
+
+        /// <summary>
+        /// Gets the fully-qualified name of the message which includes the namespace and
+        /// the message name.  A message is uniquely identified by its qualified name.
+        /// </summary>
+        /// <example>msg:/movement/not.in.room</example>
         string QualifiedName { get; }
 
         /// <summary>

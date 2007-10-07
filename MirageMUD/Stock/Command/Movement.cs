@@ -45,68 +45,54 @@ namespace Mirage.Stock.Command
 
         public static IMessage Go(Living actor, DirectionType direction)
         {
-            if (actor.Container is Room)
-            {
-                string dirName = direction.ToString().ToLower();
-                Room room = (Room)actor.Container;
-                if (room.Exits.ContainsKey(direction))
-                {
-                    RoomExit exit = room.Exits[direction];
-                    if (exit.HasAttribute(typeof(ILockable)))
-                    {
-                        ILockable lockObj = (ILockable)exit.GetAttribute(typeof(ILockable));
-                        if (lockObj.IsLocked())
-                        {
-                            return new ErrorMessage("Error.ExitLocked", "The door is locked.\r\n");
-                        }
-                    }
-                    if (exit.HasAttribute(typeof(IOpenable)))
-                    {
-                        IOpenable openObj = (IOpenable) exit.GetAttribute(typeof(IOpenable));
-                        if (!openObj.IsOpen())
-                        {
-                            return new ErrorMessage("Error.ExitClosed", "The door is closed.\r\n");
-                        }
-                    }
-                    // create the messages
-                    MovementMessage departMessage = new MovementMessage(dirName,
-                        MovementMessage.MovementType.Departure,
-                        actor.Title);
-                    MovementMessage arrivalMessage = new MovementMessage(null,
-                        MovementMessage.MovementType.Arrival,
-                        actor.Title);
+            if (!(actor.Container is Room))
+                return MessageFactory.GetMessage("msg:/movement/not.in.room");
 
-                    try
-                    {
-                        Containers.Transfer(actor, exit.TargetRoom);
-                        foreach (Living oldRoomPeople in room.Animates)
-                        {
-                            if (oldRoomPeople != actor)
-                            {
-                                oldRoomPeople.Write(departMessage);
-                            }
-                        }
-                        foreach (Living newRoomPeople in exit.TargetRoom.Animates)
-                        {
-                            if (newRoomPeople != actor)
-                            {
-                                newRoomPeople.Write(arrivalMessage);
-                            }
-                        }
-                        return new StringMessage(MessageType.Confirmation, "Movement." + dirName, "You go " + dirName + ".\r\n");
-                    }
-                    catch (ContainerAddException e)
-                    {
-                        return new ErrorMessage("Error.Movement", "You can't go that way.\r\n");
-                    }
-                } else {
-                    return new ErrorMessage("Error.Movement", "You can't go that way.\r\n");
-                }
-            }
-            else
+            string dirName = direction.ToString().ToLower();
+            Room room = (Room)actor.Container;
+            if (!room.Exits.ContainsKey(direction))
+                return MessageFactory.GetMessage("msg:/movement/cant.go.exit");
+
+            RoomExit exit = room.Exits[direction];
+            if (LockableAttribute.IsLocked(exit))
+                return MessageFactory.GetMessage("msg:/movement/door.locked");
+
+            if (!OpenableAttribute.IsOpen(exit))
+                return MessageFactory.GetMessage("msg:/movement/door.closed");
+
+            // create the messages
+            MovementMessage departMessage = new MovementMessage(dirName,
+                MovementMessage.MovementType.Departure,
+                actor.Title);
+            MovementMessage arrivalMessage = new MovementMessage(null,
+                MovementMessage.MovementType.Arrival,
+                actor.Title);
+
+            try
             {
-                return new ErrorMessage("Error.Movement", "You aren't in a room.\r\nYou need to get out first.\r\n");
+                Containers.Transfer(actor, exit.TargetRoom);
+                foreach (Living oldRoomPeople in room.Animates)
+                {
+                    if (oldRoomPeople != actor)
+                    {
+                        oldRoomPeople.Write(departMessage);
+                    }
+                }
+                foreach (Living newRoomPeople in exit.TargetRoom.Animates)
+                {
+                    if (newRoomPeople != actor)
+                    {
+                        newRoomPeople.Write(arrivalMessage);
+                    }
+                }
+                return new StringMessage(MessageType.Confirmation, "Movement." + dirName, "You go " + dirName + ".\r\n");
             }
+            catch (ContainerAddException e)
+            {
+                return MessageFactory.GetMessage("msg:/movement/cant.go.exit");
+            }
+
+
         }
 
         private static int ParseDirection(string dir)
@@ -135,77 +121,49 @@ namespace Mirage.Stock.Command
         {
             int dir = ParseDirection(directionName);
             if (dir == -1)
-                return new ErrorMessage("InvalidDirection", "That's not a valid direction");
+                return MessageFactory.GetMessage("msg:/movement/invalid.direction");
+
             DirectionType direction = (DirectionType)dir;
 
-            if (actor.Container is Room)
-            {
-                string dirName = direction.ToString().ToLower();
-                Room room = (Room)actor.Container;
-                if (room.Exits.ContainsKey(direction))
-                {
-                    RoomExit exit = room.Exits[direction];
-                    if (exit.HasAttribute(typeof(IOpenable)))
-                    {
-                        IOpenable openObj = (IOpenable)exit.GetAttribute(typeof(IOpenable));
-                        if (openObj.IsOpen() && open)
-                            return new ErrorMessage("Error.ExitAlreadyOpen", "The door is already open.\r\n");
-                        if (!openObj.IsOpen() && !open)
-                            return new ErrorMessage("Error.ExitAlreadyClosed", "The door is already closed.\r\n");
+            if (!(actor.Container is Room))
+                return MessageFactory.GetMessage("msg:/movement/not.in.room");
 
-                        if (exit.HasAttribute(typeof(ILockable)))
-                        {
-                            ILockable lockObj = (ILockable)exit.GetAttribute(typeof(ILockable));
-                            if (lockObj.IsLocked() && open)
-                            {
-                                return new ErrorMessage("Error.ExitLocked", "The door is locked.\r\n");
-                            }
-                            if (open)
-                                lockObj.Open();
-                            else
-                                lockObj.Close();
-                        } else {
-                            if (open)
-                                openObj.Open();
-                            else
-                                openObj.Close();
-                        }
-                        string action = open ? "open" : "close";
-                        ResourceMessage mActionSelf = 
-                            new ResourceMessage(MessageType.Confirmation, Namespaces.Movement,  "player." + action + ".door.self");
-                        ResourceMessage mActionOthers = 
-                            new ResourceMessage(MessageType.Information, Namespaces.Movement,  "player." + action + ".door.others");
-                        mActionOthers.Parameters["player"] = actor.Title;
-                        mActionSelf.Parameters["direction"] = mActionOthers.Parameters["direction"] = direction.ToString();
+            string dirName = direction.ToString().ToLower();
+            Room room = (Room)actor.Container;
+            if (!room.Exits.ContainsKey(direction))
+                return MessageFactory.GetMessage("msg:/movement/no.exit");
 
-                        ResourceMessage mActionAnonymous = 
-                            new ResourceMessage(MessageType.Information, Namespaces.Movement,  "anonymous." + action + ".door");
+            RoomExit exit = room.Exits[direction];
+            if (!exit.HasAttribute(typeof(IOpenable)))
+                return MessageFactory.GetMessage("msg:/movement/not.a.door");
 
-                        foreach (Living liv in room.Animates)
-                        {
-                            if (liv != actor)
-                                liv.Write(mActionOthers);
-                        }
-
-                        foreach (Living liv in exit.TargetRoom.Animates)
-                        {
-                            liv.Write(mActionAnonymous);
-                        }
-
-                        return mActionSelf;
-                    } else {
-                        return new ErrorMessage("Error.NoDoor", "The exit in that direction does not have a door.\r\n");
-                    }
-                }
-                else
-                {
-                    return new ErrorMessage("Error.Movement", "There's no door in that direction.\r\n");
-                }
-            }
+            IOpenable openObj = (IOpenable)exit.GetAttribute(typeof(IOpenable));
+            if (open)
+                openObj.Open();
             else
+                openObj.Close();
+
+            string action = open ? "open" : "close";
+            ResourceMessage mActionSelf = (ResourceMessage)MessageFactory.GetMessage("msg:/movement/player." + action + ".door.self");
+            ResourceMessage mActionOthers = (ResourceMessage)MessageFactory.GetMessage("msg:/movement/player." + action + ".door.others");
+
+            mActionOthers["player"] = actor.Title;
+            mActionSelf["direction"] = mActionOthers["direction"] = direction.ToString();
+
+            ResourceMessage mActionAnonymous = (ResourceMessage)MessageFactory.GetMessage("msg:/movement/anonymous." + action + ".door");
+
+            foreach (Living liv in room.Animates)
             {
-                return new ErrorMessage("Error.Movement", "You aren't in a room.\r\nYou need to get out first.\r\n");
+                if (liv != actor)
+                    liv.Write(mActionOthers);
             }
+
+            foreach (Living liv in exit.TargetRoom.Animates)
+            {
+                liv.Write(mActionAnonymous);
+            }
+
+            return mActionSelf;
         }        
     }
 }
