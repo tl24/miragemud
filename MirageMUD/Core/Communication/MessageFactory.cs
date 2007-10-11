@@ -55,19 +55,25 @@ namespace Mirage.Core.Communication
         /// <returns>namespace group</returns>
         private static NamespaceGroup LoadNamespace(Uri Namespace)
         {
-            NameValueCollection namespaces = (NameValueCollection)ConfigurationManager.GetSection("MirageMUD/MessageNamespaces");
-            string value = namespaces[Namespace.ToString()];
-            Serializer serializer = Serializer.GetSerializer(typeof(NamespaceGroup), "JsonMessageFactory");
-            //serializer.Context.AddTypeBinding(typeof(StringMessage), "StringMessage");
-            //serializer.Context.AddTypeBinding(typeof(ResourceMessage), "ResourceMessage");
-
-            NamespaceGroup result = null;
-            using (StreamReader reader = new StreamReader(value))
+            string namespaceFile = "";
+            try
             {
-                result = (NamespaceGroup) serializer.Deserialize(reader);
+                NameValueCollection namespaces = (NameValueCollection)ConfigurationManager.GetSection("MirageMUD/MessageNamespaces");
+                namespaceFile = namespaces[Namespace.ToString()];
+                Serializer serializer = Serializer.GetSerializer(typeof(NamespaceGroup), "JsonMessageFactory");
+
+                NamespaceGroup result = null;
+                using (StreamReader reader = new StreamReader(namespaceFile))
+                {
+                    result = (NamespaceGroup)serializer.Deserialize(reader);
+                }
+                _namespaces[Namespace.ToString()] = result;
+                return result;
             }
-            _namespaces[Namespace.ToString()] = result;
-            return result;
+            catch (Exception e)
+            {
+                throw new Exception("Error occurred loading namespace " + Namespace + " from file: " + namespaceFile + " " + e.Message, e); 
+            }
         }
 
         /// <summary>

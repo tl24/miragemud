@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Mirage.Core.Util;
 using Mirage.Core.IO;
 using Mirage.Stock.Data;
+using System.Security.Principal;
 
 namespace Mirage.Stock.IO
 {
@@ -83,7 +84,7 @@ namespace Mirage.Stock.IO
             }
             else
             {
-                Player isPlaying = (Player)QueryManager.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(GetValue<Player>("player").Uri)));
+                Player isPlaying = (Player)new QueryManager().Find(new ObjectQuery(null, "Players", new ObjectQuery(GetValue<Player>("player").Uri)));
                 if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
                 {
                     Client.Write(new ResourceMessage(MessageType.PlayerError, Namespaces.Authentication, "player.already.playing"));
@@ -96,12 +97,16 @@ namespace Mirage.Stock.IO
 
                     Player player = GetValue<Player>("player");
                     Client.Logger.Info(string.Format("{0}@{1} has connected.", player.Uri, Client.TcpClient.Client.LocalEndPoint));
+                    if (GetValue<bool>("isNew"))
+                    {
+                        player.Roles = new string[] { "player" };
+                    }
 
                     MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
                     globalLists.AddPlayer(player);
                     if (player.Container == null)
                     {
-                        Room defaultRoom = (Room)QueryManager.GetInstance().Find(ConfigurationManager.AppSettings["default.room"]);
+                        Room defaultRoom = (Room)new QueryManager().Find(ConfigurationManager.AppSettings["default.room"]);
                         defaultRoom.Add(player);
                     }
                     else
@@ -114,7 +119,7 @@ namespace Mirage.Stock.IO
                     Client.State = ConnectedState.Playing;
                     //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\r\n",  $desc);	
 
-                    Client.Player = GetValue<Player>("player");
+                    Client.Player = player;
                     GetValue<Player>("player").Client = Client;
                 }
             }
@@ -166,7 +171,7 @@ namespace Mirage.Stock.IO
                 return;
 	        }
 
-            Player isPlaying = (Player) QueryManager.GetInstance().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
+            Player isPlaying = (Player) new QueryManager().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
                 Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.AlreadyPlaying", "That player is already playing.  Try another name.\r\n"));
@@ -189,17 +194,8 @@ namespace Mirage.Stock.IO
             {
                 // New Player
                 SetValue<bool>("isNew", true);
-                /*
-	            if ($GB_Newlock) {
-		            descriptor.writeToBuffer( "The game is newlocked.\r\n" );
-		            descriptor.close;
-		            return;
-	            }
-                */
-                // Check newbie ban
-                Player player = new Player();
-                player.Uri = input;
-                player.Title = input;
+
+                Player player = new Player(input);
                 SetValue<Player>("player", player);
             }
         }

@@ -8,21 +8,21 @@ namespace Mirage.Core.Command
 {
     public class ConfirmationInterpreter : IInterpret
     {
-        private string _message = "Are you sure? (y\r\n) ";
-        private string _cancellationMessage = "Command cancelled\r\n";
+        private IMessage _message;
+        private IMessage _cancellationMessage;
         private ICommand _method;
         private IInterpret priorInterpreter;
         private IPlayer _actor;
         private string _invokedName;
         private object[] args;
 
-        public string Message
+        public IMessage Message
         {
             get { return _message; }
             set { _message = value; }
         }
 
-        public string CancellationMessage
+        public IMessage CancellationMessage
         {
             get { return _cancellationMessage; }
             set { _cancellationMessage = value; }
@@ -67,7 +67,7 @@ namespace Mirage.Core.Command
             }
             else if (input.Equals("no") || input.Equals("n"))
             {
-                actor.Write(new StringMessage(MessageType.Information, "Cancellation", _cancellationMessage));
+                actor.Write(CancellationMessage);
                 success = true;
             }
             else
@@ -85,7 +85,11 @@ namespace Mirage.Core.Command
 
         public void RequestConfirmation()
         {
-            _actor.Write(new StringMessage(MessageType.Prompt, "ConfirmationPrompt", _message));
+            if (Message == null)
+                Message = MessageFactory.GetMessage("msg:/system/confirmation.prompt");
+            if (CancellationMessage == null)
+                CancellationMessage = MessageFactory.GetMessage("msg:/system/confirmation.cancel");
+            _actor.Write(Message);
         }
     }
 }

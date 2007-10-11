@@ -44,7 +44,7 @@ namespace Mirage.Stock.Command
         public static IMessage tell([Actor] Living actor, string target, [CustomParse] string message)
         {
             // look up the target
-            Player p = (Player)QueryManager.GetInstance().Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));
+            Player p = (Player)new QueryManager().Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));
             if (p == null)
             {
                 // couldn't find them, send an error

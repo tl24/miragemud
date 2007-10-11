@@ -8,6 +8,7 @@ using System.Reflection;
 
 using Mirage.Core.Util;
 using Mirage.Core.Communication;
+using System.Security.Principal;
 namespace Mirage.Core.Command
 {
     public static class MethodInvoker
@@ -80,7 +81,7 @@ namespace Mirage.Core.Command
             IList<ICommand> methods = GetAvailableMethods(commandName);
             bool fCommandInvoked = false;
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
-            
+
             Type clientType = null;
             if (actor is IPlayer && ((IPlayer)actor).Client != null)
             {
@@ -89,7 +90,7 @@ namespace Mirage.Core.Command
 
             foreach (ICommand method in methods)
             {
-                if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes))
+                if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes) && CheckRole(actor, method))
                 {
                     parser = new ArgumentParser(args);
                     string[] commandArgs = new string[method.ArgCount];
@@ -155,7 +156,17 @@ namespace Mirage.Core.Command
             }
             else
             {
-                actor.Write(new StringMessage(MessageType.PlayerError, "NoCommandFound", "Huh?\r\n"));
+                bool cmdFound = false;
+                foreach (ICommand method in methods)
+                {
+                    if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes) && CheckRole(actor, method))
+                    {
+                        actor.Write(new StringMessage(MessageType.PlayerError, "usage", method.UsageHelp()));
+                        cmdFound = true;
+                    }
+                }
+                if (!cmdFound)
+                    actor.Write(new StringMessage(MessageType.PlayerError, "NoCommandFound", "Huh?\r\n"));
             }
             return fCommandInvoked;
         }
@@ -175,7 +186,7 @@ namespace Mirage.Core.Command
 
             foreach (ICommand method in methods)
             {
-                if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes))
+                if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes) && CheckRole(actor, method))
                 {
                     if (arguments.Length != method.ArgCount)
                     {
@@ -257,6 +268,24 @@ namespace Mirage.Core.Command
             }
         }
 
+        /// <summary>
+        /// Check to see if the actor has the appropriate roles to execute the command
+        /// </summary>
+        /// <param name="actor">the actor</param>
+        /// <param name="command">the command</param>
+        /// <returns>true if actor has access</returns>
+        private static bool CheckRole(IActor actor, ICommand command)
+        {
+            if (command.Roles.Length == 0)
+                return true;
+
+            IPrincipal principal = actor.Principal;
+            foreach (string role in command.Roles)
+                if (principal.IsInRole(role))
+                    return true;
+
+            return false;
+        }
         private static IList<ICommand> GetAvailableMethods(string commandName)
         {
             return methods.FindStartsWith(commandName);

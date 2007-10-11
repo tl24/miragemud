@@ -101,6 +101,8 @@ namespace Mirage.Core.Command
 
         public abstract IMessage Invoke(string invokedName, IActor actor, object[] arguments);
 
+        public abstract string UsageHelp();
+
         #endregion
     }
 }

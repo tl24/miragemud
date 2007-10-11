@@ -70,5 +70,7 @@ namespace Mirage.Core.Command
         /// <param name="arguments">the arguments to the command</param>
         /// <returns>A message to be returned to the player if any</returns>
         IMessage Invoke(string invokedName, IActor actor, object[] arguments);
+
+        string UsageHelp();
     }
 }
