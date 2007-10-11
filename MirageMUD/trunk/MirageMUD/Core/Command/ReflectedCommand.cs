@@ -180,7 +180,7 @@ namespace Mirage.Core.Command
                     else if (target is string)
                     {                        
                         ObjectQuery query = attr.ConstructQuery((string) target);
-                        result = QueryManager.GetInstance().Find(actor, query);
+                        result = new QueryManager().Find(actor, query);
                     }
                     if (result == null && attr.IsRequired)
                     {
@@ -266,6 +266,26 @@ namespace Mirage.Core.Command
             }
         }
 
+        public override string UsageHelp()
+        {
+            string nameOrAlias = "";
+            if (Aliases.Length > 0)
+                nameOrAlias = Aliases[0];
+            else
+                nameOrAlias = Name;
+
+            string args = "";
+            ParameterInfo[] parms = _methodInfo.GetParameters();
+            foreach (ParameterInfo info in parms)
+            {
+                if (info.IsDefined(typeof(ActorAttribute), false))
+                    continue;
+                if (args.Length > 0)
+                    args += " ";
+                args += info.Name;
+            }
+            return "Usage: " + nameOrAlias + " " + args + "\r\n";
+        }
         #endregion Methods
     }
 }

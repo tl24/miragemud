@@ -26,7 +26,7 @@ namespace NUnitTests.Data.Query
             def.Uri = "Def";
             players.AddLast(def);
 
-            Player defActual = (Player) QueryManager.GetInstance().Find(bd, "Players/def");
+            Player defActual = (Player) new QueryManager().Find(bd, "Players/def");
             Assert.IsNotNull(defActual, "No player returned");
             Assert.AreSame(def, defActual, "Player not expected");
         }
@@ -35,7 +35,7 @@ namespace NUnitTests.Data.Query
         public void NoMatchTest()
         {
             MockUriContainer bd = new MockUriContainer();
-            Player defActual = (Player)QueryManager.GetInstance().Find(bd, "Players/def");
+            Player defActual = (Player)new QueryManager().Find(bd, "Players/def");
             Assert.IsNull(defActual, "No match should be returned");
         }
 
@@ -53,7 +53,7 @@ namespace NUnitTests.Data.Query
             def.Uri = "Def";
             players.AddLast(def);
 
-            Player defActual = (Player)QueryManager.GetInstance().Find(bd, "Players/d*");
+            Player defActual = (Player)new QueryManager().Find(bd, "Players/d*");
             Assert.IsNotNull(defActual, "No player returned");
             Assert.AreSame(def, defActual, "Player not expected");
         }
@@ -76,7 +76,7 @@ namespace NUnitTests.Data.Query
             dekken.Uri = "Dekken";
             players.AddLast(dekken);
 
-            Player dekkenActual = (Player)QueryManager.GetInstance().Find(bd, "Players/d*", 1);
+            Player dekkenActual = (Player)new QueryManager().Find(bd, "Players/d*", 1);
             Assert.IsNotNull(dekkenActual, "No player returned");
             Assert.AreSame(dekken, dekkenActual, "Player not expected");
         }
@@ -103,7 +103,7 @@ namespace NUnitTests.Data.Query
             room2.Uri = "Room2";
             area2.Rooms.Add(room2.Uri, room2);
 
-            Room room2Actual = (Room) QueryManager.GetInstance().Find(bd, "Areas/Area2/Rooms/Room2");
+            Room room2Actual = (Room) new QueryManager().Find(bd, "Areas/Area2/Rooms/Room2");
             Assert.AreSame(room2, room2Actual, "RoomQuery returned wrong room");
      
         }
@@ -130,7 +130,7 @@ namespace NUnitTests.Data.Query
             room2.Uri = "Room2";
             area2.Rooms.Add(room2.Uri, room2);
 
-            Room room2Actual = (Room)QueryManager.GetInstance().Find(bd, "Areas/Area2/Rooms/Room2", 1);
+            Room room2Actual = (Room)new QueryManager().Find(bd, "Areas/Area2/Rooms/Room2", 1);
             Assert.IsNull(room2Actual, "RoomQuery should have returned nothing");
 
         }

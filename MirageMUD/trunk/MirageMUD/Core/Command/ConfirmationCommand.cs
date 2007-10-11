@@ -67,9 +67,9 @@ namespace Mirage.Core.Command
                 // create the interpreter
                 ConfirmationInterpreter interp = new ConfirmationInterpreter((IPlayer) actor, _innerCommand, invokedName, arguments);
                 if (_promptMessage != null)
-                    interp.Message = _promptMessage;
+                    interp.Message = new StringMessage(MessageType.Prompt, "confirmation." + invokedName, _promptMessage);
                 if (_cancellationMessage != null)
-                    interp.CancellationMessage = _promptMessage;
+                    interp.CancellationMessage = new StringMessage(MessageType.Information, "cancellation." + invokedName, _cancellationMessage);
 
                 interp.RequestConfirmation();
             }
@@ -81,6 +81,10 @@ namespace Mirage.Core.Command
             return null;
         }
 
+        public string UsageHelp()
+        {
+            return _innerCommand.UsageHelp();
+        }
         #endregion
 
         #region ICommand Members

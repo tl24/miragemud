@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using Mirage.Core.Data.Query;
 using JsonExSerializer;
 using Mirage.Core.Data;
+using System.Security.Principal;
 
 namespace Mirage.Stock.Data
 {
@@ -68,6 +69,8 @@ namespace Mirage.Stock.Data
         }
 
         public abstract void Write(IMessage message);
+
+        public abstract IPrincipal Principal { get; }
 
         #region IViewable Members
 

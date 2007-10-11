@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.Command;
 using Mirage.Core.Communication;
+using System.Security.Principal;
 
 namespace Mirage.Core.Data
 {
@@ -22,5 +23,10 @@ namespace Mirage.Core.Data
         /// </summary>
         //TODO: Get rid of this, but the invoker currently checks this
         int Level { get; }
+
+        /// <summary>
+        /// Get security for executing commands
+        /// </summary>
+        IPrincipal Principal { get; }
     }
 }

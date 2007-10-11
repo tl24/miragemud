@@ -106,6 +106,8 @@
     <Compile Include="IO\IClientIO.cs" />
     <Compile Include="IO\Serialization\FileSerializerAdapterBase.cs" />
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
+    <Compile Include="MudIdentity.cs" />
+    <Compile Include="Security\MudPrincipal.cs" />
     <Compile Include="Util\AbstractStateMachine.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\Interpret.cs" />
@@ -130,8 +132,11 @@
     <Compile Include="IO\TransactionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\BlockingQueue.cs" />
+    <Compile Include="Util\CollectionEvent.cs" />
     <Compile Include="Util\Collections.cs" />
+    <Compile Include="Util\ICollectionEvents.cs" />
     <Compile Include="Util\ISynchronizedQueue.cs" />
+    <Compile Include="Util\ListWithEvents.cs" />
     <Compile Include="Util\SynchronizedQueue.cs" />
     <Compile Include="Util\TypeSupports.cs" />
   </ItemGroup>

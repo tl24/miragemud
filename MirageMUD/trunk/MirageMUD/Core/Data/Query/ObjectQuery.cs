@@ -136,21 +136,6 @@ namespace Mirage.Core.Data.Query
             return _toString;
         }
 
-        public static bool operator ==(ObjectQuery q1, ObjectQuery q2) {
-            if (object.ReferenceEquals(q1, q2))
-                return true;
-
-            if ((object)q1 == null)
-                return (object)q2 == null;
-            else
-                return q1.Equals(q2);
-        }
-      
-        public static bool operator !=(ObjectQuery q1, ObjectQuery q2)
-        {
-            return !(q1 == q2);
-        }
-
         public override bool Equals(object obj)
         {
             if (!base.Equals(obj))

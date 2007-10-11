@@ -15,19 +15,23 @@ using Mirage.Core.Communication;
 using System.Security.Principal;
 using JsonExSerializer;
 using Mirage.Core.Data;
+using Mirage.Core.Security;
+using Mirage.Core;
 
 namespace Mirage.Stock.Data
 {
     /// <summary>
     ///     A player is controlled by a live person and a participant in
     /// the game (as opposed to a Mobile which is a game object controlled by AI).
-    /// It is a descendant of Living, the base-class for living breating things
+    /// It is a descendant of Living, the base-class for living breathing things
     /// </summary>
     public class Player : Living, IPlayer
     {
         private string _password;
         private IClient _client;
         private IInterpret _interpreter;
+        private MudPrincipal _principal;
+        private string[] _roles;
 
         public event PlayerEventHandler PlayerEvent;
 
@@ -36,6 +40,18 @@ namespace Mirage.Stock.Data
         /// </summary>
         public Player() : base()
         {
+        }
+
+        /// <summary>
+        /// Creates a player with the given name and password and security roles
+        /// </summary>
+        /// <param name="name">player's name</param>
+        /// <param name="plainPassword">plaintext password</param>
+        /// <param name="roles">the user's security roles</param>
+        public Player(string name)
+        {
+            Uri = name;
+            Title = name;
         }
 
         #region Password Items
@@ -84,7 +100,7 @@ namespace Mirage.Stock.Data
         /// <returns>the encrypted password</returns>
         private string EncryptPassword(string password)
         {
-            byte[] salt = Encoding.ASCII.GetBytes("encryptPassword");
+            byte[] salt = Encoding.ASCII.GetBytes(Uri.ToLower().PadRight(8,'x'));
             Rfc2898DeriveBytes passwordKey = new Rfc2898DeriveBytes("MirageHashPassword", salt);
             byte[] secretKey = passwordKey.GetBytes(64);
             HMACSHA1 hash = new HMACSHA1(secretKey);
@@ -98,7 +114,7 @@ namespace Mirage.Stock.Data
         #endregion Password Items
 
         /// <summary>
-        ///    Gets or sets the descriptor for this player
+        ///    Gets or sets the client connection for this player
         /// </summary>
         [XmlIgnore]
         [JsonExIgnore]
@@ -119,7 +135,9 @@ namespace Mirage.Stock.Data
             set { _interpreter = value; }
         }
 
-
+        /// <summary>
+        /// The uri to the room that they are in
+        /// </summary>
         public string RoomUri
         {
             get
@@ -138,7 +156,7 @@ namespace Mirage.Stock.Data
             {
                 if (value != null)
                 {
-                    Container = (Room)QueryManager.GetInstance().Find(value);
+                    Container = (Room)new QueryManager().Find(value);
                     if (Container == null)
                     {
                         throw new ObjectNotFoundException("Could not find room with value: " + value);
@@ -167,6 +185,44 @@ namespace Mirage.Stock.Data
                 Client.Write(message);
         }
 
+        /// <summary>
+        /// Security principal for the player
+        /// </summary>
+        public override IPrincipal Principal
+        {
+            get {
+                if (_principal == null)
+                {
+                    _principal = new MudPrincipal(new MudIdentity(Uri), _roles);
+                    _roles = null;
+                }
+                return _principal; 
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the roles that the user has. Normally one should not call set, but
+        /// use the principal object to add the roles.
+        /// </summary>
+        public string[] Roles
+        {
+            get
+            {
+                if (_principal != null)
+                    return _principal.Roles;
+                else
+                    return _roles;
+            }
+            set
+            {
+                _roles = value;
+                if (_principal != null)
+                {
+                    _principal.Clear();
+                    _principal.AddRoles(value);
+                }
+            }
+        }
         /// <summary>
         ///     Loads a player object from a file
         /// </summary>
@@ -224,7 +280,7 @@ namespace Mirage.Stock.Data
             return "You are going to kill " + target + " " + count + " times\r\n";
         }
 
-        [Command(Description="Attempt to kill another player or mobile")]
+        [Command(Description = "Attempt to kill another player or mobile")]
         public string kill([Actor] Player self, 
                           [Lookup("/Players")] Player target)
         {

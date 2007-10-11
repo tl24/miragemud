@@ -36,15 +36,24 @@ namespace Mirage.Core.Data.Query
     public class QueryManager
     {
         private object[] emptyList;
-
+        private object _root;
+        /// <summary>
+        /// Creates a query manager using the default repository
+        /// </summary>
         public QueryManager()
+            : this(null)
         {
-            emptyList = new object[0];
+            
         }
 
-        public static QueryManager GetInstance()
+        /// <summary>
+        /// Create a query manager using the specified root to search for global uri's
+        /// </summary>
+        /// <param name="root">mud repository root</param>
+        public QueryManager(object root)
         {
-            return new QueryManager();
+            emptyList = new object[0];
+            this._root = root;
         }
 
         /// <summary>
@@ -77,7 +86,7 @@ namespace Mirage.Core.Data.Query
         /// <returns>the first matching object</returns>
         public object Find(ObjectQuery query)
         {
-            return Find(MudFactory.GetObject<MudRepositoryBase>(), query);
+            return Find(Root, query);
         }
 
         /// <summary>
@@ -103,7 +112,7 @@ namespace Mirage.Core.Data.Query
         
         public object Find(ObjectQuery query, int index)
         {
-            return Find(MudFactory.GetObject<MudRepositoryBase>(), query, index);
+            return Find(Root, query, index);
         }
 
         public object Find(object searched, string query, int index)
@@ -113,7 +122,7 @@ namespace Mirage.Core.Data.Query
 
         public object Find(string query, int index)
         {
-            return Find(MudFactory.GetObject<MudRepositoryBase>(), ObjectQuery.parse(query), index);
+            return Find(Root, ObjectQuery.parse(query), index);
         }
 
         /// <summary>
@@ -143,7 +152,7 @@ namespace Mirage.Core.Data.Query
         {
             if (query.IsAbsolute)
             {
-                searched = MudFactory.GetObject<MudRepositoryBase>();
+                searched = Root;
             }
             if (searched == null)
                 return emptyList;
@@ -269,6 +278,19 @@ namespace Mirage.Core.Data.Query
             yield break;
         }
 
+        /// <summary>
+        /// Gets the root object that will be searched when an absolute query is performed or if no searched object is set.
+        /// If nothing is set, then the implementation for MudRepositoryBase will be used.
+        /// </summary>
+        public object Root
+        {
+            get {
+                if (_root == null)
+                    _root = MudFactory.GetObject<MudRepositoryBase>();
+                return _root;
+            }
+            set { _root = value; }
+        }
         /// <summary>
         /// Finds the first match in a collection and returns it.
         /// </summary>

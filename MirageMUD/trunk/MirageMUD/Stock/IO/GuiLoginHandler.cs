@@ -54,7 +54,7 @@ namespace Mirage.Stock.IO
                     globalLists.AddPlayer(p);
                     if (p.Container == null)
                     {
-                        Room defaultRoom = (Room)QueryManager.GetInstance().Find(ConfigurationManager.AppSettings["default.room"]);
+                        Room defaultRoom = (Room)new QueryManager().Find(ConfigurationManager.AppSettings["default.room"]);
                         defaultRoom.Add(p);
                     }
                     else
