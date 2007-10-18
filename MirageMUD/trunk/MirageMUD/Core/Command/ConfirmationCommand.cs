@@ -85,6 +85,12 @@ namespace Mirage.Core.Command
         {
             return _innerCommand.UsageHelp();
         }
+
+        public string ShortHelp()
+        {
+            return _innerCommand.ShortHelp();
+        }
+
         #endregion
 
         #region ICommand Members
@@ -93,6 +99,16 @@ namespace Mirage.Core.Command
         public Type[] ClientTypes
         {
             get { return _innerCommand.ClientTypes; }
+        }
+
+        #endregion
+
+        #region ICommand Members
+
+
+        public bool CanInvoke(IActor actor)
+        {
+            return _innerCommand.CanInvoke(actor);
         }
 
         #endregion

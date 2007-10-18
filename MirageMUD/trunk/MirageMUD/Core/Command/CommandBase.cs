@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.Communication;
 using Mirage.Core.Data;
+using System.Security.Principal;
 
 namespace Mirage.Core.Command
 {
@@ -92,6 +93,50 @@ namespace Mirage.Core.Command
             get { return _customParse; }
         }
 
+        /// <summary>
+        /// Checks the actor's security, level and client type to see if they
+        /// can access the command
+        /// </summary>
+        /// <param name="actor"></param>
+        /// <returns></returns>
+        public virtual bool CanInvoke(IActor actor)
+        {
+            if (Level > actor.Level)
+                return false;
+            
+            if (ClientTypes != null && ClientTypes.Length > 0) {
+                IPlayer player = actor as IPlayer;
+                if (player == null || player.Client == null)
+                    return false;
+
+                Type clientType = player.Client.GetType();
+                bool found = false;
+                foreach(Type t in ClientTypes) {
+                    if (t.IsAssignableFrom(clientType)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    return false;
+            }
+
+            if (Roles.Length > 0) {
+                IPrincipal principal = actor.Principal;
+                bool found = false;
+                foreach (string role in Roles) {
+                    if (principal.IsInRole(role)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    return false;
+            }
+            // if we make it here we're ok
+            return true;
+        }
+
         public virtual bool ConvertArguments(string invokedName, IActor actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
         {
             convertedArguments = arguments;
@@ -103,6 +148,7 @@ namespace Mirage.Core.Command
 
         public abstract string UsageHelp();
 
+        public abstract string ShortHelp();
         #endregion
     }
 }

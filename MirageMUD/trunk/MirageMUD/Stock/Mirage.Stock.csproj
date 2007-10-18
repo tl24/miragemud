@@ -42,9 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\CoderCommands.cs" />
     <Compile Include="Command\MiscCommands.cs" />
     <Compile Include="Command\AreaBuilder.cs" />
-    <Compile Include="Command\Movement.cs" />	
+    <Compile Include="Command\Movement.cs" />
     <Compile Include="IO\GuiClientFactory.cs" />
     <Compile Include="IO\GuiLoginHandler.cs" />
     <Compile Include="IO\TextLoginStateHandler.cs" />
@@ -55,7 +56,7 @@
     <Compile Include="Data\Area.cs" />
     <Compile Include="Data\AreaLoader.cs" />
     <Compile Include="Data\Room.cs" />
-    <Compile Include="Data\World.cs" />	
+    <Compile Include="Data\World.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

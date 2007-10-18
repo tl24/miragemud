@@ -44,10 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\ActorAttribute.cs" />
+    <Compile Include="Command\ArgumentConversion.cs" />
     <Compile Include="Command\ArgumentParser.cs" />
     <Compile Include="Command\BaseArgumentAttribute.cs" />
     <Compile Include="Command\CommandAttribute.cs" />
     <Compile Include="Command\CommandBase.cs" />
+    <Compile Include="Command\CommandGroup.cs" />
     <Compile Include="Command\CommandInitializer.cs" />
     <Compile Include="Command\ConfirmationAttribute.cs" />
     <Compile Include="Command\ConfirmationCommand.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="Command\CustomParseAttribute.cs" />
     <Compile Include="Command\ILoginInputHandler.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
+    <Compile Include="Command\ReflectedCommandGroup.cs" />
     <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
     <Compile Include="Communication\BuilderMessages\UpdateConfirmationMessage.cs" />
     <Compile Include="Communication\DataMessage.cs" />
@@ -106,7 +109,7 @@
     <Compile Include="IO\IClientIO.cs" />
     <Compile Include="IO\Serialization\FileSerializerAdapterBase.cs" />
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
-    <Compile Include="MudIdentity.cs" />
+    <Compile Include="Security\MudIdentity.cs" />
     <Compile Include="Security\MudPrincipal.cs" />
     <Compile Include="Util\AbstractStateMachine.cs" />
     <Compile Include="Command\ICommand.cs" />

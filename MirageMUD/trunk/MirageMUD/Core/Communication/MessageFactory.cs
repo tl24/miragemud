@@ -77,6 +77,14 @@ namespace Mirage.Core.Communication
         }
 
         /// <summary>
+        /// This will clear all cached messages and namespaces
+        /// </summary>
+        public static void Clear()
+        {
+            _namespaces.Clear();
+        }
+
+        /// <summary>
         /// Separates a uri into its namespace and name
         /// </summary>
         /// <param name="path">the uri to separate</param>

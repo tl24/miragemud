@@ -127,5 +127,57 @@ namespace Mirage.Stock.Command
             }
             return result;
         }
+
+        [CommandAttribute(Description="Lists commands available to a user")]
+        public static IMessage commands([Actor] Player actor, string searchText)
+        {
+            IList<ICommand> commandList = MethodInvoker.GetAvailableCommands(searchText);
+            StringBuilder sb = new StringBuilder();
+
+            SortedList<string, ICommand> list = FilterAndSortCommands(commandList, actor);
+            int i = 0;
+            foreach (string key in list.Keys)
+            {
+                ICommand cmd = list[key];
+                sb.AppendLine(cmd.ShortHelp());
+            }
+
+            return new StringMessage(MessageType.Information, Namespaces.Common, "command.list.short", sb.ToString());
+        }
+
+        [CommandAttribute(Description = "Lists commands available to a user")]
+        public static IMessage commands([Actor] Player actor)
+        {
+            IList<ICommand> commandList = MethodInvoker.GetAvailableCommands();
+            StringBuilder sb = new StringBuilder();
+
+            SortedList<string, ICommand> list = FilterAndSortCommands(commandList, actor);
+            int i = 0;
+            foreach (string key in list.Keys)
+            {
+                sb.AppendFormat("{0,-20} ", key);
+                i++;
+                if (i % 3 == 0)
+                    sb.AppendLine();
+            }
+            if (i % 3 != 0)
+                sb.AppendLine();
+
+            return new StringMessage(MessageType.Information, Namespaces.Common, "command.list.all", sb.ToString());
+        }
+
+        private static SortedList<string, ICommand> FilterAndSortCommands(IList<ICommand> commands, Player actor)
+        {
+            SortedList<string, ICommand> list = new SortedList<string, ICommand>();
+            foreach (ICommand cmd in commands)
+            {
+                if (cmd.CanInvoke(actor))
+                {
+                    string name = cmd.Aliases.Length > 0 ? cmd.Aliases[0] : cmd.Name;
+                    list[name] = cmd;
+                }
+            }
+            return list;
+        }
     }
 }
