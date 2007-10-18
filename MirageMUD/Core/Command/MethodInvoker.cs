@@ -39,11 +39,13 @@ namespace Mirage.Core.Command
 
         private static void GetTypeMethods(Type objectType)
         {
+            ReflectedCommandGroup group = new ReflectedCommandGroup(objectType);
+
             foreach (MethodInfo mInfo in objectType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static /* | BindingFlags.DeclaredOnly*/))
             {
                 if (mInfo.IsDefined(typeof(CommandAttribute), false))
                 {
-                    ICommand command = ReflectedCommand.CreateInstance(mInfo);
+                    ICommand command = ReflectedCommand.CreateInstance(mInfo, group);
                     if (command.Aliases != null && command.Aliases.Length > 0)
                     {
                         foreach (string alias in command.Aliases)
@@ -78,19 +80,14 @@ namespace Mirage.Core.Command
                 args = parser.GetRest().TrimStart(null);
             }
 
-            IList<ICommand> methods = GetAvailableMethods(commandName);
+            IList<ICommand> methods = GetAvailableCommands(commandName);
             bool fCommandInvoked = false;
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
 
-            Type clientType = null;
-            if (actor is IPlayer && ((IPlayer)actor).Client != null)
-            {
-                clientType = ((IPlayer)actor).Client.GetType();
-            }
 
             foreach (ICommand method in methods)
             {
-                if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes) && CheckRole(actor, method))
+                if (method.CanInvoke(actor))
                 {
                     parser = new ArgumentParser(args);
                     string[] commandArgs = new string[method.ArgCount];
@@ -100,13 +97,9 @@ namespace Mirage.Core.Command
                         if (parsedArgs == commandArgs.Length - 1)
                         {
                             if (method.CustomParse)
-                            {
                                 commandArgs[parsedArgs] = parser.GetRest();
-                            }
                             else
-                            {
                                 commandArgs[parsedArgs] = parser.GetNextArgument();
-                            }
                         }
                         else
                         {
@@ -159,7 +152,7 @@ namespace Mirage.Core.Command
                 bool cmdFound = false;
                 foreach (ICommand method in methods)
                 {
-                    if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes) && CheckRole(actor, method))
+                    if (method.CanInvoke(actor))
                     {
                         actor.Write(new StringMessage(MessageType.PlayerError, "usage", method.UsageHelp()));
                         cmdFound = true;
@@ -174,7 +167,7 @@ namespace Mirage.Core.Command
         public static bool Interpret(IActor actor, string commandName, object[] arguments)
         {
 
-            IList<ICommand> methods = GetAvailableMethods(commandName);
+            IList<ICommand> methods = GetAvailableCommands(commandName);
             bool fCommandInvoked = false;
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
 
@@ -186,7 +179,7 @@ namespace Mirage.Core.Command
 
             foreach (ICommand method in methods)
             {
-                if (method.Level <= actor.Level && CheckClientType(clientType, method.ClientTypes) && CheckRole(actor, method))
+                if (method.CanInvoke(actor))
                 {
                     if (arguments.Length != method.ArgCount)
                     {
@@ -236,59 +229,23 @@ namespace Mirage.Core.Command
         }
 
         /// <summary>
-        /// Checks to see if the type of the player's client is within the allowed list
-        /// or if all clients are accepted
+        /// Returns a list of available commands starting with the given string
         /// </summary>
-        /// <param name="clientType">the players client type</param>
-        /// <param name="allowedTypes">the list of allowed types</param>
-        /// <returns>true if allowed</returns>
-        private static bool CheckClientType(Type clientType, Type[] allowedTypes)
+        /// <param name="commandName">command string to search for</param>
+        /// <returns>list of commands</returns>
+        public static IList<ICommand> GetAvailableCommands(string commandName)
         {
-            if (allowedTypes == null || allowedTypes.Length == 0)
-            {
-                return true;
-            }
-            else
-            {
-                if (clientType == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    foreach (Type t in allowedTypes)
-                    {
-                        if (t.IsAssignableFrom(clientType))
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }
+            return methods.FindStartsWith(commandName);
         }
 
         /// <summary>
-        /// Check to see if the actor has the appropriate roles to execute the command
+        /// Returns a list of available commands
         /// </summary>
-        /// <param name="actor">the actor</param>
-        /// <param name="command">the command</param>
-        /// <returns>true if actor has access</returns>
-        private static bool CheckRole(IActor actor, ICommand command)
+        /// <param name="commandName">command string to search for</param>
+        /// <returns>list of commands</returns>
+        public static IList<ICommand> GetAvailableCommands()
         {
-            if (command.Roles.Length == 0)
-                return true;
-
-            IPrincipal principal = actor.Principal;
-            foreach (string role in command.Roles)
-                if (principal.IsInRole(role))
-                    return true;
-
-            return false;
-        }
-        private static IList<ICommand> GetAvailableMethods(string commandName)
-        {
-            return methods.FindStartsWith(commandName);
+            return methods.GetAllValues();
         }
 
         private class CanidateCommand : IComparable<CanidateCommand>

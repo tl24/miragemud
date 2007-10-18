@@ -11,5 +11,6 @@
 		{ Template: "${player} tells you '${message}'." },
 
 		"tell.self" :  new ResourceMessage ("Confirmation", "tell.self")
-		{ Template: "You tell ${target} '${message}'." }		
+		{ Template: "You tell ${target} '${message}'." }
+	}
 }

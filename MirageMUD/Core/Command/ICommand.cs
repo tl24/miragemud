@@ -52,6 +52,13 @@ namespace Mirage.Core.Command
         bool CustomParse { get; }
 
         /// <summary>
+        /// Verifies that the actor meets the necessary requirements to invoke this command
+        /// </summary>
+        /// <param name="actor">the actor to check</param>
+        /// <returns>true if the actor is allowed to invoked the command</returns>
+        bool CanInvoke(IActor actor);
+
+        /// <summary>
         /// Converts arguments from their input format into their desired types
         /// </summary>
         /// <param name="invokedName">the command name or alias that was used to invoke this command</param>
@@ -72,5 +79,11 @@ namespace Mirage.Core.Command
         IMessage Invoke(string invokedName, IActor actor, object[] arguments);
 
         string UsageHelp();
+
+        /// <summary>
+        /// Returns a single line help description for displaying in a list
+        /// </summary>
+        /// <returns></returns>
+        string ShortHelp();
     }
 }
