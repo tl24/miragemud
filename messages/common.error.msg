@@ -2,16 +2,16 @@
 	"Namespace" : "msg:/common/error/",
 	"Messages" : {
 		"InvalidActor" :  new ResourceMessage ("PlayerError", "InvalidActor")
-		{ Template: "This command can not be executed by a ${ActorType}." },
+		{ Template: "This command can not be executed by a ${ActorType}.\r\n" },
 		
 		"InvalidCommand" :  new ResourceMessage ("PlayerError", "InvalidCommand")
-		{ Template: "Huh?" },
+		{ Template: "Huh?\r\n" },
 		
 		"NotHere" :  new ResourceMessage ("PlayerError", "NotHere")
-		{ Template: "${target} is not here." },
+		{ Template: "${target} is not here.\r\n" },
 		
 		"PlayerNotPlaying" :  new ResourceMessage ("PlayerError", "PlayerNotPlaying")
-		{ Template: "${player} is not playing right now." },
+		{ Template: "${player} is not playing right now.\r\n" },
 		
 		/* OpenableAttribute */
 		"object.already.open" : new StringMessage ("PlayerError", "object.already.open", "It's already open.\r\n"),
