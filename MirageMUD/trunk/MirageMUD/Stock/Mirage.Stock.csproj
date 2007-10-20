@@ -48,6 +48,7 @@
     <Compile Include="Command\Movement.cs" />
     <Compile Include="IO\GuiClientFactory.cs" />
     <Compile Include="IO\GuiLoginHandler.cs" />
+    <Compile Include="IO\PlayerFinalizer.cs" />
     <Compile Include="IO\TextLoginStateHandler.cs" />
     <Compile Include="IO\TextClientFactory.cs" />
     <Compile Include="Data\Player.cs" />

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.Data.Query;
+using Mirage.Core.Communication;
 
 namespace Mirage.Core.Data
 {
@@ -9,6 +10,7 @@ namespace Mirage.Core.Data
     {
         private ICollection<IPlayer> _players;
         private IDictionary<string, IArea> _areas;
+        private ICollection<Channel> _channels;
 
         /// <summary>
         /// Creates the mud repository.  NOTE: this is not meant to be called directly.
@@ -20,6 +22,7 @@ namespace Mirage.Core.Data
             _uri = "global";
             _players = new LinkedList<IPlayer>();
             _areas = new Dictionary<string, IArea>();
+            _channels = new List<Channel>();
             _uriChildCollections.Add("Players", new BaseData.ChildCollectionPair(_players, QueryHints.DefaultPartialMatch));
             _uriChildCollections.Add("Areas", new BaseData.ChildCollectionPair(_areas, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems));
         }
@@ -55,6 +58,10 @@ namespace Mirage.Core.Data
             get { return this._areas; }
         }
 
-
+        public ICollection<Channel> Channels
+        {
+            get { return this._channels; }
+            set { _channels = value; }
+        }
     }
 }

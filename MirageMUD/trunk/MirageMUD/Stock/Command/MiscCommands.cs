@@ -30,6 +30,9 @@ namespace Mirage.Stock.Command
             {
                 if (am != actor)
                 {
+                    if (am is Player && ((Player)am).CommunicationPreferences.IsIgnored(actor.Uri))
+                        continue;
+
                     am.Write(msgToOthers);
                 }
             }
@@ -54,17 +57,26 @@ namespace Mirage.Stock.Command
             }
             else
             {
-                // format the messages
-                ResourceMessage msgToTarget = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/tell.others");
-                msgToTarget["player"] = actor.Title;
-                msgToTarget["message"] = message;
-                p.Write(msgToTarget);
+                if (p.CommunicationPreferences.IsIgnored(actor.Uri) 
+                    && !actor.Principal.IsInRole("immortal"))
+                {
+                    //They're ignoring us!
+                    ResourceMessage errorMsg = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/being.ignored");
+                    errorMsg["player"] = target;
+                    return errorMsg;
+                } else {
+                    // format the messages
+                    ResourceMessage msgToTarget = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/tell.others");
+                    msgToTarget["player"] = actor.Title;
+                    msgToTarget["message"] = message;
+                    p.Write(msgToTarget);
 
-                ResourceMessage msgToSelf = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/tell.self");
-                msgToSelf["message"] = message;
-                msgToSelf["target"] = p.Title;
+                    ResourceMessage msgToSelf = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/tell.self");
+                    msgToSelf["message"] = message;
+                    msgToSelf["target"] = p.Title;
 
-                return msgToSelf;
+                    return msgToSelf;
+                }
             }
         }
 

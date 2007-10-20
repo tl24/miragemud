@@ -31,6 +31,8 @@ namespace Mirage.Core.Data
         /// </summary>
         IInterpret Interpreter { get; set; }
 
+        ICommunicationPreferences CommunicationPreferences { get; }
+
     }
 
     public delegate void PlayerEventHandler(object sender, PlayerEventArgs eventArgs);

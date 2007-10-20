@@ -37,6 +37,25 @@ namespace Mirage.Core.Command
             }
         }
 
+        /// <summary>
+        /// Registers a command with the system
+        /// </summary>
+        /// <param name="command">the command to register</param>
+        public static void RegisterCommand(ICommand command)
+        {
+            if (command.Aliases != null && command.Aliases.Length > 0)
+            {
+                foreach (string alias in command.Aliases)
+                {
+                    methods.Put(alias, command);
+                }
+            }
+            else
+            {
+                methods.Put(command.Name, command);
+            }
+        }
+
         private static void GetTypeMethods(Type objectType)
         {
             ReflectedCommandGroup group = new ReflectedCommandGroup(objectType);
@@ -46,17 +65,7 @@ namespace Mirage.Core.Command
                 if (mInfo.IsDefined(typeof(CommandAttribute), false))
                 {
                     ICommand command = ReflectedCommand.CreateInstance(mInfo, group);
-                    if (command.Aliases != null && command.Aliases.Length > 0)
-                    {
-                        foreach (string alias in command.Aliases)
-                        {
-                            methods.Put(alias, command);
-                        }
-                    }
-                    else
-                    {
-                        methods.Put(command.Name, command);
-                    }
+                    RegisterCommand(command);
                 }
             }
         }

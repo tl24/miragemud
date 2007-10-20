@@ -46,6 +46,7 @@
     <Compile Include="Mock\MockUriContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\MudPrincipalTests.cs" />
+    <Compile Include="Util\HashSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MirageMUD\Core\Mirage.Core.csproj">

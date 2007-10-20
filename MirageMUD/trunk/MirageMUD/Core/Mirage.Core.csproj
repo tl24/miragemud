@@ -58,13 +58,19 @@
     <Compile Include="Command\CustomParseAttribute.cs" />
     <Compile Include="Command\ILoginInputHandler.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
+    <Compile Include="Command\MudCommands.cs" />
     <Compile Include="Command\ReflectedCommandGroup.cs" />
     <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
     <Compile Include="Communication\BuilderMessages\UpdateConfirmationMessage.cs" />
+    <Compile Include="Communication\ChannelCommand.cs" />
+    <Compile Include="Communication\ChannelsInitializer.cs" />
+    <Compile Include="Communication\CommunicationPreferences.cs" />
     <Compile Include="Communication\DataMessage.cs" />
     <Compile Include="Communication\ErrorMessage.cs" />
     <Compile Include="Communication\ErrorResourceMessage.cs" />
+    <Compile Include="Communication\ICommunicationPreferences.cs" />
     <Compile Include="Communication\IMessage.cs" />
+    <Compile Include="Communication\IReceiveMessages.cs" />
     <Compile Include="Communication\ITemplate.cs" />
     <Compile Include="Communication\MessageFactory.cs" />
     <Compile Include="Communication\MovementMessage.cs" />
@@ -138,8 +144,10 @@
     <Compile Include="Util\CollectionEvent.cs" />
     <Compile Include="Util\Collections.cs" />
     <Compile Include="Util\ICollectionEvents.cs" />
+    <Compile Include="Util\ISet.cs" />
     <Compile Include="Util\ISynchronizedQueue.cs" />
     <Compile Include="Util\ListWithEvents.cs" />
+    <Compile Include="Util\HashSet.cs" />
     <Compile Include="Util\SynchronizedQueue.cs" />
     <Compile Include="Util\TypeSupports.cs" />
   </ItemGroup>

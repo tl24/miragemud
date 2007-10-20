@@ -35,7 +35,7 @@ namespace Mirage.Stock.Data
     ///     A base class for living breathing things such as players
     /// and mobiles.
     /// </summary>
-    public abstract class Living : BaseData, IViewable, IContainable, IActor
+    public abstract class Living : BaseData, IViewable, IContainable, IActor, IReceiveMessages
     {
         private string _title;
         private int _level;

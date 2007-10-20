@@ -45,6 +45,11 @@ namespace Mirage.Core.Communication
             set { this._movementType = value; }
         }
 
+        public override string Render()
+        {
+            return ToString();
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

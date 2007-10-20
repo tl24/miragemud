@@ -47,31 +47,12 @@ namespace Mirage.Stock.IO
                 }
                 else
                 {
-                    // should put this in an event to be triggered
-                    //log_string( $ch->{Name}, "\@", $desc->{HOST}, " has connected." );
-                    Client.Logger.Info(string.Format("{0}@{1} has connected.", p.Uri, Client.TcpClient.Client.RemoteEndPoint));
-                    MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
-                    globalLists.AddPlayer(p);
-                    if (p.Container == null)
-                    {
-                        Room defaultRoom = (Room)new QueryManager().Find(ConfigurationManager.AppSettings["default.room"]);
-                        defaultRoom.Add(p);
-                    }
-                    else
-                    {
-                        p.Container.Add(p);
-                    }
-
-                    //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\r\n");
-                    Client.State = ConnectedState.Playing;
-                    //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\r\n",  $desc);	
-                    
-                    Client.Player = p;
-                    p.Client = Client;
+                    PlayerFinalizer finalizer = new PlayerFinalizer(Client, p);
+                    finalizer.Finalize(false);
 
                     Client.LoginHandler = null;
-                    Client.Write(new StringMessage(MessageType.Confirmation, Namespaces.Authentication, "Login", "Login successful"));
-                    Client.Write(new StringMessage(MessageType.Information, Namespaces.Negotiation, "Welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
+                    Client.Write(MessageFactory.GetMessage("msg:/negotiation/Login"));
+                    //Client.Write(new StringMessage(MessageType.Information, Namespaces.Negotiation, "Welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
                 }
             }
         }
