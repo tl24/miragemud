@@ -10,7 +10,7 @@ namespace Mirage.Core.Data
     /// <summary>
     /// represents an object that is capable of invoking a command
     /// </summary>
-    public interface IActor
+    public interface IActor : IReceiveMessages
     {
         /// <summary>
         /// Writes a message to the player's output stream

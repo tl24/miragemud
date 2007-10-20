@@ -84,44 +84,8 @@ namespace Mirage.Stock.IO
             }
             else
             {
-                Player isPlaying = (Player)new QueryManager().Find(new ObjectQuery(null, "Players", new ObjectQuery(GetValue<Player>("player").Uri)));
-                if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
-                {
-                    Client.Write(new ResourceMessage(MessageType.PlayerError, Namespaces.Authentication, "player.already.playing"));
-                    Client.Player = null;
-                    Client.State = ConnectedState.Connecting;
-                    Client.Close();
-                }
-                else
-                {
-
-                    Player player = GetValue<Player>("player");
-                    Client.Logger.Info(string.Format("{0}@{1} has connected.", player.Uri, Client.TcpClient.Client.LocalEndPoint));
-                    if (GetValue<bool>("isNew"))
-                    {
-                        player.Roles = new string[] { "player" };
-                    }
-
-                    MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
-                    globalLists.AddPlayer(player);
-                    if (player.Container == null)
-                    {
-                        Room defaultRoom = (Room)new QueryManager().Find(ConfigurationManager.AppSettings["default.room"]);
-                        defaultRoom.Add(player);
-                    }
-                    else
-                    {
-                        player.Container.Add(player);
-                    }
-
-                    Client.Write(new StringMessage(MessageType.Information, Namespaces.Negotiation, "welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
-                    //descriptor.writeToBuffer( "Color TesT: " + CLR_TEST + "\r\n");
-                    Client.State = ConnectedState.Playing;
-                    //Client->WriteToChannel(GLOBAL, $ch->Short . " has entered the game.\r\n",  $desc);	
-
-                    Client.Player = player;
-                    GetValue<Player>("player").Client = Client;
-                }
+                PlayerFinalizer finalizer = new PlayerFinalizer(Client, GetValue<Player>("player"));
+                finalizer.Finalize(GetValue<bool>("isNew"));
             }
             Client.LoginHandler = null;
             Client = null;            

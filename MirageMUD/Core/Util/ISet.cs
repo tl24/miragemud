@@ -10,6 +10,12 @@ namespace Mirage.Core.Util
     public interface ISet<T> : ICollection<T>
     {
         /// <summary>
+        /// Copies the contents to an array
+        /// </summary>
+        /// <returns>an array</returns>
+        T[] ToArray();
+
+        /// <summary>
         /// Adds all the items in the collection to this set
         /// </summary>
         /// <param name="collection"></param>

@@ -8,7 +8,7 @@ namespace Mirage.Core.Util
     /// Provides an implementation of a set
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Set<T> : ISet<T>
+    public class HashSet<T> : ISet<T>
     {
         private Dictionary<T, bool> _dictionary;
 
@@ -16,7 +16,7 @@ namespace Mirage.Core.Util
         /// Creates an empty set with the default equality comparer
         /// for the item type
         /// </summary>
-        public Set()
+        public HashSet()
         {
             _dictionary = new Dictionary<T, bool>();
         }
@@ -25,16 +25,16 @@ namespace Mirage.Core.Util
         /// Creates an empty set that uses the specified equality comparer to compare
         /// items.
         /// </summary>
-        public Set(IEqualityComparer<T> equalityComparer)
+        public HashSet(IEqualityComparer<T> equalityComparer)
         {
-            _dictionary = new Dictionary<T, bool>();
+            _dictionary = new Dictionary<T, bool>(equalityComparer);
         }
 
         /// <summary>
         /// Creates set with the default equality comparer
         /// for the item type initialized with the items in the collection
         /// </summary>
-        public Set(IEnumerable<T> collection)
+        public HashSet(IEnumerable<T> collection)
             : this()
         {
             Add(collection);
@@ -44,20 +44,10 @@ namespace Mirage.Core.Util
         /// Creates set with the specified equality comparer
         /// to compare items initialized with the items in the collection
         /// </summary>
-        public Set(IEnumerable<T> collection, IEqualityComparer<T> equalityComparer)
+        public HashSet(IEnumerable<T> collection, IEqualityComparer<T> equalityComparer)
             : this(equalityComparer)
         {
             Add(collection);
-        }
-
-        /// <summary>
-        /// Adds all the elements in the collection to this set
-        /// </summary>
-        /// <param name="collection">collection of items to add</param>
-        public void Add(IEnumerable<T> collection)
-        {
-            foreach (T item in collection)
-                Add(item);
         }
 
         #region ICollection<T> Members
@@ -70,6 +60,17 @@ namespace Mirage.Core.Util
         {
             _dictionary[item] = true;
         }
+
+        /// <summary>
+        /// Adds all the elements in the collection to this set
+        /// </summary>
+        /// <param name="collection">collection of items to add</param>
+        public void Add(IEnumerable<T> collection)
+        {
+            foreach (T item in collection)
+                Add(item);
+        }
+
 
         /// <summary>
         /// Remove all items from the set
@@ -124,6 +125,13 @@ namespace Mirage.Core.Util
             _dictionary.Keys.CopyTo(array, arrayIndex);
         }
 
+        public T[] ToArray()
+        {
+            T[] items = new T[this.Count];
+            CopyTo(items, 0);
+            return items;
+        }
+
         /// <summary>
         /// Returns the number of items in the set
         /// </summary>
@@ -163,12 +171,12 @@ namespace Mirage.Core.Util
         /// Creates a new set that contains all the items in the current set and
         /// all the items in the sets to union
         /// </summary>
-        /// <param name="toUnion"></param>
+        /// <param name="set"></param>
         /// <returns></returns>
-        public ISet<T> Union(IEnumerable<T> collection)
+        public ISet<T> Union(IEnumerable<T> set)
         {
-            Set<T> result = new Set<T>();
-            result.Add(collection);
+            HashSet<T> result = new HashSet<T>();
+            result.Add(set);
             return result;
         }
 
@@ -176,11 +184,11 @@ namespace Mirage.Core.Util
         /// Returns a set that is the intersection of this set and the other set, i.e. a
         /// set containing the items that exist in both sets
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="set"></param>
         /// <returns></returns>
         public ISet<T> Intersect(ICollection<T> set)
         {
-            Set<T> result = new Set<T>();
+            HashSet<T> result = new HashSet<T>();
             ICollection<T> smallest = this;
             ICollection<T> biggest = set;
             if (set.Count < this.Count)
@@ -204,7 +212,7 @@ namespace Mirage.Core.Util
         /// <returns></returns>
         public ISet<T> Exclude(IEnumerable<T> toExclude)
         {
-            Set<T> result = new Set<T>(this);
+            HashSet<T> result = new HashSet<T>(this);
             result.Remove(toExclude);
             return result;
         }

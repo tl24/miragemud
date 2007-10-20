@@ -4,90 +4,438 @@ using System.Text;
 
 using Mirage.Core.Data;
 using Mirage.Core.Command;
+using Mirage.Core.Util;
+using JsonExSerializer;
+using Mirage.Core.Data.Query;
 
 namespace Mirage.Core.Communication
 {
     public class Channel {
-        /*
-        private string _name;
-        private IList<IPrincipal> _allowed;
-        private IList<IPrincipal> _denied;
-        private IDictionary<string, Player> _members;
         
-        public Channel(string name) {
-           this._name = _name;
+        private string _name;
+        private ISet<string> _allowed;
+        private ISet<string> _banned;
+        private ISet<IReceiveMessages> _members;
+        private ISet<string> _roles;
+        private bool _isDefault;
+
+        public Channel() : this("", null, null, null)
+        {
+            
         }
 
-        //TODO: Visibility?? Readonly?
-        public IList<IPrincipal> Allowed {
-           get { return _allowed; }
-           set { _allowed = value; }
+        public Channel(string name, IEnumerable<string> allowed, IEnumerable<string> banned, IEnumerable<string> roles) {
+            _name = name;
+            _members = new HashSet<IReceiveMessages>();
+            _allowed = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _banned = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _roles = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            if (allowed != null)
+                _allowed.Add(allowed);
+            if (banned != null)
+                _banned.Add(banned);
+            if (roles != null)
+                _roles.Add(roles);
+
+        }
+        
+        [ConstructorParameter(0)]
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
         }
 
-        public IList<IPrincipal> Denied {
-           get { return _denied; }
-           set { _denied = value; }
+        #region Allow
+
+        /// <summary>
+        /// The names of players that are allowed to join, if blank
+        /// any player can join as long as they meet security requirements and
+        /// they aren't denied.
+        /// </summary>
+        [ConstructorParameter(1)]
+        public IEnumerable<string> Allowed
+        {
+           get { return _allowed.ToArray(); }
         }
 
-        public bool CanJoin() {
-           if (_denied.Count > 0) {
-              foreach(? role in _denied) {
-                 if IsPlayerInRole(player, role)) {
-                     return false;
-                 }
-              }
-           }
-
-           if (_allowed.Count > 0) {
-              foreach(? role in _allowed) {
-                 if IsPlayerInRole(player, role)) {
-                     return true;
-                 }
-              }
-              return false;
-           } else {
-              return true;
-           }
+        /// <summary>
+        /// Checks to see if the participant is in the allow list
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        public bool IsAllowed(object participant)
+        {
+            if (_allowed.Count > 0)
+            {
+                string name = GetName(participant);
+                if (name == null)
+                    return false;
+                return _allowed.Contains(name);
+            }
+            return true;
         }
 
-        public void Join(Player player) {
-            if (CanJoin(player)) {
-                _members[player.Uri] = player;
-            } else {
-                throw new ApplicationException("Player " + player.Uri + " can't join channel " + _name);
+        /// <summary>
+        /// Allow the player to join.  Once any name is added to this list, anyone who joins
+        /// must be in the allow list.  Use ClearAllow list to clear the list
+        /// </summary>
+        /// <param name="name">the name to add</param>
+        public void Allow(string name)
+        {
+            _allowed.Add(name);
+            _banned.Remove(name);
+        }
+
+        /// <summary>
+        /// Removes the player from the allow list
+        /// </summary>
+        /// <param name="name">the name to unallow</param>
+        public void UnAllow(string name)
+        {
+            _allowed.Remove(name);
+        }
+
+        /// <summary>
+        /// Clears all names from the allow list
+        /// </summary>
+        public void ClearAllow()
+        {
+            _allowed.Clear();
+        }
+
+        #endregion
+
+        #region Ban
+        /// <summary>
+        /// The players that are not allowed to join
+        /// </summary>
+        [ConstructorParameter(2)]
+        public IEnumerable<string> Banned
+        {
+            get { return _banned.ToArray(); }
+        }
+
+        /// <summary>
+        /// Checks to see if the participant is in the banned list
+        /// </summary>
+        /// <param name="participant">participant to test</param>
+        /// <returns>true if denied</returns>
+        public bool IsBanned(object participant)
+        {
+            if (_banned.Count > 0)
+            {
+                string name = GetName(participant);
+                // if no name to test, assume they're denied
+                if (name == null)
+                    return true;
+                return _banned.Contains(name);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Bans any player with the given name from the channel.  If the
+        /// player is already a member of the channel they will be removed and sent a message indicating
+        /// that they've been banned.  They will also not be able to join in the future until the
+        /// ban is lifted.
+        /// </summary>
+        /// <param name="name">the name of the player to ban</param>
+        public void Ban(string name)
+        {
+            _banned.Add(name);
+            _allowed.Remove(name);
+            foreach (IReceiveMessages member in _members)
+            {
+                if (IsBanned(member))
+                {
+                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/member.not.allowed");
+                    rm["channel"] = this.Name;
+                    member.Write(rm);
+                    Remove(member);
+                    break;
+                }
             }
         }
-                 
-        public void Part(Player player) { 
-            if (_members.Contains(player)) {
-                _members.Remove(player);
+
+        /// <summary>
+        /// Removes the name from the ban list
+        /// </summary>
+        /// <param name="name"></param>
+        public void UnBan(string name)
+        {
+            _banned.Remove(name);
+        }
+
+        /// <summary>
+        /// Clears the ban list
+        /// </summary>
+        public void ClearBans()
+        {
+            _banned.Clear();
+        }
+        #endregion
+
+        #region Roles
+
+        /// <summary>
+        /// The roles required to join the channel.  A participant must have any one of the
+        /// specified roles to join.  If roles are applied to this channel, only objects implementing
+        /// IActor(which includes players) may join.
+        /// </summary>
+        [ConstructorParameter(3)]
+        public IEnumerable<string> Roles
+        {
+            get { return _roles.ToArray(); }
+        }
+
+        /// <summary>
+        /// Checks to see if the given object is in role for this channel,
+        /// tries to find an IPrincipal member for the object
+        /// </summary>
+        /// <param name="member">the member to check</param>
+        /// <returns>true if in role</returns>
+        private bool IsInRole(object participant)
+        {
+            if (_roles.Count > 0)
+            {
+                IActor actor = participant as IActor;
+                if (actor != null)
+                {
+                    foreach (string role in _roles)
+                        if (actor.Principal.IsInRole(role))
+                            return true;
+                }
+                // can't determine their roles, so return false
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Adds the role to this channel.  If no roles exist on the channel, any current members
+        /// will be rechecked to see if they can still be members.
+        /// </summary>
+        /// <param name="role">role to add</param>
+        public void AddRole(string role)
+        {
+            bool recheck = _roles.Count > 0;
+            _roles.Add(role);
+            if (recheck)
+            {
+                CheckAllMemberRoles();
             }
         }
 
-        private bool IsPlayerInRole(Player player, string role) {
-            //TODO: Check role for player
+        /// <summary>
+        /// Removes a role from the restriction list.  Will recheck members to see if they are still allowed
+        /// </summary>
+        /// <param name="role">the role to remove</param>
+        public void RemoveRole(string role)
+        {
+            _roles.Remove(role);
+            CheckAllMemberRoles();
         }
 
-        public int Send(Player sender, string message) {
-            string formatted = String.format("[{0}]: {1}\r\n", _name, message);
-            foreach(Player recipient in _members) {
-               //TODO: Check preferences
-               if (recipient != sender) {
-                   recipient.writeToBuffer(formatted);
+        /// <summary>
+        /// Rechecks all members to see if they still meet the role requirements when roles are changed
+        /// </summary>
+        private void CheckAllMemberRoles()
+        {
+            // we added a role where there were none before, check to see if
+            // members till meet criteria
+            // use the Members property since it is readonly we can remove from our list without exceptions
+            foreach (IReceiveMessages member in Members)
+            {
+                if (!IsInRole(member))
+                {
+                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/member.not.allowed");
+                    rm["channel"] = this.Name;
+                    member.Write(rm);
+                    Remove(member);
+                }
+            }
+        }
+
+        public void ClearRoles()
+        {
+            _roles.Clear();
+        }
+        #endregion
+
+        #region Members
+
+        /// <summary>
+        /// Gets the current members of the channel
+        /// </summary>
+        public IEnumerable<IReceiveMessages> Members
+        {
+            get { return _members.ToArray(); }
+        }
+
+        /// <summary>
+        /// The number of members in the channel
+        /// </summary>
+        public int MemberCount
+        {
+            get { return _members.Count; }
+        }
+
+        /// <summary>
+        /// Checks to see if the specified member is a member of the channel
+        /// </summary>
+        /// <param name="member">member</param>
+        public bool ContainsMember(IReceiveMessages member)
+        {
+            return _members.Contains(member);
+        }
+
+        /// <summary>
+        /// Clears all members from the channel
+        /// </summary>
+        public void ClearMembers()
+        {
+            // remove manually to clear events
+            foreach (IReceiveMessages member in Members)
+                Remove(member);
+        }
+
+        /// <summary>
+        /// Adds the participant to this channel.
+        /// </summary>
+        /// <param name="participant">the participant to add</param>
+        /// <exception cref="Mirage.Core.Communication.ValidationException">The participant is not allowed to join</exception>
+        public void Add(IReceiveMessages participant)
+        {
+            if (CanJoin(participant))
+            {
+                _members.Add(participant);
+                if (participant is IPlayer)
+                {
+                    ((IPlayer)participant).PlayerEvent += new PlayerEventHandler(Channel_PlayerEvent);
+                }
+            }
+            else
+            {
+                ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/cant.join.channel");
+                rm["channel"] = this.Name;
+                throw new ValidationException(rm);
+            }
+        }
+
+        void Channel_PlayerEvent(object sender, PlayerEventArgs eventArgs)
+        {
+            if (eventArgs.EventType == PlayerEventType.Quiting)
+            {
+                Remove((IReceiveMessages) sender);
+            }
+        }
+
+        /// <summary>
+        /// Removes the participant from the channel
+        /// </summary>
+        /// <param name="participant">participant to remove</param>
+        public void Remove(IReceiveMessages participant)
+        {
+            _members.Remove(participant);
+            if (participant is IPlayer)
+            {
+                ((IPlayer)participant).PlayerEvent -= new PlayerEventHandler(Channel_PlayerEvent);
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Clears all allow, ban, and role restrictions
+        /// </summary>
+        public void ClearRestrictions()
+        {
+            ClearAllow();
+            ClearBans();
+            ClearRoles();
+        }
+
+        /// <summary>
+        /// Returns true if the participant can join this channel
+        /// </summary>
+        /// <param name="participant">participant to check</param>
+        /// <returns>true if they can join the channel</returns>
+        public bool CanJoin(IReceiveMessages participant)
+        {
+            return (!IsBanned(participant)
+                    && IsAllowed(participant)
+                    && IsInRole(participant));
+        }
+
+        /// <summary>
+        /// Tries to determine the name from any acceptable interface that a name can be retrieved from
+        /// </summary>
+        /// <param name="participant">participant object to test</param>
+        /// <returns>name if it can be determined</returns>
+        private string GetName(object participant)
+        {
+            IUri uri = participant as IUri;
+            if (uri != null)
+                return uri.Uri;
+            return null;
+        }
+
+        /// <summary>
+        /// Sends the given message to all players within the channel
+        /// </summary>
+        /// <param name="sender">the message sender</param>
+        /// <param name="message">the message to send</param>
+        public void Send(IReceiveMessages sender, string message) {
+            ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/channel.text");
+            string senderName = GetName(sender) ?? "someone";
+            rm["sender"] = senderName;
+            rm["channel"] = this.Name;
+            rm["message"] = message;
+
+            foreach (IReceiveMessages recipient in _members)
+            {               
+               if (recipient != sender && !IsIgnoring(recipient, senderName)) {                   
+                   recipient.Write(rm);
                }
             }
         }
-        */
 
-        [Command(Aliases=new string[]{"test"})]
-        public static void Send(string name, [Actor] IActor player) {
-            
-        }        
-
-        [Command]
-        public static void Send(string name, [Actor] IActor player, [CustomParse] string message)
+        /// <summary>
+        /// Checks to see if the recipient is ignoring the sender
+        /// </summary>
+        /// <param name="recipient">the recipient to check</param>
+        /// <param name="sender">the sender name</param>
+        private bool IsIgnoring(object recipient, string sender)
         {
-           
-        }        
+            IPlayer player = recipient as IPlayer;
+            if (player != null)
+            {
+                return player.CommunicationPreferences.IsIgnored(sender);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Creates the necessary commands for the player to interact with this channel
+        /// </summary>
+        public IList<ICommand> CreateCommands()
+        {
+            List<ICommand> commands = new List<ICommand>();
+
+            commands.Add(new ChannelSendCommand(this));
+            commands.Add(new ChannelToggleCommand(this));
+            return commands;
+        }
+
+        /// <summary>
+        /// Gets or sets a property that indicates whether this channel should be turned on by 
+        /// default for a new player
+        /// </summary>
+        public bool IsDefault
+        {
+            get { return this._isDefault; }
+            set { this._isDefault = value; }
+        }
     }
 }

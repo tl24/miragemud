@@ -15,7 +15,7 @@ namespace Mirage.Stock.Command
         {
             MessageFactory.Clear();
             //don't load a message through the factory since it will reload the namespace
-            return new StringMessage(MessageType.Confirmation, "ClearMessageCache", "Message factory cache cleared.");
+            return new StringMessage(MessageType.Confirmation, "ClearMessageCache", "Message factory cache cleared.\r\n");
         }
     }
 }

@@ -32,6 +32,7 @@ namespace Mirage.Stock.Data
         private IInterpret _interpreter;
         private MudPrincipal _principal;
         private string[] _roles;
+        private CommunicationPreferences _commPrefs = new CommunicationPreferences();
 
         public event PlayerEventHandler PlayerEvent;
 
@@ -193,7 +194,10 @@ namespace Mirage.Stock.Data
             get {
                 if (_principal == null)
                 {
-                    _principal = new MudPrincipal(new MudIdentity(Uri), _roles);
+                    if (_roles == null)
+                        _principal = new MudPrincipal(new MudIdentity(Uri));
+                    else
+                        _principal = new MudPrincipal(new MudIdentity(Uri), _roles);
                     _roles = null;
                 }
                 return _principal; 
@@ -304,6 +308,12 @@ namespace Mirage.Stock.Data
         public override string ToString()
         {
             return this.GetType().Name + " " + Title;
+        }
+
+        public ICommunicationPreferences CommunicationPreferences
+        {
+            get { return this._commPrefs; }
+            set { this._commPrefs = (CommunicationPreferences) value; }
         }
 
     }
