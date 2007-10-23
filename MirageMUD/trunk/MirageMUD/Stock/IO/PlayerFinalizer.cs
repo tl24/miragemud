@@ -68,7 +68,7 @@ namespace Mirage.Stock.IO
                 globalLists.AddPlayer(Player);
                 if (Player.Container == null)
                 {
-                    Room defaultRoom = (Room)new QueryManager().Find(ConfigurationManager.AppSettings["default.room"]);
+                    Room defaultRoom = (Room)MudFactory.GetObject<QueryManager>().Find(ConfigurationManager.AppSettings["default.room"]);
                     defaultRoom.Add(Player);
                 }
                 else
@@ -102,7 +102,7 @@ namespace Mirage.Stock.IO
 
         public bool CheckAlreadyPlaying()
         {
-            Player isPlaying = (Player)new QueryManager().Find(new ObjectQuery(null, "Players", new ObjectQuery(Player.Uri)));
+            Player isPlaying = (Player)MudFactory.GetObject<QueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(Player.Uri)));
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
                 Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/player.already.playing"));

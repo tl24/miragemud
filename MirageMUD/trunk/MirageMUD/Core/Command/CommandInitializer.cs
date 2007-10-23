@@ -9,6 +9,11 @@ namespace Mirage.Core.Command
 {
     public class CommandInitializer : IInitializer
     {
+        public string Name
+        {
+            get { return this.GetType().Name; }
+        }
+
         public void Execute()
         {
             ILog logger = LogManager.GetLogger(typeof(CommandInitializer));

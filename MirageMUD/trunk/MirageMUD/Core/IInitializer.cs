@@ -9,6 +9,7 @@ namespace Mirage.Core
     /// </summary>
     public interface IInitializer
     {
+        string Name { get; }
         void Execute();
     }    
 }

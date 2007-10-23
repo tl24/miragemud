@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.IO;
 using Mirage.Core.Data;
+using Mirage.Core;
+using log4net;
 
 namespace Mirage
 {
@@ -11,8 +13,18 @@ namespace Mirage
         static void Main(string[] args)
         {
             log4net.Config.XmlConfigurator.Configure();            
-            Server listener = new Server(4500);
-            listener.Run();
+            //MirageServer listener = new MirageServer(4500);
+            //listener.Run();
+            try
+            {
+                MirageServer listener = MudFactory.GetObject<MirageServer>();
+                listener.Run();
+            }
+            catch (Exception e)
+            {
+                ILog logger = LogManager.GetLogger("");
+                logger.Error(e.Message, e);
+            }
         }
     }
 }

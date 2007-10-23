@@ -63,7 +63,7 @@ namespace Mirage.Stock.Data
         {
             get {
                 if (_targetRoom == null) {
-                    QueryManager queryManager = new QueryManager();
+                    QueryManager queryManager = MudFactory.GetObject<QueryManager>();
                     if (_toRoomURI.StartsWith("/") || _toRoomURI.StartsWith("Areas")) {
                         // absolute link
                         _targetRoom = (Room)queryManager.Find(_toRoomURI);

@@ -13,12 +13,13 @@ using Mirage.Core.Util;
 using Mirage.Core.IO.Serialization;
 using System.Configuration;
 using System.Collections.Specialized;
+using Mirage.Core.IO;
 
-namespace Mirage.Core.IO
+namespace Mirage.Core
 {
-    public class Server
+    public class MirageServer
     {
-        private static ILog logger = LogManager.GetLogger(typeof(Server));
+        private static ILog logger = LogManager.GetLogger(typeof(MirageServer));
 
         /// <summary>
         ///     The network port being listened on
@@ -30,7 +31,9 @@ namespace Mirage.Core.IO
         /// </summary>
         private bool _shutdown;
 
-        public Server(int port)
+        private List<IInitializer> _initializers;
+
+        public MirageServer(int port)
         {
             _port = port;
             Shutdown = true;
@@ -41,19 +44,20 @@ namespace Mirage.Core.IO
             set { _shutdown = value; }
         }
 
+        public List<IInitializer> Initializers
+        {
+            get { return _initializers; }
+            set { _initializers = value; }
+        }
+
         protected void Init()
         {
-            //Configuration cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-            NameValueCollection initializers = (NameValueCollection)ConfigurationManager.GetSection("MirageMUD/Initializers");
-            if (initializers != null)
+            if (_initializers != null)
             {
-                
-                foreach (string key in initializers)
+               
+                foreach (IInitializer initModule in _initializers)
                 {
-                    string value = initializers[key];
-                    logger.Info("Loading initializer " + key + " : " + value);
-                    IInitializer initModule = (IInitializer) Activator.CreateInstance(Type.GetType(value));
-                    logger.Debug("Executing initializer " + key);
+                    logger.Info("Loading initializer " + initModule.Name);
                     initModule.Execute();                    
                 }                
             }

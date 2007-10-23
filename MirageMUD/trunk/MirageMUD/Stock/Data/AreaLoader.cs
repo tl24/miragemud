@@ -10,9 +10,20 @@ namespace Mirage.Stock.Data
 {
     public class AreaLoader : IInitializer
     {
+        private MudRepositoryBase _mudRespository;
+
+        public AreaLoader(MudRepositoryBase MudRepository)
+        {
+            _mudRespository = MudRepository;
+        }
+
+        public string Name
+        {
+            get { return this.GetType().Name; }
+        }
+
         public void Execute()
         {
-            MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
             Area defaultArea = null;
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
             defaultArea = (Area) persister.Load("DefaultArea");
@@ -46,7 +57,7 @@ namespace Mirage.Stock.Data
                 room.Area = defaultArea;
                 persister.Save(defaultArea, defaultArea.Uri);
             }
-            globalLists.Areas[defaultArea.Uri] = defaultArea;
+            _mudRespository.Areas[defaultArea.Uri] = defaultArea;
         }
 
     }

@@ -102,7 +102,7 @@ namespace Mirage.Stock.Command
         [Command]
         public static IMessage GetArea(string itemUri)
         {
-            Area area = (Area) new QueryManager().Find(itemUri);
+            Area area = (Area) MudFactory.GetObject<QueryManager>().Find(itemUri);
             return new DataMessage(Namespaces.Area, "Area", itemUri, area);
         }
 
@@ -115,7 +115,7 @@ namespace Mirage.Stock.Command
         [Command]
         public static IMessage GetRooms(string itemUri)
         {
-            IDictionary<string, Room> rooms = (IDictionary<string, Room>) new QueryManager().Find(itemUri);
+            IDictionary<string, Room> rooms = (IDictionary<string, Room>)MudFactory.GetObject<QueryManager>().Find(itemUri);
             List<string> roomList = new List<string>(rooms.Keys);
             return new DataMessage(Namespaces.Area, "Rooms", itemUri, roomList);
         }
@@ -129,7 +129,7 @@ namespace Mirage.Stock.Command
         [Command]
         public static IMessage GetRoom(string itemUri)
         {
-            Room room = (Room)new QueryManager().Find(itemUri);
+            Room room = (Room)MudFactory.GetObject<QueryManager>().Find(itemUri);
             return new DataMessage(Namespaces.Area, "Room", itemUri, room);
         }
     }
