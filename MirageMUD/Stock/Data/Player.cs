@@ -157,7 +157,7 @@ namespace Mirage.Stock.Data
             {
                 if (value != null)
                 {
-                    Container = (Room)new QueryManager().Find(value);
+                    Container = (Room)MudFactory.GetObject<QueryManager>().Find(value);
                     if (Container == null)
                     {
                         throw new ObjectNotFoundException("Could not find room with value: " + value);

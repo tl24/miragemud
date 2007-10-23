@@ -75,7 +75,7 @@ namespace Mirage.Core.Command
             {
                 // they're not ignored, so start ignoring them
                 // try and find them first to validate its a valid name
-                IPlayer p = (IPlayer) new QueryManager().Find(ObjectQuery.parse("/Players", player));
+                IPlayer p = (IPlayer) MudFactory.GetObject<QueryManager>().Find(ObjectQuery.parse("/Players", player));
                 if (p == null)
                 {
                     // they're not playing

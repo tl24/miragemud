@@ -29,6 +29,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.MicroKernel, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Castle.MicroKernel.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Castle.Windsor.dll</HintPath>
+    </Reference>
     <Reference Include="JsonExSerializer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\JsonExSerializer.dll</HintPath>
@@ -135,7 +147,7 @@
     <Compile Include="IO\IClientFactory.cs" />
     <Compile Include="IO\TextClient.cs" />
     <Compile Include="IO\IClient.cs" />
-    <Compile Include="IO\Server.cs" />
+    <Compile Include="MirageServer.cs" />
     <Compile Include="IO\Serialization\ObjectSerializer.cs" />
     <Compile Include="IO\Serialization\XmlSerializerAdapter.cs" />
     <Compile Include="IO\TransactionFactory.cs" />
