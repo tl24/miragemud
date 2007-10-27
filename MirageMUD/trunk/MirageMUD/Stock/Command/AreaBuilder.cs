@@ -21,12 +21,28 @@ namespace Mirage.Stock.Command
         Roles = "builder")]
     public class AreaBuilder
     {
+        private IQueryManager _queryManager;
+
+        public IQueryManager QueryManager
+        {
+            get { return this._queryManager; }
+            set { this._queryManager = value; }
+        }
+
+        private MudRepositoryBase _mudRepository;
+
+        public MudRepositoryBase MudRepository
+        {
+            get { return _mudRepository; }
+            set { _mudRepository = value; }
+        }
+
         /// <summary>
         /// Get the top node of the area hierarchy
         /// </summary>
         /// <returns></returns>
         [Command]
-        public static IMessage GetWorld()
+        public IMessage GetWorld()
         {
             return new DataMessage(Namespaces.Area, "World", new World());
         }
@@ -36,9 +52,9 @@ namespace Mirage.Stock.Command
         /// </summary>
         /// <returns>area list</returns>
         [Command]
-        public static IMessage GetAreas(string itemUri)
+        public IMessage GetAreas(string itemUri)
         {
-            IDictionary<string, IArea> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
+            IDictionary<string, IArea> areas = MudRepository.Areas;
             List<string> areaList = new List<string>(areas.Keys);
             return new DataMessage(Namespaces.Area, "AreaList", "Areas", areaList);
         }
@@ -48,9 +64,9 @@ namespace Mirage.Stock.Command
         /// </summary>
         /// <returns>confirmation</returns>
         [Command]
-        public static IMessage UpdateItem(ChangeType changeType, Area area)
+        public IMessage UpdateItem(ChangeType changeType, Area area)
         {
-            IDictionary<string, IArea> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
+            IDictionary<string, IArea> areas = MudRepository.Areas;
             switch (changeType)
             {
                 case ChangeType.Add:                    
@@ -73,10 +89,10 @@ namespace Mirage.Stock.Command
         }
 
         [Command]
-        public static IMessage SaveArea(string areaName)
+        public IMessage SaveArea(string areaName)
         {
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
-            IDictionary<string, IArea> areas = MudFactory.GetObject<MudRepositoryBase>().Areas;
+            IDictionary<string, IArea> areas = MudRepository.Areas;
             if (areaName == null || areaName == string.Empty || areaName == "all")
             {
                 foreach (Area area in areas.Values)
@@ -100,9 +116,9 @@ namespace Mirage.Stock.Command
         /// <param name="builder">the builder player doing the request</param>
         /// <returns>area</returns>
         [Command]
-        public static IMessage GetArea(string itemUri)
+        public IMessage GetArea(string itemUri)
         {
-            Area area = (Area) MudFactory.GetObject<QueryManager>().Find(itemUri);
+            Area area = (Area) QueryManager.Find(itemUri);
             return new DataMessage(Namespaces.Area, "Area", itemUri, area);
         }
 
@@ -113,9 +129,9 @@ namespace Mirage.Stock.Command
         /// <param name="itemUri">Uri to the rooms collection of an area</param>
         /// <returns>list of rooms</returns>
         [Command]
-        public static IMessage GetRooms(string itemUri)
+        public IMessage GetRooms(string itemUri)
         {
-            IDictionary<string, Room> rooms = (IDictionary<string, Room>)MudFactory.GetObject<QueryManager>().Find(itemUri);
+            IDictionary<string, Room> rooms = (IDictionary<string, Room>)QueryManager.Find(itemUri);
             List<string> roomList = new List<string>(rooms.Keys);
             return new DataMessage(Namespaces.Area, "Rooms", itemUri, roomList);
         }
@@ -127,9 +143,9 @@ namespace Mirage.Stock.Command
         /// <param name="itemUri">Uri to the room of an area</param>
         /// <returns>room</returns>
         [Command]
-        public static IMessage GetRoom(string itemUri)
+        public IMessage GetRoom(string itemUri)
         {
-            Room room = (Room)MudFactory.GetObject<QueryManager>().Find(itemUri);
+            Room room = (Room)QueryManager.Find(itemUri);
             return new DataMessage(Namespaces.Area, "Room", itemUri, room);
         }
     }

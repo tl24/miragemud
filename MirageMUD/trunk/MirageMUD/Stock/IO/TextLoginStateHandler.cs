@@ -135,7 +135,7 @@ namespace Mirage.Stock.IO
                 return;
 	        }
 
-            Player isPlaying = (Player)MudFactory.GetObject<QueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
+            Player isPlaying = (Player)MudFactory.GetObject<IQueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
                 Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.AlreadyPlaying", "That player is already playing.  Try another name.\r\n"));

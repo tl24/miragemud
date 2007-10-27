@@ -11,8 +11,17 @@ using Mirage.Stock.Data;
 
 namespace Mirage.Stock.Command
 {
-    public static class MiscCommands
+    public class MiscCommands
     {
+
+        private IQueryManager _queryManager;
+
+        public IQueryManager QueryManager
+        {
+            get { return this._queryManager; }
+            set { this._queryManager = value; }
+        }
+
         /// <summary>
         ///     Say something to everyone in the room
         /// </summary>
@@ -20,7 +29,7 @@ namespace Mirage.Stock.Command
         /// <param name="args">the message to speak</param>
         /// <param name="extraArgs"></param>
         [Command(Aliases = new string[] { "'", "say" })]
-        public static IMessage say([Actor] Living actor, [CustomParse] string message)
+        public IMessage say([Actor] Living actor, [CustomParse] string message)
         {
             //speak to all others in the room
             ResourceMessage msgToOthers = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/say.others");
@@ -44,10 +53,10 @@ namespace Mirage.Stock.Command
         }
 
         [Command]
-        public static IMessage tell([Actor] Living actor, string target, [CustomParse] string message)
+        public IMessage tell([Actor] Living actor, string target, [CustomParse] string message)
         {
             // look up the target
-            Player p = (Player)MudFactory.GetObject<QueryManager>().Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));
+            Player p = (Player)QueryManager.Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));
             if (p == null)
             {
                 // couldn't find them, send an error
@@ -81,7 +90,7 @@ namespace Mirage.Stock.Command
         }
 
         [Command]
-        public static void quit([Actor] Player player)
+        public void quit([Actor] Player player)
         {
             player.Write(MessageFactory.GetMessage("msg:/system/goodbye"));
             if (player.Client.State == ConnectedState.Playing)
@@ -94,7 +103,7 @@ namespace Mirage.Stock.Command
         }
 
         [Command]
-        public static string look([Actor] Living actor)
+        public string look([Actor] Living actor)
         {
             string result = "";
             IViewable viewableContainer = actor.Container as IViewable;
@@ -141,13 +150,13 @@ namespace Mirage.Stock.Command
         }
 
         [CommandAttribute(Description="Lists commands available to a user")]
-        public static IMessage commands([Actor] Player actor, string searchText)
+        public IMessage commands([Actor] Player actor, string searchText)
         {
             IList<ICommand> commandList = MethodInvoker.GetAvailableCommands(searchText);
             StringBuilder sb = new StringBuilder();
 
             SortedList<string, ICommand> list = FilterAndSortCommands(commandList, actor);
-            int i = 0;
+            
             foreach (string key in list.Keys)
             {
                 ICommand cmd = list[key];
@@ -158,7 +167,7 @@ namespace Mirage.Stock.Command
         }
 
         [CommandAttribute(Description = "Lists commands available to a user")]
-        public static IMessage commands([Actor] Player actor)
+        public IMessage commands([Actor] Player actor)
         {
             IList<ICommand> commandList = MethodInvoker.GetAvailableCommands();
             StringBuilder sb = new StringBuilder();
@@ -178,7 +187,7 @@ namespace Mirage.Stock.Command
             return new StringMessage(MessageType.Information, Namespaces.Common, "command.list.all", sb.ToString());
         }
 
-        private static SortedList<string, ICommand> FilterAndSortCommands(IList<ICommand> commands, Player actor)
+        private SortedList<string, ICommand> FilterAndSortCommands(IList<ICommand> commands, Player actor)
         {
             SortedList<string, ICommand> list = new SortedList<string, ICommand>();
             foreach (ICommand cmd in commands)
@@ -191,5 +200,6 @@ namespace Mirage.Stock.Command
             }
             return list;
         }
+
     }
 }

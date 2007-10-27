@@ -7,6 +7,7 @@ using Mirage.Core.IO;
 using Mirage.Core.Data;
 using Mirage.Core.Data.Query;
 using System.Configuration;
+using log4net;
 
 namespace Mirage.Stock.IO
 {
@@ -15,6 +16,7 @@ namespace Mirage.Stock.IO
     /// </summary>
     public class PlayerFinalizer
     {
+        private static ILog logger = LogManager.GetLogger(typeof(PlayerFinalizer));
         private Player _player;
         private IClient _client;
 
@@ -68,7 +70,7 @@ namespace Mirage.Stock.IO
                 globalLists.AddPlayer(Player);
                 if (Player.Container == null)
                 {
-                    Room defaultRoom = (Room)MudFactory.GetObject<QueryManager>().Find(ConfigurationManager.AppSettings["default.room"]);
+                    Room defaultRoom = (Room)MudFactory.GetObject<IQueryManager>().Find(ConfigurationManager.AppSettings["default.room"]);
                     defaultRoom.Add(Player);
                 }
                 else
@@ -96,13 +98,14 @@ namespace Mirage.Stock.IO
                 Client.State = ConnectedState.Playing;
                 Client.Player = Player;
                 Player.Client = Client;
+                logger.Info("Player " + Player.Uri + " has joined the game.");
                 return true;
             }
         }
 
         public bool CheckAlreadyPlaying()
         {
-            Player isPlaying = (Player)MudFactory.GetObject<QueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(Player.Uri)));
+            Player isPlaying = (Player)MudFactory.GetObject<IQueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(Player.Uri)));
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
                 Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/player.already.playing"));

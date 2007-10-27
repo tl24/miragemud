@@ -12,6 +12,23 @@ namespace Mirage.Core.Command
     /// </summary>
     public class MudCommands
     {
+
+        private IQueryManager _queryManager;
+
+        public IQueryManager QueryManager
+        {
+            get { return this._queryManager; }
+            set { this._queryManager = value; }
+        }
+
+        private MudRepositoryBase _mudRepository;
+
+        public MudRepositoryBase MudRepository
+        {
+            get { return _mudRepository; }
+            set { _mudRepository = value; }
+        }
+
         /// <summary>
         /// Lists the available channels
         /// </summary>
@@ -23,8 +40,7 @@ namespace Mirage.Core.Command
             string format = "{0,-20}  {1,-10}\r\n";
             sb.AppendFormat(format, "Channel Name", "Status");
             sb.AppendFormat("--------------------  ----------\r\n");
-            MudRepositoryBase repository = MudFactory.GetObject<MudRepositoryBase>();
-            foreach (Channel channel in repository.Channels)
+            foreach (Channel channel in MudRepository.Channels)
             {
                 if (channel.CanJoin(actor))
                 {
@@ -75,7 +91,7 @@ namespace Mirage.Core.Command
             {
                 // they're not ignored, so start ignoring them
                 // try and find them first to validate its a valid name
-                IPlayer p = (IPlayer) MudFactory.GetObject<QueryManager>().Find(ObjectQuery.parse("/Players", player));
+                IPlayer p = (IPlayer) QueryManager.Find(ObjectQuery.parse("/Players", player));
                 if (p == null)
                 {
                     // they're not playing

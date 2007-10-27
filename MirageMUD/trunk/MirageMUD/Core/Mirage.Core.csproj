@@ -115,6 +115,7 @@
     <Compile Include="Data\IPlayer.cs" />
     <Compile Include="Data\MudFactory.cs" />
     <Compile Include="Data\ObjectUpdater.cs" />
+    <Compile Include="Data\Query\IQueryManager.cs" />
     <Compile Include="Data\Query\IURI.cs" />
     <Compile Include="Data\Query\IUriContainer.cs" />
     <Compile Include="Data\Query\QueryManager.cs" />
