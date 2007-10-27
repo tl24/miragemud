@@ -74,7 +74,7 @@ namespace Mirage.Stock.Data
         /// <param name="newArea">the new area</param>
         public void CopyTo(Area newArea)
         {
-            Room defaultRoom = (Room)MudFactory.GetObject<QueryManager>().Find(ConfigurationManager.AppSettings["default.room"]);
+            Room defaultRoom = (Room)MudFactory.GetObject<IQueryManager>().Find(ConfigurationManager.AppSettings["default.room"]);
             if (defaultRoom.Area.Uri == this.Uri)
             {
                 // check to see if it still exists

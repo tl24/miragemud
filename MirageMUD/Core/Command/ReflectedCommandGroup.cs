@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Core.Data;
 
 namespace Mirage.Core.Command
 {
@@ -26,10 +27,14 @@ namespace Mirage.Core.Command
         public object GetInstance()
         {
             if (_instance == null)
-                _instance = Activator.CreateInstance(_groupType);
+            {
+                MudFactory.RegisterService(_groupType);
+                _instance = MudFactory.GetObject(_groupType);
+            }
             return _instance;
         }
     }
 
 
 }
+

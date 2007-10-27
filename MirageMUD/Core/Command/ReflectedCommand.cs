@@ -264,7 +264,7 @@ namespace Mirage.Core.Command
             else if (target is string)
             {
                 ObjectQuery query = attr.ConstructQuery((string)target);
-                result = MudFactory.GetObject<QueryManager>().Find(context.Actor, query);
+                result = MudFactory.GetObject<IQueryManager>().Find(context.Actor, query);
             }
             if (result == null && attr.IsRequired)
             {

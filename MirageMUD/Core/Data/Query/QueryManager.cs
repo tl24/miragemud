@@ -33,7 +33,7 @@ namespace Mirage.Core.Data.Query
     /// <summary>
     /// Refactor this class so that it can search objects that are not IQueryable
     /// </summary>
-    public class QueryManager
+    public class QueryManager : IQueryManager
     {
         private object[] emptyList;
         private object _root;
@@ -285,8 +285,6 @@ namespace Mirage.Core.Data.Query
         public object Root
         {
             get {
-                if (_root == null)
-                    _root = MudFactory.GetObject<MudRepositoryBase>();
                 return _root;
             }
             set { _root = value; }

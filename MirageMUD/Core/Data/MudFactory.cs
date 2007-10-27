@@ -41,5 +41,21 @@ namespace Mirage.Core.Data
         {
             return _instance.Resolve(key);
         }
+
+        public static void RegisterService(Type classType)
+        {
+            _instance.AddComponent(classType.FullName, classType);
+        }
+
+        public static void RegisterService(string key, Type classType)
+        {
+            _instance.AddComponent(key, classType);
+        }
+
+        public static void RegisterService(string key, Type serviceType, Type classType)
+        {
+            _instance.AddComponent(key, serviceType, classType);
+        }
+
     }
 }
