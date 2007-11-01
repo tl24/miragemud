@@ -78,10 +78,9 @@
     <Compile Include="Communication\ChannelsInitializer.cs" />
     <Compile Include="Communication\CommunicationPreferences.cs" />
     <Compile Include="Communication\DataMessage.cs" />
-    <Compile Include="Communication\ErrorMessage.cs" />
-    <Compile Include="Communication\ErrorResourceMessage.cs" />
     <Compile Include="Communication\ICommunicationPreferences.cs" />
     <Compile Include="Communication\IMessage.cs" />
+    <Compile Include="Communication\IMessageFactory.cs" />
     <Compile Include="Communication\IReceiveMessages.cs" />
     <Compile Include="Communication\ITemplate.cs" />
     <Compile Include="Communication\MessageFactory.cs" />

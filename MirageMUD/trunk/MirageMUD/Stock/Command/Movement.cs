@@ -11,6 +11,14 @@ namespace Mirage.Stock.Command
 {
     public class Movement : CommandGroupBase
     {
+        private IMessageFactory _messageFactory;
+
+        public IMessageFactory MessageFactory
+        {
+            get { return _messageFactory; }
+            set { _messageFactory = value; }
+        }
+
         [Command]
         public IMessage north([Actor]Living actor)
         {

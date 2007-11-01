@@ -20,33 +20,52 @@ namespace Mirage.Stock.IO
     {
         private bool _failed;
         private bool _echoOn;
+        private IMessageFactory _messageFactory;
+
         public TextLoginStateHandler(IClient client)
             : base(client)
         {
             _failed = false;
             _echoOn = true;
         }
+        
+        public IMessageFactory MessageFactory
+        {
+            get
+            {
+                if (_messageFactory == null)
+                {
+                    _messageFactory = MudFactory.GetObject<IMessageFactory>();
+                }
+                return this._messageFactory;
+            }
+            set { this._messageFactory = value; }
+        }
 
         protected override void DetermineNextState()
         {
             if (!Contains("name"))
-                Require("Nanny.Name", "Enter Name: ", new ValidateDelegate(this.ValidateName));
+                Require(MessageFactory.GetMessage("msg:/negotiation/authentication/enter.name"), new ValidateDelegate(this.ValidateName));
             else if (GetValue<bool>("isNew") == true) {
-                if (!Contains("confirmName"))
-                    Require("Nanny.ConfirmNewName", "Is that right, " + GetValue<Player>("player").Title + " (Y/N)? ", new ValidateDelegate(this.ConfirmName));
+                if (!Contains("confirmName")) {
+                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/negotiation/authentication/confirm.new.name");
+                    rm["player"] = GetValue<Player>("player").Title;
+                    Require(rm, new ValidateDelegate(this.ConfirmName));
+                }
                 else if (!Contains("password"))
                 {
                     MultipartMessage message = new MultipartMessage(MessageType.Multiple, Namespaces.Authentication, "password");
-                    message.Parts.Add(new StringMessage(MessageType.Prompt, Namespaces.Authentication, "password", "New character.\r\nEnter a password for " + GetValue<Player>("player").Title + ": "));
-                    message.Parts.Add(MessageFactory.GetMessage(MessageFactory.EchoOff));
+                    message.Parts.Add(MessageFactory.GetMessage("msg:/negotiation/authentication/newplayer.password"));
+                    ((ResourceMessage)message.Parts[0])["player"] = GetValue<Player>("player").Title;
+                    message.Parts.Add(MessageFactory.GetMessage("msg:/system/EchoOff"));
 
                     Require(message, new ValidateDelegate(this.ValidateNewPassword));
                 }
                 else if (!Contains("confirmPassword"))
                 {
                     MultipartMessage message = new MultipartMessage(MessageType.Multiple, Namespaces.Authentication, "confirmPassword");
-                    message.Parts.Add(new StringMessage(MessageType.Prompt, Namespaces.Authentication, "confirmPassword", "Confirm password: "));
-                    message.Parts.Add(MessageFactory.GetMessage(MessageFactory.EchoOff));
+                    message.Parts.Add(MessageFactory.GetMessage("msg:/negotiation/authentication/confirm.password"));
+                    message.Parts.Add(MessageFactory.GetMessage("msg:/system/EchoOff"));
 
                     Require(message, new ValidateDelegate(this.ConfirmPassword));
                 }
@@ -59,8 +78,8 @@ namespace Mirage.Stock.IO
                 {
                     List<IMessage> message = new List<IMessage>();
                     //MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
-                    message.Add(new StringMessage(MessageType.Prompt, Namespaces.Authentication, "password", "Password: "));
-                    message.Add(MessageFactory.GetMessage(MessageFactory.EchoOff));
+                    message.Add(MessageFactory.GetMessage("msg:/negotiation/authentication/existingplayer.password"));
+                    message.Add(MessageFactory.GetMessage("msg:/system/EchoOff"));
                     _echoOn = false;
                     Require(message, new ValidateDelegate(this.ValidateOldPassword));
                 }
@@ -131,23 +150,19 @@ namespace Mirage.Stock.IO
 	        }   
 	
 	        if (!CheckName( input )) {
-	            Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.IllegalName", "Illegal name, try another.\r\n" ));
+	            Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/error.illegal.name"));
                 return;
 	        }
 
             Player isPlaying = (Player)MudFactory.GetObject<IQueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
-                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.AlreadyPlaying", "That player is already playing.  Try another name.\r\n"));
+                Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/error.already.playing"));
                 return;
             }
 
             SetValue<string>("name", input);
             Player oldPlayer = Player.Load(input);
-	        //TODO: Check Deny players
-	        //TODO: Check Sitebans
-	        //TODO: Check reconnect
-	        //TODO: Check wizlock
             if (oldPlayer != null)
             {
                 // Old player
@@ -178,12 +193,12 @@ namespace Mirage.Stock.IO
             }
             else if (input.StartsWith("n", StringComparison.CurrentCultureIgnoreCase))
             {  // No
-                Client.Write(new StringMessage(MessageType.Prompt, "Nanny.NewName", "Ok, what is it, then? "));
+                Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/enter.another.name"));
                 Clear();                
             }
             else
             {
-                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.InvalidConfirmName", "Please type Yes or No.\r\n"));
+                Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/error.confirm.name"));
             }
         }
 
@@ -194,19 +209,13 @@ namespace Mirage.Stock.IO
         private void ValidateOldPassword(object data)
         {
             string input = (string)data;
-            Client.Write(MessageFactory.GetMessage(MessageFactory.EchoOn));
+            Client.Write(MessageFactory.GetMessage("msg:/system/EchoOn"));
             if (!GetValue<Player>("player").ComparePassword(input))
             {
-                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.WrongPassword", "\r\nWrong password.\r\n"));
+                Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/error.invalid.password"));
                 Finished = _failed = true;
                 return;
             }
-            //return if check_playing( $desc, $ch->{Name} );
-            //return if check_reconnect( $desc, $ch->{Name}, TRUE );
-            // wiznet logins
-            // motd stuff
-            // $desc->{LINES_READ} = [] unless $desc->{LINES_READ};
-            // push @{$desc->{LINES_READ}}, "\n\r";
             SetValue<string>("password", input);
         }
 
@@ -218,10 +227,10 @@ namespace Mirage.Stock.IO
         private void ValidateNewPassword(object data)
         {
             string input = (string)data;
-            Client.Write(MessageFactory.GetMessage(MessageFactory.EchoOn));
+            Client.Write(MessageFactory.GetMessage("msg:/system/EchoOn"));
             if (input.Length < 5)
             {
-                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.InvalidPassword", "Password must be at least five characters long.\n\r"));
+                Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/error.password.length"));
                 return;
             }
             GetValue<Player>("player").SetPassword(input);
@@ -236,12 +245,12 @@ namespace Mirage.Stock.IO
         private void ConfirmPassword(object data)
         {
             string input = (string)data;
-            Client.Write(MessageFactory.GetMessage(MessageFactory.EchoOn));
+            Client.Write(MessageFactory.GetMessage("msg:/system/EchoOn"));
             _echoOn = true;
-            Client.Write(new StringMessage(MessageType.UIControl, "Newline", "\n\r"));
+            Client.Write(MessageFactory.GetMessage("msg:/system/Newline"));
             if (!GetValue<Player>("player").ComparePassword(input))
             {
-                Client.Write(new StringMessage(MessageType.PlayerError, "Nanny.PasswordsDontMatch", "Passwords don't match.\r\n"));
+                Client.Write(MessageFactory.GetMessage("msg:/negotiation/authentication/error.passwords.dont.match"));
                 GetValue<Player>("player").SetPassword("");
                 Remove("password");
             }

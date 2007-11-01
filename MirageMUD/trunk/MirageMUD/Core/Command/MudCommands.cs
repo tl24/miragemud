@@ -29,6 +29,14 @@ namespace Mirage.Core.Command
             set { _mudRepository = value; }
         }
 
+        private IMessageFactory _messageFactory;
+
+        public IMessageFactory MessageFactory
+        {
+            get { return _messageFactory; }
+            set { _messageFactory = value; }
+        }
+
         /// <summary>
         /// Lists the available channels
         /// </summary>

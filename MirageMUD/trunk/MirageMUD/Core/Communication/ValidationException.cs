@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Core.Data;
 
 namespace Mirage.Core.Communication
 {
@@ -29,7 +30,7 @@ namespace Mirage.Core.Communication
         /// <param name="messageUri">message uri</param>
         /// <param name="innerException">the exception that is the cause of the current exception, or null if there is no inner exception</param>
         public ValidationException(Uri messageUri, Exception innerException)
-            : this(MessageFactory.GetMessage(messageUri), innerException)
+            : this(MudFactory.GetObject<IMessageFactory>().GetMessage(messageUri), innerException)
         {
         }
 

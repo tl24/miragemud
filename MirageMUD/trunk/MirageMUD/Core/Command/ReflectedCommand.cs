@@ -241,7 +241,7 @@ namespace Mirage.Core.Command
             }
             else
             {
-                ResourceMessage rmsg = (ResourceMessage)MessageFactory.GetMessage("msg:/common/error/InvalidActor");
+                ResourceMessage rmsg = (ResourceMessage)MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/common/error/InvalidActor");
                 rmsg["ActorType"] = context.Actor.GetType().Name;
                 context.ErrorMessage = rmsg;
                 return null;
@@ -268,7 +268,7 @@ namespace Mirage.Core.Command
             }
             if (result == null && attr.IsRequired)
             {
-                ResourceMessage errorMessage = (ResourceMessage) MessageFactory.GetMessage("msg:/common/error/NotHere");
+                ResourceMessage errorMessage = (ResourceMessage) MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/common/error/NotHere");
                 errorMessage["target"] = target;
                 context.ErrorMessage = errorMessage;
                 // return null below
@@ -367,8 +367,7 @@ namespace Mirage.Core.Command
                     error += " invoked by {1}.";
                     logger.Error(string.Format(error, invokedName, actor), e);
                     // send generic message to player
-                    ErrorResourceMessage msg = new ErrorResourceMessage(MessageType.SystemError, Namespaces.SystemError, "SystemError");
-                    return msg;
+                    return MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/common/error/system.error");
                 }
             }
         }

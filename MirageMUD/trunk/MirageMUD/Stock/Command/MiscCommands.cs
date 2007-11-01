@@ -22,6 +22,15 @@ namespace Mirage.Stock.Command
             set { this._queryManager = value; }
         }
 
+        private IMessageFactory _messageFactory;
+
+        public IMessageFactory MessageFactory
+        {
+            get { return _messageFactory; }
+            set { _messageFactory = value; }
+        }
+
+
         /// <summary>
         ///     Say something to everyone in the room
         /// </summary>
