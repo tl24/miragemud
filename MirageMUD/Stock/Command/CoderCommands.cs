@@ -9,9 +9,15 @@ namespace Mirage.Stock.Command
     [CommandDefaults(Roles="coder")]
     public class CoderCommands
     {
+        private IMessageFactory _messageFactory;
+        public IMessageFactory MessageFactory
+        {
+            get { return _messageFactory; }
+            set { _messageFactory = value; }
+        }
 
         [CommandAttribute(Description="Clears the cache for the message factory")]
-        public static IMessage ClearMessageCache()
+        public IMessage ClearMessageCache()
         {
             MessageFactory.Clear();
             //don't load a message through the factory since it will reload the namespace

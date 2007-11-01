@@ -18,6 +18,7 @@ namespace Mirage.Core.Communication
         private ISet<IReceiveMessages> _members;
         private ISet<string> _roles;
         private bool _isDefault;
+        private IMessageFactory _messageFactory;
 
         public Channel() : this("", null, null, null)
         {
@@ -281,6 +282,20 @@ namespace Mirage.Core.Communication
             get { return _members.Count; }
         }
 
+        [JsonExIgnore]
+        public IMessageFactory MessageFactory
+        {
+            get
+            {
+                if (_messageFactory == null)
+                {
+                    _messageFactory = MudFactory.GetObject<IMessageFactory>();
+                }
+                return this._messageFactory;
+            }
+            set { this._messageFactory = value; }
+        }
+
         /// <summary>
         /// Checks to see if the specified member is a member of the channel
         /// </summary>
@@ -423,8 +438,8 @@ namespace Mirage.Core.Communication
         {
             List<ICommand> commands = new List<ICommand>();
 
-            commands.Add(new ChannelSendCommand(this));
-            commands.Add(new ChannelToggleCommand(this));
+            commands.Add(new ChannelSendCommand(this, MessageFactory));
+            commands.Add(new ChannelToggleCommand(this, MessageFactory));
             return commands;
         }
 

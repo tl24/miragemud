@@ -12,11 +12,11 @@ namespace Mirage.Core.Communication
     /// <summary>
     /// Factory class for creating well known message types
     /// </summary>
-    public static class MessageFactory
+    public class MessageFactory : IMessageFactory
     {
-        private static IDictionary<string, NamespaceGroup> _namespaces;
+        private IDictionary<string, NamespaceGroup> _namespaces;
 
-        static MessageFactory()
+        public MessageFactory()
         {
             _namespaces = new Dictionary<string, NamespaceGroup>(StringComparer.CurrentCultureIgnoreCase);
         }
@@ -26,7 +26,7 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="messageUri">the uri that identifies the message</param>
         /// <returns>the message</returns>
-        public static IMessage GetMessage(string messageUri)
+        public IMessage GetMessage(string messageUri)
         {
             return GetMessage(new Uri(messageUri));
         }
@@ -36,7 +36,7 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="messageUri">the uri that identifies the message</param>
         /// <returns>the message</returns>
-        public static IMessage GetMessage(Uri messageUri)
+        public IMessage GetMessage(Uri messageUri)
         {            
             string name;
             Uri nmspace = SeparateUri(messageUri, out name);
@@ -53,7 +53,7 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="Namespace">the namespace uri to load</param>
         /// <returns>namespace group</returns>
-        private static NamespaceGroup LoadNamespace(Uri Namespace)
+        private NamespaceGroup LoadNamespace(Uri Namespace)
         {
             string namespaceFile = "";
             try
@@ -79,7 +79,7 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// This will clear all cached messages and namespaces
         /// </summary>
-        public static void Clear()
+        public void Clear()
         {
             _namespaces.Clear();
         }
@@ -90,7 +90,7 @@ namespace Mirage.Core.Communication
         /// <param name="path">the uri to separate</param>
         /// <param name="name">the name part of the uri</param>
         /// <returns>the namespace</returns>
-        private static Uri SeparateUri(Uri path, out string name)
+        private Uri SeparateUri(Uri path, out string name)
         {
             name = path.Segments[path.Segments.Length - 1];
             return new Uri(path.Scheme + ":" + string.Join("", path.Segments, 0, path.Segments.Length - 1));

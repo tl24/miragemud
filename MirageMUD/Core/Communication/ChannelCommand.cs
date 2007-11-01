@@ -12,15 +12,28 @@ namespace Mirage.Core.Communication
     /// </summary>
     public abstract class ChannelCommandBase : CommandBase
     {
+    
         private Channel _channel;
+        private IMessageFactory _messageFactory;
 
-        public ChannelCommandBase(Channel channel)
+        
+        public ChannelCommandBase(Channel channel, IMessageFactory messageFactory)
         {
             _channel = channel;
+            _messageFactory = messageFactory;
             _name = channel.Name;
             _aliases = new string[0];
             HashSet<string> tmpRoles = new HashSet<string>(channel.Roles);
             _roles = tmpRoles.ToArray();
+        }
+
+        /// <summary>
+        /// Gets or sets the message factory for creating messages
+        /// </summary>
+        public IMessageFactory MessageFactory
+        {
+            get { return this._messageFactory; }
+            set { this._messageFactory = value; }
         }
 
         /// <summary>
@@ -82,8 +95,8 @@ namespace Mirage.Core.Communication
     /// </summary>
     public class ChannelSendCommand : ChannelCommandBase
     {
-        public ChannelSendCommand(Channel channel)
-            : base(channel)
+        public ChannelSendCommand(Channel channel, IMessageFactory messageFactory)
+            : base(channel, messageFactory)
         {
             _argCount = 1;
             _customParse = true;            
@@ -115,8 +128,8 @@ namespace Mirage.Core.Communication
     /// </summary>
     public class ChannelToggleCommand : ChannelCommandBase
     {
-        public ChannelToggleCommand(Channel channel)
-            : base(channel)
+        public ChannelToggleCommand(Channel channel, IMessageFactory messageFactory)
+            : base(channel, messageFactory)
         {
             _argCount = 0;
         }
