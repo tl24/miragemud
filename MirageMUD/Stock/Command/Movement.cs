@@ -93,7 +93,9 @@ namespace Mirage.Stock.Command
                         newRoomPeople.Write(arrivalMessage);
                     }
                 }
-                return new StringMessage(MessageType.Confirmation, "Movement." + dirName, "You go " + dirName + ".\r\n");
+                actor.Write(new StringMessage(MessageType.Confirmation, "Movement." + dirName, "You go " + dirName + ".\r\n"));
+                Interpreter.ExecuteCommand(actor, "look");
+                return null;
             }
             catch (ContainerAddException e)
             {

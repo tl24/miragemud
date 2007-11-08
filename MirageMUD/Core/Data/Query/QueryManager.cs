@@ -259,6 +259,9 @@ namespace Mirage.Core.Data.Query
 
             int matchCount = 0;
             int index = 0;
+            if ((flags & QueryHints.DefaultPartialMatch) != 0)
+                query.MatchType = QueryMatchType.Partial;
+
             foreach (IUri uriObj in GetCollectionEnumerable(searched))
             {
                 if (count != 0 && matchCount == count) {

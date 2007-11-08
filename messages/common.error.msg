@@ -31,6 +31,8 @@
 
 		"wrong.key" : new StringMessage ("PlayerError", "wrong.key", "You don't have the right key.\r\n"),
 
-		"object.locked" : new StringMessage ("PlayerError", "object.locked", "You can't open that, it's locked.\r\n")
+		"object.locked" : new StringMessage ("PlayerError", "object.locked", "You can't open that, it's locked.\r\n"),
+		
+		"system.error" : new StringMessage ("SystemError", "system.error", "A system error has occurred executing your command.\r\n")
 	}
 }

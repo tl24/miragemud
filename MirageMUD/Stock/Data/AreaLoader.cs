@@ -5,6 +5,7 @@ using Mirage.Core.Data.Attribute;
 using Mirage.Core.IO.Serialization;
 using Mirage.Core;
 using Mirage.Core.Data;
+using Mirage.Stock.Data.MobAI;
 
 namespace Mirage.Stock.Data
 {
@@ -58,6 +59,15 @@ namespace Mirage.Stock.Data
                 persister.Save(defaultArea, defaultArea.Uri);
             }
             _mudRespository.Areas[defaultArea.Uri] = defaultArea;
+            Mobile mob = new Mobile("first mobile");
+            mob.ShortDescription = "the first mob";
+            mob.LongDescription = "He is dressed in a new mob uniform waiting for orders.";
+            mob.Level = 1;
+            mob.Gender = GenderType.Male;
+            mob.Programs.Add(new Wanderer(mob));
+            mob.Programs.Add(new EchoProgram(mob));
+            ((StockRepository)_mudRespository).Mobiles.Add(mob);
+            defaultArea.Rooms["DefaultRoom"].Add(mob);
         }
 
     }

@@ -69,7 +69,12 @@ namespace Mirage.Core.Communication
         public IDictionary<string, object> Parameters
         {
             get { return this._parameters; }
-            set { this._parameters = value; }
+            set {
+                if (value != null)
+                    this._parameters = new Dictionary<string, object>(value);
+                else
+                    this._parameters.Clear();
+            }
         }
 
         /// <summary>
@@ -125,7 +130,10 @@ namespace Mirage.Core.Communication
             if (this.GetType() != typeof(ResourceMessage))
                 throw new Exception("Subclass must override the copy method");
 
-            return new ResourceMessage(MessageType, Namespace, Name, templateDefinition);
+            ResourceMessage copy = new ResourceMessage(MessageType, Namespace, Name, templateDefinition);
+            if (this.Parameters.Count > 0)
+                copy.Parameters = this.Parameters;
+            return copy;
         }
 
         /// <summary>
