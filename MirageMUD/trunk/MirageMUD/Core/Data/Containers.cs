@@ -22,8 +22,8 @@ namespace Mirage.Core.Data
         public static void Transfer(IContainable item, IContainer newContainer)
         {
             IContainer oldContainer = item.Container;
-            newContainer.Add(item);
             oldContainer.Remove(item);
+            newContainer.Add(item);
             if (item.Container != newContainer)
                 item.Container = newContainer;
 

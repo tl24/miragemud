@@ -46,6 +46,15 @@
     <Compile Include="Command\MiscCommands.cs" />
     <Compile Include="Command\AreaBuilder.cs" />
     <Compile Include="Command\Movement.cs" />
+    <Compile Include="Data\IViewManager.cs" />
+    <Compile Include="Data\MobAI\AIProgram.cs" />
+    <Compile Include="Data\MobAI\EchoProgram.cs" />
+    <Compile Include="Data\MobAI\Wanderer.cs" />
+    <Compile Include="Data\Mobile.cs" />
+    <Compile Include="Data\MobileService.cs" />
+    <Compile Include="Data\MobPrincipal.cs" />
+    <Compile Include="Data\StockRepository.cs" />
+    <Compile Include="Data\ViewManager.cs" />
     <Compile Include="IO\GuiClientFactory.cs" />
     <Compile Include="IO\GuiLoginHandler.cs" />
     <Compile Include="IO\PlayerFinalizer.cs" />

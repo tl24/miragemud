@@ -32,6 +32,7 @@ namespace Mirage.Core
         private bool _shutdown;
 
         private List<IInitializer> _initializers;
+        private List<ServiceEntry> _services;
 
         public MirageServer(int port)
         {
@@ -159,64 +160,13 @@ namespace Mirage.Core
                         }
                     }
 
-                    Queue<IPlayer> removePlayers = new Queue<IPlayer>();
-
-                    // reset state
-                    foreach (IPlayer player in globalLists.Players)
+                    foreach (ServiceEntry service in Services)
                     {
-                        player.Client.CommandRead = false;
-                        player.Client.OutputWritten = false;
-                        if (!player.Client.IsOpen)
-                        {
-                            try
-                            {
-                                logger.InfoFormat("{0} has left the game.", player.Uri);
-                                SavePlayer(player);
-                            }
-                            catch (Exception e)
-                            {
-                                logger.Error("Error trying to save disconnected client before removing", e);
-                            }
-                            removePlayers.Enqueue(player);
-                        }
+                        if (!service.Service.IsStarted)
+                            service.Service.Start();
+                        service.Execute();
                     }
 
-                    while (removePlayers.Count > 0)
-                    {
-                        try
-                        {
-                            removePlayers.Dequeue().FirePlayerEvent(PlayerEventType.Quiting);
-                        }
-                        catch (Exception e)
-                        {
-                            logger.Error("Error handling player quit event", e);
-                        }
-                    }
-
-                    foreach (IPlayer player in globalLists.Players)
-                    {
-                        try
-                        {
-                            player.Client.ProcessInput();
-                        }
-                        catch (Exception e)
-                        {
-                            logger.Error("Error processing client input for player: " + player.Uri, e);
-                        }
-                    }
-
-                    foreach (IPlayer player in globalLists.Players)
-                    {
-                        try
-                        {
-                            if (player.Client.CommandRead || player.Client.OutputWritten)
-                                player.Client.WritePrompt();
-                        }
-                        catch (Exception e)
-                        {
-                            logger.Error("Error writing prompt for player: " + player.Uri, e);
-                        }
-                    }
                 }
                 catch (Exception e)
                 {
@@ -245,6 +195,12 @@ namespace Mirage.Core
         {
             IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(player.GetType());
             persister.Save(player, player.Uri);
+        }
+
+        public List<ServiceEntry> Services
+        {
+            get { return this._services; }
+            set { this._services = value; }
         }
     }
 }

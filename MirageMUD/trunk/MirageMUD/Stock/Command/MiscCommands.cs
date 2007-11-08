@@ -15,6 +15,8 @@ namespace Mirage.Stock.Command
     {
 
         private IQueryManager _queryManager;
+        private IMessageFactory _messageFactory;
+        private IViewManager _viewManager;
 
         public IQueryManager QueryManager
         {
@@ -22,14 +24,17 @@ namespace Mirage.Stock.Command
             set { this._queryManager = value; }
         }
 
-        private IMessageFactory _messageFactory;
-
         public IMessageFactory MessageFactory
         {
             get { return _messageFactory; }
             set { _messageFactory = value; }
         }
 
+        public IViewManager ViewManager
+        {
+            get { return _viewManager; }
+            set { _viewManager = value; }
+        }
 
         /// <summary>
         ///     Say something to everyone in the room
@@ -41,17 +46,18 @@ namespace Mirage.Stock.Command
         public IMessage say([Actor] Living actor, [CustomParse] string message)
         {
             //speak to all others in the room
-            ResourceMessage msgToOthers = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/say.others");
-            msgToOthers["player"] = actor.Title;
-            msgToOthers["message"] = message;
+            ResourceMessage msgToOthersTemplate = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/say.others");
+            msgToOthersTemplate["player"] = actor.Title;
+            msgToOthersTemplate["message"] = message;
             foreach (Living am in actor.Container.Contents(typeof(Living)))
             {
                 if (am != actor)
                 {
                     if (am is Player && ((Player)am).CommunicationPreferences.IsIgnored(actor.Uri))
                         continue;
-
-                    am.Write(msgToOthers);
+                    ResourceMessage m = (ResourceMessage) msgToOthersTemplate.Copy();
+                    m["player"] = ViewManager.GetTitle(am, actor);
+                    am.Write(m);
                 }
             }
 
@@ -85,13 +91,13 @@ namespace Mirage.Stock.Command
                 } else {
                     // format the messages
                     ResourceMessage msgToTarget = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/tell.others");
-                    msgToTarget["player"] = actor.Title;
+                    msgToTarget["player"] = ViewManager.GetTitle(p, actor);
                     msgToTarget["message"] = message;
                     p.Write(msgToTarget);
 
                     ResourceMessage msgToSelf = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/tell.self");
                     msgToSelf["message"] = message;
-                    msgToSelf["target"] = p.Title;
+                    msgToSelf["target"] = ViewManager.GetTitle(actor, p);
 
                     return msgToSelf;
                 }
@@ -156,6 +162,27 @@ namespace Mirage.Stock.Command
                 }
             }
             return result;
+        }
+
+        [Command]
+        public void look([Actor] Living actor, string target)
+        {
+            Living lookAt = QueryManager.Find(actor.Container, ObjectQuery.parse("Animates", target)) as Living;
+            if (lookAt == null || ViewManager.GetVisibility(actor, lookAt) == VisiblityType.NotVisible)
+            {
+                // couldn't find them
+                ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/common/error/NotHere");
+                rm["target"] = target;
+                actor.Write(rm);
+                return;
+            }
+
+            string text = "";
+            text += ViewManager.GetTitle(actor, lookAt) + "\r\n";
+            text += ViewManager.GetLong(actor, lookAt) + "\r\n";
+            //TODO: create message namespace:
+            actor.Write(new StringMessage(MessageType.Information, Namespaces.Common, "look.player", text));
+            lookAt.Write(new StringMessage(MessageType.Information, Namespaces.Common, "look.target", ViewManager.GetTitle(lookAt, actor) + " looks at you.\r\n"));
         }
 
         [CommandAttribute(Description="Lists commands available to a user")]

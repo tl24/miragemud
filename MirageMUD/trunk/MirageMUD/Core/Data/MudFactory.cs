@@ -6,6 +6,9 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
+using Castle.MicroKernel.SubSystems.Conversion;
+using Castle.Windsor.Configuration;
+using Mirage.Core.IO;
 
 namespace Mirage.Core.Data
 {
@@ -14,11 +17,12 @@ namespace Mirage.Core.Data
     /// </summary>
     public class MudFactory
     {
-        private static WindsorContainer _instance;
+        private static MyContainer _instance;
 
         static MudFactory()
         {
-            _instance = new WindsorContainer(new XmlInterpreter());
+            _instance = new MyContainer(new XmlInterpreter());
+            
         }
 
         public static TObjectInterface GetObject<TObjectInterface>()
@@ -57,5 +61,25 @@ namespace Mirage.Core.Data
             _instance.AddComponent(key, serviceType, classType);
         }
 
+        private class MyContainer : WindsorContainer
+        {
+            public MyContainer(IConfigurationInterpreter interpreter)
+            {
+                // Registers the type converter:
+
+                IConversionManager manager = (IConversionManager)
+                    Kernel.GetSubSystem(Castle.MicroKernel.SubSystemConstants.ConversionManagerKey);
+
+                manager.Add(new ServiceEntryConverter());
+
+                // Process the configuration
+
+                interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore);
+
+                // Install the components
+
+                Installer.SetUp(this, Kernel.ConfigurationStore);
+            }
+        }
     }
 }
