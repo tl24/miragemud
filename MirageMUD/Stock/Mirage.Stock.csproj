@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\CoderCommands.cs" />
+    <Compile Include="Command\ItemCommands.cs" />
     <Compile Include="Command\MiscCommands.cs" />
     <Compile Include="Command\AreaBuilder.cs" />
     <Compile Include="Command\Movement.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="Data\IMobileRepository.cs" />
     <Compile Include="Data\Items\Armor.cs" />
     <Compile Include="Data\Items\ItemBase.cs" />
+    <Compile Include="Data\Items\WornItems.cs" />
     <Compile Include="Data\IViewManager.cs" />
     <Compile Include="Data\LivingTemplateBase.cs" />
     <Compile Include="Data\MobAI\AIProgram.cs" />

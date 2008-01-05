@@ -70,6 +70,7 @@ namespace Mirage.Stock.Data
             defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
             defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
             defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
+            defaultArea.Rooms["DefaultRoom"].Add(CreateHelmet());
         }
 
         private Mobile CreateMobile()
@@ -77,6 +78,7 @@ namespace Mirage.Stock.Data
             Mobile mob = new Mobile(null);
             mob.ShortDescription = "the first mob";
             mob.LongDescription = "He is dressed in a new mob uniform waiting for orders.";
+            mob.Title = "First Mob";
             mob.Level = 1;
             mob.Gender = GenderType.Male;
             mob.Programs.Add(new Wanderer(mob));
@@ -91,6 +93,17 @@ namespace Mirage.Stock.Data
             item.Title = "Default Item";
             item.ShortDescription = "a default item";
             item.LongDescription = "This is a very basic item.";
+            return item;
+        }
+
+        private Armor CreateHelmet()
+        {
+            Armor item = new Armor();
+            item.Uri = "Helmet";
+            item.Title = "Helmet";
+            item.ShortDescription = "a helmet";
+            item.LongDescription = "This is a metal helmet";
+            item.WearFlags = WearLocations.Head;
             return item;
         }
     }
