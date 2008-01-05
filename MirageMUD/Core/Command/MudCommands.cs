@@ -21,14 +21,6 @@ namespace Mirage.Core.Command
             set { this._queryManager = value; }
         }
 
-        private MudRepositoryBase _mudRepository;
-
-        public MudRepositoryBase MudRepository
-        {
-            get { return _mudRepository; }
-            set { _mudRepository = value; }
-        }
-
         private IMessageFactory _messageFactory;
 
         public IMessageFactory MessageFactory
@@ -36,6 +28,15 @@ namespace Mirage.Core.Command
             get { return _messageFactory; }
             set { _messageFactory = value; }
         }
+
+        private IChannelRepository _channelRespository;
+
+        public IChannelRepository ChannelRespository
+        {
+            get { return this._channelRespository; }
+            set { this._channelRespository = value; }
+        }
+
 
         /// <summary>
         /// Lists the available channels
@@ -48,7 +49,7 @@ namespace Mirage.Core.Command
             string format = "{0,-20}  {1,-10}\r\n";
             sb.AppendFormat(format, "Channel Name", "Status");
             sb.AppendFormat("--------------------  ----------\r\n");
-            foreach (Channel channel in MudRepository.Channels)
+            foreach (Channel channel in ChannelRespository)
             {
                 if (channel.CanJoin(actor))
                 {

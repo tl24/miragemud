@@ -50,12 +50,13 @@ namespace Mirage.Stock.IO
             else
             {
                 Client.Logger.Info(string.Format("{0}@{1} has connected.", Player.Uri, Client.TcpClient.Client.LocalEndPoint));
-                MudRepositoryBase globalLists = MudFactory.GetObject<MudRepositoryBase>();
+                IChannelRepository channelRepository = MudFactory.GetObject<IChannelRepository>();
+                IPlayerRepository playerRepository = MudFactory.GetObject<IPlayerRepository>();
                 if (isNew)
                 {
                     Player.Roles = new string[] { "player" };
                     // default channels
-                    foreach (Channel channel in globalLists.Channels)
+                    foreach (Channel channel in channelRepository)
                     {
                         if (channel.IsDefault)
                         {
@@ -67,7 +68,7 @@ namespace Mirage.Stock.IO
                 }
 
                 
-                globalLists.AddPlayer(Player);
+                playerRepository.Add(Player);
                 if (Player.Container == null)
                 {
                     Room defaultRoom = (Room)MudFactory.GetObject<IQueryManager>().Find(ConfigurationManager.AppSettings["default.room"]);
@@ -80,7 +81,8 @@ namespace Mirage.Stock.IO
 
                 Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/negotiation/welcome"));
                 // Try to turn on channels
-                foreach(Channel channel in globalLists.Channels) {
+                foreach (Channel channel in channelRepository)
+                {
                     if (Player.CommunicationPreferences.IsChannelOn(channel.Name))
                     {
                         // check to see that the player can still join the channel

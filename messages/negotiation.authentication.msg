@@ -29,7 +29,9 @@
 		"error.wrong.password" : new StringMessage("PlayerError", "error.wrong.password", "\r\nWrong Password\r\n"),
 
 		"error.password.length" : new StringMessage("PlayerError", "error.password.length", "Password must be at least five characters long.\n\r"),
-		"error.passwords.dont.match" : new StringMessage("PlayerError", "error.passwords.dont.match", "Passwords don't match.\r\n")
+		"error.passwords.dont.match" : new StringMessage("PlayerError", "error.passwords.dont.match", "Passwords don't match.\r\n"),
+		
+		"Login" :  new StringMessage ("Confirmation", "Login", "Login Successful")		
 		
 	}
 }

@@ -6,16 +6,19 @@ using Mirage.Core.IO.Serialization;
 using Mirage.Core;
 using Mirage.Core.Data;
 using Mirage.Stock.Data.MobAI;
+using Mirage.Stock.Data.Items;
 
 namespace Mirage.Stock.Data
 {
     public class AreaLoader : IInitializer
     {
-        private MudRepositoryBase _mudRespository;
+        private IAreaRepository _areaRespository;
+        private IMobileRepository _mobileRepository;
 
-        public AreaLoader(MudRepositoryBase MudRepository)
+        public AreaLoader(IAreaRepository AreaRepository, IMobileRepository MobileRepository)
         {
-            _mudRespository = MudRepository;
+            _areaRespository = AreaRepository;
+            _mobileRepository = MobileRepository;
         }
 
         public string Name
@@ -25,9 +28,7 @@ namespace Mirage.Stock.Data
 
         public void Execute()
         {
-            Area defaultArea = null;
-            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
-            defaultArea = (Area) persister.Load("DefaultArea");
+            Area defaultArea = (Area) _areaRespository.Load("DefaultArea");
             if (defaultArea == null)
             {
 
@@ -56,19 +57,41 @@ namespace Mirage.Stock.Data
                 room.Exits[DirectionType.West] = westExit;
                 defaultArea.Rooms[room.Uri] = room;
                 room.Area = defaultArea;
-                persister.Save(defaultArea, defaultArea.Uri);
+                _areaRespository.Save(defaultArea);                
             }
-            _mudRespository.Areas[defaultArea.Uri] = defaultArea;
-            Mobile mob = new Mobile("first mobile");
+            _areaRespository.Update(defaultArea);
+
+            Mobile mob = CreateMobile();
+            _mobileRepository.Mobiles.Add(mob);
+            defaultArea.Rooms["DefaultRoom"].Add(mob);
+
+            defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
+            defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
+            defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
+            defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
+            defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
+        }
+
+        private Mobile CreateMobile()
+        {
+            Mobile mob = new Mobile(null);
             mob.ShortDescription = "the first mob";
             mob.LongDescription = "He is dressed in a new mob uniform waiting for orders.";
             mob.Level = 1;
             mob.Gender = GenderType.Male;
             mob.Programs.Add(new Wanderer(mob));
             mob.Programs.Add(new EchoProgram(mob));
-            ((StockRepository)_mudRespository).Mobiles.Add(mob);
-            defaultArea.Rooms["DefaultRoom"].Add(mob);
+            return mob;
         }
 
+        private ItemBase CreateItem()
+        {
+            ItemBase item = new ItemBase();
+            item.Uri = "DefaultItem";
+            item.Title = "Default Item";
+            item.ShortDescription = "a default item";
+            item.LongDescription = "This is a very basic item.";
+            return item;
+        }
     }
 }

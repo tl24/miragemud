@@ -8,6 +8,8 @@ using Mirage.Core.Data.Query;
 using Mirage.Core.IO;
 using Mirage.Core.Data.Attribute;
 using Mirage.Stock.Data;
+using Mirage.Stock.Data.Items;
+using Mirage.Core.Data.Containers;
 
 namespace Mirage.Stock.Command
 {
@@ -17,6 +19,7 @@ namespace Mirage.Stock.Command
         private IQueryManager _queryManager;
         private IMessageFactory _messageFactory;
         private IViewManager _viewManager;
+        private IPlayerRepository _playerRepository;
 
         public IQueryManager QueryManager
         {
@@ -36,6 +39,11 @@ namespace Mirage.Stock.Command
             set { _viewManager = value; }
         }
 
+        public IPlayerRepository PlayerRepository
+        {
+            get { return _playerRepository; }
+            set { _playerRepository = value; }
+        }
         /// <summary>
         ///     Say something to everyone in the room
         /// </summary>
@@ -110,7 +118,7 @@ namespace Mirage.Stock.Command
             player.Write(MessageFactory.GetMessage("msg:/system/goodbye"));
             if (player.Client.State == ConnectedState.Playing)
             {
-                player.save();
+                PlayerRepository.Save(player);
             }
             // comment out for now
             //player.FirePlayerEvent(Player.PlayerEventType.Quiting);
@@ -141,6 +149,13 @@ namespace Mirage.Stock.Command
                             result += animate.Title + "\r\n";
                         }
                     }
+                }
+
+                if (room.Items.Count > 0)
+                {
+                    result += "Items:\r\n";
+                    foreach (ItemBase item in room.Items)
+                        result += item.ShortDescription + "\r\n";
                 }
 
                 if (room.Exits.Count > 0)
@@ -237,5 +252,76 @@ namespace Mirage.Stock.Command
             return list;
         }
 
+
+        [CommandAttribute(Aliases=new string[]{"get"})]
+        public IMessage get_item([Actor] Living actor, string target)
+        {
+            ItemBase item = QueryManager.Find(actor.Container, ObjectQuery.parse("Items", target)) as ItemBase;
+            if (item == null)
+                return new StringMessage(MessageType.PlayerError, "item.not.here", "I don't see that here.\r\n");
+
+            if (actor.CanAdd(item))
+            {
+                ContainerUtils.Transfer(item, actor);
+                foreach (Living am in actor.Container.Contents(typeof(Living)))
+                {
+                    if (am != actor)
+                    {
+                        am.Write(new StringMessage(MessageType.Information, "get.item.other", actor.Title + " gets " + item.ShortDescription + "\r\n"));
+                    }
+                }
+                return new StringMessage(MessageType.Confirmation, "get.item.self", "You get " + item.ShortDescription + "\r\n");
+            } else {
+                return new StringMessage(MessageType.PlayerError, "get.item.error", "You can't pick that up!\r\n");
+            }
+        }
+
+        [Command]
+        public IMessage drop([Actor] Living actor, string target)
+        {
+            Room room = actor.Container as Room;            
+            if (target.Equals("all", StringComparison.CurrentCultureIgnoreCase))
+            {
+                if (room == null)
+                    return new StringMessage(MessageType.PlayerError, "cant.drop.all", "You can't drop anything here.\r\n");
+
+                List<ItemBase> items = new List<ItemBase>(actor.Inventory);
+                foreach (ItemBase item in items)
+                    actor.Write(drop(actor, room, item));
+
+                return null;
+            }
+            else
+            {
+                if (room == null)
+                    return new StringMessage(MessageType.PlayerError, "cant.drop.that", "You can't drop that here.\r\n");
+
+                ItemBase item = QueryManager.Find(actor, ObjectQuery.parse("Inventory", target)) as ItemBase;
+                if (item == null)
+                    return new StringMessage(MessageType.PlayerError, "dont.have.item", "You don't have that!\r\n");
+
+                return drop(actor, room, item);
+            }
+        }
+
+        public IMessage drop(Living actor, Room room, ItemBase item)
+        {
+            if (room.CanAdd(item))
+            {
+                ContainerUtils.Transfer(item, room);
+                foreach (Living am in actor.Container.Contents(typeof(Living)))
+                {
+                    if (am != actor)
+                    {
+                        am.Write(new StringMessage(MessageType.Information, "drop.item.other", actor.Title + " drops " + item.ShortDescription + ".\r\n"));
+                    }
+                }
+                return new StringMessage(MessageType.Confirmation, "drop.item.self", "You drop " + item.ShortDescription + ".\r\n");
+            }
+            else
+            {
+                return new StringMessage(MessageType.PlayerError, "drop.item.error", "You can't drop " + item.ShortDescription + "!\r\n");
+            }
+        }
     }
 }

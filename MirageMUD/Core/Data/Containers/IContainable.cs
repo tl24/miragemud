@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mirage.Core.Data
+namespace Mirage.Core.Data.Containers
 {
 
     /// <summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 
-namespace Mirage.Core.Data
+namespace Mirage.Core.Data.Containers
 {
 
     /// <summary>
@@ -18,7 +18,7 @@ namespace Mirage.Core.Data
         /// Adds an item to this container
         /// </summary>
         /// <param name="item">the item to add</param>
-        /// <exception cref="Mirage.Core.Data.ContainerAddException">When the item cannot be added to the container</exception>
+        /// <exception cref="Mirage.Core.Data.Containers.ContainerAddException">When the item cannot be added to the container</exception>
         void Add(IContainable item);
 
         /// <summary>
@@ -56,5 +56,11 @@ namespace Mirage.Core.Data
         /// <typeparam name="T">the type of object to get</typeparam>
         /// <returns>enumerable item</returns>
         IEnumerable Contents(Type t);
+
+        /// <summary>
+        /// Gets all contents of the object regardless of type
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable Contents();
     }
 }

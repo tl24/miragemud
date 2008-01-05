@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mirage.Core.Data
+namespace Mirage.Core.Data.Containers
 {
     /// <summary>
     /// Exception thrown when an object can't be added to a container

@@ -29,12 +29,12 @@ namespace Mirage.Stock.Command
             set { this._queryManager = value; }
         }
 
-        private MudRepositoryBase _mudRepository;
+        private IAreaRepository _areaRepository;
 
-        public MudRepositoryBase MudRepository
+        public IAreaRepository AreaRepository
         {
-            get { return _mudRepository; }
-            set { _mudRepository = value; }
+            get { return _areaRepository; }
+            set { _areaRepository = value; }
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Mirage.Stock.Command
         [Command]
         public IMessage GetAreas(string itemUri)
         {
-            IDictionary<string, IArea> areas = MudRepository.Areas;
+            IDictionary<string, IArea> areas = AreaRepository.Areas;
             List<string> areaList = new List<string>(areas.Keys);
             return new DataMessage(Namespaces.Area, "AreaList", "Areas", areaList);
         }
@@ -66,7 +66,7 @@ namespace Mirage.Stock.Command
         [Command]
         public IMessage UpdateItem(ChangeType changeType, Area area)
         {
-            IDictionary<string, IArea> areas = MudRepository.Areas;
+            IDictionary<string, IArea> areas = AreaRepository.Areas;
             switch (changeType)
             {
                 case ChangeType.Add:                    
@@ -91,21 +91,18 @@ namespace Mirage.Stock.Command
         [Command]
         public IMessage SaveArea(string areaName)
         {
-            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Area));
-            IDictionary<string, IArea> areas = MudRepository.Areas;
             if (areaName == null || areaName == string.Empty || areaName == "all")
             {
-                foreach (Area area in areas.Values)
+                foreach (Area area in AreaRepository)
                 {
                     if (area.IsDirty)
-                        persister.Save(area, area.Uri);
+                        AreaRepository.Save(area);
                 }
                 return new Message(MessageType.Confirmation, Namespaces.Area, "AllAreasSaved");
             }
             else
             {
-                Area area = (Area) areas[areaName];
-                persister.Save(area, area.Uri);
+                AreaRepository.Save(areaName);
                 return new Message(MessageType.Confirmation, Namespaces.Area, "AreaSaved");
             }
         }
