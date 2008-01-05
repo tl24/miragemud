@@ -10,12 +10,12 @@ namespace Mirage.Core.Data
     public class PlayerExecutorServiceBase : ServiceExecutorBase
     {
         private ILog logger = LogManager.GetLogger(typeof(PlayerExecutorServiceBase));
-        private MudRepositoryBase _mudRepository;
+        private IPlayerRepository _playerRepository;
 
-        public MudRepositoryBase MudRepository
+        public IPlayerRepository PlayerRepository
         {
-            get { return this._mudRepository; }
-            set { this._mudRepository = value; }
+            get { return this._playerRepository; }
+            set { this._playerRepository = value; }
         }
 
         public override ServiceMethod GetServiceMethod(string key)
@@ -38,7 +38,7 @@ namespace Mirage.Core.Data
             Queue<IPlayer> removePlayers = new Queue<IPlayer>();
 
             // reset state
-            foreach (IPlayer player in MudRepository.Players)
+            foreach (IPlayer player in PlayerRepository)
             {
                 player.Client.CommandRead = false;
                 player.Client.OutputWritten = false;
@@ -72,7 +72,7 @@ namespace Mirage.Core.Data
 
         public void ReadInput()
         {
-            foreach (IPlayer player in MudRepository.Players)
+            foreach (IPlayer player in PlayerRepository)
             {
                 try
                 {
@@ -87,7 +87,7 @@ namespace Mirage.Core.Data
 
         public void WriteOutput()
         {
-            foreach (IPlayer player in MudRepository.Players)
+            foreach (IPlayer player in PlayerRepository)
             {
                 try
                 {
@@ -103,8 +103,7 @@ namespace Mirage.Core.Data
 
         protected void SavePlayer(IPlayer player)
         {
-            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(player.GetType());
-            persister.Save(player, player.Uri);
+            PlayerRepository.Save(player);
         }
 
     }

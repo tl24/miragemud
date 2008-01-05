@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mirage.Core.Data
+namespace Mirage.Core.Data.Containers
 {
-    public class Containers
+    public class ContainerUtils
     {
         public static bool TryTransfer(IContainable item, IContainer newContainer)
         {

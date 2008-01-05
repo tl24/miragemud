@@ -13,11 +13,11 @@ namespace Mirage.Core.Communication
     /// </summary>
     public class ChannelsInitializer : IInitializer
     {
-        private MudRepositoryBase _mudRepository;
+        private IChannelRepository _channelRepository;
 
-        public ChannelsInitializer(MudRepositoryBase MudRespository)
+        public ChannelsInitializer(IChannelRepository ChannelRespository)
         {
-            _mudRepository = MudRespository;
+            _channelRepository = ChannelRespository;
         }
 
         #region IInitializer Members
@@ -30,15 +30,10 @@ namespace Mirage.Core.Communication
         public void Execute()
         {
             // Load the channel definitions
-            Serializer serializer = Serializer.GetSerializer(typeof(List<Channel>));
-            List<Channel> channels = null;
-            using(StreamReader reader = new StreamReader("channels.jsx")) {
-                channels = (List<Channel>) serializer.Deserialize(reader);
-            }            
-            _mudRepository.Channels = channels;
+
 
             // create the commands for each channel
-            foreach (Channel channel in channels)
+            foreach (Channel channel in _channelRepository)
             {
                 foreach (ICommand command in channel.CreateCommands())
                 {

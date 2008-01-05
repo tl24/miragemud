@@ -37,6 +37,15 @@ namespace Mirage.Core.Data
         }
         #endregion
 
+        /// <summary>
+        /// Copy this items properties to another item
+        /// </summary>
+        /// <param name="other">other item to copy to</param>
+        public virtual void CopyTo(BaseData other)
+        {
+            other.Uri = this.Uri;
+        }
+
         #region IUriContainer Members
 
         public object GetChild(string uri)

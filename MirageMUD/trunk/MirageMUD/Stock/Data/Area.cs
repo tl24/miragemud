@@ -8,17 +8,17 @@ using Mirage.Core.Data;
 
 namespace Mirage.Stock.Data
 {
-    public class Area : BaseData, IViewable, IArea
+    public class Area : ViewableBase, IArea
     {
-        private string _title;
-        private string _shortDescription;
-        private string _longDescription;
         private IDictionary<string, Room> _rooms;
+        private IDictionary<string, MobTemplate> _mobiles;
+
         private bool _isDirty;
 
         public Area()
         {
-            Rooms = new Dictionary<string, Room>(StringComparer.CurrentCultureIgnoreCase);            
+            Rooms = new Dictionary<string, Room>(StringComparer.CurrentCultureIgnoreCase);
+            Mobiles = new Dictionary<string, MobTemplate>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         [EditorCollection(typeof(Room))]
@@ -31,27 +31,16 @@ namespace Mirage.Stock.Data
             }
         }
 
-        [Editor(Priority = 3)]
-        public string Title
+        [EditorCollection(typeof(MobTemplate))]
+        public IDictionary<string, MobTemplate> Mobiles
         {
-            get { return this._title; }
-            set { this._title = value; }
+            get { return this._mobiles; }
+            set
+            {
+                this._mobiles = value;
+                _uriChildCollections["Mobiles"] = new BaseData.ChildCollectionPair(_mobiles, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
+            }
         }
-
-        [Editor(Priority = 4)]
-        public string ShortDescription
-        {
-            get { return this._shortDescription; }
-            set { this._shortDescription = value; }
-        }
-
-        [Editor(Priority = 5, EditorType="Multiline")]
-        public string LongDescription
-        {
-            get { return this._longDescription; }
-            set { this._longDescription = value; }
-        }
-
         [JsonExIgnore]
         public bool IsDirty
         {

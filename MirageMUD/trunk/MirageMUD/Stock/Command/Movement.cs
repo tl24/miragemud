@@ -6,6 +6,7 @@ using Mirage.Core.Communication;
 using Mirage.Core.Data.Attribute;
 using Mirage.Stock.Data;
 using Mirage.Core.Command;
+using Mirage.Core.Data.Containers;
 
 namespace Mirage.Stock.Command
 {
@@ -78,7 +79,7 @@ namespace Mirage.Stock.Command
 
             try
             {
-                Containers.Transfer(actor, exit.TargetRoom);
+                ContainerUtils.Transfer(actor, exit.TargetRoom);
                 foreach (Living oldRoomPeople in room.Animates)
                 {
                     if (oldRoomPeople != actor)
@@ -94,15 +95,14 @@ namespace Mirage.Stock.Command
                     }
                 }
                 actor.Write(new StringMessage(MessageType.Confirmation, "Movement." + dirName, "You go " + dirName + ".\r\n"));
-                Interpreter.ExecuteCommand(actor, "look");
+                if (actor is IPlayer)
+                    Interpreter.ExecuteCommand(actor, "look");
                 return null;
             }
-            catch (ContainerAddException e)
+            catch (ContainerAddException)
             {
                 return MessageFactory.GetMessage("msg:/movement/cant.go.exit");
             }
-
-
         }
 
         private int ParseDirection(string dir)

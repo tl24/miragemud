@@ -57,23 +57,6 @@ namespace NUnitTests.Data
 
             Assert.AreNotEqual(val, target.Password, "rom.Data.Player.password was not encrypted.");
         }
-
-        [Test]
-        public void loadSaveTest()
-        {
-            Player target = new Player();
-            target.Uri = "targetName";
-            target.Title = "targetName";
-            target.LongDescription = "target Description line 1\r\ntargeDescriptionon line 2";
-            target.SetPassword("targetPassword");
-            target.Level = 23;
-            target.Gender = GenderType.Female;
-
-            Player.Save(target);
-            Player loaded = Player.Load(target.Uri);
-
-            Assert.AreEqual(target.Title, loaded.Title, "rom.Data.Player.Title field not equal to loaded value");
-        }
     }
 
 

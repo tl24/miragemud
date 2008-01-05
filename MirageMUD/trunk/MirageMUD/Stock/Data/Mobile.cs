@@ -11,20 +11,19 @@ namespace Mirage.Stock.Data
     /// <summary>
     /// Non-player chars, monsters, mobs, etc
     /// </summary>
-    public class Mobile : Living
+    public class Mobile : Living, IDisposable
     {
         private IPrincipal _principal;
         // mob uri's can be duplicates so give us an ID to distinguish us
         private Guid _id;
         private Queue<IMobileCommand> _commands;
         private IList<AIProgram> _programs;
+        private MobTemplate _template;
 
-        public Mobile(string name)
+        public Mobile(MobTemplate template)
             : base()
         {
             _id = Guid.NewGuid();
-            _uri = name;
-            Title = name;
             _commands = new Queue<IMobileCommand>();
             _programs = new List<AIProgram>();
         }
@@ -81,6 +80,22 @@ namespace Mirage.Stock.Data
         {
             get { return this._programs; }
         }
+
+        public MobTemplate Template
+        {
+            get { return _template; }
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Commands.Clear();
+            Programs.Clear();
+            Template.Mobiles.Remove(this);
+        }
+
+        #endregion
     }
 
     public interface IMobileCommand

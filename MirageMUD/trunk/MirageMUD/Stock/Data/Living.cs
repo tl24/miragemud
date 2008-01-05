@@ -8,6 +8,9 @@ using Mirage.Core.Data.Query;
 using JsonExSerializer;
 using Mirage.Core.Data;
 using System.Security.Principal;
+using Mirage.Stock.Data.Items;
+using System.Collections;
+using Mirage.Core.Data.Containers;
 
 namespace Mirage.Stock.Data
 {
@@ -35,73 +38,23 @@ namespace Mirage.Stock.Data
     ///     A base class for living breathing things such as players
     /// and mobiles.
     /// </summary>
-    public abstract class Living : BaseData, IViewable, IContainable, IActor, IReceiveMessages
+    public abstract class Living : LivingTemplateBase, IContainable, IActor, IReceiveMessages, IContainer
     {
-        private string _title;
-        private int _level;
-        private GenderType _gender;
-        private string _shortDescription;
-        private string _longDescription;
         private Room _room;
+        private LinkedList<ItemBase> _inventory;
+        protected IContainer _itemContainer;
 
         public Living()
         {
-            _level = 1;
-            _gender = GenderType.Other;
-        }
-        /// <summary>
-        ///     The player or mobile's level
-        /// </summary>
-
-        public int Level
-        {
-            get { return _level; }
-            set { _level = value; }
-        }
-
-        /// <summary>
-        ///     The object's gender
-        /// </summary>
-        public GenderType Gender
-        {
-            get { return _gender; }
-            set { _gender = value; }
+            _inventory = new LinkedList<ItemBase>();
+            _uriChildCollections.Add("Inventory", new ChildCollectionPair(_inventory, QueryHints.DefaultPartialMatch));
+            _itemContainer = new GenericCollectionContainer<ItemBase>(_inventory, this);
         }
 
         public abstract void Write(IMessage message);
 
         public abstract IPrincipal Principal { get; }
 
-        #region IViewable Members
-
-        /// <summary>
-        ///     The name of this animate
-        /// </summary>
-        public string Title
-        {
-            get { return _title; }
-            set { _title = value; }
-        }
-
-        /// <summary>
-        /// A short description of this animate
-        /// </summary>
-        public string ShortDescription
-        {
-            get { return _shortDescription; }
-            set { _shortDescription = value; }
-        }
-
-        /// <summary>
-        /// A long description of this animate
-        /// </summary>
-        public string LongDescription
-        {
-            get { return _longDescription; }
-            set { _longDescription = value; }
-        }
-
-        #endregion
 
         #region IContainable Members
 
@@ -109,14 +62,8 @@ namespace Mirage.Stock.Data
         [JsonExIgnore]
         public IContainer Container
         {
-            get
-            {
-                return _room;
-            }
-            set
-            {
-                _room = (Room)value;
-            }
+            get { return _room; }
+            set { _room = (Room)value; }
         }
 
         public bool CanBeContainedBy(IContainer container)
@@ -124,6 +71,48 @@ namespace Mirage.Stock.Data
             return (container is Room);
         }
 
+        #endregion
+
+        public ICollection<ItemBase> Inventory
+        {
+            get { return _inventory; }
+        }
+        #region IContainer Members
+
+        public void Add(IContainable item)
+        {
+            _itemContainer.Add(item);
+        }
+
+        public void Remove(IContainable item)
+        {
+            _itemContainer.Remove(item);
+        }
+
+        public bool Contains(IContainable item)
+        {
+            return _itemContainer.Contains(item);
+        }
+
+        public bool CanContain(Type item)
+        {
+            return _itemContainer.CanContain(item);
+        }
+
+        public bool CanAdd(IContainable item)
+        {
+            return _itemContainer.CanAdd(item);
+        }
+
+        public IEnumerable Contents(Type t)
+        {
+            return _itemContainer.Contents(t);
+        }
+
+        public IEnumerable Contents()
+        {
+            return _itemContainer.Contents();
+        }
         #endregion
     }
 }

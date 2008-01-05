@@ -21,12 +21,14 @@ namespace Mirage.Stock.IO
         private bool _failed;
         private bool _echoOn;
         private IMessageFactory _messageFactory;
+        private IPlayerRepository _playerRepository;
 
         public TextLoginStateHandler(IClient client)
             : base(client)
         {
             _failed = false;
             _echoOn = true;
+            _playerRepository = MudFactory.GetObject<IPlayerRepository>();
         }
         
         public IMessageFactory MessageFactory
@@ -162,7 +164,7 @@ namespace Mirage.Stock.IO
             }
 
             SetValue<string>("name", input);
-            Player oldPlayer = Player.Load(input);
+            Player oldPlayer = (Player) _playerRepository.Load(input);
             if (oldPlayer != null)
             {
                 // Old player

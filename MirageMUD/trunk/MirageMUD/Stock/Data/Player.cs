@@ -7,9 +7,7 @@ using System.Configuration;
 using System.IO;
 using System.Security.Cryptography;
 using Mirage.Core.IO;
-using Mirage.Core.Command;
 
-using Mirage.Core.IO.Serialization;
 using Mirage.Core.Data.Query;
 using Mirage.Core.Communication;
 using System.Security.Principal;
@@ -17,6 +15,7 @@ using JsonExSerializer;
 using Mirage.Core.Data;
 using Mirage.Core.Security;
 using Mirage.Core;
+using Mirage.Core.Command;
 
 namespace Mirage.Stock.Data
 {
@@ -227,83 +226,11 @@ namespace Mirage.Stock.Data
                 }
             }
         }
-        /// <summary>
-        ///     Loads a player object from a file
-        /// </summary>
-        /// <param name="name">the name of the player to load</param>
-        /// <returns></returns>
-        public static Player Load(string uri)
-        {
-            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(typeof(Player));
-            try
-            {
-                Player p = (Player) persister.Load(uri);
-                return p;
-            }
-            catch (FileNotFoundException e)
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        ///     Saves the given player to disk
-        /// </summary>
-        /// <param name="p">the player to save</param>
-        public static void Save(Player p)
-        {
-            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(p.GetType());
-            persister.Save(p, p.Uri);
-        }
-
-        #region Commands
-
-        [Command(Description = "Attempt to kill another player or mobile")]
-        public string kill([Actor] Player self, string target)
-        {
-            return "You are going to kill " + target + "\r\n";
-        }
-
-        [Command(Description = "Change the password")]
-        public string changePassword(string oldPassword, string newPassword)
-        {
-            if (ComparePassword(oldPassword))
-            {
-                SetPassword(newPassword);
-                return "Password changed.\r\n";
-            }
-            else
-            {
-                return "The old password is incorrect.\r\n";
-            }
-        }
-
-        [Command(Description = "Attempt to kill another player or mobile")]
-        public string kill([Actor] Player self, string target, int count)
-        {
-            return "You are going to kill " + target + " " + count + " times\r\n";
-        }
-
-        [Command(Description = "Attempt to kill another player or mobile")]
-        public string kill([Actor] Player self, 
-                          [Lookup("/Players")] Player target)
-        {
-            return "You started a fight with " + target.Title + ".\r\n";
-        }
-
-        [Command(Description="Saves the current progress")]
-        [Confirmation(CancellationMessage="Save cancelled.\r\n")]
-        public string save()
-        {
-            Player.Save(this);
-            return "Information saved.\r\n";
-        }
 
         public void FirePlayerEvent(PlayerEventType eventType)
         {
             PlayerEvent(this, new PlayerEventArgs(eventType));
         }
-        #endregion
 
         public override string ToString()
         {
