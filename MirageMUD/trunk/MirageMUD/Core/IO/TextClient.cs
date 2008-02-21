@@ -65,9 +65,8 @@ namespace Mirage.Core.IO
         /// tcp client (Socket)
         /// </summary>
         /// <param name="client"> the client to read and write from</param>
-        public override void Open(TcpClient client)
+        public TextClient(TcpClient client) : base(client)
         {
-            base.Open(client);
             NetworkStream stm = _client.GetStream();
             reader = new StreamReader(stm);
             writer = new StreamWriter(stm);

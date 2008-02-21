@@ -22,10 +22,21 @@ namespace Mirage.Stock.Command
         [CommandAttribute(Aliases = new string[] { "get" })]
         public IMessage get_item([Actor] Living actor, string target)
         {
-            ItemBase item = QueryManager.Find(actor.Container, ObjectQuery.parse("Items", target)) as ItemBase;
-            if (item == null)
-                return new StringMessage(MessageType.PlayerError, "item.not.here", "I don't see that here.\r\n");
+            if ("all".Equals(target, StringComparison.CurrentCultureIgnoreCase)) {
+                foreach(ItemBase item in new List<ItemBase>(actor.Container.Contents<ItemBase>())) {
+                    actor.Write(get_item(actor, item));
+                }
+                return null;
+            } else {
+                ItemBase item = QueryManager.Find(actor.Container, ObjectQuery.parse("Items", target)) as ItemBase;
+                if (item == null)
+                    return new StringMessage(MessageType.PlayerError, "item.not.here", "I don't see that here.\r\n");
+                else
+                    return get_item(actor, item);
+            }
+        }
 
+        public IMessage get_item(Living actor, ItemBase item) {
             if (actor.CanAdd(item))
             {
                 ContainerUtils.Transfer(item, actor);
@@ -40,7 +51,7 @@ namespace Mirage.Stock.Command
             }
             else
             {
-                return new StringMessage(MessageType.PlayerError, "get.item.error", "You can't pick that up!\r\n");
+                return new StringMessage(MessageType.PlayerError, "get.item.error", "You can't pick up " + item.ShortDescription + "!\r\n");
             }
         }
 
@@ -139,5 +150,24 @@ namespace Mirage.Stock.Command
 
             return new StringMessage(MessageType.Information, "equipment", sb.ToString());
         }
+
+        [CommandAttribute(Description="Shows the current items in inventory that a player has")]
+        public IMessage inventory([Actor] Living actor)
+        {
+            return new StringMessage(MessageType.Information, "inventory", DisplayItemList("You have the following items:", actor.Inventory));
+        }
+
+        public static string DisplayItemList(string title, ICollection<ItemBase> items)
+        {
+            string result = "";
+            if (!string.IsNullOrEmpty(title))
+                result += title + "\r\n";
+
+            foreach (ItemBase item in items)
+                result += item.ShortDescription + "\r\n";
+
+            return result;
+        }
+
     }
 }

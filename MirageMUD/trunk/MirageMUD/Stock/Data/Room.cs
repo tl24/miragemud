@@ -176,6 +176,14 @@ namespace Mirage.Stock.Data
             }
         }
 
+        public System.Collections.Generic.IEnumerable<T> Contents<T>()
+        {
+            foreach (object item in this.Contents(typeof(T)))
+            {
+                yield return (T)item;
+            }
+        }
+
         public IEnumerable Contents()
         {
             throw new Exception("Not Implemented");

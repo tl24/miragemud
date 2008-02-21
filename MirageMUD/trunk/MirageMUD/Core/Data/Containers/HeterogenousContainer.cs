@@ -107,6 +107,15 @@ namespace Mirage.Core.Data.Containers
             }
         }
 
+        public System.Collections.Generic.IEnumerable<T> Contents<T>()
+        {
+            foreach (IContainer container in _collections.Values)
+            {
+                foreach (T item in container.Contents<T>())
+                    yield return item;
+            }
+        }
+
         public System.Collections.IEnumerable Contents()
         {
             return Contents(typeof(object));

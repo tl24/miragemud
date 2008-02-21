@@ -152,11 +152,7 @@ namespace Mirage.Stock.Command
                 }
 
                 if (room.Items.Count > 0)
-                {
-                    result += "Items:\r\n";
-                    foreach (ItemBase item in room.Items)
-                        result += item.ShortDescription + "\r\n";
-                }
+                    result += ItemCommands.DisplayItemList("Items:", room.Items);
 
                 if (room.Exits.Count > 0)
                 {

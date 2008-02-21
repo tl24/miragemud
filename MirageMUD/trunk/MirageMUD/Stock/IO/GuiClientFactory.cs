@@ -12,10 +12,9 @@ namespace Mirage.Stock.IO
     /// </summary>
     public class GuiClientFactory : IClientFactory
     {
-        public IClient CreateClient(TcpClient client)
+        public ITelnetClient CreateClient(TcpClient client)
         {
-            IClient mudClient = new GuiClient();
-            mudClient.Open(client);
+            ITelnetClient mudClient = new GuiClient(client);
             mudClient.LoginHandler = new GuiLoginHandler(mudClient);
             mudClient.LoginHandler.HandleInput(null);
             return mudClient;

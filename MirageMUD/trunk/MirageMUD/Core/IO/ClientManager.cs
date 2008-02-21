@@ -22,10 +22,10 @@ namespace Mirage.Core.IO
     public class ClientManager
     {
         private List<ClientListener> _listeners;
-        private ISynchronizedQueue<IClient> _newClients;
+        private ISynchronizedQueue<IMudClient> _newClients;
         private bool _started = false;
         private BlockingQueue<ClientOperation> workItems;
-        protected ISynchronizedQueue<IClient> _internalNewClients;
+        protected ISynchronizedQueue<ITelnetClient> _internalNewClients;
 
         protected IList<Thread> threads;
         protected IList<Socket> _sockets;
@@ -38,7 +38,7 @@ namespace Mirage.Core.IO
         {
             _listeners = new List<ClientListener>();
             workItems = new BlockingQueue<ClientOperation>(15);
-            _internalNewClients = new SynchronizedQueue<IClient>();
+            _internalNewClients = new SynchronizedQueue<ITelnetClient>();
             threads = new List<Thread>();
             _sockets = new List<Socket>();
             _clientMap = new Hashtable();
@@ -120,7 +120,7 @@ namespace Mirage.Core.IO
                     Thread.Sleep(100);
 
                 // add any new clients
-                IClient newClient;
+                ITelnetClient newClient;
                 while (_internalNewClients.TryDequeue(out newClient))
                 {
                     _sockets.Add(newClient.TcpClient.Client);
@@ -147,7 +147,7 @@ namespace Mirage.Core.IO
             foreach (DictionaryEntry entry in _clientMap)
             {
                 Socket skey = (Socket)entry.Key;
-                IClient client = entry.Value as IClient;
+                ITelnetClient client = entry.Value as ITelnetClient;
                 if (client != null)
                 {
                     if (!client.IsOpen)
@@ -179,25 +179,25 @@ namespace Mirage.Core.IO
                     switch (op.Type)
                     {
                         case OpType.Accept:
-                            IClient client = ((ClientListener)op.Client).Accept();
+                            ITelnetClient client = ((ClientListener)op.Client).Accept();
                             _internalNewClients.Enqueue(client);
                             break;
                         case OpType.Read:
-                            ((IClient)op.Client).ReadInput();
+                            ((ITelnetClient)op.Client).ReadInput();
                             break;
                         case OpType.Write:
-                            ((IClient)op.Client).FlushOutput();
+                            ((ITelnetClient)op.Client).FlushOutput();
                             break;
                         case OpType.Error:
-                            ((IClient)op.Client).Close();
+                            ((ITelnetClient)op.Client).Close();
                             break;
                     }
                 }
                 catch (IOException e)
                 {
-                    if (op.Client is IClient)
+                    if (op.Client is ITelnetClient)
                         // error, close the connection, main thread will clean it up
-                        ((IClient)op.Client).Close();
+                        ((ITelnetClient)op.Client).Close();
                 }
             }
         }
@@ -252,7 +252,7 @@ namespace Mirage.Core.IO
             _started = false;
         }
 
-        public ISynchronizedQueue<IClient> NewClients
+        public ISynchronizedQueue<IMudClient> NewClients
         {
             get { return this._newClients; }
             set

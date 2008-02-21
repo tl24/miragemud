@@ -5,13 +5,8 @@ using System.Net.Sockets;
 
 namespace Mirage.Core.IO
 {
-    public interface IClientIO : IDisposable
+    public interface ITelnetClient : IMudClient, IDisposable
     {
-        /// <summary>
-        /// Initialize the client with its TCP client socket connection.
-        /// </summary>
-        /// <param name="client">The TcpClient that this client will be connected to</param>
-        void Open(TcpClient client);
 
         /// <summary>
         /// Read from the socket and populate the input queue

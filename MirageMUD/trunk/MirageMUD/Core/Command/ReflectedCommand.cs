@@ -98,6 +98,9 @@ namespace Mirage.Core.Command
             if (cmdAttr.ClientTypes != null)
                 this._clientTypes = cmdAttr.ClientTypes;
 
+            if (cmdAttr.Priority != 0)
+                this._priority = cmdAttr.Priority;
+
             this._aliases = cmdAttr.Aliases ?? new string[0];
 
             _argCount = 0;

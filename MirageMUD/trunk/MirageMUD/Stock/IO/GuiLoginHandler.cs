@@ -21,10 +21,10 @@ namespace Mirage.Stock.IO
     /// </summary>
     public class GuiLoginHandler : ILoginInputHandler
     {
-        private IClient _client;
+        private IMudClient _client;
         private IPlayerRepository _playerRepository;
 
-        public GuiLoginHandler(IClient client)
+        public GuiLoginHandler(IMudClient client)
         {
             _client = client;
             _playerRepository = MudFactory.GetObject<IPlayerRepository>();
@@ -61,7 +61,7 @@ namespace Mirage.Stock.IO
 
         #endregion
 
-        public IClient Client
+        public IMudClient Client
         {
             get { return this._client; }
             set { this._client = value; }

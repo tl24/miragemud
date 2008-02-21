@@ -35,7 +35,7 @@ namespace Mirage.Core.Util
         /// <summary>
         /// The current client session
         /// </summary>
-        private IClient _client;
+        private IMudClient _client;
 
         /// <summary>
         /// Delegate type for the validation routines.  Passed as
@@ -49,7 +49,7 @@ namespace Mirage.Core.Util
         /// object is used to send prompts for information.
         /// </summary>
         /// <param name="client">The current client</param>
-        public AbstractStateMachine(IClient client)
+        public AbstractStateMachine(IMudClient client)
         {
             _properties = new HybridDictionary();
             this._client = client;
@@ -137,7 +137,7 @@ namespace Mirage.Core.Util
         /// <summary>
         /// The client object that this state machine is managing
         /// </summary>
-        public IClient Client
+        public IMudClient Client
         {
             get { return _client; }
             set { _client = value; }

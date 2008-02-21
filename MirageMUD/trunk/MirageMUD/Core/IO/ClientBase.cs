@@ -16,9 +16,8 @@ namespace Mirage.Core.IO
     /// <summary>
     ///     Handles Server for a player
     /// </summary>
-    public abstract class ClientBase : IClient
+    public abstract class ClientBase : ITelnetClient
     {
-
         /// <summary>
         /// closed flag, 0 = open, 1 = closed
         /// </summary>
@@ -62,11 +61,11 @@ namespace Mirage.Core.IO
         protected IClientFactory _clientFactory;
 
         /// <summary>
-        ///     Create a descriptor to read and write to the given
+        ///     Create a client to read and write to the given
         /// tcp client (Socket)
         /// </summary>
         /// <param name="client"> the client to read and write from</param>
-        public virtual void Open(TcpClient client)
+        public ClientBase(TcpClient client)
         {
             this._client = client;
         }
@@ -176,9 +175,9 @@ namespace Mirage.Core.IO
             get { return _client; }
         }
 
-        public ILog Logger
+        public string Address
         {
-            get { return log; }
+            get { return TcpClient.Client.LocalEndPoint.ToString(); }
         }
     }
 }

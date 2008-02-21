@@ -34,15 +34,10 @@ namespace Mirage.Core.IO
         protected ISynchronizedQueue<AdvancedMessage> outputQueue;
 
 
-        public GuiClient()
+        public GuiClient(TcpClient client) : base(client)
         {
             inputQueue = new SynchronizedQueue<AdvancedMessage>();
             outputQueue = new SynchronizedQueue<AdvancedMessage>();
-        }
-
-        public override void Open(TcpClient client)
-        {
-            base.Open(client);
             NetworkStream stm = client.GetStream();
             reader = new BinaryReader(stm);
             writer = new BinaryWriter(stm);

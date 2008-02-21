@@ -17,29 +17,37 @@ namespace Mirage.Stock.Data
 
         public Area()
         {
-            Rooms = new Dictionary<string, Room>(StringComparer.CurrentCultureIgnoreCase);
-            Mobiles = new Dictionary<string, MobTemplate>(StringComparer.CurrentCultureIgnoreCase);
+            _rooms = new Dictionary<string, Room>(StringComparer.CurrentCultureIgnoreCase);
+            _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
+            _mobiles = new Dictionary<string, MobTemplate>(StringComparer.CurrentCultureIgnoreCase);
+            _uriChildCollections["Mobiles"] = new BaseData.ChildCollectionPair(_mobiles, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
         }
 
         [EditorCollection(typeof(Room))]
+        [JsonExProperty]
         public IDictionary<string, Room> Rooms
         {
             get { return this._rooms; }
+            /*
             set { 
                 this._rooms = value;
                 _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
             }
+             */ 
         }
 
         [EditorCollection(typeof(MobTemplate))]
+        [JsonExProperty]
         public IDictionary<string, MobTemplate> Mobiles
         {
             get { return this._mobiles; }
+            /*
             set
             {
                 this._mobiles = value;
                 _uriChildCollections["Mobiles"] = new BaseData.ChildCollectionPair(_mobiles, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
             }
+             */ 
         }
         [JsonExIgnore]
         public bool IsDirty
