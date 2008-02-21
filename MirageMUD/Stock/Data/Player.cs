@@ -27,7 +27,7 @@ namespace Mirage.Stock.Data
     public class Player : Living, IPlayer
     {
         private string _password;
-        private IClient _client;
+        private IMudClient _client;
         private IInterpret _interpreter;
         private MudPrincipal _principal;
         private string[] _roles;
@@ -118,7 +118,7 @@ namespace Mirage.Stock.Data
         /// </summary>
         [XmlIgnore]
         [JsonExIgnore]
-        public IClient Client
+        public IMudClient Client
         {
             get { return _client; }
             set { _client = value; }

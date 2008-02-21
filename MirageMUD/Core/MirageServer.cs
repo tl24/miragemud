@@ -78,8 +78,8 @@ namespace Mirage.Core
 
             ClientManager manager = null;
             MudRepositoryBase globalLists = null;
-            List<IClient> NannyClients = null;
-            BlockingQueue<IClient> NannyQueue = null;
+            List<IMudClient> NannyClients = null;
+            BlockingQueue<IMudClient> NannyQueue = null;
             DateTime lastTime;
             DateTime currentTime;
             TimeSpan delta;
@@ -94,9 +94,9 @@ namespace Mirage.Core
                 manager = new ClientManager();
                 manager.Configure();
                 globalLists = MudFactory.GetObject<MudRepositoryBase>();
-                NannyClients = new List<IClient>();
+                NannyClients = new List<IMudClient>();
                 // These are the new connections waiting to be put in the nanny list
-                NannyQueue = new BlockingQueue<IClient>(15);
+                NannyQueue = new BlockingQueue<IMudClient>(15);
 
                 manager.NewClients = NannyQueue;
                 manager.Start();
@@ -117,7 +117,7 @@ namespace Mirage.Core
                 try
                 {
                     loopCount++;
-                    IClient newClient;
+                    IMudClient newClient;
 
                     try
                     {

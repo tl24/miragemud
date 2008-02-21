@@ -78,6 +78,19 @@ namespace Mirage.Core.Data.Containers
             }
         }
 
+        public virtual System.Collections.Generic.IEnumerable<IT> Contents<IT>() 
+        {
+            foreach (T item in Items)
+            {
+                if (item is IT)
+                {
+                    object o = item;
+
+                    yield return (IT) o;
+                }
+            }
+        }
+
         public virtual IEnumerable Contents()
         {
             return Contents(typeof(object));

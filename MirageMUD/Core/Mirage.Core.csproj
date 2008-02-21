@@ -93,6 +93,7 @@
     <Compile Include="Communication\TemplateManager.cs" />
     <Compile Include="Communication\TemplateRenderer.cs" />
     <Compile Include="Communication\ValidationException.cs" />
+    <Compile Include="Data\AbstractSimpleRepository.cs" />
     <Compile Include="Data\AreaRepository.cs" />
     <Compile Include="Data\Attribute\AttributeNotSupportedException.cs" />
     <Compile Include="Data\Attribute\BaseAttribute.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Data\IMudRepository.cs" />
     <Compile Include="Data\IPlayer.cs" />
     <Compile Include="Data\IPlayerRepository.cs" />
+    <Compile Include="Data\JsonSimpleRepository.cs" />
     <Compile Include="Data\MudFactory.cs" />
     <Compile Include="Data\ObjectUpdater.cs" />
     <Compile Include="Data\PlayerExecutorServiceBase.cs" />
@@ -134,7 +136,7 @@
     <Compile Include="IO\ClientBase.cs" />
     <Compile Include="IO\ClientListener.cs" />
     <Compile Include="IO\ConnectedState.cs" />
-    <Compile Include="IO\IClientIO.cs" />
+    <Compile Include="IO\ITelnetClient.cs" />
     <Compile Include="IO\IServiceExecutor.cs" />
     <Compile Include="IO\Serialization\FileSerializerAdapterBase.cs" />
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
@@ -159,7 +161,7 @@
     <Compile Include="IO\ClientManager.cs" />
     <Compile Include="IO\IClientFactory.cs" />
     <Compile Include="IO\TextClient.cs" />
-    <Compile Include="IO\IClient.cs" />
+    <Compile Include="IO\IMudClient.cs" />
     <Compile Include="MirageServer.cs" />
     <Compile Include="IO\Serialization\ObjectSerializer.cs" />
     <Compile Include="IO\Serialization\XmlSerializerAdapter.cs" />
@@ -178,6 +180,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Includes\Welcome.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Players\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,33 +20,33 @@ namespace Mirage.Stock.Command
             set { _messageFactory = value; }
         }
 
-        [Command]
+        [CommandAttribute(Priority=80)]
         public IMessage north([Actor]Living actor)
         {
             return Go(actor, DirectionType.North);
         }
 
-        [Command]
+        [CommandAttribute(Priority = 80)]
         public IMessage south([Actor]Living actor)
         {
             return Go(actor, DirectionType.South);
         }
-        [Command]
+        [CommandAttribute(Priority = 80)]
         public IMessage east([Actor]Living actor)
         {
             return Go(actor, DirectionType.East);
         }
-        [Command]
+        [CommandAttribute(Priority = 80)]
         public IMessage west([Actor]Living actor)
         {
             return Go(actor, DirectionType.West);
         }
-        [Command]
+        [CommandAttribute(Priority = 80)]
         public IMessage up([Actor]Living actor)
         {
             return Go(actor, DirectionType.Up);
         }
-        [Command]
+        [CommandAttribute(Priority = 80)]
         public IMessage down([Actor]Living actor)
         {
             return Go(actor, DirectionType.Down);

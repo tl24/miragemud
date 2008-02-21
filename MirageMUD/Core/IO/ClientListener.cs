@@ -47,7 +47,7 @@ namespace Mirage.Core.IO
         /// returns it
         /// </summary>
         /// <returns>new client object</returns>
-        public IClient Accept()
+        public ITelnetClient Accept()
         {
             TcpClient client = _listener.AcceptTcpClient();
             Socket newSocket = client.Client;
@@ -55,7 +55,7 @@ namespace Mirage.Core.IO
             return CreateClient(client);            
         }
 
-        private IClient CreateClient(TcpClient client)
+        private ITelnetClient CreateClient(TcpClient client)
         {
             return clientFactory.CreateClient(client);
         }

@@ -204,6 +204,11 @@ namespace Mirage.Stock.Data
         {
             return _itemContainer.Contents();
         }
+
+        public System.Collections.Generic.IEnumerable<T> Contents<T>()
+        {
+            return _itemContainer.Contents<T>();
+        }
         #endregion
     }
 }

@@ -9,6 +9,7 @@ namespace Mirage.Stock.Data
     public class StockRepository : MudRepositoryBase
     {
         private LinkedList<Mobile> _mobiles;
+        private IRaceRepository _races;
 
         public StockRepository()
             : base()
@@ -22,5 +23,10 @@ namespace Mirage.Stock.Data
             get { return this._mobiles; }
         }
 
+        public IRaceRepository Races
+        {
+            get { return _races; }
+            set { _races = value; }
+        }
     }
 }

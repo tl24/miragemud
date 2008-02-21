@@ -14,7 +14,7 @@ namespace Mirage.Core.Command
         protected int _level;
         protected string _roles;
         protected Type[] _clients;
-
+        
         /// <summary>
         ///     Creates an instance of the attribute
         /// </summary>
@@ -62,7 +62,7 @@ namespace Mirage.Core.Command
 
         private string _description;
         private string[] _aliases;
-
+        private int _priority = 0;
 
         /// <summary>
         ///     A helpful description of the Command
@@ -81,5 +81,19 @@ namespace Mirage.Core.Command
             get { return _aliases; }
             set { _aliases = value; }
         }
+
+        public int Priority
+        {
+            get
+            {
+                return this._priority;
+            }
+            set
+            {
+                this._priority = value;
+            }
+        }
+
+
     }
 }

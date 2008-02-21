@@ -14,7 +14,7 @@ namespace Mirage.Core.Data
     /// </summary>
     public interface IPlayer : IUri, IActor
     {
-        IClient Client { get; set; }
+        IMudClient Client { get; set; }
 
         /// <summary>
         /// Writes a message to the player's output stream

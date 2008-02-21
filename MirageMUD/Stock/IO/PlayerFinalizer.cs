@@ -18,9 +18,9 @@ namespace Mirage.Stock.IO
     {
         private static ILog logger = LogManager.GetLogger(typeof(PlayerFinalizer));
         private Player _player;
-        private IClient _client;
+        private IMudClient _client;
 
-        public PlayerFinalizer(IClient client, Player player)
+        public PlayerFinalizer(IMudClient client, Player player)
         {
             _player = player;
             _client = client;
@@ -31,7 +31,7 @@ namespace Mirage.Stock.IO
             get { return _player; }
         }
 
-        public IClient Client
+        public IMudClient Client
         {
             get { return _client; }
         }
@@ -49,7 +49,7 @@ namespace Mirage.Stock.IO
             }
             else
             {
-                Client.Logger.Info(string.Format("{0}@{1} has connected.", Player.Uri, Client.TcpClient.Client.LocalEndPoint));
+                LogManager.GetLogger(typeof(ClientBase)).Info(string.Format("{0}@{1} has connected.", Player.Uri, Client.Address));
                 IChannelRepository channelRepository = MudFactory.GetObject<IChannelRepository>();
                 IPlayerRepository playerRepository = MudFactory.GetObject<IPlayerRepository>();
                 if (isNew)

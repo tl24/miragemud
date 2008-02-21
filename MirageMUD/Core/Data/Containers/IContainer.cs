@@ -57,6 +57,8 @@ namespace Mirage.Core.Data.Containers
         /// <returns>enumerable item</returns>
         IEnumerable Contents(Type t);
 
+        IEnumerable<T> Contents<T>();
+
         /// <summary>
         /// Gets all contents of the object regardless of type
         /// </summary>

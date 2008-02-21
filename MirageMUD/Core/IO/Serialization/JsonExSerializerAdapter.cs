@@ -17,7 +17,7 @@ namespace Mirage.Core.IO.Serialization
 
         public JsonExPersistenceAdapter(string basePath, Type t, string ext) : base(basePath, ext)
         {
-            this._serializer = Serializer.GetSerializer(t);
+            this._serializer = new Serializer(t);
             this._serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
         }
 

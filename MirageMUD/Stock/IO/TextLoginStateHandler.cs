@@ -22,13 +22,15 @@ namespace Mirage.Stock.IO
         private bool _echoOn;
         private IMessageFactory _messageFactory;
         private IPlayerRepository _playerRepository;
+        private IRaceRepository _raceRepository;
 
-        public TextLoginStateHandler(IClient client)
+        public TextLoginStateHandler(IMudClient client)
             : base(client)
         {
             _failed = false;
             _echoOn = true;
             _playerRepository = MudFactory.GetObject<IPlayerRepository>();
+            _raceRepository = MudFactory.GetObject<IRaceRepository>();
         }
         
         public IMessageFactory MessageFactory
@@ -70,6 +72,9 @@ namespace Mirage.Stock.IO
                     message.Parts.Add(MessageFactory.GetMessage("msg:/system/EchoOff"));
 
                     Require(message, new ValidateDelegate(this.ConfirmPassword));
+                }
+                else if (!Contains("race"))
+                {
                 }
                 else
                 {
@@ -259,5 +264,20 @@ namespace Mirage.Stock.IO
             SetValue<string>("confirmPassword", input);
         }
 
+        private void SetRace(object data)
+        {
+            string input = (string)data;
+            if (string.IsNullOrEmpty(input))
+            {
+                Client.Write(new StringMessage(MessageType.PlayerError, "InvalidRace", "You must select a race"));
+            }
+            else
+            {
+                foreach (Race r in _raceRepository)
+                {
+                    
+                }
+            }
+        }
     }
 }

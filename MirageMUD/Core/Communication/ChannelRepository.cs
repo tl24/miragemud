@@ -7,57 +7,26 @@ using System.IO;
 
 namespace Mirage.Core.Communication
 {
-    public class ChannelRepository : IChannelRepository
+    public class ChannelRepository : JsonSimpleRepository<Channel>, IChannelRepository
     {
         private MudRepositoryBase _mudRepository;
-        private bool _loaded;
 
         public ChannelRepository(MudRepositoryBase MudRepository)
+            : base("channels.jsx")
         {
             _mudRepository = MudRepository;
         }
 
-        private void Load()
+        protected override List<Channel> Load()
         {
-            Serializer serializer = Serializer.GetSerializer(typeof(List<Channel>));
-            List<Channel> channels = null;
-            using (StreamReader reader = new StreamReader("channels.jsx"))
-            {
-                channels = (List<Channel>)serializer.Deserialize(reader);
-            }
-            _mudRepository.Channels = channels;
-            _loaded = true;
+            List<Channel> channels = base.Load();
+            _mudRepository.Channels = this;
+            return channels;
         }
-
-        #region IChannelRepository Members
 
         public ICollection<Channel> Channels
         {
-            get {
-                if (!_loaded)
-                    Load();
-                return _mudRepository.Channels;
-            }
+            get { return this.Items; }
         }
-
-        #endregion
-
-        #region IEnumerable<Channel> Members
-
-        public IEnumerator<Channel> GetEnumerator()
-        {
-            return Channels.GetEnumerator();
-        }
-
-        #endregion
-
-        #region IEnumerable Members
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
-
-        #endregion
     }
 }

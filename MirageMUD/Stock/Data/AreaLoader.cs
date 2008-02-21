@@ -71,11 +71,13 @@ namespace Mirage.Stock.Data
             defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
             defaultArea.Rooms["DefaultRoom"].Add(CreateItem());
             defaultArea.Rooms["DefaultRoom"].Add(CreateHelmet());
+            Race.SaveRaces();
         }
 
         private Mobile CreateMobile()
         {
             Mobile mob = new Mobile(null);
+            mob.Uri = "FirstMob";
             mob.ShortDescription = "the first mob";
             mob.LongDescription = "He is dressed in a new mob uniform waiting for orders.";
             mob.Title = "First Mob";

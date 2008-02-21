@@ -64,6 +64,8 @@
     <Compile Include="Data\MobPrincipal.cs" />
     <Compile Include="Data\MobReset.cs" />
     <Compile Include="Data\MobTemplate.cs" />
+    <Compile Include="Data\Race.cs" />
+    <Compile Include="Data\RaceRepository.cs" />
     <Compile Include="Data\ResetBase.cs" />
     <Compile Include="Data\StockRepository.cs" />
     <Compile Include="Data\ViewManager.cs" />

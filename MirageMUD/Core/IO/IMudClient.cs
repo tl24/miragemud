@@ -11,12 +11,11 @@ using log4net;
 namespace Mirage.Core.IO
 {
     /// <summary>
-    /// The IClient interface specifies the interface for reading input and
+    /// The IMudClient interface specifies the interface for reading input and
     /// writing output to the remote client connected to the mud.
     /// </summary>
-    public interface IClient : IClientIO
+    public interface IMudClient
     {
-
         /// <summary>
         /// Close the client and its underlying connection
         /// </summary>
@@ -38,8 +37,6 @@ namespace Mirage.Core.IO
         /// Write the prompt for the client to the output buffer
         /// </summary>
         void WritePrompt();
-
-
 
         /// <summary>
         /// Returns true if the client had a message written to its queue during this execution loop
@@ -76,8 +73,6 @@ namespace Mirage.Core.IO
         /// <returns></returns>
         bool IsOpen { get; }
 
-
-
-        ILog Logger { get; }
+        string Address { get; }
     }
 }

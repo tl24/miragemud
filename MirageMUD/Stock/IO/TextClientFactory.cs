@@ -16,10 +16,9 @@ namespace Mirage.Stock.IO
         ///     creates a new client from the TcpClient
         /// </summary>
         /// <param name="client"></param>
-        public IClient CreateClient(TcpClient client)
+        public ITelnetClient CreateClient(TcpClient client)
         {
-            IClient mudClient = new TextClient();
-            mudClient.Open(client);
+            ITelnetClient mudClient = new TextClient(client);
             mudClient.LoginHandler = new TextLoginStateHandler(mudClient);
             mudClient.LoginHandler.HandleInput(null);
             return mudClient;
