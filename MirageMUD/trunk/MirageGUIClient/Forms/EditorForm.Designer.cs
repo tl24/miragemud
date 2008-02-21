@@ -30,10 +30,10 @@ namespace MirageGUI.Forms
         {
             this.TableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.EditButtonPanel = new System.Windows.Forms.Panel();
-            this.SaveCloseButton = new System.Windows.Forms.Button();
-            this.SaveButton = new System.Windows.Forms.Button();
-            this.CancelButton = new System.Windows.Forms.Button();
             this.CloseButton = new System.Windows.Forms.Button();
+            this.CancelButton = new System.Windows.Forms.Button();
+            this.SaveButton = new System.Windows.Forms.Button();
+            this.SaveCloseButton = new System.Windows.Forms.Button();
             this.EditButtonPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,27 +64,16 @@ namespace MirageGUI.Forms
             this.EditButtonPanel.Size = new System.Drawing.Size(366, 30);
             this.EditButtonPanel.TabIndex = 1;
             // 
-            // SaveCloseButton
+            // CloseButton
             // 
-            this.SaveCloseButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.SaveCloseButton.Location = new System.Drawing.Point(15, 3);
-            this.SaveCloseButton.Name = "SaveCloseButton";
-            this.SaveCloseButton.Size = new System.Drawing.Size(82, 23);
-            this.SaveCloseButton.TabIndex = 0;
-            this.SaveCloseButton.Text = "Save && Close";
-            this.SaveCloseButton.UseVisualStyleBackColor = true;
-            this.SaveCloseButton.Click += new System.EventHandler(this.SaveClose_Click);
-            // 
-            // SaveButton
-            // 
-            this.SaveButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.SaveButton.Location = new System.Drawing.Point(103, 3);
-            this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(82, 23);
-            this.SaveButton.TabIndex = 1;
-            this.SaveButton.Text = "Save";
-            this.SaveButton.UseVisualStyleBackColor = true;
-            this.SaveButton.Click += new System.EventHandler(this.Save_Click);
+            this.CloseButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.CloseButton.Location = new System.Drawing.Point(279, 3);
+            this.CloseButton.Name = "CloseButton";
+            this.CloseButton.Size = new System.Drawing.Size(75, 23);
+            this.CloseButton.TabIndex = 3;
+            this.CloseButton.Text = "Close";
+            this.CloseButton.UseVisualStyleBackColor = true;
+            this.CloseButton.Click += new System.EventHandler(this.Close_Click);
             // 
             // CancelButton
             // 
@@ -97,16 +86,27 @@ namespace MirageGUI.Forms
             this.CancelButton.UseVisualStyleBackColor = true;
             this.CancelButton.Click += new System.EventHandler(this.Cancel_Click);
             // 
-            // CloseButton
+            // SaveButton
             // 
-            this.CloseButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.CloseButton.Location = new System.Drawing.Point(279, 3);
-            this.CloseButton.Name = "CloseButton";
-            this.CloseButton.Size = new System.Drawing.Size(75, 23);
-            this.CloseButton.TabIndex = 3;
-            this.CloseButton.Text = "Close";
-            this.CloseButton.UseVisualStyleBackColor = true;
-            this.CloseButton.Click += new System.EventHandler(this.Close_Click);
+            this.SaveButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.SaveButton.Location = new System.Drawing.Point(103, 3);
+            this.SaveButton.Name = "SaveButton";
+            this.SaveButton.Size = new System.Drawing.Size(82, 23);
+            this.SaveButton.TabIndex = 1;
+            this.SaveButton.Text = "Save";
+            this.SaveButton.UseVisualStyleBackColor = true;
+            this.SaveButton.Click += new System.EventHandler(this.Save_Click);
+            // 
+            // SaveCloseButton
+            // 
+            this.SaveCloseButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.SaveCloseButton.Location = new System.Drawing.Point(15, 3);
+            this.SaveCloseButton.Name = "SaveCloseButton";
+            this.SaveCloseButton.Size = new System.Drawing.Size(82, 23);
+            this.SaveCloseButton.TabIndex = 0;
+            this.SaveCloseButton.Text = "Save && Close";
+            this.SaveCloseButton.UseVisualStyleBackColor = true;
+            this.SaveCloseButton.Click += new System.EventHandler(this.SaveClose_Click);
             // 
             // EditorForm
             // 

@@ -284,4 +284,60 @@ namespace MirageGUI.ItemEditor
             get { return (ComboBox)base.EditControl; }
         }
     }
+
+    public class NumericTextBoxAdapter : ControlAdapterBase
+    {
+        private Type numericType;
+
+        public NumericTextBoxAdapter(PropertyInfo property)
+            : base(property)
+        {
+            numericType = property.PropertyType;            
+        }
+
+        protected override Control CreateEditControl()
+        {
+            NumericUpDown nupd = new NumericUpDown();
+            if (numericType != typeof(float)
+                && numericType != typeof(double)
+                && numericType != typeof(decimal))
+            {
+                nupd.DecimalPlaces = 0;
+            }
+            return nupd;
+        }
+
+        public new NumericUpDown EditControl
+        {
+            get
+            {
+                return (NumericUpDown) base.EditControl;
+            }
+        }
+
+        protected override object ControlValue
+        {
+            get
+            {
+                return Convert.ChangeType(EditControl.Value, numericType);
+            }
+            set
+            {
+                EditControl.Value = (decimal) Convert.ChangeType(value, typeof(decimal));
+            }
+        }
+
+        protected override void OnValidate()
+        {
+            try
+            {
+                // will trigger a convert, which will fail if invalid
+                object value = ControlValue;
+            }
+            catch
+            {
+                throw new Exception(this.LabelControl.Text + " does not contain a valid number.");
+            }
+        }
+    }
 }

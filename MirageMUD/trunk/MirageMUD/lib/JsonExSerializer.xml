@@ -4,16 +4,6 @@
         <name>JsonExSerializer</name>
     </assembly>
     <members>
-        <member name="T:JsonExSerializer.CollectionException">
-            <summary>
-            Exception class thrown when errors occur dealing with collections
-            </summary>
-        </member>
-        <member name="T:JsonExSerializer.JsonExSerializationException">
-            <summary>
-            Base class for all serialization exceptions
-            </summary>
-        </member>
         <member name="T:JsonExSerializer.Collections.ArrayBuilder">
             <summary>
             Collection builder class for arrays
@@ -29,14 +19,14 @@
             Collection handler class for arrays
             </summary>
         </member>
-        <member name="M:JsonExSerializer.Collections.ICollectionHandler.IsCollection(System.Type)">
+        <member name="M:JsonExSerializer.Collections.CollectionHandler.IsCollection(System.Type)">
             <summary>
             Checks to see if the collection type is handled by this handler.
             </summary>
             <param name="collectionType">the type to check</param>
             <returns>true if this handler can process the collection type</returns>
         </member>
-        <member name="M:JsonExSerializer.Collections.ICollectionHandler.ConstructBuilder(System.Type,System.Int32)">
+        <member name="M:JsonExSerializer.Collections.CollectionHandler.ConstructBuilder(System.Type,System.Int32)">
             <summary>
             Constructs a collection builder for the given collection type.  The
             type must be supported by this handler.
@@ -44,14 +34,23 @@
             <param name="collectionType">the type to construct a builder for</param>
             <returns>a collection builder</returns>
         </member>
-        <member name="M:JsonExSerializer.Collections.ICollectionHandler.GetItemType(System.Type)">
+        <member name="M:JsonExSerializer.Collections.CollectionHandler.ConstructBuilder(System.Object)">
             <summary>
-            Gets the type of items that this collection type holds
+            Constructs a collection builder to update an existing collection.  The
+            type must be supported by this handler.
+            </summary>
+            <param name="collection">an existing istance of the collection class to be populated</param>
+            <param name="collectionType">the type to construct a builder for</param>
+            <returns>a collection builder</returns>
+        </member>
+        <member name="M:JsonExSerializer.Collections.CollectionHandler.GetItemType(System.Type)">
+            <summary>
+            Gets the type of items that this collection type holds.  The default is System.Object.
             </summary>
             <param name="CollectionType">the type of the collection</param>
             <returns>the item type</returns>
         </member>
-        <member name="M:JsonExSerializer.Collections.ICollectionHandler.GetEnumerable(System.Object)">
+        <member name="M:JsonExSerializer.Collections.CollectionHandler.GetEnumerable(System.Object)">
             <summary>
             Gets the enumerable property of the collection.  This is normally
             just the collection itself, but can be implemented to provide a custom enumerable
@@ -232,7 +231,7 @@
             for this key, from the parent and checking for a property converter.
             </summary>
         </member>
-        <member name="M:JsonExSerializer.Expression.ListEvaluator.InitializeResult">
+        <member name="M:JsonExSerializer.Expression.ListEvaluator.UpdateResult">
             <summary>
             Populate the list with its values
             </summary>
@@ -259,12 +258,12 @@
             Evaluator for Object expressions
             </summary>
         </member>
-        <member name="M:JsonExSerializer.Expression.ObjectEvaluator.InitializeResult">
+        <member name="M:JsonExSerializer.Expression.ObjectEvaluator.UpdateResult">
             <summary>
             Populate the list with its values
             </summary>
         </member>
-        <member name="M:JsonExSerializer.Expression.ObjectEvaluator.DetermineConstructorArgTypes(System.Collections.Generic.IList{JsonExSerializer.MetaData.IPropertyHandler})">
+        <member name="M:JsonExSerializer.Expression.ObjectEvaluator.DetermineConstructorArgTypes(System.Collections.Generic.IList{JsonExSerializer.MetaData.AbstractPropertyHandler})">
             <summary>
             Determines the constructor argument types when there are no mappings for them.
             it does this by searching the constructors on the created type for a compatible match.
@@ -535,6 +534,16 @@
             Collection builder for types implementing IList
             </summary>
         </member>
+        <member name="T:JsonExSerializer.JsonExSerializationException">
+            <summary>
+            Base class for all serialization exceptions
+            </summary>
+        </member>
+        <member name="T:JsonExSerializer.JsonExPropertyAttribute">
+            <summary>
+            Force serialization of a property that would otherwise be ignored
+            </summary>
+        </member>
         <member name="M:JsonExSerializer.JsonWriter.WriteTypeInfo(System.Type)">
             <summary>
             Writes out the type for an object in regular C# code syntax
@@ -659,125 +668,96 @@
             State when a javascript object is in progress
             </summary>
         </member>
-        <member name="T:JsonExSerializer.MetaData.IPropertyHandler">
+        <member name="T:JsonExSerializer.MetaData.AbstractPropertyHandler">
             <summary>
-            Metadata for a property of an object
+            Base Implementation of an object property
             </summary>
         </member>
-        <member name="M:JsonExSerializer.MetaData.IPropertyHandler.GetValue(System.Object)">
+        <member name="T:JsonExSerializer.MetaData.MemberHandlerBase">
             <summary>
-            Gets the value of a property from an object instance
-            </summary>
-            <param name="instance">the object instance to get the value from</param>
-            <returns>the value of the property</returns>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.IPropertyHandler.SetValue(System.Object,System.Object)">
-            <summary>
-            Sets the value of the property to the specified value
-            </summary>
-            <param name="instance"></param>
-            <param name="value"></param>
-        </member>
-        <member name="P:JsonExSerializer.MetaData.IPropertyHandler.Name">
-            <summary>
-            The property name
+            Base class for TypeHandler and PropertyHandler
             </summary>
         </member>
-        <member name="P:JsonExSerializer.MetaData.IPropertyHandler.Position">
+        <member name="M:JsonExSerializer.MetaData.MemberHandlerBase.CreateTypeConverter(JsonExSerializer.JsonConvertAttribute)">
             <summary>
-            If this is a constructor property, its position in the constructor args
+            Constructs a converter from the convert attribute
+            </summary>
+            <param name="attribute">the JsonConvertAttribute decorating a property or class</param>
+            <returns>converter</returns>
+        </member>
+        <member name="P:JsonExSerializer.MetaData.MemberHandlerBase.TypeConverter">
+            <summary>
+            Gets or sets the TypeConverter defined for this object
             </summary>
         </member>
-        <member name="P:JsonExSerializer.MetaData.IPropertyHandler.Property">
+        <member name="P:JsonExSerializer.MetaData.MemberHandlerBase.HasConverter">
             <summary>
-            The Reflection PropertyInfo for this property
+            Returns true if there is a TypeConverter defined for this object
             </summary>
         </member>
-        <member name="P:JsonExSerializer.MetaData.IPropertyHandler.PropertyType">
+        <member name="T:JsonExSerializer.MetaData.CustomTypeHandlerFactory">
             <summary>
-            The system type of the property
-            </summary>
-        </member>
-        <member name="T:JsonExSerializer.MetaData.ITypeHandler">
-            <summary>
-            A type handler is responsible for exposing type information used to inspect objects
-            </summary>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.ITypeHandler.CreateInstance(System.Object[])">
-            <summary>
-            Constructs an instance of the given type passing the args array to
-            the constructor
-            </summary>
-            <param name="args">the arguments to the constructor</param>
-            <returns>object instance</returns>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.ITypeHandler.FindProperty(System.String)">
-            <summary>
-            Finds a property by name
-            </summary>
-            <param name="Name">the name of the property to find</param>
-            <returns>property info</returns>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.ITypeHandler.IgnoreProperty(System.Reflection.PropertyInfo)">
-            <summary>
-            Sets the ignore flag on the property so that it will not be serialized
-            </summary>
-            <param name="property">property to ignore</param>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.ITypeHandler.IgnoreProperty(System.String)">
-            <summary>
-            Sets the ignore flag on the property so that it will not be serialized
-            </summary>
-            <param name="property">property to ignore</param>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.ITypeHandler.GetCollectionBuilder(System.Int32)">
-            <summary>
-            Gets a collection builder to construct a collection of the
-            specified size.
-            </summary>
-            <param name="itemCount">the number of items that the collection will hold</param>
-            <returns>a collection builder</returns>
-            <exception cref="T:JsonExSerializer.CollectionException">If this type is not a collection type</exception>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.ITypeHandler.GetCollectionHandler">
-            <summary>
-            Returns the collection handler for this type, if the type is
-            a collection.
-            </summary>
-            <returns>collection handler</returns>
-            <exception cref="T:JsonExSerializer.CollectionException">If this type is not a collection type</exception>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.ITypeHandler.GetCollectionItemType">
-            <summary>
-            Gets the type of items contained within a collection if this is a collection type
-            </summary>
-            <returns>item type of the collection</returns>
-            <exception cref="T:JsonExSerializer.CollectionException">If this type is not a collection type</exception>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.ITypeHandler.IsCollection">
-            <summary>
-            Tests to see if this type is a collection type
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:JsonExSerializer.MetaData.ITypeHandler.ConstructorParameters">
-            <summary>
-            The list of constructor parameters for this type if any
-            </summary>
-        </member>
-        <member name="P:JsonExSerializer.MetaData.ITypeHandler.Properties">
-            <summary>
-            Returns the properties for this type that can be serialized/deserialized
-            </summary>
-        </member>
-        <member name="P:JsonExSerializer.MetaData.ITypeHandler.ForType">
-            <summary>
-            The system type that this TypeHandler exposes metadata for
+            TypeHandlerFactory implementation that allows you to specify the TypeHandler
+            class that gets created when the factory creates ITypeHandler implementations
             </summary>
         </member>
         <member name="T:JsonExSerializer.MetaData.TypeHandlerFactory">
             <summary>
             Factory for TypeHandlers
+            </summary>
+        </member>
+        <member name="T:JsonExSerializer.MetaData.FieldHandler">
+            <summary>
+            Handles a public field on an object
+            </summary>
+        </member>
+        <member name="T:JsonExSerializer.MetaData.PropertyHandlerBase">
+            <summary>
+            Base class for Properties and Fields of a Type
+            </summary>
+        </member>
+        <member name="P:JsonExSerializer.MetaData.PropertyHandlerBase.Name">
+            <summary>
+             The name of the property
+            </summary>
+        </member>
+        <member name="M:JsonExSerializer.MetaData.FieldHandler.#ctor(System.Reflection.FieldInfo)">
+            <summary>
+            Constructs a FieldHandler for a field on a type that is not a constructor
+            parameter
+            </summary>
+            <param name="field">field info</param>
+        </member>
+        <member name="M:JsonExSerializer.MetaData.FieldHandler.#ctor(System.Reflection.FieldInfo,System.Int32)">
+            <summary>
+            Constructs a FieldHandler for a field on a type that is also a constructor
+            parameter at the specified position in the constructor arguments.
+            </summary>
+            <param name="field">field info</param>
+            <param name="position">its position in the constructor</param>
+        </member>
+        <member name="M:JsonExSerializer.MetaData.FieldHandler.GetValue(System.Object)">
+            <summary>
+            Gets the value of the field from an object instance
+            </summary>
+            <param name="instance">the object instance to retrieve the field value from</param>
+            <returns>field value</returns>
+        </member>
+        <member name="M:JsonExSerializer.MetaData.FieldHandler.SetValue(System.Object,System.Object)">
+            <summary>
+            Sets the value of the field on the object
+            </summary>
+            <param name="instance">the object instance to retrieve the field value from</param>
+            <param name="value">field value</param>
+        </member>
+        <member name="P:JsonExSerializer.MetaData.FieldHandler.Field">
+            <summary>
+            The fieldInfo object for this FieldHandler
+            </summary>
+        </member>
+        <member name="P:JsonExSerializer.MetaData.FieldHandler.PropertyType">
+            <summary>
+            Gets the type of the field
             </summary>
         </member>
         <member name="T:JsonExSerializer.ParseException">
@@ -968,7 +948,7 @@
             </summary>
             <example>
             <c>
-                Serializer serializerObject = Serializer.GetSerializer(typeof(MyClass));
+                Serializer serializerObject = new Serializer(typeof(MyClass));
                 MyClass myClass = new MyClass();
                 /* set properties on myClass */
                 string data = serializerObject.Serialize(myClass);
@@ -989,6 +969,13 @@
             <param name="t">type</param>
             <returns>a serializer</returns>
         </member>
+        <member name="M:JsonExSerializer.Serializer.Serialize(System.Object,System.IO.Stream)">
+            <summary>
+            Serialize the object and write the data to the stream parameter.
+            </summary>
+            <param name="o">the object to serialize</param>
+            <param name="stream">stream for the serialized data</param>
+        </member>
         <member name="M:JsonExSerializer.Serializer.Serialize(System.Object,System.IO.TextWriter)">
             <summary>
             Serialize the object and write the data to the writer parameter.
@@ -1003,6 +990,14 @@
             </summary>
             <param name="o">the object to serialize</param>
             <returns>serialized data string</returns>
+        </member>
+        <member name="M:JsonExSerializer.Serializer.Deserialize(System.IO.Stream)">
+            <summary>
+            Read the serialized data from the stream and return the
+            deserialized object.
+            </summary>
+            <param name="stream">stream to read the data from</param>
+            <returns>the deserialized object</returns>
         </member>
         <member name="M:JsonExSerializer.Serializer.Deserialize(System.IO.TextReader)">
             <summary>
@@ -1157,42 +1152,14 @@
             <param name="forType">the type to register</param>
             <param name="converter">the converter</param>
         </member>
-        <member name="M:JsonExSerializer.SerializationContext.RegisterTypeConverter(System.Reflection.PropertyInfo,JsonExSerializer.TypeConversion.IJsonTypeConverter)">
+        <member name="M:JsonExSerializer.SerializationContext.RegisterTypeConverter(System.Type,System.String,JsonExSerializer.TypeConversion.IJsonTypeConverter)">
             <summary>
             Register a type converter with the DefaultConverterFactory.
             </summary>
             <param name="forType">the property to register</param>
             <param name="converter">the converter</param>
         </member>
-        <member name="M:JsonExSerializer.SerializationContext.GetConverter(System.Reflection.PropertyInfo)">
-            <summary>
-            Constructs and returns a type converter for the property
-            </summary>
-            <param name="forProperty">property to convert</param>
-            <returns>type converter</returns>
-        </member>
-        <member name="M:JsonExSerializer.SerializationContext.GetConverter(System.Type)">
-            <summary>
-            Constructs and returns a type converter for the type
-            </summary>
-            <param name="forProperty">type to convert</param>
-            <returns>type converter</returns>
-        </member>
-        <member name="M:JsonExSerializer.SerializationContext.HasConverter(System.Type)">
-            <summary>
-            Checks to see if a type converter can be found for the given type
-            </summary>
-            <param name="forType">type to check</param>
-            <returns>true if the type has a converter</returns>
-        </member>
-        <member name="M:JsonExSerializer.SerializationContext.HasConverter(System.Reflection.PropertyInfo)">
-            <summary>
-            Checks to see if a type converter can be found for the given property
-            </summary>
-            <param name="forProperty">property to check</param>
-            <returns>true if the property has a converter</returns>
-        </member>
-        <member name="M:JsonExSerializer.SerializationContext.RegisterCollectionHandler(JsonExSerializer.Collections.ICollectionHandler)">
+        <member name="M:JsonExSerializer.SerializationContext.RegisterCollectionHandler(JsonExSerializer.Collections.CollectionHandler)">
             <summary>
             Registers a collection handler which provides support for a certain type
             or multiple types of collections.
@@ -1205,12 +1172,6 @@
             </summary>
             <param name="objectType">the type that contains the property</param>
             <param name="propertyName">the name of the property</param>
-        </member>
-        <member name="M:JsonExSerializer.SerializationContext.IgnoreProperty(System.Reflection.PropertyInfo)">
-            <summary>
-            Ignore a property to keep from being serialized, same as if the JsonExIgnore attribute had been set
-            </summary>
-            <param name="property">the property</param>
         </member>
         <member name="P:JsonExSerializer.SerializationContext.IsCompact">
             <summary>
@@ -1242,16 +1203,31 @@
             is set, then an error will be thrown.
             </summary>
         </member>
+        <member name="P:JsonExSerializer.SerializationContext.IgnoredPropertyAction">
+            <summary>
+            Controls the action taken when an ignored property is encountered upon deserialization
+            </summary>
+        </member>
         <member name="P:JsonExSerializer.SerializationContext.SerializerInstance">
             <summary>
             The current serializer instance that created and is using this
             context.
             </summary>
         </member>
+        <member name="P:JsonExSerializer.SerializationContext.Parameters">
+            <summary>
+            User defined parameters
+            </summary>
+        </member>
         <member name="P:JsonExSerializer.SerializationContext.TypeHandlerFactory">
             <summary>
             Gets or sets the TypeHandlerFactory which is responsible for
             creating ITypeHandlers which manage type metadata
+            </summary>
+        </member>
+        <member name="T:JsonExSerializer.SerializationContext.IgnoredPropertyOption">
+            <summary>
+            Set of options for handling Ignored properties encountered upon Deserialization
             </summary>
         </member>
         <member name="T:JsonExSerializer.TokenType">
@@ -1485,89 +1461,20 @@
             of the value type is used as the key.
             </summary>
         </member>
-        <member name="T:JsonExSerializer.TypeConversion.ITypeConverterFactory">
-            <summary>
-            A factory for producing type converters.  One of the HasConverter
-            methods should be called to see if this factory instance can produce
-            a converter of the given type.  If so, then a call to GetConverter
-            should succeed.
-            </summary>
-        </member>
         <member name="T:JsonExSerializer.TypeConversion.TypeConverterAdapter">
             <summary>
             TypeConverter that utilizes the System.ComponentModel.TypeConverter for
             a given type.
             </summary>
         </member>
-        <member name="T:JsonExSerializer.TypeConversion.DefaultConverterFactory">
+        <member name="M:JsonExSerializer.TypeConversion.TypeConverterAdapter.GetAdapter(System.Type)">
             <summary>
-            The default type converter factory, which handles registering types directly,
-            JsonConverterAttribute, and System.ComponentModel methods of declaring type converters.
+            Gets a TypeConverterAdapter instace for the type if there is a valid
+            System.ComponentModel.TypeConverter for the type.  Otherwise
+            it returns null
             </summary>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.RegisterConverter(System.Type,JsonExSerializer.TypeConversion.IJsonTypeConverter)">
-            <summary>
-            Register a type converter for the given type
-            </summary>
-            <param name="typeToConvert">the object that will be converted</param>
-            <param name="converter">the converter instance</param>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.RegisterConverter(System.Reflection.PropertyInfo,JsonExSerializer.TypeConversion.IJsonTypeConverter)">
-            <summary>
-            Register a type converter for the given property of a class
-            </summary>
-            <param name="property">the property that will be converted</param>
-            <param name="converter">the converter instance</param>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.HasConverter(System.Type)">
-            <summary>
-            Checks to see if this converter factory can produce a converter for the given type
-            </summary>
-            <param name="forType">the type to check</param>
-            <returns>true if this factory can produce a converter for the type</returns>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.HasConverter(System.Reflection.PropertyInfo)">
-            <summary>
-            Checks to see if this converter factory can produce a converter for the object property
-            </summary>
-            <param name="forProperty">the property to check</param>
-            <returns>true if this factory can produce a converter for the property</returns>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.HasConverter(System.Reflection.MemberInfo)">
-            <summary>
-            Internal method to check for a converter for both Type and PropertyInfo, but will
-            not check for a System.ComponentModel TypeConverter.
-            </summary>
-            <param name="member">the object to check for, either Type or PropertyInfo</param>
-            <returns>true if it has a converter</returns>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.GetConverter(System.Reflection.PropertyInfo)">
-            <summary>
-            Gets a Converter for the property specified
-            </summary>
-            <param name="forProperty">the property to convert</param>
-            <returns>a json type converter</returns>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.GetConverter(System.Type)">
-            <summary>
-            Gets a Converter for the type specified.
-            </summary>
-            <param name="forType">the type to convert</param>
-            <returns>a json type converter</returns>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.GetConverter(System.Reflection.MemberInfo)">
-            <summary>
-            Internal method to construct a type converter
-            </summary>
-            <param name="forMember"></param>
+            <param name="ForType"></param>
             <returns></returns>
-        </member>
-        <member name="M:JsonExSerializer.TypeConversion.DefaultConverterFactory.GetConverter(JsonExSerializer.JsonConvertAttribute)">
-            <summary>
-            Constructs a converter from the convert attribute
-            </summary>
-            <param name="attribute">the JsonConvertAttribute decorating a property or class</param>
-            <returns>converter</returns>
         </member>
         <member name="T:JsonExSerializer.MetaData.TypeHandler">
             <summary>
@@ -1585,6 +1492,13 @@
             Loads the properties for the type if they haven't already been loaded
             </summary>
         </member>
+        <member name="M:JsonExSerializer.MetaData.TypeHandler.ReadProperties(System.Collections.Generic.IList{JsonExSerializer.MetaData.AbstractPropertyHandler}@,System.Collections.Generic.IList{JsonExSerializer.MetaData.AbstractPropertyHandler}@)">
+            <summary>
+            Reads the properties and constructor arguments from type metadata
+            </summary>
+            <param name="Properties">properties collection</param>
+            <param name="ConstructorArguments">constructor arguments</param>
+        </member>
         <member name="M:JsonExSerializer.MetaData.TypeHandler.FindProperty(System.String)">
             <summary>
             Finds a property by its name.  The property must follow the same rules as
@@ -1595,12 +1509,6 @@
             <returns>TypeHandlerProperty instance for the property or null if not found</returns>
         </member>
         <member name="M:JsonExSerializer.MetaData.TypeHandler.IgnoreProperty(System.String)">
-            <summary>
-            Ignore a property to keep from being serialized, same as if the JsonExIgnore attribute had been set
-            </summary>
-            <param name="name">the name of the property</param>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.TypeHandler.IgnoreProperty(System.Reflection.PropertyInfo)">
             <summary>
             Ignore a property to keep from being serialized, same as if the JsonExIgnore attribute had been set
             </summary>
@@ -1620,33 +1528,19 @@
             <param name="context"></param>
             <returns></returns>
         </member>
-        <member name="M:JsonExSerializer.MetaData.TypeHandler.GetCollectionItemType">
-            <summary>
-            If the object is a collection or array gets the type 
-            of its elements.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:JsonExSerializer.MetaData.TypeHandler.GetCollectionBuilder(System.Int32)">
-            <summary>
-            Returns a collection builder object for this type if it is a collection.
-            </summary>
-            <param name="context">the serialization context</param>
-            <returns>collection builder</returns>
-        </member>
         <member name="P:JsonExSerializer.MetaData.TypeHandler.ConstructorParameters">
             <summary>
             Get the list of constructor parameters for this type
             </summary>
         </member>
-        <member name="P:JsonExSerializer.MetaData.TypeHandler.Properties">
+        <member name="P:JsonExSerializer.MetaData.TypeHandler.IsEmpty">
             <summary>
-            Get the list of properties for this type
+            
             </summary>
         </member>
-        <member name="P:JsonExSerializer.MetaData.TypeHandler.ForType">
+        <member name="P:JsonExSerializer.MetaData.TypeHandler.AllProperties">
             <summary>
-            The type of object that this typehandler represents
+            Get the list of properties for this type
             </summary>
         </member>
         <member name="T:JsonExSerializer.MetaData.PropertyHandler">
@@ -1671,16 +1565,6 @@
         <member name="P:JsonExSerializer.MetaData.PropertyHandler.PropertyType">
             <summary>
             The type for the property
-            </summary>
-        </member>
-        <member name="P:JsonExSerializer.MetaData.PropertyHandler.Name">
-            <summary>
-             The name of the property
-            </summary>
-        </member>
-        <member name="P:JsonExSerializer.MetaData.PropertyHandler.Property">
-            <summary>
-            The System.Reflection.PropertyInfo instance represented by this PropertyHandler
             </summary>
         </member>
         <member name="M:JsonExSerializer.XmlConfigurator.AddTypeBinding(System.String,System.String[])">
@@ -1712,11 +1596,6 @@
         <member name="M:JsonExSerializer.XmlConfigurator.HandleTypeConverters">
             <summary>
             Handles the configuration of Type Converters for the TypeConverters node
-            </summary>
-        </member>
-        <member name="M:JsonExSerializer.XmlConfigurator.HandleTypeConverterFactories">
-            <summary>
-            Handles the configuration of Type Converters factories for the TypeConverterFactories node
             </summary>
         </member>
         <member name="M:JsonExSerializer.XmlConfigurator.HandleCollectionHandlers">
