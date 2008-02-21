@@ -67,12 +67,29 @@ namespace MirageGUI.ItemEditor
                 adapterType = typeof(MultilineTextBoxAdapter);
             else if (property.PropertyType.IsEnum)
                 adapterType = typeof(EnumComboAdapter);
+            else if (IsNumericType(property.PropertyType))
+                adapterType = typeof(NumericTextBoxAdapter);
             else
                 adapterType = typeof(StringTextBoxAdapter);
 
             return (ControlAdapterBase) Activator.CreateInstance(adapterType, property);
         }
 
+        private bool IsNumericType(Type t)
+        {
+            return (
+                t == typeof(int)
+                || t == typeof(long)
+                || t == typeof(float)
+                || t == typeof(double)
+                || t == typeof(short)
+                || t == typeof(uint)                
+                || t == typeof(ulong)
+                || t == typeof(ushort)
+                || t == typeof(sbyte)
+                || t == typeof(byte));
+        }
+    
         /// <summary>
         /// The object instance being edited
         /// </summary>
