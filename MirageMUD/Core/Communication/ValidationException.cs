@@ -19,7 +19,7 @@ namespace Mirage.Core.Communication
         /// Constructs the validation exception with the given message uri
         /// </summary>
         /// <param name="messageUri">message uri</param>
-        public ValidationException(Uri messageUri) 
+        public ValidationException(string messageUri) 
             : this(messageUri, null)
         {
         }
@@ -29,27 +29,8 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="messageUri">message uri</param>
         /// <param name="innerException">the exception that is the cause of the current exception, or null if there is no inner exception</param>
-        public ValidationException(Uri messageUri, Exception innerException)
+        public ValidationException(string messageUri, Exception innerException)
             : this(MudFactory.GetObject<IMessageFactory>().GetMessage(messageUri), innerException)
-        {
-        }
-
-        /// <summary>
-        /// Constructs the validation exception with the given message text
-        /// </summary>
-        /// <param name="message">message text</param>
-        public ValidationException(string message)
-            : this(message, null)
-        {
-        }
-
-        /// <summary>
-        /// Constructs the validation exception with the given message text and inner exception
-        /// </summary>
-        /// <param name="message">message text</param>
-        /// <param name="innerException">the exception that is the cause of the current exception, or null if there is no inner exception</param>
-        public ValidationException(string message, Exception innerException)
-            : this(new StringMessage(MessageType.PlayerError, "error", message), innerException)
         {
         }
 

@@ -21,7 +21,7 @@ namespace Mirage.Core.Data
 
         protected override List<T> Load()
         {
-            Serializer serializer = new Serializer(typeof(T));
+            Serializer serializer = new Serializer(typeof(List<T>));
             using (StreamReader reader = new StreamReader(_fileName))
             {
                 return (List<T>)serializer.Deserialize(reader);

@@ -86,9 +86,9 @@ namespace Mirage.Core.Command
         public void RequestConfirmation()
         {
             if (Message == null)
-                Message = MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/system/confirmation.prompt");
+                Message = MudFactory.GetObject<IMessageFactory>().GetMessage("system.ConfirmationPrompt");
             if (CancellationMessage == null)
-                CancellationMessage = MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/system/confirmation.cancel");
+                CancellationMessage = MudFactory.GetObject<IMessageFactory>().GetMessage("system.ConfirmationCancel");
             _actor.Write(Message);
         }
     }

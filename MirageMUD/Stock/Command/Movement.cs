@@ -55,19 +55,19 @@ namespace Mirage.Stock.Command
         public IMessage Go(Living actor, DirectionType direction)
         {
             if (!(actor.Container is Room))
-                return MessageFactory.GetMessage("msg:/movement/not.in.room");
+                return MessageFactory.GetMessage("movement.NotInRoom");
 
             string dirName = direction.ToString().ToLower();
             Room room = (Room)actor.Container;
             if (!room.Exits.ContainsKey(direction))
-                return MessageFactory.GetMessage("msg:/movement/cant.go.exit");
+                return MessageFactory.GetMessage("movement.CantGoExit");
 
             RoomExit exit = room.Exits[direction];
             if (LockableAttribute.IsLocked(exit))
-                return MessageFactory.GetMessage("msg:/movement/door.locked");
+                return MessageFactory.GetMessage("movement.DoorLocked");
 
             if (!OpenableAttribute.IsOpen(exit))
-                return MessageFactory.GetMessage("msg:/movement/door.closed");
+                return MessageFactory.GetMessage("movement.DoorClosed");
 
             // create the messages
             MovementMessage departMessage = new MovementMessage(dirName,
@@ -94,14 +94,14 @@ namespace Mirage.Stock.Command
                         newRoomPeople.Write(arrivalMessage);
                     }
                 }
-                actor.Write(new StringMessage(MessageType.Confirmation, "Movement." + dirName, "You go " + dirName + ".\r\n"));
+                actor.Write(new StringMessage(MessageType.Confirmation, "movement." + dirName, "You go " + dirName + ".\r\n"));
                 if (actor is IPlayer)
                     Interpreter.ExecuteCommand(actor, "look");
                 return null;
             }
             catch (ContainerAddException)
             {
-                return MessageFactory.GetMessage("msg:/movement/cant.go.exit");
+                return MessageFactory.GetMessage("movement.CantGoExit");
             }
         }
 
@@ -130,16 +130,16 @@ namespace Mirage.Stock.Command
         private IMessage OpenCloseDoorHelper(Living actor, DirectionType direction, bool open)
         {
             if (!(actor.Container is Room))
-                return MessageFactory.GetMessage("msg:/movement/not.in.room");
+                return MessageFactory.GetMessage("movement.NotInRoom");
 
             string dirName = direction.ToString().ToLower();
             Room room = (Room)actor.Container;
             if (!room.Exits.ContainsKey(direction))
-                return MessageFactory.GetMessage("msg:/movement/no.exit");
+                return MessageFactory.GetMessage("movement.NoExit");
 
             RoomExit exit = room.Exits[direction];
             if (!exit.HasAttribute(typeof(IOpenable)))
-                return MessageFactory.GetMessage("msg:/movement/not.a.door");
+                return MessageFactory.GetMessage("movement.NotADoor");
 
             IOpenable openObj = (IOpenable)exit.GetAttribute(typeof(IOpenable));
             if (open)
@@ -147,14 +147,14 @@ namespace Mirage.Stock.Command
             else
                 openObj.Close();
 
-            string action = open ? "open" : "close";
-            ResourceMessage mActionSelf = (ResourceMessage)MessageFactory.GetMessage("msg:/movement/player." + action + ".door.self");
-            ResourceMessage mActionOthers = (ResourceMessage)MessageFactory.GetMessage("msg:/movement/player." + action + ".door.others");
+            string action = open ? "Open" : "Close";
+            ResourceMessage mActionSelf = (ResourceMessage)MessageFactory.GetMessage("movement.Player" + action + "DoorSelf");
+            ResourceMessage mActionOthers = (ResourceMessage)MessageFactory.GetMessage("movement.Player" + action + "DoorOthers");
 
             mActionOthers["player"] = actor.Title;
             mActionSelf["direction"] = mActionOthers["direction"] = direction.ToString();
 
-            ResourceMessage mActionAnonymous = (ResourceMessage)MessageFactory.GetMessage("msg:/movement/anonymous." + action + ".door");
+            ResourceMessage mActionAnonymous = (ResourceMessage)MessageFactory.GetMessage("movement.Anonymous" + action + "Door");
 
             foreach (Living liv in room.Animates)
             {
@@ -186,16 +186,16 @@ namespace Mirage.Stock.Command
         private IMessage UnlockLockDoorHelper(Living actor, DirectionType direction, bool unlock)
         {
             if (!(actor.Container is Room))
-                return MessageFactory.GetMessage("msg:/movement/not.in.room");
+                return MessageFactory.GetMessage("movement.NotInRoom");
 
             string dirName = direction.ToString().ToLower();
             Room room = (Room)actor.Container;
             if (!room.Exits.ContainsKey(direction))
-                return MessageFactory.GetMessage("msg:/movement/no.exit");
+                return MessageFactory.GetMessage("movement.NoExit");
 
             RoomExit exit = room.Exits[direction];
             if (!exit.HasAttribute(typeof(ILockable)))
-                return MessageFactory.GetMessage("msg:/movement/door.not.lockable");
+                return MessageFactory.GetMessage("movement.DoorNotLockable");
 
 
             ILockable lockObj = (ILockable)exit.GetAttribute(typeof(ILockable));
@@ -205,9 +205,9 @@ namespace Mirage.Stock.Command
             else
                 lockObj.Lock();
 
-            string action = unlock ? "unlock" : "lock";
-            ResourceMessage mActionSelf = (ResourceMessage)MessageFactory.GetMessage("msg:/movement/player." + action + ".door.self");
-            ResourceMessage mActionOthers = (ResourceMessage)MessageFactory.GetMessage("msg:/movement/player." + action + ".door.others");
+            string action = unlock ? "Unlock" : "Lock";
+            ResourceMessage mActionSelf = (ResourceMessage)MessageFactory.GetMessage("movement.Player" + action + "DoorSelf");
+            ResourceMessage mActionOthers = (ResourceMessage)MessageFactory.GetMessage("movement.Player" + action + "DoorOthers");
 
             mActionOthers["player"] = actor.Title;
             mActionSelf["direction"] = mActionOthers["direction"] = direction.ToString();
@@ -231,7 +231,7 @@ namespace Mirage.Stock.Command
             int dir = ParseDirection((string) context.GetCurrentAndIncrement());
             if (dir == -1)
             {
-                context.ErrorMessage = MessageFactory.GetMessage("msg:/movement/invalid.direction");
+                context.ErrorMessage = MessageFactory.GetMessage("movement.InvalidDirection");
                 return null;
             }
             return (DirectionType)dir;

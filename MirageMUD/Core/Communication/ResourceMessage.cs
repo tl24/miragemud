@@ -25,7 +25,7 @@ namespace Mirage.Core.Communication
         /// <param name="messageType">the type of the message</param>
         /// <param name="messageName">the name of the message</param>
         /// <param name="resourceName">the name of the resource template</param>
-        public ResourceMessage(MessageType messageType, Uri Namespace, string messageName)
+        public ResourceMessage(MessageType messageType, string Namespace, string messageName)
             : this(messageType, Namespace, messageName, new Dictionary<string, object>())
         {
         }
@@ -42,7 +42,7 @@ namespace Mirage.Core.Communication
         /// <param name="Namespace">the namespace</param>
         /// <param name="messageName">the message name</param>
         /// <param name="template">the template to use</param>
-        protected ResourceMessage(MessageType messageType, Uri Namespace, string messageName, TemplateDefinition template)
+        protected ResourceMessage(MessageType messageType, string Namespace, string messageName, TemplateDefinition template)
             :this(messageType, Namespace, messageName)
         {
             this.templateDefinition = template;
@@ -56,7 +56,7 @@ namespace Mirage.Core.Communication
         /// <param name="messageName">the name of the message</param>
         /// <param name="resourceName">the name of the resource template</param>
         /// <param name="parameters">the replacement parameters for the template</param>
-        public ResourceMessage(MessageType messageType, Uri Namespace, string messageName, IDictionary<string, object> parameters)
+        public ResourceMessage(MessageType messageType, string Namespace, string messageName, IDictionary<string, object> parameters)
             : base(messageType, Namespace, messageName)
         {
             this._parameters = parameters;

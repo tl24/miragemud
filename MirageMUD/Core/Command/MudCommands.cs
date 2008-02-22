@@ -93,7 +93,7 @@ namespace Mirage.Core.Command
             if (actor.CommunicationPreferences.IsIgnored(player))
             {
                 // they're ignored, so stop ignoring them
-                rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/unignore.player");                
+                rm = (ResourceMessage) MessageFactory.GetMessage("communication.UnignorePlayer");                
                 actor.CommunicationPreferences.UnIgnore(player);
             }
             else
@@ -104,16 +104,16 @@ namespace Mirage.Core.Command
                 if (p == null)
                 {
                     // they're not playing
-                    rm = (ResourceMessage)MessageFactory.GetMessage("msg:/common/error/PlayerNotPlaying");
+                    rm = (ResourceMessage)MessageFactory.GetMessage("common.error.PlayerNotPlaying");
                 }
                 else
                 {
                     if (p == actor)
                     {
-                        return MessageFactory.GetMessage("msg:/communication/cant.ignore.self");
+                        return MessageFactory.GetMessage("communication.CantIgnoreSelf");
                     }
                     // found them, ignore them
-                    rm = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/ignore.player");
+                    rm = (ResourceMessage)MessageFactory.GetMessage("communication.IgnorePlayer");
                     actor.CommunicationPreferences.Ignore(p.Uri);
                     player = p.Uri;
                 }

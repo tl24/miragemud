@@ -150,7 +150,7 @@ namespace Mirage.Core.Communication
             {
                 if (IsBanned(member))
                 {
-                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/member.not.allowed");
+                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("communication.MemberNotAllowed");
                     rm["channel"] = this.Name;
                     member.Write(rm);
                     Remove(member);
@@ -250,7 +250,7 @@ namespace Mirage.Core.Communication
             {
                 if (!IsInRole(member))
                 {
-                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/member.not.allowed");
+                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("communication.MemberNotAllowed");
                     rm["channel"] = this.Name;
                     member.Write(rm);
                     Remove(member);
@@ -332,7 +332,7 @@ namespace Mirage.Core.Communication
             }
             else
             {
-                ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/cant.join.channel");
+                ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("communication.CantJoinChannel");
                 rm["channel"] = this.Name;
                 throw new ValidationException(rm);
             }
@@ -402,7 +402,7 @@ namespace Mirage.Core.Communication
         /// <param name="sender">the message sender</param>
         /// <param name="message">the message to send</param>
         public void Send(IReceiveMessages sender, string message) {
-            ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/channel.text");
+            ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("communication.ChannelText");
             string senderName = GetName(sender) ?? "someone";
             rm["sender"] = senderName;
             rm["channel"] = this.Name;

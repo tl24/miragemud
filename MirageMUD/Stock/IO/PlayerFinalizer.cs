@@ -79,7 +79,7 @@ namespace Mirage.Stock.IO
                     Player.Container.Add(Player);
                 }
 
-                Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/negotiation/welcome"));
+                Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("negotiation.welcome"));
                 // Try to turn on channels
                 foreach (Channel channel in channelRepository)
                 {
@@ -110,7 +110,7 @@ namespace Mirage.Stock.IO
             Player isPlaying = (Player)MudFactory.GetObject<IQueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(Player.Uri)));
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
-                Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/negotiation/authentication/player.already.playing"));
+                Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("negotiation.authentication.PlayerAlreadyPlaying"));
                 Client.Player = null;
                 Client.State = ConnectedState.Connecting;
                 Client.Close();

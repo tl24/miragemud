@@ -8,7 +8,7 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="baseNamespace">namespace or qualified name to check</param>
         /// <returns>true if it matches</returns>
-        bool IsMatch(Uri baseNamespace);
+        bool IsMatch(string baseNamespace);
 
         /// <summary>
         /// Checks to see if the message matches the specified namespace and name
@@ -16,7 +16,7 @@ namespace Mirage.Core.Communication
         /// <param name="baseNamespace">the base namespace to check</param>
         /// <param name="name">the message name</param>
         /// <returns>true if it matches</returns>
-        bool IsMatch(Uri baseNamespace, string name);
+        bool IsMatch(string baseNamespace, string name);
 
         /// <summary>
         /// Checks to see if the message matches the specified type, namespace and name
@@ -25,7 +25,7 @@ namespace Mirage.Core.Communication
         /// <param name="baseNamespace">the base namespace to check</param>
         /// <param name="name">the message name</param>
         /// <returns>true if it matches</returns>
-        bool IsMatch(MessageType type, Uri baseNamespace, string name);
+        bool IsMatch(MessageType type, string baseNamespace, string name);
 
         /// <summary>
         /// Checks to see if the message matches the specified type
@@ -49,7 +49,7 @@ namespace Mirage.Core.Communication
         /// logical categories
         /// </summary>
         /// <example>msg:/system/</example>
-        Uri Namespace { get; set; }
+        string Namespace { get; set; }
 
         /// <summary>
         /// Gets the fully-qualified name of the message which includes the namespace and

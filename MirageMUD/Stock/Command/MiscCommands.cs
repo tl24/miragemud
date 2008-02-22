@@ -54,7 +54,7 @@ namespace Mirage.Stock.Command
         public IMessage say([Actor] Living actor, [CustomParse] string message)
         {
             //speak to all others in the room
-            ResourceMessage msgToOthersTemplate = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/say.others");
+            ResourceMessage msgToOthersTemplate = (ResourceMessage)MessageFactory.GetMessage("communication.SayOthers");
             msgToOthersTemplate["player"] = actor.Title;
             msgToOthersTemplate["message"] = message;
             foreach (Living am in actor.Container.Contents(typeof(Living)))
@@ -70,7 +70,7 @@ namespace Mirage.Stock.Command
             }
 
             //repeat message to yourself as confirmation
-            ResourceMessage msgToSelf = (ResourceMessage) MessageFactory.GetMessage("msg:/communication/say.self");
+            ResourceMessage msgToSelf = (ResourceMessage) MessageFactory.GetMessage("communication.SaySelf");
             msgToSelf["message"] = message;
             return msgToSelf;
         }
@@ -83,7 +83,7 @@ namespace Mirage.Stock.Command
             if (p == null)
             {
                 // couldn't find them, send an error
-                ResourceMessage errorMsg = (ResourceMessage) MessageFactory.GetMessage("msg:/common/error/PlayerNotPlaying");
+                ResourceMessage errorMsg = (ResourceMessage) MessageFactory.GetMessage("common.error.PlayerNotPlaying");
                 errorMsg["player"] = target;
                 return errorMsg;
             }
@@ -93,17 +93,17 @@ namespace Mirage.Stock.Command
                     && !actor.Principal.IsInRole("immortal"))
                 {
                     //They're ignoring us!
-                    ResourceMessage errorMsg = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/being.ignored");
+                    ResourceMessage errorMsg = (ResourceMessage)MessageFactory.GetMessage("communication.BeingIgnored");
                     errorMsg["player"] = target;
                     return errorMsg;
                 } else {
                     // format the messages
-                    ResourceMessage msgToTarget = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/tell.others");
+                    ResourceMessage msgToTarget = (ResourceMessage)MessageFactory.GetMessage("communication.TellOthers");
                     msgToTarget["player"] = ViewManager.GetTitle(p, actor);
                     msgToTarget["message"] = message;
                     p.Write(msgToTarget);
 
-                    ResourceMessage msgToSelf = (ResourceMessage)MessageFactory.GetMessage("msg:/communication/tell.self");
+                    ResourceMessage msgToSelf = (ResourceMessage)MessageFactory.GetMessage("communication.TellSelf");
                     msgToSelf["message"] = message;
                     msgToSelf["target"] = ViewManager.GetTitle(actor, p);
 
@@ -115,7 +115,7 @@ namespace Mirage.Stock.Command
         [Command]
         public void quit([Actor] Player player)
         {
-            player.Write(MessageFactory.GetMessage("msg:/system/goodbye"));
+            player.Write(MessageFactory.GetMessage("system.goodbye"));
             if (player.Client.State == ConnectedState.Playing)
             {
                 PlayerRepository.Save(player);
@@ -182,7 +182,7 @@ namespace Mirage.Stock.Command
             if (lookAt == null || ViewManager.GetVisibility(actor, lookAt) == VisiblityType.NotVisible)
             {
                 // couldn't find them
-                ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("msg:/common/error/NotHere");
+                ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("common.error.NotHere");
                 rm["target"] = target;
                 actor.Write(rm);
                 return;

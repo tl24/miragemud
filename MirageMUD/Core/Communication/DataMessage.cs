@@ -18,7 +18,7 @@ namespace Mirage.Core.Communication
             this.MessageType = MessageType.Data;
         }
 
-        public DataMessage(Uri Namespace, string name, object data)
+        public DataMessage(string Namespace, string name, object data)
             : base(MessageType.Data, Namespace, name)
         {
             if (_data is IUri)
@@ -26,14 +26,14 @@ namespace Mirage.Core.Communication
             this._data = data;
         }
 
-        public DataMessage(Uri Namespace, string name, string itemUri, object data)
+        public DataMessage(string Namespace, string name, string itemUri, object data)
             : base(MessageType.Data, Namespace, name)
         {
             this._itemUri = itemUri;
             this._data = data;
         }
 
-        public DataMessage(Uri Namespace, string name)
+        public DataMessage(string Namespace, string name)
             : base(MessageType.Data, Namespace, name)
         {
         }

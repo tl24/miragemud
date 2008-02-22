@@ -16,22 +16,22 @@ namespace Mirage.Core.Communication
     public static class Namespaces
     {
         // NOTE: These must end in "/" in order to combine properly
-        public static readonly Uri Root = new Uri("msg:/");
-        public static readonly Uri System = new Uri(Root, "system/");
-        public static readonly Uri SystemError = new Uri(System, "error/");
-        public static readonly Uri Movement = new Uri(Root, "movement/");
-        public static readonly Uri Communication = new Uri(Root, "communication/");
-        public static readonly Uri Common = new Uri(Root, "common/");
-        public static readonly Uri CommonError = new Uri(Common, "error/");
+        public static readonly string Root = "";
+        public static readonly string System = "system";
+        public static readonly string SystemError = System + ".error";
+        public static readonly string Movement = "movement";
+        public static readonly string Communication = "communication";
+        public static readonly string Common = "common";
+        public static readonly string CommonError = Common + ".error";
 
-        public static readonly Uri Negotiation = new Uri(Root, "negotiation/");
+        public static readonly string Negotiation = "negotiation";
 
-        public static readonly Uri Authentication = new Uri(Negotiation, "authentication/");
-        public static readonly Uri PlayerCreation = new Uri(Negotiation, "creation/");
+        public static readonly string Authentication = Negotiation + ".authentication";
+        public static readonly string PlayerCreation = Negotiation + ".creation";
 
-        public static readonly Uri Builder = new Uri(Root, "builder/");
+        public static readonly string Builder = "builder";
 
-        public static readonly Uri Area = new Uri(Builder, "area/");
+        public static readonly string Area = Builder +  ".area";
 
     }
 }

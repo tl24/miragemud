@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Collections.Generic;
 using Mirage.Core.Communication;
@@ -106,13 +106,13 @@ namespace NUnitTests.Communication
         [Test]
         public void SpecialCharactersTest()
         {
-            string templateName = "msg:/namespace/test";
+            string templateName = "namespace.test";
             string expected = "Namespace test message";
-            Uri nmspc = new Uri("msg:/namespace/");
+            Uri nmspc = new Uri("namespace.");
             Uri combined = new Uri(nmspc, "test");
 
-            Uri testBase = Namespaces.Authentication;
-            Uri testName = new Uri(testBase, "Challenge");
+            string testBase = Namespaces.Authentication;
+            string testName = testBase + ".Challenge";
 
             ITemplate template = TemplateManager.GetTemplate(combined.ToString());
             string actual = template.Render();

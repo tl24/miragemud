@@ -53,7 +53,7 @@ namespace Mirage.Stock.IO
                     finalizer.Finalize(false);
 
                     Client.LoginHandler = null;
-                    Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("msg:/negotiation/authentication/Login"));
+                    Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("negotiation.authentication.Login"));
                     //Client.Write(new StringMessage(MessageType.Information, Namespaces.Negotiation, "Welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.\r\n"));
                 }
             }

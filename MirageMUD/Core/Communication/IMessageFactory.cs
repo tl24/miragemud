@@ -5,6 +5,5 @@ namespace Mirage.Core.Communication
     {
         void Clear();
         IMessage GetMessage(string messageUri);
-        IMessage GetMessage(Uri messageUri);
     }
 }
