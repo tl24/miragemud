@@ -37,7 +37,7 @@ namespace Mirage.Core.Data.Attribute
         {
             if (Opened)
             {
-                throw new ValidationException(new Uri("msg:/common/error/object.already.open"));
+                throw new ValidationException("common.error.ObjectAlreadyOpen");
             }
             else
             {
@@ -49,7 +49,7 @@ namespace Mirage.Core.Data.Attribute
         {
             if (!Opened)
             {
-                throw new ValidationException(new Uri("msg:/common/error/object.already.closed"));
+                throw new ValidationException("common.error.ObjectAlreadyClosed");
             }
             else
             {
@@ -84,7 +84,7 @@ namespace Mirage.Core.Data.Attribute
             if (o != null)
                 o.Open();
             else
-                throw new ValidationException(new Uri("msg:/common/error/not.openable"));
+                throw new ValidationException("common.error.NotOpenable");
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Mirage.Core.Data.Attribute
             if (o != null)
                 o.Close();
             else
-                throw new ValidationException(new Uri("msg:/common/error/not.closeable"));
+                throw new ValidationException("common.error.NotCloseable");
         }
     }
 }

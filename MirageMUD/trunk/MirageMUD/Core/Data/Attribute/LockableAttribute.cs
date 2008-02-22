@@ -68,10 +68,10 @@ namespace Mirage.Core.Data.Attribute
         public void Lock()
         {
             if (Opened)
-                throw new ValidationException(new Uri("msg:/common/error/cant.lock.when.open"));
+                throw new ValidationException("common.error.CantLockWhenOpen");
             
             if (Locked)
-                throw new ValidationException(new Uri("msg:/common/error/object.already.locked"));
+                throw new ValidationException("common.error.ObjectAlreadyLocked");
 
             _isLocked = true;
         }
@@ -85,7 +85,7 @@ namespace Mirage.Core.Data.Attribute
         public void Unlock()
         {
             if (!Locked)
-                throw new ValidationException(new Uri("msg:/common/error/object.already.unlocked"));
+                throw new ValidationException("common.error.ObjectAlreadyUnlocked");
 
             _isLocked = false;
         }
@@ -105,7 +105,7 @@ namespace Mirage.Core.Data.Attribute
         private void ValidateKey(IUri key)
         {
             if (!IsKey(key))
-                throw new ValidationException(new Uri("msg:/common/error/wrong.key"));
+                throw new ValidationException("common.error.WrongKey");
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Mirage.Core.Data.Attribute
         public override void Open()
         {
             if (Locked)
-                throw new ValidationException(new Uri("msg:/common/error/object.locked"));
+                throw new ValidationException("common.error.ObjectLocked");
             base.Open();
         }
 

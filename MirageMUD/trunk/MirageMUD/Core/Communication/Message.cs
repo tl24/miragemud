@@ -70,7 +70,7 @@ namespace Mirage.Core.Communication
     public class Message : IMessage
     {
         private MessageType _messageType;
-        private Uri _namespace;
+        private string _namespace;
         private string _name;
 
         public Message()
@@ -82,7 +82,7 @@ namespace Mirage.Core.Communication
         {
         }
 
-        public Message(MessageType messageType, Uri Namespace, string name)
+        public Message(MessageType messageType, string Namespace, string name)
         {
             this._messageType = messageType;
             this._name = name;
@@ -116,12 +116,19 @@ namespace Mirage.Core.Communication
         {
             get
             {
-                Uri nmspace = Namespace;
-                if (nmspace == null)
-                    nmspace = Namespaces.Root;
-
-                return new Uri(nmspace, _name).ToString();
+                return GetQualifiedName(Namespace, Name);
             }
+        }
+
+
+        private static string GetQualifiedName(string Namespace, string Name)
+        {
+            string nmspace = Namespace;
+            if (nmspace == null)
+                nmspace = Namespaces.Root;
+            nmspace += "." + Name;
+
+            return nmspace.TrimStart('.');
         }
         /// <summary>
         /// The namespace for the message
@@ -129,7 +136,7 @@ namespace Mirage.Core.Communication
         /// otherwise the format is:
         /// msg:/name/name
         /// </summary>
-        public Uri Namespace
+        public string Namespace
         {
             get { return this._namespace; }
             set { this._namespace = value; }
@@ -151,7 +158,7 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="baseNamespace">namespace to test</param>
         /// <returns>true if match</returns>
-        public bool IsMatch(Uri baseNamespace)
+        public bool IsMatch(string baseNamespace)
         {
             return IsMatch(MessageType.Unknown, baseNamespace, null);
         }
@@ -162,7 +169,7 @@ namespace Mirage.Core.Communication
         /// <param name="baseNamespace">namespace to check</param>
         /// <param name="name">name to check</param>
         /// <returns>true if match</returns>
-        public bool IsMatch(Uri baseNamespace, string name)
+        public bool IsMatch(string baseNamespace, string name)
         {
             return IsMatch(MessageType.Unknown, baseNamespace, name);
         }
@@ -175,7 +182,7 @@ namespace Mirage.Core.Communication
         /// <param name="baseNamespace">expected namespace</param>
         /// <param name="name">expected name</param>
         /// <returns>true if it matches</returns>
-        public bool IsMatch(MessageType type, Uri baseNamespace, string name)
+        public bool IsMatch(MessageType type, string baseNamespace, string name)
         {
             if (type != MessageType.Unknown
                 && MessageType != type)
@@ -185,11 +192,11 @@ namespace Mirage.Core.Communication
                 && name != null
                 && name != string.Empty) {
 
-                if (!(new Uri(baseNamespace, name)).Equals(QualifiedName))
+                if (!GetQualifiedName(baseNamespace, name).Equals(QualifiedName))
                     return false;
 
             } else if (baseNamespace != null) {
-                if (!baseNamespace.IsBaseOf(Namespace) && !baseNamespace.Equals(QualifiedName))
+                if (!Namespace.StartsWith(baseNamespace) && !baseNamespace.Equals(QualifiedName))
                     return false;
             } else if (name != null) {
                 if (name != this.Name)

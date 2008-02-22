@@ -123,21 +123,21 @@
   <data name="Movement.Arrival" xml:space="preserve">
     <value>${player} has arrived.</value>
   </data>
-  <data name="msg:/namespace/test" xml:space="preserve">
+  <data name="namespace.test" xml:space="preserve">
     <value>Namespace test message</value>
   </data>
-  <data name="msg:/negotiation/authentication/player.already.playing" xml:space="preserve">
+  <data name="negotiation.authentication.PlayerAlreadyPlaying" xml:space="preserve">
     <value>That player is already playing.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="msg:/negotiation/splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="negotiation.splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Includes\Welcome.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="msg:/negotiation/welcome" xml:space="preserve">
+  <data name="negotiation.welcome" xml:space="preserve">
     <value>
 Welcome to MirageMUD 0.1.  Still in development.</value>
   </data>
-  <data name="msg:/system/error/SystemError" xml:space="preserve">
+  <data name="system.error.SystemError" xml:space="preserve">
     <value>A system error has occurred executing your command.</value>
   </data>
   <data name="TestTemplateInclude" xml:space="preserve">

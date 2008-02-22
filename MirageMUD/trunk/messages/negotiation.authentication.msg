@@ -1,35 +1,35 @@
 {
-	"Namespace" : "msg:/negotiation/authentication/",
+	"Namespace" : "negotiation.authentication",
 	"Messages" : {
-		"player.already.playing" :  new ResourceMessage ("PlayerError", "player.already.playing")
+		"PlayerAlreadyPlaying" :  new ResourceMessage ("PlayerError", "PlayerAlreadyPlaying")
 		{ Template: "That player is already playing.\r\n" },
 		
-		"newplayer.password" : new ResourceMessage("Prompt", "newplayer.password")
+		"NewplayerPassword" : new ResourceMessage("Prompt", "NewplayerPassword")
 		{ Template: "New character.\r\nEnter a password for ${player}: " },
 		
-		"existingplayer.password" : new StringMessage("Prompt", "existingplayer.password", "Password: "),
+		"ExistingplayerPassword" : new StringMessage("Prompt", "ExistingplayerPassword", "Password: "),
 
-		"enter.name" :  new StringMessage ("Prompt", "enter.name", "Enter Name: "),
-		"enter.another.name" :  new StringMessage ("Prompt", "enter.another.name", "Ok, what is it, then? "),
+		"EnterName" :  new StringMessage ("Prompt", "EnterName", "Enter Name: "),
+		"EnterAnotherName" :  new StringMessage ("Prompt", "EnterAnotherName", "Ok, what is it, then? "),
 
-		"confirm.new.name" : new ResourceMessage("Prompt", "confirm.new.name")
+		"ConfirmNewName" : new ResourceMessage("Prompt", "ConfirmNewName")
 		{ Template: "Is that right, ${player} (Y/N)? " }
 
-		"confirm.new.name" : new ResourceMessage("Prompt", "confirm.new.name")
+		"ConfirmNewName" : new ResourceMessage("Prompt", "ConfirmNewName")
 		{ Template: "Is that right, ${player} (Y/N)? " },
 		
-		"error.confirm.name" : new StringMessage("PlayerError", "error.confirm.name", "Please type Yes or No.\r\n"),
+		"ErrorConfirmName" : new StringMessage("PlayerError", "ErrorConfirmName", "Please type Yes or No.\r\n"),
 		
-		"confirm.password" :  new StringMessage ("Prompt", "confirm.password", "Confirm password: "),
+		"ConfirmPassword" :  new StringMessage ("Prompt", "ConfirmPassword", "Confirm password: "),
 		
-		"error.illegal.name" : new StringMessage("PlayerError", "error.illegal.name", "Illegal name, try another.\r\n"),
+		"ErrorIllegalName" : new StringMessage("PlayerError", "ErrorIllegalName", "Illegal name, try another.\r\n"),
 
-		"error.already.playing" : new StringMessage("PlayerError", "error.already.playing", "That player is already playing.  Try another name.\r\n"),
+		"ErrorAlreadyPlaying" : new StringMessage("PlayerError", "ErrorAlreadyPlaying", "That player is already playing.  Try another name.\r\n"),
 
-		"error.wrong.password" : new StringMessage("PlayerError", "error.wrong.password", "\r\nWrong Password\r\n"),
+		"ErrorWrongPassword" : new StringMessage("PlayerError", "ErrorWrongPassword", "\r\nWrong Password\r\n"),
 
-		"error.password.length" : new StringMessage("PlayerError", "error.password.length", "Password must be at least five characters long.\n\r"),
-		"error.passwords.dont.match" : new StringMessage("PlayerError", "error.passwords.dont.match", "Passwords don't match.\r\n"),
+		"ErrorPasswordLength" : new StringMessage("PlayerError", "ErrorPasswordLength", "Password must be at least five characters long.\n\r"),
+		"ErrorPasswordsDontMatch" : new StringMessage("PlayerError", "ErrorPasswordsDontMatch", "Passwords don't match.\r\n"),
 		
 		"Login" :  new StringMessage ("Confirmation", "Login", "Login Successful")		
 		

@@ -27,19 +27,9 @@ namespace Mirage.Core.Communication
         /// <param name="messageUri">the uri that identifies the message</param>
         /// <returns>the message</returns>
         public IMessage GetMessage(string messageUri)
-        {
-            return GetMessage(new Uri(messageUri));
-        }
-
-        /// <summary>
-        /// Constructs and returns the message identified by the message uri
-        /// </summary>
-        /// <param name="messageUri">the uri that identifies the message</param>
-        /// <returns>the message</returns>
-        public IMessage GetMessage(Uri messageUri)
         {            
             string name;
-            Uri nmspace = SeparateUri(messageUri, out name);
+            string nmspace = SeparateUri(messageUri, out name);
             NamespaceGroup ngroup = null;
             if (!_namespaces.TryGetValue(nmspace.ToString(), out ngroup))
             {
@@ -53,7 +43,7 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="Namespace">the namespace uri to load</param>
         /// <returns>namespace group</returns>
-        private NamespaceGroup LoadNamespace(Uri Namespace)
+        private NamespaceGroup LoadNamespace(string Namespace)
         {
             string namespaceFile = "";
             try
@@ -90,24 +80,28 @@ namespace Mirage.Core.Communication
         /// <param name="path">the uri to separate</param>
         /// <param name="name">the name part of the uri</param>
         /// <returns>the namespace</returns>
-        private Uri SeparateUri(Uri path, out string name)
+        private string SeparateUri(string path, out string name)
         {
-            name = path.Segments[path.Segments.Length - 1];
-            return new Uri(path.Scheme + ":" + string.Join("", path.Segments, 0, path.Segments.Length - 1));
+            int pos = path.LastIndexOf('.');
+            if (pos >= 0)
+            {
+                name = path.Substring(pos + 1);
+                return path.Substring(0, pos);
+            }
+            else
+            {
+                name = path;
+                return "";
+            }
         }
-
-        //public const string EchoOn = "EchoOn";
-        public const string EchoOn = "msg:/system/EchoOn";
-        //public const string EchoOff = "EchoOff";
-        public const string EchoOff = "msg:/system/EchoOff";
     }
 
     public class NamespaceGroup 
     {
-        private Uri _namespace;
+        private string _namespace;
         private Dictionary<string, IMessage> _messages = new Dictionary<string, IMessage>();
 
-        public System.Uri Namespace
+        public string Namespace
         {
             get { return this._namespace; }
             set { this._namespace = value; }

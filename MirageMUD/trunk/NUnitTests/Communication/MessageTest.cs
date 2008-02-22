@@ -32,7 +32,7 @@ namespace NUnitTests.Communication
         {
             Message target = new Message(MessageType.Information, Namespaces.Authentication, "test");
             Assert.IsTrue(target.IsMatch(Namespaces.Authentication, "test"));
-            Assert.IsTrue(target.IsMatch(new Uri(Namespaces.Authentication, "test")));
+            Assert.IsTrue(target.IsMatch(Namespaces.Authentication + ".test"));
             Assert.IsFalse(target.IsMatch(Namespaces.Negotiation, "test"));
         }
     }

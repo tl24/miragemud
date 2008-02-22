@@ -16,9 +16,9 @@ namespace Mirage.Core.Communication
         {
         }
 
-        public MultipartMessage(MessageType messageType, Uri Namespace, string name) : this(messageType, Namespace, name, null) { }
+        public MultipartMessage(MessageType messageType, string Namespace, string name) : this(messageType, Namespace, name, null) { }
 
-        public MultipartMessage(MessageType messageType, Uri Namespace, string name, ICollection parts)
+        public MultipartMessage(MessageType messageType, string Namespace, string name, ICollection parts)
             : base(messageType, Namespace, name)
         {
             if (parts != null)
