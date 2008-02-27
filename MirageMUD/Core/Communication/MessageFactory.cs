@@ -26,16 +26,48 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="messageUri">the uri that identifies the message</param>
         /// <returns>the message</returns>
-        public IMessage GetMessage(string messageUri)
+        public IMessage GetMessage(string messageName)
         {            
             string name;
-            string nmspace = SeparateUri(messageUri, out name);
+            string nmspace = SeparateUri(messageName, out name);
             NamespaceGroup ngroup = null;
             if (!_namespaces.TryGetValue(nmspace.ToString(), out ngroup))
             {
                 ngroup = LoadNamespace(nmspace);                    
             }
             return ngroup.CreateMessage(name);
+        }
+
+        public IMessage GetMessage(string messageName, string messageText)
+        {
+            return GetMessage(new MessageName(messageName), messageText);
+        }
+
+        public IMessage GetMessage(MessageName name, string messageText)
+        {
+            MessageType type = MessageType.Information;
+            if (name.Namespace.Contains("error"))
+                type = MessageType.PlayerError;
+            return GetMessage(type, name, messageText);
+        }
+
+        public IMessage GetMessage(MessageType type, string messageName, string messageText)
+        {
+            return GetMessage(type, new MessageName(messageName), messageText);
+        }
+
+        public IMessage GetMessage(MessageType type, MessageName name, string messageText)
+        {
+            if (messageText.Contains("${"))
+            {
+                ResourceMessage msg = new ResourceMessage(type, name.FullName);
+                msg.Template = messageText;
+                return msg;
+            }
+            else
+            {
+                return new StringMessage(type, name, messageText);
+            }
         }
 
         /// <summary>
@@ -116,7 +148,7 @@ namespace Mirage.Core.Communication
         public IMessage CreateMessage(string Name)
         {
             IMessage newMessage = _messages[Name].Copy();
-            newMessage.Namespace = this.Namespace;
+            newMessage.Name = new MessageName(this.Namespace, newMessage.Name.Name);
             return newMessage;
         }
 

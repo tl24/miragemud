@@ -70,31 +70,22 @@ namespace Mirage.Stock.Command
                 return MessageFactory.GetMessage("movement.DoorClosed");
 
             // create the messages
-            MovementMessage departMessage = new MovementMessage(dirName,
-                MovementMessage.MovementType.Departure,
-                actor.Title);
-            MovementMessage arrivalMessage = new MovementMessage(null,
-                MovementMessage.MovementType.Arrival,
-                actor.Title);
+            IMessage departMessage = MessageFactory.GetMessage("movement.PlayerLeavesDirection");
+            departMessage["player"] = actor.Title;
+            departMessage["direction"] = dirName;
+
+            IMessage arrivalMessage = MessageFactory.GetMessage("movement.PlayerArrival");
+            arrivalMessage["player"] = actor.Title;
 
             try
             {
                 ContainerUtils.Transfer(actor, exit.TargetRoom);
-                foreach (Living oldRoomPeople in room.Animates)
-                {
-                    if (oldRoomPeople != actor)
-                    {
-                        oldRoomPeople.Write(departMessage);
-                    }
-                }
-                foreach (Living newRoomPeople in exit.TargetRoom.Animates)
-                {
-                    if (newRoomPeople != actor)
-                    {
-                        newRoomPeople.Write(arrivalMessage);
-                    }
-                }
-                actor.Write(new StringMessage(MessageType.Confirmation, "movement." + dirName, "You go " + dirName + ".\r\n"));
+                room.Write(actor, departMessage);
+                exit.TargetRoom.Write(actor, arrivalMessage);
+
+                IMessage confirmation = MessageFactory.GetMessage("movement.YouGoDirection");
+                confirmation["direction"] = dirName;
+                actor.Write(confirmation);
                 if (actor is IPlayer)
                     Interpreter.ExecuteCommand(actor, "look");
                 return null;
@@ -148,24 +139,16 @@ namespace Mirage.Stock.Command
                 openObj.Close();
 
             string action = open ? "Open" : "Close";
-            ResourceMessage mActionSelf = (ResourceMessage)MessageFactory.GetMessage("movement.Player" + action + "DoorSelf");
-            ResourceMessage mActionOthers = (ResourceMessage)MessageFactory.GetMessage("movement.Player" + action + "DoorOthers");
+            IMessage mActionSelf = MessageFactory.GetMessage("movement.Player" + action + "DoorSelf");
+            IMessage mActionOthers = MessageFactory.GetMessage("movement.Player" + action + "DoorOthers");
 
             mActionOthers["player"] = actor.Title;
             mActionSelf["direction"] = mActionOthers["direction"] = direction.ToString();
 
-            ResourceMessage mActionAnonymous = (ResourceMessage)MessageFactory.GetMessage("movement.Anonymous" + action + "Door");
+            IMessage mActionAnonymous = MessageFactory.GetMessage("movement.Anonymous" + action + "Door");
+            room.Write(actor, mActionOthers);
 
-            foreach (Living liv in room.Animates)
-            {
-                if (liv != actor)
-                    liv.Write(mActionOthers);
-            }
-
-            foreach (Living liv in exit.TargetRoom.Animates)
-            {
-                liv.Write(mActionAnonymous);
-            }
+            exit.TargetRoom.Write(mActionAnonymous);
 
             return mActionSelf;
         }
@@ -206,13 +189,13 @@ namespace Mirage.Stock.Command
                 lockObj.Lock();
 
             string action = unlock ? "Unlock" : "Lock";
-            ResourceMessage mActionSelf = (ResourceMessage)MessageFactory.GetMessage("movement.Player" + action + "DoorSelf");
-            ResourceMessage mActionOthers = (ResourceMessage)MessageFactory.GetMessage("movement.Player" + action + "DoorOthers");
+            IMessage mActionSelf = MessageFactory.GetMessage("movement.Player" + action + "DoorSelf");
+            IMessage mActionOthers = MessageFactory.GetMessage("movement.Player" + action + "DoorOthers");
 
             mActionOthers["player"] = actor.Title;
             mActionSelf["direction"] = mActionOthers["direction"] = direction.ToString();
 
-            foreach (Living liv in room.Animates)
+            foreach (Living liv in room.LivingThings)
             {
                 if (liv != actor)
                     liv.Write(mActionOthers);

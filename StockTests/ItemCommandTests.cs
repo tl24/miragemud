@@ -24,6 +24,7 @@ namespace StockTests
             cmd = new ItemCommands();
             QueryManager qmgr = new QueryManager();
             cmd.QueryManager = qmgr;
+            cmd.MessageFactory = new MessageFactory();
 
             player = new Player();
             MockClient client = new MockClient();

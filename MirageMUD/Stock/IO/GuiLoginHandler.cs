@@ -37,7 +37,7 @@ namespace Mirage.Stock.IO
         {
             if (input == null)
             {
-                Client.Write(new Message(MessageType.Prompt, Namespaces.Authentication, "Nanny.Challenge"));
+                Client.Write(new Message(MessageType.Prompt, "negotiation.authenticiation.NannyChallenge"));
             }
             else if (input is LoginMessage)
             {
@@ -45,7 +45,7 @@ namespace Mirage.Stock.IO
                 Player p = (Player) _playerRepository.Load(login.Login);
                 if (p == null || !p.ComparePassword(login.Password))
                 {
-                    Client.Write(new StringMessage(MessageType.PlayerError, Namespaces.Authentication, "Error.Login", "Invalid Login or password, Please try again"));
+                    Client.Write(new StringMessage(MessageType.PlayerError, "negotiation.authenticiation.LoginError", "Invalid Login or password, Please try again"));
                 }
                 else
                 {

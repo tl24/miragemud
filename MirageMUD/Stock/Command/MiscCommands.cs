@@ -54,7 +54,7 @@ namespace Mirage.Stock.Command
         public IMessage say([Actor] Living actor, [CustomParse] string message)
         {
             //speak to all others in the room
-            ResourceMessage msgToOthersTemplate = (ResourceMessage)MessageFactory.GetMessage("communication.SayOthers");
+            IMessage msgToOthersTemplate = MessageFactory.GetMessage("communication.SayOthers");
             msgToOthersTemplate["player"] = actor.Title;
             msgToOthersTemplate["message"] = message;
             foreach (Living am in actor.Container.Contents(typeof(Living)))
@@ -63,14 +63,14 @@ namespace Mirage.Stock.Command
                 {
                     if (am is Player && ((Player)am).CommunicationPreferences.IsIgnored(actor.Uri))
                         continue;
-                    ResourceMessage m = (ResourceMessage) msgToOthersTemplate.Copy();
+                    IMessage m = msgToOthersTemplate.Copy();
                     m["player"] = ViewManager.GetTitle(am, actor);
                     am.Write(m);
                 }
             }
 
             //repeat message to yourself as confirmation
-            ResourceMessage msgToSelf = (ResourceMessage) MessageFactory.GetMessage("communication.SaySelf");
+            IMessage msgToSelf = MessageFactory.GetMessage("communication.SaySelf");
             msgToSelf["message"] = message;
             return msgToSelf;
         }
@@ -83,7 +83,7 @@ namespace Mirage.Stock.Command
             if (p == null)
             {
                 // couldn't find them, send an error
-                ResourceMessage errorMsg = (ResourceMessage) MessageFactory.GetMessage("common.error.PlayerNotPlaying");
+                IMessage errorMsg = MessageFactory.GetMessage("common.error.PlayerNotPlaying");
                 errorMsg["player"] = target;
                 return errorMsg;
             }
@@ -93,17 +93,17 @@ namespace Mirage.Stock.Command
                     && !actor.Principal.IsInRole("immortal"))
                 {
                     //They're ignoring us!
-                    ResourceMessage errorMsg = (ResourceMessage)MessageFactory.GetMessage("communication.BeingIgnored");
+                    IMessage errorMsg = MessageFactory.GetMessage("communication.BeingIgnored");
                     errorMsg["player"] = target;
                     return errorMsg;
                 } else {
                     // format the messages
-                    ResourceMessage msgToTarget = (ResourceMessage)MessageFactory.GetMessage("communication.TellOthers");
+                    IMessage msgToTarget = MessageFactory.GetMessage("communication.TellOthers");
                     msgToTarget["player"] = ViewManager.GetTitle(p, actor);
                     msgToTarget["message"] = message;
                     p.Write(msgToTarget);
 
-                    ResourceMessage msgToSelf = (ResourceMessage)MessageFactory.GetMessage("communication.TellSelf");
+                    IMessage msgToSelf = MessageFactory.GetMessage("communication.TellSelf");
                     msgToSelf["message"] = message;
                     msgToSelf["target"] = ViewManager.GetTitle(actor, p);
 
@@ -139,10 +139,10 @@ namespace Mirage.Stock.Command
             if (actor.Container is Room)
             {
                 Room room = actor.Container as Room;
-                if (room.Animates.Count > 1)
+                if (room.LivingThings.Count > 1)
                 {
                     result += "Players:\r\n";
-                    foreach (Living animate in room.Animates)
+                    foreach (Living animate in room.LivingThings)
                     {
                         if (animate != actor)
                         {
@@ -178,13 +178,13 @@ namespace Mirage.Stock.Command
         [Command]
         public void look([Actor] Living actor, string target)
         {
-            Living lookAt = QueryManager.Find(actor.Container, ObjectQuery.parse("Animates", target)) as Living;
+            Living lookAt = QueryManager.Find(actor.Container, ObjectQuery.parse("LivingThings", target)) as Living;
             if (lookAt == null || ViewManager.GetVisibility(actor, lookAt) == VisiblityType.NotVisible)
             {
                 // couldn't find them
-                ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("common.error.NotHere");
-                rm["target"] = target;
-                actor.Write(rm);
+                IMessage message = MessageFactory.GetMessage("common.error.NotHere");
+                message["target"] = target;
+                actor.Write(message);
                 return;
             }
 
@@ -192,8 +192,8 @@ namespace Mirage.Stock.Command
             text += ViewManager.GetTitle(actor, lookAt) + "\r\n";
             text += ViewManager.GetLong(actor, lookAt) + "\r\n";
             //TODO: create message namespace:
-            actor.Write(new StringMessage(MessageType.Information, Namespaces.Common, "look.player", text));
-            lookAt.Write(new StringMessage(MessageType.Information, Namespaces.Common, "look.target", ViewManager.GetTitle(lookAt, actor) + " looks at you.\r\n"));
+            actor.Write(MessageFactory.GetMessage("common.LookPlayer", text));
+            lookAt.Write(MessageFactory.GetMessage("common.PlayerLooksAtYou", ViewManager.GetTitle(lookAt, actor) + " looks at you.\r\n"));
         }
 
         [CommandAttribute(Description="Lists commands available to a user")]
@@ -210,7 +210,7 @@ namespace Mirage.Stock.Command
                 sb.AppendLine(cmd.ShortHelp());
             }
 
-            return new StringMessage(MessageType.Information, Namespaces.Common, "command.list.short", sb.ToString());
+            return MessageFactory.GetMessage("common.CommandListShort", sb.ToString());
         }
 
         [CommandAttribute(Description = "Lists commands available to a user")]
@@ -231,7 +231,7 @@ namespace Mirage.Stock.Command
             if (i % 3 != 0)
                 sb.AppendLine();
 
-            return new StringMessage(MessageType.Information, Namespaces.Common, "command.list.all", sb.ToString());
+            return MessageFactory.GetMessage("common.CommandListAll", sb.ToString());
         }
 
         private SortedList<string, ICommand> FilterAndSortCommands(IList<ICommand> commands, Player actor)

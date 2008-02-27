@@ -85,7 +85,7 @@ namespace MirageGUI.Code
             if (wasConnected)
                 OnConnectStateChanged();
             if (closeReasonMessage != null)
-                OnResponseReceived(new StringMessage(MessageType.SystemError, new Uri(Namespaces.CommonError, "GuiError/"), "ConnectionError", closeReasonMessage));
+                OnResponseReceived(new StringMessage(MessageType.SystemError, "common.error.GuiError", "ConnectionError", closeReasonMessage));
             _isClosing = false;
         }
 

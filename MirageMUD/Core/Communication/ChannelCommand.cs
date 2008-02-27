@@ -51,9 +51,9 @@ namespace Mirage.Core.Communication
                 }
                 if (sendConfirmation)
                 {
-                    ResourceMessage rm = (ResourceMessage)MessageFactory.GetMessage("communication.ChannelOn");
-                    rm["channel"] = Channel.Name;
-                    actor.Write(rm);
+                    IMessage message = MessageFactory.GetMessage("communication.ChannelOn");
+                    message["channel"] = Channel.Name;
+                    actor.Write(message);
                 }
             }
         }
@@ -73,9 +73,9 @@ namespace Mirage.Core.Communication
                 }
                 if (sendConfirmation)
                 {
-                    ResourceMessage rm = (ResourceMessage)MessageFactory.GetMessage("communication.ChannelOff");
-                    rm["channel"] = Channel.Name;
-                    actor.Write(rm);
+                    IMessage message = MessageFactory.GetMessage("communication.ChannelOff");
+                    message["channel"] = Channel.Name;
+                    actor.Write(message);
                 }
             }
         }

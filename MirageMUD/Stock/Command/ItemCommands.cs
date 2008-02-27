@@ -19,6 +19,13 @@ namespace Mirage.Stock.Command
             set { this._queryManager = value; }
         }
 
+        private IMessageFactory _messageFactory;
+        public IMessageFactory MessageFactory
+        {
+            get { return this._messageFactory; }
+            set { this._messageFactory = value; }
+        }
+
         [CommandAttribute(Aliases = new string[] { "get" })]
         public IMessage get_item([Actor] Living actor, string target)
         {
@@ -30,7 +37,7 @@ namespace Mirage.Stock.Command
             } else {
                 ItemBase item = QueryManager.Find(actor.Container, ObjectQuery.parse("Items", target)) as ItemBase;
                 if (item == null)
-                    return new StringMessage(MessageType.PlayerError, "item.not.here", "I don't see that here.\r\n");
+                    return MessageFactory.GetMessage("item.error.ItemNotHere", "I don't see that here.\r\n");
                 else
                     return get_item(actor, item);
             }
@@ -44,14 +51,14 @@ namespace Mirage.Stock.Command
                 {
                     if (am != actor)
                     {
-                        am.Write(new StringMessage(MessageType.Information, "get.item.other", actor.Title + " gets " + item.ShortDescription + "\r\n"));
+                        am.Write(MessageFactory.GetMessage("item.PlayerGetsItem", actor.Title + " gets " + item.ShortDescription + "\r\n"));
                     }
                 }
-                return new StringMessage(MessageType.Confirmation, "get.item.self", "You get " + item.ShortDescription + "\r\n");
+                return MessageFactory.GetMessage("item.YouGetItem", "You get " + item.ShortDescription + "\r\n");
             }
             else
             {
-                return new StringMessage(MessageType.PlayerError, "get.item.error", "You can't pick up " + item.ShortDescription + "!\r\n");
+                return MessageFactory.GetMessage("item.error.CantGetItem", "You can't pick up " + item.ShortDescription + "!\r\n");
             }
         }
 
@@ -62,7 +69,7 @@ namespace Mirage.Stock.Command
             if (target.Equals("all", StringComparison.CurrentCultureIgnoreCase))
             {
                 if (room == null)
-                    return new StringMessage(MessageType.PlayerError, "cant.drop.all", "You can't drop anything here.\r\n");
+                    return MessageFactory.GetMessage("item.error.CantDropAll", "You can't drop anything here.\r\n");
 
                 List<ItemBase> items = new List<ItemBase>(actor.Inventory);
                 foreach (ItemBase item in items)
@@ -73,11 +80,11 @@ namespace Mirage.Stock.Command
             else
             {
                 if (room == null)
-                    return new StringMessage(MessageType.PlayerError, "cant.drop.that", "You can't drop that here.\r\n");
+                    return MessageFactory.GetMessage("item.error.CantDropItem", "You can't drop that here.\r\n");
 
                 ItemBase item = QueryManager.Find(actor, ObjectQuery.parse("Inventory", target)) as ItemBase;
                 if (item == null)
-                    return new StringMessage(MessageType.PlayerError, "dont.have.item", "You don't have that!\r\n");
+                    return MessageFactory.GetMessage("item.error.DontHaveItem", "You don't have that!\r\n");
 
                 return drop(actor, room, item);
             }
@@ -92,14 +99,14 @@ namespace Mirage.Stock.Command
                 {
                     if (am != actor)
                     {
-                        am.Write(new StringMessage(MessageType.Information, "drop.item.other", actor.Title + " drops " + item.ShortDescription + ".\r\n"));
+                        am.Write(MessageFactory.GetMessage("item.PlayerDropsItem", actor.Title + " drops " + item.ShortDescription + ".\r\n"));
                     }
                 }
-                return new StringMessage(MessageType.Confirmation, "drop.item.self", "You drop " + item.ShortDescription + ".\r\n");
+                return MessageFactory.GetMessage("item.YouDropItem", "You drop " + item.ShortDescription + ".\r\n");
             }
             else
             {
-                return new StringMessage(MessageType.PlayerError, "drop.item.error", "You can't drop " + item.ShortDescription + "!\r\n");
+                return MessageFactory.GetMessage("item.error.CantDropItem", "You can't drop that here.\r\n");
             }
         }
 
@@ -108,17 +115,22 @@ namespace Mirage.Stock.Command
         {
             ItemBase item = QueryManager.Find(actor, ObjectQuery.parse("Inventory", target)) as ItemBase;
             if (item == null)
-                return new StringMessage(MessageType.PlayerError, "item.not.found", "You don't have that.\r\n");
+                return MessageFactory.GetMessage("item.error.DontHaveItem", "You don't have that!\r\n");
 
             Armor armor = item as Armor;
             if (armor == null)
-                return new StringMessage(MessageType.PlayerError, "item.not.wearable", "You can't wear that.\r\n");
+                return MessageFactory.GetMessage("item.error.CantWearItem", "You can't wear that!\r\n");
 
             Armor removed = actor.EquipItem(armor, true);
             if (removed != null)
-                actor.Write(new StringMessage(MessageType.Information, "item.removed", "You remove " + removed.ShortDescription + ".\r\n"));
-
-            return new StringMessage(MessageType.Information, "item.worn", "You wear " + armor.ShortDescription + ".\r\n");
+            {
+                actor.Write(MessageFactory.GetMessage("item.YouRemoveItem", "You remove " + removed.ShortDescription + ".\r\n"));
+                if (actor.Container is IReceiveMessages)
+                    ((IReceiveMessages)actor.Container).Write(actor, MessageFactory.GetMessage("item.PlayerRemovesItem", actor.Title + " removes " + removed.ShortDescription + ".\r\n"));
+            }
+            if (actor.Container is IReceiveMessages)
+                ((IReceiveMessages)actor.Container).Write(actor, MessageFactory.GetMessage("item.PlayerWearsItem", actor.Title + " wears " + removed.ShortDescription + ".\r\n"));
+            return MessageFactory.GetMessage("item.YouWearItem", "You wear " + armor.ShortDescription + ".\r\n");
         }
 
         [CommandAttribute(Description = "Remove an item")]
@@ -126,10 +138,12 @@ namespace Mirage.Stock.Command
         {
             Armor item = QueryManager.Find(actor, ObjectQuery.parse("Equipment", target)) as Armor;
             if (item == null)
-                return new StringMessage(MessageType.PlayerError, "item.not.worn", "You're not wearing that!\r\n");
+                return MessageFactory.GetMessage("item.error.ItemNotWorn", "You're not wearing that!\r\n");
 
             actor.UnequipItem(item);
-            return new StringMessage(MessageType.Information, "item.removed", "You remove " + item.ShortDescription + ".\r\n");
+            if (actor.Container is IReceiveMessages)
+                ((IReceiveMessages)actor.Container).Write(actor, MessageFactory.GetMessage("item.PlayerRemovesItem", actor.Title + " removes " + item.ShortDescription + ".\r\n"));
+            return MessageFactory.GetMessage("item.YouRemoveItem", "You remove " + item.ShortDescription + ".\r\n");
 
         }
 
@@ -148,13 +162,13 @@ namespace Mirage.Stock.Command
                 sb.Append(string.Format("{0,-15} {1}\r\n", locString, desc));    
             }
 
-            return new StringMessage(MessageType.Information, "equipment", sb.ToString());
+            return MessageFactory.GetMessage("item.Equipment", sb.ToString());
         }
 
         [CommandAttribute(Description="Shows the current items in inventory that a player has")]
         public IMessage inventory([Actor] Living actor)
         {
-            return new StringMessage(MessageType.Information, "inventory", DisplayItemList("You have the following items:", actor.Inventory));
+            return MessageFactory.GetMessage("item.Inventory", DisplayItemList("You have the following items:", actor.Inventory));
         }
 
         public static string DisplayItemList(string title, ICollection<ItemBase> items)

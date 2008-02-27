@@ -52,22 +52,22 @@ namespace Mirage.Stock.IO
                 Require(MessageFactory.GetMessage("negotiation.authentication.EnterName"), new ValidateDelegate(this.ValidateName));
             else if (GetValue<bool>("isNew") == true) {
                 if (!Contains("confirmName")) {
-                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("negotiation.authentication.ConfirmNewName");
+                    IMessage rm = MessageFactory.GetMessage("negotiation.authentication.ConfirmNewName");
                     rm["player"] = GetValue<Player>("player").Title;
                     Require(rm, new ValidateDelegate(this.ConfirmName));
                 }
                 else if (!Contains("password"))
                 {
-                    MultipartMessage message = new MultipartMessage(MessageType.Multiple, Namespaces.Authentication, "password");
+                    MultipartMessage message = new MultipartMessage("negotiation.authentication.password");
                     message.Parts.Add(MessageFactory.GetMessage("negotiation.authentication.NewplayerPassword"));
-                    ((ResourceMessage)message.Parts[0])["player"] = GetValue<Player>("player").Title;
+                    ((IMessage)message.Parts[0])["player"] = GetValue<Player>("player").Title;
                     message.Parts.Add(MessageFactory.GetMessage("system.EchoOff"));
 
                     Require(message, new ValidateDelegate(this.ValidateNewPassword));
                 }
                 else if (!Contains("confirmPassword"))
                 {
-                    MultipartMessage message = new MultipartMessage(MessageType.Multiple, Namespaces.Authentication, "confirmPassword");
+                    MultipartMessage message = new MultipartMessage("negotiation.authentication.confirmPassword");
                     message.Parts.Add(MessageFactory.GetMessage("negotiation.authentication.ConfirmPassword"));
                     message.Parts.Add(MessageFactory.GetMessage("system.EchoOff"));
 
@@ -99,7 +99,7 @@ namespace Mirage.Stock.IO
 
         protected override void InitialState()
         {
-            Client.Write(new ResourceMessage(MessageType.Information, Namespaces.Negotiation, "splash"));
+            Client.Write(new ResourceMessage(MessageType.Information, "negotiation.splash"));
         }
 
         protected override void FinalState()

@@ -59,7 +59,7 @@ namespace Mirage.Core.Command
                         sb.AppendFormat(format, channel.Name, "off");
                 }
             }
-            return new StringMessage(MessageType.Communication, Namespaces.Communication, "channel.list", sb.ToString());
+            return MessageFactory.GetMessage("communication.ChannelList", sb.ToString());
         }
 
         /// <summary>
@@ -83,17 +83,17 @@ namespace Mirage.Core.Command
             {
                 sb.AppendLine("You're not currently ignoring anyone.");
             }
-            return new StringMessage(MessageType.Communication, Namespaces.Communication, "ignore.list", sb.ToString());
+            return MessageFactory.GetMessage("communication.IgnoreList", sb.ToString());
         }
 
         [Command(Description = "Toggles ignoring a player on or off")]
         public IMessage ignore([Actor] IPlayer actor, string player)
         {
-            ResourceMessage rm;
+            IMessage message;
             if (actor.CommunicationPreferences.IsIgnored(player))
             {
                 // they're ignored, so stop ignoring them
-                rm = (ResourceMessage) MessageFactory.GetMessage("communication.UnignorePlayer");                
+                message = MessageFactory.GetMessage("communication.UnignorePlayer");                
                 actor.CommunicationPreferences.UnIgnore(player);
             }
             else
@@ -104,7 +104,7 @@ namespace Mirage.Core.Command
                 if (p == null)
                 {
                     // they're not playing
-                    rm = (ResourceMessage)MessageFactory.GetMessage("common.error.PlayerNotPlaying");
+                    message = MessageFactory.GetMessage("common.error.PlayerNotPlaying");
                 }
                 else
                 {
@@ -113,13 +113,13 @@ namespace Mirage.Core.Command
                         return MessageFactory.GetMessage("communication.CantIgnoreSelf");
                     }
                     // found them, ignore them
-                    rm = (ResourceMessage)MessageFactory.GetMessage("communication.IgnorePlayer");
+                    message = MessageFactory.GetMessage("communication.IgnorePlayer");
                     actor.CommunicationPreferences.Ignore(p.Uri);
                     player = p.Uri;
                 }
             }
-            rm["player"] = player;
-            return rm;
+            message["player"] = player;
+            return message;
         }
     }
 }

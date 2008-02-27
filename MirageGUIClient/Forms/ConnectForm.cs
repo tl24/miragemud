@@ -52,7 +52,7 @@ namespace MirageGUI.Forms
             LoginMessage lmsg = new LoginMessage();
             lmsg.Login = Login.Text;
             lmsg.Password = Password.Text;
-            handler.SendObject(lmsg.Name, lmsg);
+            handler.SendObject(lmsg.Name.FullName, lmsg);
         }
 
         #region IResponseHandler Members
@@ -70,7 +70,7 @@ namespace MirageGUI.Forms
                 }
                 else
                 {
-                    if (msg.IsMatch(Namespaces.Authentication, "Nanny.Challenge"))
+                    if (msg.IsMatch(Namespaces.Authentication, "NannyChallenge"))
                     {
                         DoLogin();
                         return ProcessStatus.SuccessAbort;

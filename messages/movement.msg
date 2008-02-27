@@ -1,6 +1,16 @@
 {
 	"Namespace" : "movement",
 	"Messages" : {
+		"PlayerArrival" : new ResourceMessage("Information", "PlayerArrival")
+		{ Template: "${player} has arrived.\r\n" },
+		
+		"PlayerLeavesDirection" : new ResourceMessage("Information", "PlayerLeavesDirection")
+		{ Template: "${player} leaves ${direction}.\r\n" },
+
+		"YouLeaveDirection" : new ResourceMessage("Information", "YouLeaveDirection")
+		{ Template: "You go ${direction}.\r\n" },
+
+		
 		"AnonymousCloseDoor" :  new ResourceMessage ("Information", "AnonymousCloseDoor")
 		{ Template: "A door closes.\r\n" },
 

@@ -17,7 +17,7 @@ namespace Mirage.Stock.Data.MobAI
 
         public override AIMessageResult HandleMessage(Mirage.Core.Communication.IMessage message)
         {
-            if (message.IsMatch(MessageType.Communication, Namespaces.Communication, "say.others"))
+            if (message.IsMatch(Namespaces.Communication, "SayOthers"))
             {
                 ResourceMessage msg = (ResourceMessage)message;
                 this.Mob.Commands.Enqueue(new MobileStringCommand("say '" + msg["player"] + " said \"" + msg["message"] + "\""));

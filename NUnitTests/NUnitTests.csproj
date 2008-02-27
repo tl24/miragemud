@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\ArgumentParserTests.cs" />
+    <Compile Include="Communication\MessageNameTests.cs" />
     <Compile Include="Communication\MessageTest.cs" />
     <Compile Include="Communication\TemplateManagerTest.cs" />
     <Compile Include="Data\Containers\HeterogenousContainerTests.cs" />

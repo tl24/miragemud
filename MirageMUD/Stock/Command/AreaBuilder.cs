@@ -72,7 +72,7 @@ namespace Mirage.Stock.Command
                 case ChangeType.Add:                    
                     areas[area.Uri] = area;
                     area.IsDirty = true;
-                    return new UpdateConfirmationMessage(Namespaces.Area, "AreaAdded", area.FullUri, changeType);
+                    return new UpdateConfirmationMessage("builder.area.AreaAdded", area.FullUri, changeType);
                 case ChangeType.Edit:
                     //TODO: need to do room contents copy
                     Area old = (Area) areas[area.Uri];
@@ -81,7 +81,7 @@ namespace Mirage.Stock.Command
 
                     //ObjectUpdater.CopyObject(area, dest);
                     area.IsDirty = true;
-                    return new UpdateConfirmationMessage(Namespaces.Area, "AreaUpdated", area.FullUri, changeType);
+                    return new UpdateConfirmationMessage("builder.area.AreaUpdated", area.FullUri, changeType);
                 default:
                     throw new ArgumentException("Invalid changeType: " + changeType);
             }
@@ -98,12 +98,12 @@ namespace Mirage.Stock.Command
                     if (area.IsDirty)
                         AreaRepository.Save(area);
                 }
-                return new Message(MessageType.Confirmation, Namespaces.Area, "AllAreasSaved");
+                return new Message(MessageType.Confirmation, "builder.area.AllAreasSaved");
             }
             else
             {
                 AreaRepository.Save(areaName);
-                return new Message(MessageType.Confirmation, Namespaces.Area, "AreaSaved");
+                return new Message(MessageType.Confirmation, "builder.area.AreaSaved");
             }
         }
 

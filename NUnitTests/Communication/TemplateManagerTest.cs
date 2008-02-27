@@ -108,13 +108,8 @@ namespace NUnitTests.Communication
         {
             string templateName = "namespace.test";
             string expected = "Namespace test message";
-            Uri nmspc = new Uri("namespace.");
-            Uri combined = new Uri(nmspc, "test");
 
-            string testBase = Namespaces.Authentication;
-            string testName = testBase + ".Challenge";
-
-            ITemplate template = TemplateManager.GetTemplate(combined.ToString());
+            ITemplate template = TemplateManager.GetTemplate(templateName);
             string actual = template.Render();
             Assert.AreEqual(expected, actual);
         }

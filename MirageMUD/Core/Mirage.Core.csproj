@@ -86,7 +86,7 @@
     <Compile Include="Communication\IReceiveMessages.cs" />
     <Compile Include="Communication\ITemplate.cs" />
     <Compile Include="Communication\MessageFactory.cs" />
-    <Compile Include="Communication\MovementMessage.cs" />
+    <Compile Include="Communication\MessageName.cs" />
     <Compile Include="Communication\Namespace.cs" />
     <Compile Include="Communication\ResourceMessage.cs" />
     <Compile Include="Communication\TemplateDefinition.cs" />

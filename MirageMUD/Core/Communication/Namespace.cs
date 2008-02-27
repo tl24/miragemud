@@ -32,6 +32,5 @@ namespace Mirage.Core.Communication
         public static readonly string Builder = "builder";
 
         public static readonly string Area = Builder +  ".area";
-
     }
 }
