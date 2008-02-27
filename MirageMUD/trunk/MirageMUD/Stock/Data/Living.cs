@@ -56,6 +56,8 @@ namespace Mirage.Stock.Data
 
         public abstract void Write(IMessage message);
 
+        public abstract void Write(object sender, IMessage message);
+
         public abstract IPrincipal Principal { get; }
 
 

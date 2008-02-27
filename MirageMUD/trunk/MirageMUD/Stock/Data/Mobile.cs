@@ -48,6 +48,11 @@ namespace Mirage.Stock.Data
             }
         }
 
+        public override void Write(object sender, IMessage message)
+        {
+            Write(message);
+        }
+
         public override IPrincipal Principal
         {
             get {

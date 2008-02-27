@@ -16,12 +16,6 @@ namespace Mirage.Core.Data
     {
         IMudClient Client { get; set; }
 
-        /// <summary>
-        /// Writes a message to the player's output stream
-        /// </summary>
-        /// <param name="message">the message to write</param>
-        void Write(IMessage message);
-
         void FirePlayerEvent(PlayerEventType eventType);
 
         event PlayerEventHandler PlayerEvent;

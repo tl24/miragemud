@@ -14,12 +14,13 @@ namespace Mirage.Core.Communication
 
         public MultipartMessage()
         {
+            this.MessageType = MessageType.Multiple;
         }
 
-        public MultipartMessage(MessageType messageType, string Namespace, string name) : this(messageType, Namespace, name, null) { }
+        public MultipartMessage(string name) : this(name, null) { }
 
-        public MultipartMessage(MessageType messageType, string Namespace, string name, ICollection parts)
-            : base(messageType, Namespace, name)
+        public MultipartMessage(string name, ICollection parts)
+            : base(MessageType.Multiple, name)
         {
             if (parts != null)
             {
@@ -52,7 +53,7 @@ namespace Mirage.Core.Communication
 
         protected override IMessage MakeCopy()
         {
-            return new MultipartMessage(MessageType, Namespace, Name);
+            return new MultipartMessage(Name.FullName);
         }
     }
 

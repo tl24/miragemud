@@ -21,7 +21,7 @@ namespace NUnitTests.Communication
         [Test]
         public void TestIsMatchNamespace()
         {
-            Message target = new Message(MessageType.Information, Namespaces.Authentication, "test");
+            Message target = new Message(MessageType.Information, "negotiation.authentication.test");
             Assert.IsTrue(target.IsMatch(Namespaces.Authentication));
             Assert.IsTrue(target.IsMatch(Namespaces.Negotiation));
             Assert.IsFalse(target.IsMatch(Namespaces.CommonError));
@@ -30,7 +30,7 @@ namespace NUnitTests.Communication
         [Test]
         public void TestIsMatchName()
         {
-            Message target = new Message(MessageType.Information, Namespaces.Authentication, "test");
+            Message target = new Message(MessageType.Information, "negotiation.authentication.test");
             Assert.IsTrue(target.IsMatch(Namespaces.Authentication, "test"));
             Assert.IsTrue(target.IsMatch(Namespaces.Authentication + ".test"));
             Assert.IsFalse(target.IsMatch(Namespaces.Negotiation, "test"));

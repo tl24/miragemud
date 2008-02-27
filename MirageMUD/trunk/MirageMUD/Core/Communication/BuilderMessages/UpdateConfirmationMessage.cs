@@ -22,8 +22,8 @@ namespace Mirage.Core.Communication.BuilderMessages
         private string _itemUri;
         private ChangeType _changeType;
 
-        public UpdateConfirmationMessage(string Namespace, string name, string itemUri, ChangeType changeType)
-            : base(MessageType.Confirmation, Namespace, name)
+        public UpdateConfirmationMessage(string name, string itemUri, ChangeType changeType)
+            : base(MessageType.Confirmation, name)
         {
             this._itemUri = itemUri;
             this._changeType = changeType;

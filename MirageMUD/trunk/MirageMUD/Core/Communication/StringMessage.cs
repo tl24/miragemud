@@ -21,8 +21,8 @@ namespace Mirage.Core.Communication
             this._text = text;
         }
 
-        public StringMessage(MessageType messageType, string Namespace, string name, string text)
-            : base(messageType, Namespace, name)
+        public StringMessage(MessageType messageType, MessageName name, string text)
+            : base(messageType, name)
         {
             this._text = text;
         }

@@ -7,22 +7,23 @@ using JsonExSerializer;
 using Mirage.Core.Data;
 using Mirage.Stock.Data.Items;
 using Mirage.Core.Data.Containers;
+using Mirage.Core.Communication;
 
 namespace Mirage.Stock.Data
 {
-    public class Room : ViewableBase, IContainer
+    public class Room : ViewableBase, IContainer, IReceiveMessages
     {
         private Area _area;
-        private LinkedList<Living> _animates;
+        private LinkedList<Living> _livingThings;
         private IDictionary<DirectionType, RoomExit> _exits;
         private LinkedList<ItemBase> _items;
 
         public Room()
             : base()
         {
-            _animates = new LinkedList<Living>();
+            _livingThings = new LinkedList<Living>();
             _items = new LinkedList<ItemBase>();
-            _uriChildCollections.Add("Animates", new BaseData.ChildCollectionPair(_animates, QueryHints.DefaultPartialMatch));
+            _uriChildCollections.Add("LivingThings", new BaseData.ChildCollectionPair(_livingThings, QueryHints.DefaultPartialMatch));
             _uriChildCollections.Add("Items", new BaseData.ChildCollectionPair(_items, QueryHints.DefaultPartialMatch));
             _exits = new Dictionary<DirectionType, RoomExit>();
         }
@@ -35,9 +36,9 @@ namespace Mirage.Stock.Data
         }
 
         [JsonExIgnore]
-        public ICollection<Living> Animates
+        public ICollection<Living> LivingThings
         {
-            get { return this._animates; }
+            get { return this._livingThings; }
         }
 
         [JsonExIgnore]
@@ -77,7 +78,7 @@ namespace Mirage.Stock.Data
             if (this != newRoom)
             {
                 // read from a copy so we can modify the list inside the loop
-                foreach (Living living in new List<Living>(Animates))
+                foreach (Living living in new List<Living>(LivingThings))
                 {
                     //TODO: Catch exceptions and exit gracefully?
                     ContainerUtils.Transfer(living, newRoom);
@@ -85,6 +86,7 @@ namespace Mirage.Stock.Data
             }
         }
 
+        
         #region IContainer Members
 
         public void Add(IContainable item)
@@ -93,9 +95,9 @@ namespace Mirage.Stock.Data
             {
                 if (item is Living)
                 {
-                    if (item.Container != this || !this._animates.Contains((Living)item))
+                    if (item.Container != this || !this._livingThings.Contains((Living)item))
                     {
-                        this._animates.AddLast((Living)item);
+                        this._livingThings.AddLast((Living)item);
                         item.Container = this;
                         if (item is Player)
                             ((Player)item).PlayerEvent += new PlayerEventHandler(player_PlayerEvent);
@@ -124,7 +126,7 @@ namespace Mirage.Stock.Data
             {
                 if (item is Living)
                 {
-                    this._animates.Remove((Living)item);
+                    this._livingThings.Remove((Living)item);
                     if (item.Container == this)
                         item.Container = null;
 
@@ -143,7 +145,7 @@ namespace Mirage.Stock.Data
         public bool Contains(IContainable item)
         {
             if (item is Living)
-                return this._animates.Contains((Living)item);
+                return this._livingThings.Contains((Living)item);
             else if (item is ItemBase)
                 return this._items.Contains((ItemBase) item);
             else
@@ -165,7 +167,7 @@ namespace Mirage.Stock.Data
         {
             if (typeof(Living).IsAssignableFrom(t))
             {
-                return _animates;
+                return _livingThings;
             }
             else if (typeof(ItemBase).IsAssignableFrom(t)) {
                 return _items;
@@ -189,6 +191,24 @@ namespace Mirage.Stock.Data
             throw new Exception("Not Implemented");
         }
         #endregion      
+    
+        #region IReceiveMessages Members
+
+        public void Write(IMessage message)
+        {
+            Write(null, message);
+        }
+
+        public void Write(object sender, IMessage message)
+        {
+            foreach (Living living in this.LivingThings)
+            {
+                if (living != sender)
+                    living.Write(sender, message);
+            }
+        }
+
+        #endregion
     }
 
 }

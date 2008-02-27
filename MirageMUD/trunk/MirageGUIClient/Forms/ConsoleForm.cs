@@ -93,7 +93,7 @@ namespace MirageGUI.Forms
             }
             else if (msg.IsMatch(MessageType.Confirmation) && msg.ToString() == string.Empty)
             {
-                MessageBox.Show(msg.Name, "Confirmation", MessageBoxButtons.OK);
+                MessageBox.Show(msg.Name.Name, "Confirmation", MessageBoxButtons.OK);
             }
             else
             {

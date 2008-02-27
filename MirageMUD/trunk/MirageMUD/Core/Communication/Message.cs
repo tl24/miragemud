@@ -17,13 +17,11 @@ namespace Mirage.Core.Communication
         Information,
 
         /// <summary>
-        /// Channel communication
-        /// </summary>
-        Communication,
-        /// <summary>
         /// Message contains multiple parts
         /// </summary>
         Multiple,
+         
+
         /// <summary>
         /// Message contains a prompt for input from the player
         /// </summary>
@@ -37,21 +35,12 @@ namespace Mirage.Core.Communication
         /// Validation error for the player
         /// </summary>
         PlayerError,
-        /// <summary>
-        /// Message contains control codes or escape sequences for controlling display on the client
-        /// such as line break info.
-        /// </summary>
-        UIControl,
+
         /// <summary>
         /// Confirmation that a player completed a command successfully
         /// </summary>
         Confirmation,
-
-        /// <summary>
-        /// Message contains a notification of an event
-        /// </summary>
-        Notification,
-
+         
         /// <summary>
         /// Message contains a data object
         /// </summary>
@@ -70,24 +59,41 @@ namespace Mirage.Core.Communication
     public class Message : IMessage
     {
         private MessageType _messageType;
-        private string _namespace;
-        private string _name;
+        private MessageName _name;
+        private IDictionary<string, object> _parameters;
 
         public Message()
         {
-            _namespace = Namespaces.Root;
+            _name = MessageName.Empty;
         }
 
-        public Message(MessageType messageType, string name) : this(messageType, Namespaces.Root, name)
+        public Message(MessageType messageType, string name) : this(messageType, new MessageName(name))
+        {
+        }
+        /*
+        public Message(MessageType messageType, string Namespace, string name, IDictionary<string, object> parameters)
+            : this(messageType, new MessageName(Namespace, name), parameters)
+        {
+        }
+        */
+
+        public Message(MessageType messageType, MessageName Name)
+            : this(messageType, Name, new Dictionary<string, object>())
         {
         }
 
-        public Message(MessageType messageType, string Namespace, string name)
+        public Message(MessageType messageType, MessageName Name, IDictionary<string, object> parameters)
         {
             this._messageType = messageType;
-            this._name = name;
-            this._namespace = Namespace;
+            this._name = Name;
+            this._parameters = parameters;
         }
+        /*
+        public Message(MessageType messageType, string Namespace, string name)
+            : this(messageType, Namespace, name, new Dictionary<string, object>())
+        {
+        }
+        */
 
         /// <summary>
         /// The general type of message.  This should be a broad
@@ -103,43 +109,36 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// The Name of the message, every message should have an Name.
         /// </summary>
-        public string Name
+        public MessageName Name
         {
             get { return this._name; }
             set { this._name = value; }
         }
 
         /// <summary>
-        /// The fully qualified name which includes the namespace and name
+        /// The replacement parameters for the template
         /// </summary>
-        public string QualifiedName
+        public IDictionary<string, object> Parameters
         {
-            get
+            get { return this._parameters; }
+            set
             {
-                return GetQualifiedName(Namespace, Name);
+                if (value != null)
+                    this._parameters = new Dictionary<string, object>(value);
+                else
+                    this._parameters.Clear();
             }
         }
 
-
-        private static string GetQualifiedName(string Namespace, string Name)
-        {
-            string nmspace = Namespace;
-            if (nmspace == null)
-                nmspace = Namespaces.Root;
-            nmspace += "." + Name;
-
-            return nmspace.TrimStart('.');
-        }
         /// <summary>
-        /// The namespace for the message
-        /// The Namespace class should be used for constants,
-        /// otherwise the format is:
-        /// msg:/name/name
+        /// Gets and sets parameters for the template
         /// </summary>
-        public string Namespace
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public object this[string key]
         {
-            get { return this._namespace; }
-            set { this._namespace = value; }
+            get { return Parameters[key]; }
+            set { Parameters[key] = value; }
         }
 
         /// <summary>
@@ -149,9 +148,13 @@ namespace Mirage.Core.Communication
         /// <returns>true if same type</returns>
         public bool IsMatch(MessageType type)
         {
-            return IsMatch(type, null, null);
+            return type == MessageType.Unknown || type == this.MessageType;
         }
 
+        public bool IsMatch(MessageName name)
+        {
+            return name.Equals(this.Name);
+        }
         /// <summary>
         /// Test to see if this message's namespace matches the desired namespace
         /// or if the desired namespace is a base of this message.
@@ -160,7 +163,7 @@ namespace Mirage.Core.Communication
         /// <returns>true if match</returns>
         public bool IsMatch(string baseNamespace)
         {
-            return IsMatch(MessageType.Unknown, baseNamespace, null);
+            return this.Name.IsPartOfNamespace(baseNamespace) || this.Name.IsSameAs(baseNamespace);
         }
 
         /// <summary>
@@ -171,38 +174,7 @@ namespace Mirage.Core.Communication
         /// <returns>true if match</returns>
         public bool IsMatch(string baseNamespace, string name)
         {
-            return IsMatch(MessageType.Unknown, baseNamespace, name);
-        }
-
-        /// <summary>
-        /// Checks to see if this message matches an expected set of 
-        /// parameters.  Any null or empty parameters are ignored.
-        /// </summary>
-        /// <param name="type">expected type</param>
-        /// <param name="baseNamespace">expected namespace</param>
-        /// <param name="name">expected name</param>
-        /// <returns>true if it matches</returns>
-        public bool IsMatch(MessageType type, string baseNamespace, string name)
-        {
-            if (type != MessageType.Unknown
-                && MessageType != type)
-                return false;
-        
-            if (baseNamespace != null
-                && name != null
-                && name != string.Empty) {
-
-                if (!GetQualifiedName(baseNamespace, name).Equals(QualifiedName))
-                    return false;
-
-            } else if (baseNamespace != null) {
-                if (!Namespace.StartsWith(baseNamespace) && !baseNamespace.Equals(QualifiedName))
-                    return false;
-            } else if (name != null) {
-                if (name != this.Name)
-                    return false;
-            }
-            return true;
+            return IsMatch(new MessageName(baseNamespace, name));
         }
 
         public override bool Equals(object obj)
@@ -210,7 +182,7 @@ namespace Mirage.Core.Communication
             if (!base.Equals(obj) && obj is IMessage)
             {
                 IMessage other = (IMessage)obj;
-                return IsMatch(other.MessageType, other.Namespace, other.Name);
+                return other.MessageType == this.MessageType && other.Name.Equals(this.Name);
             }
             return false;
         }

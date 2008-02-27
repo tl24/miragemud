@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 namespace Mirage.Core.Communication
 {
     public interface IMessage
@@ -19,13 +20,12 @@ namespace Mirage.Core.Communication
         bool IsMatch(string baseNamespace, string name);
 
         /// <summary>
-        /// Checks to see if the message matches the specified type, namespace and name
+        /// Checks to see if the message matches the specified namespace and name
         /// </summary>
-        /// <param name="type">the message type to check</param>
         /// <param name="baseNamespace">the base namespace to check</param>
         /// <param name="name">the message name</param>
         /// <returns>true if it matches</returns>
-        bool IsMatch(MessageType type, string baseNamespace, string name);
+        bool IsMatch(MessageName name);
 
         /// <summary>
         /// Checks to see if the message matches the specified type
@@ -42,21 +42,7 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// The name of the message which does not include the namespace
         /// </summary>
-        string Name { get; set; }
-
-        /// <summary>
-        /// The namespace for the message, which groups the messages into
-        /// logical categories
-        /// </summary>
-        /// <example>msg:/system/</example>
-        string Namespace { get; set; }
-
-        /// <summary>
-        /// Gets the fully-qualified name of the message which includes the namespace and
-        /// the message name.  A message is uniquely identified by its qualified name.
-        /// </summary>
-        /// <example>msg:/movement/not.in.room</example>
-        string QualifiedName { get; }
+        MessageName Name { get; set; }
 
         /// <summary>
         /// Checks to see if this message can be transferred from server to
@@ -85,5 +71,17 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <returns></returns>
         IMessage Copy();
+
+        /// <summary>
+        /// The replacement parameters for the template
+        /// </summary>
+        IDictionary<string, object> Parameters { get; set; }
+
+        /// <summary>
+        /// Gets and sets parameters for the template
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        object this[string key] { get; set; }
     }
 }

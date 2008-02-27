@@ -72,7 +72,7 @@ namespace Mirage.Core.IO
             writer = new StreamWriter(stm);
             inputQueue = new SynchronizedQueue<string>();
             outputQueue = new SynchronizedQueue<string>();
-            Write(new StringMessage(MessageType.UIControl, "Newline", "\r\n"));
+            Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));
             inputBuffer = new char[512];
             bufferLength = 0;
         }

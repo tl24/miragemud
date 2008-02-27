@@ -10,5 +10,6 @@ namespace Mirage.Core.Communication
     public interface IReceiveMessages
     {
         void Write(IMessage message);
+        void Write(object sender, IMessage message);
     }
 }

@@ -31,7 +31,7 @@ namespace Mirage.Stock.Data
         private IInterpret _interpreter;
         private MudPrincipal _principal;
         private string[] _roles;
-        private CommunicationPreferences _commPrefs = new CommunicationPreferences();
+        private ICommunicationPreferences _commPrefs = new CommunicationPreferences();
 
         public event PlayerEventHandler PlayerEvent;
 
@@ -181,6 +181,14 @@ namespace Mirage.Stock.Data
 
         public override void Write(IMessage message)
         {
+            Write(null, message);
+        }
+
+        public override void Write(object sender, IMessage message)
+        {
+            if (sender is IPlayer && this.CommunicationPreferences.IsIgnored(((IPlayer)sender).Uri))
+                return;
+
             if (Client != null)
                 Client.Write(message);
         }
@@ -240,7 +248,7 @@ namespace Mirage.Stock.Data
         public ICommunicationPreferences CommunicationPreferences
         {
             get { return this._commPrefs; }
-            set { this._commPrefs = (CommunicationPreferences) value; }
+            set { this._commPrefs = value; }
         }
 
     }

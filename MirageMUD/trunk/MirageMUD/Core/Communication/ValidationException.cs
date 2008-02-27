@@ -82,7 +82,7 @@ namespace Mirage.Core.Communication
         /// </summary>
         public string MessageUri
         {
-            get { return MessageObject.QualifiedName; }
+            get { return MessageObject.Name.FullName; }
         }
 
         /// <summary>

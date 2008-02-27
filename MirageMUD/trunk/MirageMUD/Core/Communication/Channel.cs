@@ -150,9 +150,9 @@ namespace Mirage.Core.Communication
             {
                 if (IsBanned(member))
                 {
-                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("communication.MemberNotAllowed");
-                    rm["channel"] = this.Name;
-                    member.Write(rm);
+                    IMessage message = MessageFactory.GetMessage("communication.MemberNotAllowed");
+                    message["channel"] = this.Name;
+                    member.Write(message);
                     Remove(member);
                     break;
                 }
@@ -250,9 +250,9 @@ namespace Mirage.Core.Communication
             {
                 if (!IsInRole(member))
                 {
-                    ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("communication.MemberNotAllowed");
-                    rm["channel"] = this.Name;
-                    member.Write(rm);
+                    IMessage message = MessageFactory.GetMessage("communication.MemberNotAllowed");
+                    message["channel"] = this.Name;
+                    member.Write(message);
                     Remove(member);
                 }
             }
@@ -332,9 +332,9 @@ namespace Mirage.Core.Communication
             }
             else
             {
-                ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("communication.CantJoinChannel");
-                rm["channel"] = this.Name;
-                throw new ValidationException(rm);
+                IMessage message = MessageFactory.GetMessage("communication.CantJoinChannel");
+                message["channel"] = this.Name;
+                throw new ValidationException(message);
             }
         }
 
@@ -401,34 +401,15 @@ namespace Mirage.Core.Communication
         /// </summary>
         /// <param name="sender">the message sender</param>
         /// <param name="message">the message to send</param>
-        public void Send(IReceiveMessages sender, string message) {
-            ResourceMessage rm = (ResourceMessage) MessageFactory.GetMessage("communication.ChannelText");
+        public void Send(IReceiveMessages sender, string messageText) {
+            IMessage message = MessageFactory.GetMessage("communication.ChannelText");
             string senderName = GetName(sender) ?? "someone";
-            rm["sender"] = senderName;
-            rm["channel"] = this.Name;
-            rm["message"] = message;
+            message["sender"] = senderName;
+            message["channel"] = this.Name;
+            message["message"] = messageText;
 
             foreach (IReceiveMessages recipient in _members)
-            {               
-               if (recipient != sender && !IsIgnoring(recipient, senderName)) {                   
-                   recipient.Write(rm);
-               }
-            }
-        }
-
-        /// <summary>
-        /// Checks to see if the recipient is ignoring the sender
-        /// </summary>
-        /// <param name="recipient">the recipient to check</param>
-        /// <param name="sender">the sender name</param>
-        private bool IsIgnoring(object recipient, string sender)
-        {
-            IPlayer player = recipient as IPlayer;
-            if (player != null)
-            {
-                return player.CommunicationPreferences.IsIgnored(sender);
-            }
-            return false;
+                recipient.Write(sender, message);
         }
 
         /// <summary>
