@@ -1,9 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MirageMUD", "MirageMUD\MirageMUD.csproj", "{EFADF99D-5747-445E-9FC7-94CB2A17BE45}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{76B82E8A-DC58-4F92-8151-B47E7BD55A4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MirageMUD", "MirageMUD\MirageMUD.csproj", "{EFADF99D-5747-445E-9FC7-94CB2A17BE45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitTests", "NUnitTests\NUnitTests.csproj", "{182E3263-983B-42A7-A25C-9D18FBE1B29A}"
 EndProject

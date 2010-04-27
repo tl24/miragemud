@@ -44,7 +44,9 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// Message contains a data object
         /// </summary>
-        Data
+        Data,
+
+        UIControl
     }
 
     public enum MessageTarget

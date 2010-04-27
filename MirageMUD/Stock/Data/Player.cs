@@ -16,6 +16,7 @@ using Mirage.Core.Data;
 using Mirage.Core.Security;
 using Mirage.Core;
 using Mirage.Core.Command;
+using Mirage.Stock.Data.Skills;
 
 namespace Mirage.Stock.Data
 {
@@ -32,7 +33,7 @@ namespace Mirage.Stock.Data
         private MudPrincipal _principal;
         private string[] _roles;
         private ICommunicationPreferences _commPrefs = new CommunicationPreferences();
-
+        private Dictionary<SkillDefinition, Skill> _skills = new Dictionary<SkillDefinition, Skill>();
         public event PlayerEventHandler PlayerEvent;
 
         /// <summary>
@@ -251,5 +252,10 @@ namespace Mirage.Stock.Data
             set { this._commPrefs = value; }
         }
 
+        [JsonExProperty]
+        public IDictionary<SkillDefinition, Skill> Skills
+        {
+            get { return _skills; }
+        }
     }
 }

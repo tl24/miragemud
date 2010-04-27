@@ -15,8 +15,8 @@ namespace Mirage.Core.Communication
 
         public CommunicationPreferences()
         {
-            _ignored = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-            _channels = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _ignored = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _channels = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         #region ICommunicationPreferences Members

@@ -23,7 +23,7 @@ namespace Mirage.Core.Communication
             _messageFactory = messageFactory;
             _name = channel.Name;
             _aliases = new string[0];
-            HashSet<string> tmpRoles = new HashSet<string>(channel.Roles);
+            Mirage.Core.Util.HashSet<string> tmpRoles = new Mirage.Core.Util.HashSet<string>(channel.Roles);
             _roles = tmpRoles.ToArray();
         }
 

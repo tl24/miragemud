@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build;AfterBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build;AfterBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,6 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mirage</RootNamespace>
     <AssemblyName>MirageMUD</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -81,16 +86,13 @@
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   -->
-  <Target Name="BeforeBuild">  
+  <Target Name="BeforeBuild">
   </Target>
-
   <Target Name="AfterBuild">
-  <!--
+    <!--
 	<MakeDir
             Directories="$(OutputPath)messages"/>  
 	-->
-    <Copy SourceFiles="@(MessageFiles)"
-          DestinationFolder="$(OutputPath)messages" />  
-  </Target>  
-
+    <Copy SourceFiles="@(MessageFiles)" DestinationFolder="$(OutputPath)messages" />
+  </Target>
 </Project>

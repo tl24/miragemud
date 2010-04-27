@@ -4,6 +4,8 @@ using System.Text;
 using Mirage.Core.Data;
 using Mirage.Core.Command;
 using Mirage.Stock.Data;
+using Mirage.Stock.Data.Skills;
+using Mirage.Core.Communication;
 
 namespace Mirage.Stock.Command
 {
@@ -16,6 +18,8 @@ namespace Mirage.Stock.Command
             get { return this._playerRepository; }
             set { this._playerRepository = value; }
         }
+
+        public ISkillRepository SkillRepository { get; set; }
 
         [Command(Description = "Attempt to kill another player or mobile")]
         public string kill([Actor] Player self, string target, int count)
@@ -55,6 +59,15 @@ namespace Mirage.Stock.Command
             {
                 return "The old password is incorrect.\r\n";
             }
+        }
+
+        [Command(Description="Lists available skills")]
+        public void availSkills([Actor] Player player)
+        {
+            IPlayerAvailableSkills skills = SkillRepository.GetAvailableSkillsForPlayer(player);
+            foreach (AvailableSkill skill in skills.AvailableSkills)
+                player.Write(new StringMessage(MessageType.Information, "available skill",
+                    string.Format("{0}  {1}\r\n", skill.Skill.Name, skill.Cost)));
         }
     }
 }
