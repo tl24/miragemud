@@ -4,10 +4,11 @@ using System.Text;
 using System.Configuration;
 using log4net;
 using System.Collections.Specialized;
+using Castle.Core;
 
 namespace Mirage.Core.Command
 {
-    public class CommandInitializer : IInitializer
+    public class CommandInitializer : IInitializer, IStartable
     {
         public string Name
         {
@@ -15,6 +16,11 @@ namespace Mirage.Core.Command
         }
 
         public void Execute()
+        {
+            LoadCommands();
+        }
+
+        private static void LoadCommands()
         {
             ILog logger = LogManager.GetLogger(typeof(CommandInitializer));
             NameValueCollection locations = (NameValueCollection)ConfigurationManager.GetSection("MirageMUD/CommandLocations");
@@ -27,5 +33,18 @@ namespace Mirage.Core.Command
                 }
             }
         }
+
+        #region IStartable Members
+
+        public void Start()
+        {
+            LoadCommands();
+        }
+
+        public void Stop()
+        {
+        }
+
+        #endregion
     }
 }

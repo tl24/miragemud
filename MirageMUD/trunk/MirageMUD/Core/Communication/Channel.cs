@@ -27,10 +27,10 @@ namespace Mirage.Core.Communication
 
         public Channel(string name, IEnumerable<string> allowed, IEnumerable<string> banned, IEnumerable<string> roles) {
             _name = name;
-            _members = new HashSet<IReceiveMessages>();
-            _allowed = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-            _banned = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-            _roles = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _members = new Mirage.Core.Util.HashSet<IReceiveMessages>();
+            _allowed = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _banned = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _roles = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
             if (allowed != null)
                 _allowed.Add(allowed);
             if (banned != null)

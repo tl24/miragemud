@@ -71,13 +71,12 @@ namespace Mirage.Core.Data
                     Kernel.GetSubSystem(Castle.MicroKernel.SubSystemConstants.ConversionManagerKey);
 
                 manager.Add(new ServiceEntryConverter());
-
+                //Kernel.AddFacility("", new Castle.Facilities.Logging.LoggingFacility(
                 // Process the configuration
 
                 interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore);
 
-                // Install the components
-
+                // Install the components                
                 Installer.SetUp(this, Kernel.ConfigurationStore);
             }
         }

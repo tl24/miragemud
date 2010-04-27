@@ -12,7 +12,7 @@ namespace Mirage
     {
         static void Main(string[] args)
         {
-            log4net.Config.XmlConfigurator.Configure();            
+            //log4net.Config.XmlConfigurator.Configure();            
             //MirageServer listener = new MirageServer(4500);
             //listener.Run();
             try
