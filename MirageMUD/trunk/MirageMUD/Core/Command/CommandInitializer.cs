@@ -2,49 +2,44 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
-using log4net;
 using System.Collections.Specialized;
 using Castle.Core;
+using Castle.Core.Logging;
+using System.Reflection;
+using System.Linq;
+using Mirage.Core.Util;
 
 namespace Mirage.Core.Command
-{
-    public class CommandInitializer : IInitializer, IStartable
+{    
+    public class CommandInitializer : IInitializer
     {
         public string Name
         {
             get { return this.GetType().Name; }
         }
 
-        public void Execute()
+        private ILogger logger;
+        public ILogger Logger
         {
-            LoadCommands();
+            get { return logger ?? NullLogger.Instance; }
+            set { logger = value; }
         }
 
-        private static void LoadCommands()
+        public void Execute()
         {
-            ILog logger = LogManager.GetLogger(typeof(CommandInitializer));
-            NameValueCollection locations = (NameValueCollection)ConfigurationManager.GetSection("MirageMUD/CommandLocations");
-            if (locations != null)
+            foreach (Assembly assmbly in AssemblyList.Instance)
             {
-                foreach (string key in locations)
+                Logger.Info("Looking for commands in " + assmbly);
+                var q = from t in assmbly.GetTypes()
+                        where !t.IsAbstract && (t.IsClass || t.IsValueType)
+                        && t.GetMethods().Any((mi)=>(mi.IsDefined(typeof(CommandAttribute), false)))
+                        select t;
+                foreach (Type t in q)
                 {
-                    logger.Info("Searching " + locations[key] + " for commands");
-                    MethodInvoker.RegisterType(Type.GetType(locations[key]));
+                    Logger.Debug("Registering commands found in " + t);
+                    MethodInvoker.RegisterType(t);
                 }
             }
         }
-
-        #region IStartable Members
-
-        public void Start()
-        {
-            LoadCommands();
-        }
-
-        public void Stop()
-        {
-        }
-
-        #endregion
     }
 }

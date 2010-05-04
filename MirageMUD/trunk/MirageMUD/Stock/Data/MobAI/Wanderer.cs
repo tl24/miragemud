@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mirage.Core.Communication;
 
 namespace Mirage.Stock.Data.MobAI
 {
@@ -8,7 +9,7 @@ namespace Mirage.Stock.Data.MobAI
     {
         private DateTime lastTime;
         private Random rand;
-
+        private bool processCommand = true;
         public Wanderer(Mobile mob)
             : base(mob)
         {
@@ -17,7 +18,9 @@ namespace Mirage.Stock.Data.MobAI
 
         public override void GenerateInput()
         {
-            if (lastTime.AddSeconds(6) < DateTime.Now)
+            //TODO: We need some notification that we actually executed the last move before
+            // we try and move again
+            if (lastTime.AddSeconds(6) < DateTime.Now && processCommand)
             {
                 lastTime = DateTime.Now;
 
@@ -33,11 +36,22 @@ namespace Mirage.Stock.Data.MobAI
                     if (i == result)
                     {
                         Mob.Commands.Enqueue(new MobileStringCommand(exit.Direction.ToString()));
+                        processCommand = false;
                         break;
                     }
                     i++;
                 }
             }
+        }
+
+        public override AIMessageResult HandleMessage(Mirage.Core.Communication.IMessage message)
+        {
+            if (message.IsMatch(Namespaces.Movement, "YouGoDirection"))
+            {
+                processCommand = true;
+                return AIMessageResult.MessageHandledContinue;
+            }
+            return AIMessageResult.MessageNotHandled;
         }
     }
 }

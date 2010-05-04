@@ -11,6 +11,7 @@ using Mirage.Core.Util;
 using System.Threading;
 using System.IO;
 using System.Configuration;
+using Castle.Core;
 
 namespace Mirage.Core.IO
 {
@@ -19,24 +20,35 @@ namespace Mirage.Core.IO
     /// Manages client factorys and polls them all for readable, writeable and errored clients.
     /// Follows the same calling sequence as a normal IClientFactory instance.
     /// </summary>
+    [CastleComponent("ClientManager")]
     public class ClientManager
     {
-        private List<ClientListener> _listeners;
+        private List<IClientListener> _listeners;
         private ISynchronizedQueue<IMudClient> _newClients;
         private bool _started = false;
         private BlockingQueue<ClientOperation> workItems;
-        protected ISynchronizedQueue<ITelnetClient> _internalNewClients;
+        private int _maxThreads = 0;
+        private ISynchronizedQueue<ITelnetClient> _internalNewClients;
 
-        protected IList<Thread> threads;
-        protected IList<Socket> _sockets;
-        protected Hashtable _clientMap;
+        private IList<Thread> threads;
+        private IList<Socket> _sockets;
+        private Hashtable _clientMap;
 
         /// <summary>
         /// Creates a new instance of the ClientManager
         /// </summary>
-        public ClientManager()
+        public ClientManager(IList<IClientListener> listeners)
+            : this(listeners, Environment.ProcessorCount)
         {
-            _listeners = new List<ClientListener>();
+        }
+
+        /// <summary>
+        /// Creates a new instance of the ClientManager
+        /// </summary>
+        public ClientManager(IList<IClientListener> listeners, int maxThreads)
+        {
+            _listeners = new List<IClientListener>(listeners);
+            _maxThreads = maxThreads > 0 ? maxThreads : 1;
             workItems = new BlockingQueue<ClientOperation>(15);
             _internalNewClients = new SynchronizedQueue<ITelnetClient>();
             threads = new List<Thread>();
@@ -45,35 +57,88 @@ namespace Mirage.Core.IO
         }
 
         /// <summary>
-        /// Add a client listener to be managed by this instance of the client manager.
-        /// </summary>
-        /// <param name="factory">the listener to be managed</param>
-        public void AddListener(ClientListener listener)
-        {
-            _listeners.Add(listener);
-        }
-
-
-
-        /// <summary>
         /// Polls the listening clients to see which ones are ready to read, ready to be written
         /// to and have errors.  These lists can then be access through the ReadableClients,
         /// WritableClients, and ErroredClients properties.
         /// </summary>
         /// <param name="timeout">time to wait for a client event</param>
         /// <returns>true if any clients are ready to be read, written or errored</returns>
-        public virtual void Run()
+        protected virtual void Run()
         {
-            // start some threads
-            for (int i = 0; i < 1; i++)
-            {
-                Thread t = new Thread(new ThreadStart(ProcessIO));
-                t.Name = "IOWorker" + i;
-                t.IsBackground = true;
-                t.Start();
-                threads.Add(t);
-            }
+            StartWorkerThreads();
+            StartListeners();
 
+            DateTime startTime;
+            TimeSpan elapsed;
+            while (true)
+            {
+                startTime = DateTime.Now;
+
+                RemoveClosedConnections();
+                PollForIO();
+
+                // add any new clients
+                AddNewClients();
+
+                // make sure there's some time between polls so we don't burn up all the cpu
+                elapsed = DateTime.Now.Subtract(startTime);
+                if (elapsed.TotalMilliseconds < 50)
+                {
+                    Thread.Sleep(50 - (int)elapsed.TotalMilliseconds);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds any new clients found during the Poll phase
+        /// </summary>
+        private void AddNewClients()
+        {
+            ITelnetClient newClient;
+            while (_internalNewClients.TryDequeue(out newClient))
+            {
+                _sockets.Add(newClient.TcpClient.Client);
+                _clientMap.Add(newClient.TcpClient.Client, newClient);
+                _newClients.Enqueue(newClient);
+            }
+        }
+
+        /// <summary>
+        /// Polls the sockets to see if any have any pending activity and the queues the
+        /// appropriate action
+        /// </summary>
+        private void PollForIO()
+        {
+            List<Socket> checkRead = new List<Socket>(_sockets);
+            List<Socket> checkWrite = new List<Socket>(_sockets);
+            List<Socket> checkError = new List<Socket>(_sockets);
+
+            Socket.Select(checkRead, checkWrite, checkError, 100000);
+
+            foreach (Socket s in checkRead)
+            {
+                object client = _clientMap[s];
+                if (client is ClientListener)
+                    workItems.Enqueue(new ClientOperation(client, OpType.Accept));
+                else
+                    workItems.Enqueue(new ClientOperation(client, OpType.Read));
+            }
+            foreach (Socket s in checkWrite)
+            {
+                object client = _clientMap[s];
+                workItems.Enqueue(new ClientOperation(client, OpType.Write));
+            }
+            foreach (Socket s in checkError)
+            {
+                object client = _clientMap[s];
+                workItems.Enqueue(new ClientOperation(client, OpType.Error));
+            }
+            while (workItems.Count > 0)
+                Thread.Sleep(100);
+        }
+
+        private void StartListeners()
+        {
             _sockets.Clear();
             _clientMap.Clear();
 
@@ -84,56 +149,17 @@ namespace Mirage.Core.IO
                 _sockets.Add(listener.Socket);
                 _clientMap.Add(listener.Socket, listener);
             }
+        }
 
-            DateTime startTime;
-            TimeSpan elapsed;
-            while (true)
+        private void StartWorkerThreads()
+        {
+            for (int i = 0; i < 1; i++)
             {
-                startTime = DateTime.Now;
-
-                RemoveClosedConnections();
-                List<Socket> checkRead = new List<Socket>(_sockets);
-                List<Socket> checkWrite = new List<Socket>(_sockets);
-                List<Socket> checkError = new List<Socket>(_sockets);
-
-                Socket.Select(checkRead, checkWrite, checkError, 100000);
-
-                foreach (Socket s in checkRead)
-                {
-                    object client = _clientMap[s];
-                    if (client is ClientListener)
-                        workItems.Enqueue(new ClientOperation(client, OpType.Accept));
-                    else
-                        workItems.Enqueue(new ClientOperation(client, OpType.Read));
-                }
-                foreach (Socket s in checkWrite)
-                {
-                    object client = _clientMap[s];
-                    workItems.Enqueue(new ClientOperation(client, OpType.Write));
-                }
-                foreach (Socket s in checkError)
-                {
-                    object client = _clientMap[s];
-                    workItems.Enqueue(new ClientOperation(client, OpType.Error));
-                }
-                while (workItems.Count > 0)
-                    Thread.Sleep(100);
-
-                // add any new clients
-                ITelnetClient newClient;
-                while (_internalNewClients.TryDequeue(out newClient))
-                {
-                    _sockets.Add(newClient.TcpClient.Client);
-                    _clientMap.Add(newClient.TcpClient.Client, newClient);
-                    _newClients.Enqueue(newClient);
-                }
-
-                // make sure there's some time between polls so we don't burn up all the cpu
-                elapsed = DateTime.Now.Subtract(startTime);
-                if (elapsed.TotalMilliseconds < 50)
-                {
-                    Thread.Sleep(50 - (int)elapsed.TotalMilliseconds);
-                }
+                Thread t = new Thread(new ThreadStart(ProcessIO));
+                t.Name = "IOWorker" + i;
+                t.IsBackground = true;
+                t.Start();
+                threads.Add(t);
             }
         }
 
@@ -232,8 +258,6 @@ namespace Mirage.Core.IO
             }
         }
 
-
-
         public void Start()
         {
             Thread t = new Thread(new ThreadStart(Run));
@@ -262,116 +286,6 @@ namespace Mirage.Core.IO
                     throw new InvalidOperationException("NewClients can not be set while the factory is running");
                 }
                 this._newClients = value;
-            }
-        }
-
-        public void Configure()
-        {
-            ClientManagerConfiguration section = (ClientManagerConfiguration)ConfigurationManager.GetSection("MirageMUD/ClientManager");
-            foreach (ListenerConfiguration listener in section.Listeners)
-            {                
-                if (string.IsNullOrEmpty(listener.Host))
-                    AddListener(new ClientListener(listener.Port, (IClientFactory) Activator.CreateInstance(Type.GetType(listener.ClientFactory))));
-                else {
-                    IPAddress[] addresses = System.Net.Dns.GetHostAddresses(listener.Host);
-                    if (addresses.Length > 0)
-                    {
-                        AddListener(new ClientListener(
-                            new IPEndPoint(addresses[0], listener.Port),
-                            (IClientFactory) Activator.CreateInstance(Type.GetType(listener.ClientFactory))));
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Invalid host name: " + listener.Host, "host");
-                    }
-                }
-            }
-        }
-    }
-
-    public class ClientManagerConfiguration : ConfigurationSection
-    {
-        [ConfigurationProperty("Listeners", IsDefaultCollection = true)]
-        public ListenersCollectionConfiguration Listeners
-        {
-            get { return this["Listeners"] as ListenersCollectionConfiguration; }
-        }
-    }
-
-    public class ListenersCollectionConfiguration : ConfigurationElementCollection
-    {
-        public ListenerConfiguration this[int index]
-        {
-            get
-            {
-                return base.BaseGet(index) as ListenerConfiguration;
-            }
-            set
-            {
-                if (base.BaseGet(index) != null)
-                {
-                    base.BaseRemoveAt(index);
-                }
-                this.BaseAdd(index, value);
-            }
-        }
-
-        public ListenerConfiguration this[string key]
-        {
-            get
-            {
-                return base.BaseGet(key) as ListenerConfiguration;
-            }
-            set
-            {
-                if (base.BaseGet(key) != null)
-                {
-                    base.BaseRemove(key);
-                }
-                this.BaseAdd(value);
-            }
-        }
-
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new ListenerConfiguration();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((ListenerConfiguration)element).Key;
-        }
-    }
-
-    public class ListenerConfiguration : ConfigurationElement
-    {
-        [ConfigurationProperty("host")]
-        public string Host
-        {
-            get { return base["host"] as string; }
-        }
-
-        [ConfigurationProperty("port", IsRequired=true)]
-        public int Port
-        {
-            get { return int.Parse(base["port"].ToString()); }
-        }
-
-        [ConfigurationProperty("client-factory", IsRequired=true)]
-        public string ClientFactory
-        {
-            get { return base["client-factory"] as string; }
-        }
-
-        [ConfigurationProperty("key", IsKey=true)]
-        public string Key
-        {
-            get {
-                string host = Host;
-                if (string.IsNullOrEmpty(host))
-                    host = "localhost";
-
-                return host + ":" + Port;
             }
         }
     }

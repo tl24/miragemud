@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Castle.Core;
 
 namespace Mirage.Core.Data
 {

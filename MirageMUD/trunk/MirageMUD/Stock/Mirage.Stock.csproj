@@ -98,11 +98,11 @@
     <Compile Include="Data\Skills\SkillRepository.cs" />
     <Compile Include="Data\StockRepository.cs" />
     <Compile Include="Data\ViewManager.cs" />
-    <Compile Include="IO\GuiClientFactory.cs" />
+    <Compile Include="IO\GuiClientListener.cs" />
     <Compile Include="IO\GuiLoginHandler.cs" />
     <Compile Include="IO\PlayerFinalizer.cs" />
     <Compile Include="IO\TextLoginStateHandler.cs" />
-    <Compile Include="IO\TextClientFactory.cs" />
+    <Compile Include="IO\TextClientListener.cs" />
     <Compile Include="Data\Player.cs" />
     <Compile Include="Data\RoomExit.cs" />
     <Compile Include="Data\Living.cs" />

@@ -31,12 +31,11 @@ namespace Mirage.Core
         /// </summary>
         private bool _shutdown;
 
-        private List<IInitializer> _initializers;
+        private IInitializer[] _initializers;
         private List<ServiceEntry> _services;
 
-        public MirageServer(int port)
+        public MirageServer()
         {
-            _port = port;
             Shutdown = true;
         }
 
@@ -45,7 +44,7 @@ namespace Mirage.Core
             set { _shutdown = value; }
         }
 
-        public List<IInitializer> Initializers
+        public IInitializer[] Initializers
         {
             get { return _initializers; }
             set { _initializers = value; }
@@ -91,8 +90,8 @@ namespace Mirage.Core
             try
             {
                 Init();
-                manager = new ClientManager();
-                manager.Configure();
+                manager = MudFactory.GetObject<ClientManager>();
+                //manager.Configure();
                 globalLists = MudFactory.GetObject<MudRepositoryBase>();
                 NannyClients = new List<IMudClient>();
                 // These are the new connections waiting to be put in the nanny list

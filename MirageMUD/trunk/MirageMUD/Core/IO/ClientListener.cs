@@ -7,6 +7,7 @@ using System.Net;
 using Mirage.Core.Util;
 using System.Threading;
 using System.IO;
+using Castle.Core.Logging;
 
 namespace Mirage.Core.IO
 {
@@ -14,23 +15,45 @@ namespace Mirage.Core.IO
     /// Base class for ClientFactory implementations.  Provides most of the framework for a client factory.
     /// Child factory implementations should only need to implement InitConnection.
     /// </summary>
-    public class ClientListener
+    public abstract class ClientListener : IClientListener, IDisposable
     {
-        private static ILog log = LogManager.GetLogger(typeof(ClientListener));
-        private IClientFactory clientFactory;
-
+        private ILogger logger = NullLogger.Instance;
         protected TcpListener _listener;
 
-        public ClientListener(IPEndPoint listeningEndPoint, IClientFactory clientFactory)
+        public ClientListener(string host, int port)
+            : this(GetEndpoint(host, port))
         {
-            _listener = new TcpListener(listeningEndPoint);
-            this.clientFactory = clientFactory;
         }
 
-        public ClientListener(int port, IClientFactory clientFactory)
+        public ClientListener(IPEndPoint listeningEndPoint)
+        {
+            _listener = new TcpListener(listeningEndPoint);
+        }
+
+        public ClientListener(int port)
         {
             _listener = new TcpListener(port);
-            this.clientFactory = clientFactory;
+        }
+
+        /// <summary>
+        /// Gets the IP endpoint from host and port
+        /// </summary>
+        /// <param name="host">host name</param>
+        /// <param name="port">listening port</param>
+        /// <returns>endpoint</returns>
+        private static IPEndPoint GetEndpoint(string host, int port)
+        {
+            IPAddress[] addresses = System.Net.Dns.GetHostAddresses(host);
+            if (addresses.Length > 0)
+                return new IPEndPoint(addresses[0], port);
+            else
+                throw new ArgumentException("Invalid host name: " + host, "host");
+        }
+
+        public ILogger Logger
+        {
+            get { return logger; }
+            set { logger = value; }
         }
 
         /// <summary>
@@ -51,14 +74,11 @@ namespace Mirage.Core.IO
         {
             TcpClient client = _listener.AcceptTcpClient();
             Socket newSocket = client.Client;
-            log.Info("Connection from " + client.Client.RemoteEndPoint.ToString());
+            Logger.Info("Connection from " + client.Client.RemoteEndPoint.ToString());
             return CreateClient(client);            
         }
 
-        private ITelnetClient CreateClient(TcpClient client)
-        {
-            return clientFactory.CreateClient(client);
-        }
+        protected abstract ITelnetClient CreateClient(TcpClient client);
 
         /// <summary>
         /// Starts this listener listening for connections
@@ -66,7 +86,7 @@ namespace Mirage.Core.IO
         public void Start()
         {
             _listener.Start();
-            log.Info(clientFactory.GetType().Name + " listening at address " + _listener.LocalEndpoint.ToString());
+            Logger.Info(this.GetType().Name + " listening at address " + _listener.LocalEndpoint.ToString());
         }
 
         /// <summary>
@@ -81,6 +101,17 @@ namespace Mirage.Core.IO
         {
             get { return _listener.Server; }
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (_listener != null)
+                _listener.Stop();
+            _listener = null;
+        }
+
+        #endregion
     }
 
 }
