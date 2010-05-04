@@ -83,7 +83,7 @@ namespace Mirage.Stock.Command
                 room.Write(actor, departMessage);
                 exit.TargetRoom.Write(actor, arrivalMessage);
 
-                IMessage confirmation = MessageFactory.GetMessage("movement.YouGoDirection");
+                IMessage confirmation = MessageFactory.GetMessage("movement.YouLeaveDirection");
                 confirmation["direction"] = dirName;
                 actor.Write(confirmation);
                 if (actor is IPlayer)

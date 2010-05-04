@@ -94,6 +94,7 @@ namespace Mirage.Core.IO
         /// </summary>
         public void Stop()
         {
+            Logger.Info(this.GetType().Name + " stopped listening at address " + _listener.LocalEndpoint.ToString());
             _listener.Stop();
         }
 

@@ -269,6 +269,7 @@ namespace Mirage.Core.IO
 
         public void Stop()
         {
+            
             foreach (ClientListener listener in _listeners)
             {
                 listener.Stop();

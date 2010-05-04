@@ -113,5 +113,20 @@ namespace Mirage.Core.Data
             PlayerRepository.Save(player);
         }
 
+        protected override void OnStop()
+        {
+            foreach (IPlayer player in PlayerRepository)
+            {
+                try
+                {
+                    logger.InfoFormat("Saving player {0}.", player.Uri);
+                    SavePlayer(player);
+                }
+                catch (Exception e)
+                {
+                    logger.Error("Error trying to save player before stopping", e);
+                }
+            }
+        }
     }
 }
