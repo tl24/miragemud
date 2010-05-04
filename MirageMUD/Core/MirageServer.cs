@@ -187,7 +187,15 @@ namespace Mirage.Core
 	            lastTime = currentTime;
 
             }
+            foreach (ServiceEntry service in Services)
+            {
+                if (service.Service.IsStarted)
+                {
+                    service.Service.Stop();
+                }
+            }
             manager.Stop();
+            logger.Info("The mud has shutdown successfully.");
         }
 
         protected void SavePlayer(IPlayer player)

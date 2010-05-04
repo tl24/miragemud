@@ -46,7 +46,7 @@ namespace Mirage.Stock.Data.MobAI
 
         public override AIMessageResult HandleMessage(Mirage.Core.Communication.IMessage message)
         {
-            if (message.IsMatch(Namespaces.Movement, "YouGoDirection"))
+            if (message.IsMatch(Namespaces.Movement, "YouLeaveDirection"))
             {
                 processCommand = true;
                 return AIMessageResult.MessageHandledContinue;
