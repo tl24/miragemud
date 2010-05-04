@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using Mirage.Core.Data;
 using Mirage.Core.Command;
 using Mirage.Core.Util;
-using log4net;
 
 namespace Mirage.Core.IO
 {

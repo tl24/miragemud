@@ -2,15 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.IO;
-using log4net;
 using Mirage.Core.IO.Serialization;
+using Castle.Core.Logging;
 
 namespace Mirage.Core.Data
 {
     public class PlayerExecutorServiceBase : ServiceExecutorBase
     {
-        private ILog logger = LogManager.GetLogger(typeof(PlayerExecutorServiceBase));
+        //private ILog logger = LogManager.GetLogger(typeof(PlayerExecutorServiceBase));
         private IPlayerRepository _playerRepository;
+
+        private ILogger logger;
+        public ILogger Logger
+        {
+            get { return logger ?? NullLogger.Instance; }
+            set { logger = value; }
+        }
 
         public IPlayerRepository PlayerRepository
         {

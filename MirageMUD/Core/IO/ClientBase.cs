@@ -55,10 +55,7 @@ namespace Mirage.Core.IO
         /// Indicates that output was written this cycle
         /// </summary>
         protected bool _outputWritten;
-        /// <summary>
-        /// The client factory that created this client
-        /// </summary>
-        protected IClientFactory _clientFactory;
+
 
         /// <summary>
         ///     Create a client to read and write to the given
@@ -162,12 +159,6 @@ namespace Mirage.Core.IO
             _client.Close();
             _state = ConnectedState.Disconnected;
             log.Info("Client connection closed: " + remote);
-        }
-
-        public IClientFactory ClientFactory
-        {
-            get { return _clientFactory; }
-            set { _clientFactory = value; }
         }
 
         public TcpClient TcpClient

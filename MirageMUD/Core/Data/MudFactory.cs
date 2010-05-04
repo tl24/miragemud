@@ -9,6 +9,10 @@ using Castle.Windsor.Configuration.Interpreters;
 using Castle.MicroKernel.SubSystems.Conversion;
 using Castle.Windsor.Configuration;
 using Mirage.Core.IO;
+using Castle.MicroKernel.Registration;
+using Castle.MicroKernel;
+using Mirage.Core.Util;
+using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 
 namespace Mirage.Core.Data
 {
@@ -36,29 +40,9 @@ namespace Mirage.Core.Data
             
         }
 
-        /// <summary>
-        /// Retrieves the given object using a string key
-        /// </summary>
-        /// <param name="key">the key</param>
-        /// <returns>constructed object</returns>
-        public static object GetObject(string key)
-        {
-            return _instance.Resolve(key);
-        }
-
         public static void RegisterService(Type classType)
         {
             _instance.AddComponent(classType.FullName, classType);
-        }
-
-        public static void RegisterService(string key, Type classType)
-        {
-            _instance.AddComponent(key, classType);
-        }
-
-        public static void RegisterService(string key, Type serviceType, Type classType)
-        {
-            _instance.AddComponent(key, serviceType, classType);
         }
 
         private class MyContainer : WindsorContainer
@@ -71,14 +55,53 @@ namespace Mirage.Core.Data
                     Kernel.GetSubSystem(Castle.MicroKernel.SubSystemConstants.ConversionManagerKey);
 
                 manager.Add(new ServiceEntryConverter());
-                //Kernel.AddFacility("", new Castle.Facilities.Logging.LoggingFacility(
-                // Process the configuration
 
+                Kernel.AddFacility("", new Castle.Facilities.FactorySupport.FactorySupportFacility());
                 interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore);
 
                 // Install the components                
                 Installer.SetUp(this, Kernel.ConfigurationStore);
+                this.Install(new MudWindsorInstaller());
+                
             }
         }
+
+        private class MudWindsorInstaller : IWindsorInstaller
+        {
+
+            public void Install(IWindsorContainer container, IConfigurationStore store)
+            {
+
+                IConversionManager manager = (IConversionManager)
+                    container.Kernel.GetSubSystem(Castle.MicroKernel.SubSystemConstants.ConversionManagerKey);
+
+                manager.Add(new ServiceEntryConverter());
+
+                container.Kernel.AddFacility("", new Castle.Facilities.FactorySupport.FactorySupportFacility());
+                container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
+                container.Kernel.Resolver.AddSubResolver(new ListResolver(container.Kernel));                
+                AssemblyList.Instance.ForEach(
+                    (a) =>
+                    {
+                        container.Register(
+                        AllTypes.Of<IInitializer>()
+                            .FromAssembly(a)
+                            .WithService.FromInterface()
+                            .Configure(component
+                            => component.LifeStyle.Transient.Named(component.Implementation.Name))
+                        );
+                    });
+                /*
+                // install default components
+                AssemblyList.Instance.ForEach(
+                    (a) =>
+                        {
+                            container.Register(
+                                AllTypes.FromAssembly(a)
+                                .Where((t) => (at
+                 */
+            }
+        }
+
     }
 }

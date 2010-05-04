@@ -23,9 +23,5 @@ namespace Mirage.Core.IO
         /// </summary>
         TcpClient TcpClient { get; }
 
-        /// <summary>
-        /// Gets or sets a reference to the ClientFactory that created this client
-        /// </summary>
-        IClientFactory ClientFactory { get; set; }
     }
 }

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.IO.Serialization;
 using System.IO;
+using Castle.Core;
 
 namespace Mirage.Core.Data
 {
-
+    [CastleComponent("PlayerRepository", typeof(IPlayerRepository), LifestyleType.Singleton)]
     public class PlayerRepository<T> : IPlayerRepository
     {
         private IPersistenceManager persistenceManager;

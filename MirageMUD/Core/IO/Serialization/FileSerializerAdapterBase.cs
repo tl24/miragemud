@@ -18,6 +18,7 @@ namespace Mirage.Core.IO.Serialization
         {
             this._basePath = basePath;
             this._ext = ext;
+            Directory.CreateDirectory(basePath);
         }
 
         /// <summary>
