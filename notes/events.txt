@@ -1,0 +1,23 @@
+Sensory Events
+=========================
+Hierarchy of events, with the possibility of some events overriding others.
+For example arrival, might have sight sense, auditory sense, and potentially smell.
+
+sight => Foo has arrived.
+  auditory => You hear footsteps.
+  smell => You smell rotted meat.
+  
+If you can see, probably don't care about auditory, but if you're blind you definitely want the auditory.
+Maybe there is a scale or something so if one sense event is weak compare to another you don't get them all.  Possibly combine all that apply.
+
+Examples:
+Foo has arrived, smelling like rotted meat.
+You hear footsteps and smell rotted meat.
+
+var evt = new SensoryEvent("char.arrival");
+evt.Add(new VisualEvent("${target} has arrived.", actor, EventStrength.Primary));
+evt.Add(new AudibleEvent("footsteps", EventStrength.Compute(actor.Weight, 10)));
+
+Room.Send(evt);
+
+actor.Send(Confirmation.Get("east", "You leave east"));

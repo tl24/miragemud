@@ -155,6 +155,11 @@
     <Compile Include="Data\Query\QueryManager.cs" />
     <Compile Include="Data\Thing.cs" />
     <Compile Include="Data\ViewableBase.cs" />
+    <Compile Include="Events\EventBase.cs" />
+    <Compile Include="Events\EventEnums.cs" />
+    <Compile Include="Events\IEvent.cs" />
+    <Compile Include="Events\IEventContainer.cs" />
+    <Compile Include="Events\SensoryEvent.cs" />
     <Compile Include="IInitializer.cs" />
     <Compile Include="IO\GuiClient.cs" />
     <Compile Include="IO\ClientBase.cs" />
