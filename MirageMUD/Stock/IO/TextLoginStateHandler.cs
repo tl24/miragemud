@@ -73,9 +73,9 @@ namespace Mirage.Stock.IO
 
                     Require(message, new ValidateDelegate(this.ConfirmPassword));
                 }
-                else if (!Contains("race"))
-                {
-                }
+                //else if (!Contains("race"))
+                //{
+                //}
                 else
                 {
                     Finished = true;

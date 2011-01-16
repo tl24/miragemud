@@ -38,7 +38,7 @@ namespace NUnitTests.Communication
         {
             Player chr = GetPlayer("foo", GenderType.Male);
             StringMessage msg = formatter.Format(chr, chr, "test", "Hi, ${actor.name}!");
-            Assert.AreEqual("Hi, foo!", GetMessageText(msg));
+            Assert.AreEqual("Hi, foo!\r\n", GetMessageText(msg));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace NUnitTests.Communication
         {
             Mobile chr = GetMobile("foomob", GenderType.Male);
             StringMessage msg = formatter.Format(chr, chr, "test", "Hi, ${actor.name}!");
-            Assert.AreEqual("Hi, foomob!", GetMessageText(msg));
+            Assert.AreEqual("Hi, foomob!\r\n", GetMessageText(msg));
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace NUnitTests.Communication
             Player chr = GetPlayer("foo", GenderType.Male);
             Player target = GetPlayer("bar", GenderType.Male);
             StringMessage msg = formatter.Format(chr, chr, "test", "Hi, ${actor.name} says ${target.name}!", target);
-            Assert.AreEqual("Hi, foo says bar!", GetMessageText(msg));
+            Assert.AreEqual("Hi, foo says bar!\r\n", GetMessageText(msg));
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace NUnitTests.Communication
             Mobile chr = GetMobile("foomob", GenderType.Male);
             Mobile target = GetMobile("barmob", GenderType.Male);
             StringMessage msg = formatter.Format(chr, chr, "test", "Hi, ${actor.name} says ${target.name}!", target);
-            Assert.AreEqual("Hi, foomob says barmob!", GetMessageText(msg));
+            Assert.AreEqual("Hi, foomob says barmob!\r\n", GetMessageText(msg));
         }
 
         [TestCase(GenderType.Male, "He")]
@@ -74,7 +74,7 @@ namespace NUnitTests.Communication
         {
             Player chr = GetPlayer("foo", gender);
             StringMessage msg = formatter.Format(chr, chr, "test", "${actor.he} jumps!");
-            Assert.AreEqual(expected + " jumps!", GetMessageText(msg));
+            Assert.AreEqual(expected + " jumps!\r\n", GetMessageText(msg));
         }
 
         [TestCase(GenderType.Male, "He")]
@@ -84,12 +84,12 @@ namespace NUnitTests.Communication
         {
             Player chr = GetPlayer("foo", gender);
             StringMessage msg = formatter.Format(chr, chr, "test", "${actor.she} jumps!");
-            Assert.AreEqual(expected + " jumps!", GetMessageText(msg));
+            Assert.AreEqual(expected + " jumps!\r\n", GetMessageText(msg));
         }
 
-        [TestCase(GenderType.Male, "Him")]
-        [TestCase(GenderType.Female, "Her")]
-        [TestCase(GenderType.Other, "It")]
+        [TestCase(GenderType.Male, "Him\r\n")]
+        [TestCase(GenderType.Female, "Her\r\n")]
+        [TestCase(GenderType.Other, "It\r\n")]
         public void TestFormat_Him(GenderType gender, string expected)
         {
             Player chr = GetPlayer("foo", gender);
@@ -97,9 +97,9 @@ namespace NUnitTests.Communication
             Assert.AreEqual(expected, GetMessageText(msg));
         }
 
-        [TestCase(GenderType.Male, "His")]
-        [TestCase(GenderType.Female, "Her")]
-        [TestCase(GenderType.Other, "Its")]
+        [TestCase(GenderType.Male, "His\r\n")]
+        [TestCase(GenderType.Female, "Her\r\n")]
+        [TestCase(GenderType.Other, "Its\r\n")]
         public void TestFormat_His(GenderType gender, string expected)
         {
             Player chr = GetPlayer("foo", gender);
@@ -112,7 +112,7 @@ namespace NUnitTests.Communication
         {
             Player chr = GetPlayer("foo", GenderType.Male);
             StringMessage msg = formatter.Format(chr, chr, "test", "${actor.short} is here.");
-            Assert.AreEqual("A foo is here.", GetMessageText(msg));
+            Assert.AreEqual("A foo is here.\r\n", GetMessageText(msg));
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace NUnitTests.Communication
             helmet.Title = "Gold Helmet";
             helmet.ShortDescription = "a gold helmet";
             StringMessage msg = formatter.Format(chr, chr, "test", "${object.short} is here.", null, new Dictionary<string, object> { { "object", helmet }});
-            Assert.AreEqual("A gold helmet is here.", GetMessageText(msg));
+            Assert.AreEqual("A gold helmet is here.\r\n", GetMessageText(msg));
         }
 
         [Test]
@@ -134,7 +134,7 @@ namespace NUnitTests.Communication
             helmet.Title = "Gold Helmet";
             helmet.ShortDescription = "a gold helmet";
             StringMessage msg = formatter.Format(chr, chr, "test", "${object.short} is here.", null, new Dictionary<string, object> { { "object0", helmet } });
-            Assert.AreEqual("A gold helmet is here.", GetMessageText(msg));
+            Assert.AreEqual("A gold helmet is here.\r\n", GetMessageText(msg));
         }
 
         [Test]
@@ -151,7 +151,23 @@ namespace NUnitTests.Communication
             bag.ShortDescription = "a bag";
             var args = new Dictionary<string, object> { { "object0", helmet }, { "object1", bag } };
             StringMessage msg = formatter.Format(recipient, actor, "test", "${actor.title} sees ${target.title} put ${target.his} ${object} in ${object1.short}.", target, args);
-            Assert.AreEqual("Boo sees goo put her Gold Helmet in a bag.", GetMessageText(msg));
+            Assert.AreEqual("Boo sees goo put her Gold Helmet in a bag.\r\n", GetMessageText(msg));
+        }
+
+        [Test]
+        public void TestFormat_ErrorNamespace()
+        {
+            Player actor = GetPlayer("boo", GenderType.Male);
+            StringMessage msg = formatter.Format(actor, actor, "error.test", "An error happened");
+            Assert.AreEqual(MessageType.PlayerError, msg.MessageType);
+        }
+
+        [Test]
+        public void TestFormat_NonError()
+        {
+            Player actor = GetPlayer("boo", GenderType.Male);
+            StringMessage msg = formatter.Format(actor, actor, "test", "Info");
+            Assert.AreEqual(MessageType.Information, msg.MessageType);
         }
 
         private string GetMessageText(StringMessage message)

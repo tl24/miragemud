@@ -24,7 +24,6 @@ namespace NUnitTests
             cmd = new ItemCommands();
             QueryManager qmgr = new QueryManager();
             cmd.QueryManager = qmgr;
-            cmd.MessageFactory = new MessageFactory();
 
             player = new Player();
             MockClient client = new MockClient();
@@ -47,7 +46,7 @@ namespace NUnitTests
             item.Uri = "Item";
             room.Items.Add(item);
             item.Container = room;
-            IMessage m = cmd.get_item(player, "Item");
+            cmd.get_item(player, "Item");
 
             Assert.IsTrue(player.Inventory.Contains(item), "Player should have item");
             Assert.IsFalse(room.Items.Contains(item), "Room should not contain item");
@@ -60,7 +59,7 @@ namespace NUnitTests
             item.Uri = "Item";
             player.Inventory.Add(item);
             item.Container = player;
-            IMessage m = cmd.drop(player, "Item");
+            cmd.drop(player, "Item");
 
             Assert.IsFalse(player.Inventory.Contains(item), "Player should NOT have item");
             Assert.IsTrue(room.Items.Contains(item), "Room SHOULD contain item");

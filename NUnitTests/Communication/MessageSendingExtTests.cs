@@ -35,7 +35,7 @@ namespace NUnitTests.Communication
             Assert.AreEqual(1, actClient.Messages.Count, "actor message count");
             Assert.AreEqual(0, vicClient.Messages.Count, "victim shouldn't have messages");
 
-            Assert.AreEqual("You hit vic!", actClient.Messages[0].Render(), "Actor message text");
+            Assert.AreEqual("You hit vic!\r\n", actClient.Messages[0].Render(), "Actor message text");
             Assert.AreEqual("testself.self", actClient.Messages[0].Name.FullName, "Actor message messageName");
             Assert.AreEqual(MessageType.Information, actClient.Messages[0].MessageType, "actor message type");
         }
@@ -52,7 +52,7 @@ namespace NUnitTests.Communication
             Assert.AreEqual(1, actClient.Messages.Count, "actor message count");
             Assert.AreEqual(0, vicClient.Messages.Count, "victim shouldn't have messages");
 
-            Assert.AreEqual("You hit vic with a bat!", actClient.Messages[0].Render(), "Actor message text");
+            Assert.AreEqual("You hit vic with a bat!\r\n", actClient.Messages[0].Render(), "Actor message text");
             Assert.AreEqual("vic", actClient.Messages[0]["target"], "actor message title property");
             Assert.AreEqual("a bat", actClient.Messages[0]["object"], "actor message title property");
         }
@@ -69,7 +69,7 @@ namespace NUnitTests.Communication
             Assert.AreEqual(0, actClient.Messages.Count, "actor shouldn't have messages");
             Assert.AreEqual(1, vicClient.Messages.Count, "target message count");
 
-            Assert.AreEqual("Foo hits you!", vicClient.Messages[0].Render(), "Target message text");
+            Assert.AreEqual("Foo hits you!\r\n", vicClient.Messages[0].Render(), "Target message text");
             Assert.AreEqual("testtarget.target", vicClient.Messages[0].Name.FullName, "Target message messageName");
         }
 
@@ -85,7 +85,7 @@ namespace NUnitTests.Communication
             Assert.AreEqual(0, actClient.Messages.Count, "actor shouldn't have messages");
             Assert.AreEqual(1, vicClient.Messages.Count, "target message count");
 
-            Assert.AreEqual("Foo hits you with a bat!", vicClient.Messages[0].Render(), "Target message text");
+            Assert.AreEqual("Foo hits you with a bat!\r\n", vicClient.Messages[0].Render(), "Target message text");
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace NUnitTests.Communication
             Assert.AreEqual(0, vicClient.Messages.Count, "target shouldn't have messages");
             Assert.AreEqual(1, bsClient.Messages.Count, "target message count");
 
-            Assert.AreEqual("Foo hits vic!", bsClient.Messages[0].Render(), "Target message text");
+            Assert.AreEqual("Foo hits vic!\r\n", bsClient.Messages[0].Render(), "Target message text");
             Assert.AreEqual("testbystander.others", bsClient.Messages[0].Name.FullName, "Target message messageName");
         }
 
@@ -130,7 +130,7 @@ namespace NUnitTests.Communication
             Assert.AreEqual(0, vicClient.Messages.Count, "target shouldn't have messages");
             Assert.AreEqual(1, bsClient.Messages.Count, "bystander message count");
 
-            Assert.AreEqual("Foo hits vic with a bat!", bsClient.Messages[0].Render(), "Target message text");
+            Assert.AreEqual("Foo hits vic with a bat!\r\n", bsClient.Messages[0].Render(), "Target message text");
             Assert.AreEqual("testbystander.others", bsClient.Messages[0].Name.FullName, "Target message messageName");
         }
 
@@ -153,8 +153,8 @@ namespace NUnitTests.Communication
             Assert.AreEqual(1, vicClient.Messages.Count, "target message count");
             Assert.AreEqual(1, bsClient.Messages.Count, "bystander message count");
 
-            Assert.AreEqual("Foo hits vic!", vicClient.Messages[0].Render(), "Target message text");
-            Assert.AreEqual("Foo hits vic!", bsClient.Messages[0].Render(), "Bystander message text");
+            Assert.AreEqual("Foo hits vic!\r\n", vicClient.Messages[0].Render(), "Target message text");
+            Assert.AreEqual("Foo hits vic!\r\n", bsClient.Messages[0].Render(), "Bystander message text");
             Assert.AreEqual("testroom.target", vicClient.Messages[0].Name.FullName, "Target message messageName");
             Assert.AreEqual("testroom.others", bsClient.Messages[0].Name.FullName, "Bystander message messageName");
         }
@@ -178,8 +178,8 @@ namespace NUnitTests.Communication
             Assert.AreEqual(1, vicClient.Messages.Count, "target message count");
             Assert.AreEqual(1, bsClient.Messages.Count, "bystander message count");
 
-            Assert.AreEqual("Foo hits vic with a bat!", vicClient.Messages[0].Render(), "Target message text");
-            Assert.AreEqual("Foo hits vic with a bat!", bsClient.Messages[0].Render(), "Bystander message text");
+            Assert.AreEqual("Foo hits vic with a bat!\r\n", vicClient.Messages[0].Render(), "Target message text");
+            Assert.AreEqual("Foo hits vic with a bat!\r\n", bsClient.Messages[0].Render(), "Bystander message text");
             Assert.AreEqual("testroom.target", vicClient.Messages[0].Name.FullName, "Target message messageName");
             Assert.AreEqual("testroom.others", bsClient.Messages[0].Name.FullName, "Bystander message messageName");
         }
