@@ -7,16 +7,17 @@ using Mirage.Core.Command;
 using Mirage.Core.Util;
 using JsonExSerializer;
 using Mirage.Core.Data.Query;
+using System.Linq;
 
 namespace Mirage.Core.Communication
 {
     public class Channel {
         
         private string _name;
-        private ISet<string> _allowed;
-        private ISet<string> _banned;
-        private ISet<IReceiveMessages> _members;
-        private ISet<string> _roles;
+        private System.Collections.Generic.HashSet<string> _allowed;
+        private System.Collections.Generic.HashSet<string> _banned;
+        private System.Collections.Generic.HashSet<IReceiveMessages> _members;
+        private System.Collections.Generic.HashSet<string> _roles;
         private bool _isDefault;
         private IMessageFactory _messageFactory;
 
@@ -27,16 +28,16 @@ namespace Mirage.Core.Communication
 
         public Channel(string name, IEnumerable<string> allowed, IEnumerable<string> banned, IEnumerable<string> roles) {
             _name = name;
-            _members = new Mirage.Core.Util.HashSet<IReceiveMessages>();
-            _allowed = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-            _banned = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-            _roles = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _members = new System.Collections.Generic.HashSet<IReceiveMessages>();
+            _allowed = new System.Collections.Generic.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _banned = new System.Collections.Generic.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _roles = new System.Collections.Generic.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
             if (allowed != null)
-                _allowed.Add(allowed);
+                _allowed.UnionWith(allowed);
             if (banned != null)
-                _banned.Add(banned);
+                _banned.UnionWith(banned);
             if (roles != null)
-                _roles.Add(roles);
+                _roles.UnionWith(roles);
 
         }
         

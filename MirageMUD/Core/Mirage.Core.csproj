@@ -237,10 +237,8 @@
     <Compile Include="Util\CollectionEvent.cs" />
     <Compile Include="Util\Collections.cs" />
     <Compile Include="Util\ICollectionEvents.cs" />
-    <Compile Include="Util\ISet.cs" />
     <Compile Include="Util\ISynchronizedQueue.cs" />
     <Compile Include="Util\ListWithEvents.cs" />
-    <Compile Include="Util\HashSet.cs" />
     <Compile Include="Util\StringUtils.cs" />
     <Compile Include="Util\SynchronizedQueue.cs" />
     <Compile Include="Util\TypeSupports.cs" />

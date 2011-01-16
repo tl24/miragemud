@@ -11,13 +11,13 @@ namespace Mirage.Core.Util
     /// </summary>
     public class AssemblyList : IEnumerable<Assembly>
     {
-        private HashSet<Assembly> _assemblies;
+        private System.Collections.Generic.HashSet<Assembly> _assemblies;
 
         private static AssemblyList _instance = new AssemblyList();
 
         private AssemblyList()
         {
-            _assemblies = new HashSet<Assembly>();            
+            _assemblies = new System.Collections.Generic.HashSet<Assembly>();            
             RegisterAssembly(this.GetType().Assembly);
             RegisterAssembly(Assembly.Load("Mirage.Stock"));
         }
