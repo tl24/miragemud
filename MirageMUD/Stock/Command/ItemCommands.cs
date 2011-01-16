@@ -5,8 +5,8 @@ using Mirage.Core.Command;
 using Mirage.Core.Communication;
 using Mirage.Core.Data.Query;
 using Mirage.Core.Data.Containers;
-using Mirage.Stock.Data;
-using Mirage.Stock.Data.Items;
+using Mirage.Core.Data;
+using Mirage.Core.Data.Items;
 
 namespace Mirage.Stock.Command
 {

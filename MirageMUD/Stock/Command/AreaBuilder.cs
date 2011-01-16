@@ -8,7 +8,7 @@ using Mirage.Core.IO;
 using Mirage.Core.IO.Serialization;
 using Mirage.Core.Data.Query;
 using Mirage.Core.Command;
-using Mirage.Stock.Data;
+using Mirage.Core.Data;
 
 namespace Mirage.Stock.Command
 {

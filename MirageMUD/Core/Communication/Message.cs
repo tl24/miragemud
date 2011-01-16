@@ -64,9 +64,8 @@ namespace Mirage.Core.Communication
         private MessageName _name;
         private IDictionary<string, object> _parameters;
 
-        public Message()
+        public Message() : this(MessageType.Unknown, MessageName.Empty)
         {
-            _name = MessageName.Empty;
         }
 
         public Message(MessageType messageType, string name) : this(messageType, new MessageName(name))

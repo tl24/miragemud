@@ -8,6 +8,7 @@ namespace Mirage.Core.Util
     /// Provides an implementation of a set
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [Obsolete("Use .NET 3.5 Hash Set")]
     public class HashSet<T> : ISet<T>
     {
         private Dictionary<T, bool> _dictionary;
