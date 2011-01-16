@@ -71,12 +71,6 @@ namespace Mirage.Core.Communication
         public Message(MessageType messageType, string name) : this(messageType, new MessageName(name))
         {
         }
-        /*
-        public Message(MessageType messageType, string Namespace, string name, IDictionary<string, object> parameters)
-            : this(messageType, new MessageName(Namespace, name), parameters)
-        {
-        }
-        */
 
         public Message(MessageType messageType, MessageName Name)
             : this(messageType, Name, new Dictionary<string, object>())
@@ -89,12 +83,6 @@ namespace Mirage.Core.Communication
             this._name = Name;
             this._parameters = parameters;
         }
-        /*
-        public Message(MessageType messageType, string Namespace, string name)
-            : this(messageType, Namespace, name, new Dictionary<string, object>())
-        {
-        }
-        */
 
         /// <summary>
         /// The general type of message.  This should be a broad

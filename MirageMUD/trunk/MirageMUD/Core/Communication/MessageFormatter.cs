@@ -117,9 +117,15 @@ namespace Mirage.Core.Communication
                 return null;
 
             result.Text = result.Text.ToUpperFirst();
+            if (!result.Text.EndsWith(Environment.NewLine))
+                result.Text += Environment.NewLine;
 
             result.MessageType = MessageType.Information;
             result.Name = new MessageName(messageID);
+            if (result.Name.Namespace.Contains("error"))
+                result.MessageType = MessageType.PlayerError;
+            else
+                result.MessageType = MessageType.Information;
             return result;
         }
 

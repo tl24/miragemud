@@ -92,15 +92,38 @@ namespace Mirage.Core.Data
             }
         }
 
-        /*
-        ToBystanders(this Living actor, string messageID, string formatString, Living target)
-        ToBystanders(this Living actor, string messageID, string formatString, Living target, params object[] args)
-          Sends a message to the bystanders in the room (everyone in the room except the sender and target)
+        public static void Write(this IReceiveMessages receiver, string messageName, string messageText)
+        {
+            Write(receiver, new MessageName(messageName), messageText);
+        }
 
-        ToRoom(this Living actor, string messageID, string formatString)
-        ToRoom(this Living actor, string messageID, string formatString, Living target)
-        ToRoom(this Living actor, string messageID, string formatString, Living target, params object[] args)
-          Sends a message to the bystanders in the room (everyone in the room except the sender)
-         */
+        public static void Write(this IReceiveMessages receiver, MessageName name, string messageText)
+        {
+            MessageType type = MessageType.Information;
+            if (name.Namespace.Contains("error"))
+                type = MessageType.PlayerError;
+            Write(receiver, type, name, messageText);
+        }
+
+        public static void Write(this IReceiveMessages receiver, MessageType type, string messageName, string messageText)
+        {
+            Write(receiver, type, new MessageName(messageName), messageText);
+        }
+
+        public static void Write(this IReceiveMessages receiver, MessageType type, MessageName name, string messageText)
+        {
+            if (messageText.Contains("${") && receiver is Living)
+            {
+                Living actor = receiver as Living;
+                StringMessage msg = MessageFormatter.Instance.Format(actor, actor, "", messageText);
+                msg.MessageType = type;
+                msg.Name = name;
+                receiver.Write(msg);
+            }
+            else
+            {
+                receiver.Write(new StringMessage(type, name, messageText));
+            }
+        }
     }
 }

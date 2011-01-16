@@ -19,136 +19,136 @@ namespace Mirage.Stock.Command
             set { this._queryManager = value; }
         }
 
-        private IMessageFactory _messageFactory;
-        public IMessageFactory MessageFactory
-        {
-            get { return this._messageFactory; }
-            set { this._messageFactory = value; }
-        }
-
         [CommandAttribute(Aliases = new string[] { "get" })]
-        public IMessage get_item([Actor] Living actor, string target)
+        public void get_item([Actor] Living actor, string target)
         {
             if ("all".Equals(target, StringComparison.CurrentCultureIgnoreCase)) {
                 foreach(ItemBase item in new List<ItemBase>(actor.Container.Contents<ItemBase>())) {
-                    actor.Write(get_item(actor, item));
+                    get_item(actor, item);
                 }
-                return null;
             } else {
                 ItemBase item = QueryManager.Find(actor.Container, ObjectQuery.parse("Items", target)) as ItemBase;
                 if (item == null)
-                    return MessageFactory.GetMessage("item.error.ItemNotHere", "I don't see that here.\r\n");
+                    actor.Write("item.error.nothere.self", "I don't see that here.\r\n");
                 else
-                    return get_item(actor, item);
+                    get_item(actor, item);
             }
         }
 
-        public IMessage get_item(Living actor, ItemBase item) {
+        public void get_item(Living actor, ItemBase item) {
             if (actor.CanAdd(item))
             {
                 ContainerUtils.Transfer(item, actor);
-                foreach (Living am in actor.Container.Contents(typeof(Living)))
-                {
-                    if (am != actor)
-                    {
-                        am.Write(MessageFactory.GetMessage("item.PlayerGetsItem", actor.Title + " gets " + item.ShortDescription + "\r\n"));
-                    }
-                }
-                return MessageFactory.GetMessage("item.YouGetItem", "You get " + item.ShortDescription + "\r\n");
+                actor.ToRoom("item.get", "${actor} gets ${object.short}", null, item);
+                actor.ToSelf("item.get", "You get ${object.short}", null, item);
             }
             else
             {
-                return MessageFactory.GetMessage("item.error.CantGetItem", "You can't pick up " + item.ShortDescription + "!\r\n");
+                actor.ToSelf("item.error.cantgetitem.self", "You can't pick up ${object.short}!", null, item); 
             }
         }
 
         [Command]
-        public IMessage drop([Actor] Living actor, string target)
+        public void drop([Actor] Living actor, string target)
         {
             Room room = actor.Container as Room;
             if (target.Equals("all", StringComparison.CurrentCultureIgnoreCase))
             {
                 if (room == null)
-                    return MessageFactory.GetMessage("item.error.CantDropAll", "You can't drop anything here.\r\n");
+                {
+                    actor.Write("item.error.cantdropall.self", "You can't drop anything here.\r\n");
+                    return;
+                }
 
                 List<ItemBase> items = new List<ItemBase>(actor.Inventory);
                 foreach (ItemBase item in items)
-                    actor.Write(drop(actor, room, item));
+                    drop(actor, room, item);
 
-                return null;
             }
             else
             {
                 if (room == null)
-                    return MessageFactory.GetMessage("item.error.CantDropItem", "You can't drop that here.\r\n");
+                {
+                    actor.Write("item.error.cantdrop.self", "You can't drop that here.\r\n");
+                    return;
+                }
 
                 ItemBase item = QueryManager.Find(actor, ObjectQuery.parse("Inventory", target)) as ItemBase;
                 if (item == null)
-                    return MessageFactory.GetMessage("item.error.DontHaveItem", "You don't have that!\r\n");
-
-                return drop(actor, room, item);
+                {
+                    actor.Write("item.error.donthaveitem.self", "You don't have that.\r\n");
+                    return;
+                }
+                drop(actor, room, item);
             }
         }
 
-        public IMessage drop(Living actor, Room room, ItemBase item)
+        /// <summary>
+        /// Drops a single item into the room
+        /// </summary>
+        /// <param name="actor">the actor dropping the item</param>
+        /// <param name="room">the room to drop it in</param>
+        /// <param name="item">the item being dropped</param>
+        /// <returns>true if successfully dropped, false otherwise</returns>
+        public bool drop(Living actor, Room room, ItemBase item)
         {
             if (room.CanAdd(item))
             {
                 ContainerUtils.Transfer(item, room);
-                foreach (Living am in actor.Container.Contents(typeof(Living)))
-                {
-                    if (am != actor)
-                    {
-                        am.Write(MessageFactory.GetMessage("item.PlayerDropsItem", actor.Title + " drops " + item.ShortDescription + ".\r\n"));
-                    }
-                }
-                return MessageFactory.GetMessage("item.YouDropItem", "You drop " + item.ShortDescription + ".\r\n");
+                actor.ToRoom("item.drop", "${actor} drops ${object.short}.", null, item);
+                actor.ToSelf("item.drop", "You drop ${object.short}.", null, item);
+                return true;
             }
             else
             {
-                return MessageFactory.GetMessage("item.error.CantDropItem", "You can't drop that here.\r\n");
+                actor.Write("item.error.cantdrop.self", "You can't drop that here.\r\n");
+                return false;
             }
         }
 
         [CommandAttribute(Description="Wear an item")]
-        public IMessage wear([Actor] Living actor, string target)
+        public void wear([Actor] Living actor, string target)
         {
             ItemBase item = QueryManager.Find(actor, ObjectQuery.parse("Inventory", target)) as ItemBase;
             if (item == null)
-                return MessageFactory.GetMessage("item.error.DontHaveItem", "You don't have that!\r\n");
-
+            {
+                actor.Write("item.error.donthaveitem.self", "You don't have that!\r\n");
+                return;
+            }
             Armor armor = item as Armor;
             if (armor == null)
-                return MessageFactory.GetMessage("item.error.CantWearItem", "You can't wear that!\r\n");
+            {
+                actor.Write("item.error.cantwearitem.self", "You can't wear that!\r\n");
+                return;
+            }
 
             Armor removed = actor.EquipItem(armor, true);
             if (removed != null)
             {
-                actor.Write(MessageFactory.GetMessage("item.YouRemoveItem", "You remove " + removed.ShortDescription + ".\r\n"));
-                if (actor.Container is IReceiveMessages)
-                    ((IReceiveMessages)actor.Container).Write(actor, MessageFactory.GetMessage("item.PlayerRemovesItem", actor.Title + " removes " + removed.ShortDescription + ".\r\n"));
+                actor.ToSelf("item.remove", "You remove ${object.short}.", null, removed);
+                actor.ToRoom("item.remove", "${actor} removes ${object.short}.", null, removed);
             }
-            if (actor.Container is IReceiveMessages)
-                ((IReceiveMessages)actor.Container).Write(actor, MessageFactory.GetMessage("item.PlayerWearsItem", actor.Title + " wears " + removed.ShortDescription + ".\r\n"));
-            return MessageFactory.GetMessage("item.YouWearItem", "You wear " + armor.ShortDescription + ".\r\n");
+            actor.ToSelf("item.wear", "You wear ${object.short}.", null, armor);
+            actor.ToRoom("item.remove", "${actor} wears ${object.short}.", null, armor);
         }
 
         [CommandAttribute(Description = "Remove an item")]
-        public IMessage remove([Actor] Living actor, string target)
+        public void remove([Actor] Living actor, string target)
         {
             Armor item = QueryManager.Find(actor, ObjectQuery.parse("Equipment", target)) as Armor;
             if (item == null)
-                return MessageFactory.GetMessage("item.error.ItemNotWorn", "You're not wearing that!\r\n");
+            {
+                actor.Write("item.error.itemnotworn.self", "You're not wearing that!\r\n");
+                return;
+            }
 
             actor.UnequipItem(item);
-            if (actor.Container is IReceiveMessages)
-                ((IReceiveMessages)actor.Container).Write(actor, MessageFactory.GetMessage("item.PlayerRemovesItem", actor.Title + " removes " + item.ShortDescription + ".\r\n"));
-            return MessageFactory.GetMessage("item.YouRemoveItem", "You remove " + item.ShortDescription + ".\r\n");
-
+            actor.ToSelf("item.remove", "You remove ${object.short}.", null, item);
+            actor.ToRoom("item.remove", "${actor} removes ${object.short}.", null, item);
         }
 
         [CommandAttribute(Description="Shows the equipment currently being worn")]
-        public IMessage equipment([Actor] Living actor)
+        public void equipment([Actor] Living actor)
         {
             WearLocations[] locs = (WearLocations[]) Enum.GetValues(typeof(WearLocations));
             StringBuilder sb = new StringBuilder();
@@ -161,14 +161,13 @@ namespace Mirage.Stock.Command
                 string desc = item != null ? item.ShortDescription : "none";
                 sb.Append(string.Format("{0,-15} {1}\r\n", locString, desc));    
             }
-
-            return MessageFactory.GetMessage("item.Equipment", sb.ToString());
+            actor.Write("item.equipment", sb.ToString());
         }
 
         [CommandAttribute(Description="Shows the current items in inventory that a player has")]
-        public IMessage inventory([Actor] Living actor)
-        {
-            return MessageFactory.GetMessage("item.Inventory", DisplayItemList("You have the following items:", actor.Inventory));
+        public void inventory([Actor] Living actor)
+        {         
+            actor.Write("item.inventory", DisplayItemList("You have the following items:", actor.Inventory));
         }
 
         public static string DisplayItemList(string title, ICollection<ItemBase> items)
