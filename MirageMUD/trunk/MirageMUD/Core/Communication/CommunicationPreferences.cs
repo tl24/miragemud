@@ -10,13 +10,13 @@ namespace Mirage.Core.Communication
     /// </summary>
     public class CommunicationPreferences : ICommunicationPreferences
     {
-        private ISet<string> _ignored;
-        private ISet<string> _channels;
+        private System.Collections.Generic.HashSet<string> _ignored;
+        private System.Collections.Generic.HashSet<string> _channels;
 
         public CommunicationPreferences()
         {
-            _ignored = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-            _channels = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _ignored = new System.Collections.Generic.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _channels = new System.Collections.Generic.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         #region ICommunicationPreferences Members
@@ -51,13 +51,13 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// List of ignored players
         /// </summary>
-        public ISet<string> Ignored
+        public System.Collections.Generic.HashSet<string> Ignored
         {
             get { return _ignored; }
             set
             {
                 _ignored.Clear();
-                _ignored.Add(value);
+                _ignored.UnionWith(value);
             }
         }
 
@@ -101,13 +101,13 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// Returns the set of channels that are turned on
         /// </summary>
-        public ISet<string> Channels
+        public System.Collections.Generic.HashSet<string> Channels
         {
             get { return _channels; }
             set
             {
                 _channels.Clear();
-                _channels.Add(value);
+                _channels.UnionWith(value);
             }
         }
 

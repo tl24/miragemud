@@ -29,7 +29,7 @@ namespace Mirage.Core.Communication
         /// <returns>true if being ignored</returns>
         bool IsIgnored(string player);
 
-        ISet<string> Ignored { get; }
+        System.Collections.Generic.HashSet<string> Ignored { get; }
 
         /// <summary>
         /// Toggles the channel on or off
@@ -53,7 +53,7 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// Returns the list of channels that are currently on
         /// </summary>
-        ISet<string> Channels { get; }
+        System.Collections.Generic.HashSet<string> Channels { get; }
 
         /// <summary>
         /// Returns true if the player has the channel on

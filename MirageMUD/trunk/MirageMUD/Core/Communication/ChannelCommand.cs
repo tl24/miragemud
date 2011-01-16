@@ -4,6 +4,7 @@ using System.Text;
 using Mirage.Core.Command;
 using Mirage.Core.Util;
 using Mirage.Core.Data;
+using System.Linq;
 
 namespace Mirage.Core.Communication
 {
@@ -23,7 +24,7 @@ namespace Mirage.Core.Communication
             _messageFactory = messageFactory;
             _name = channel.Name;
             _aliases = new string[0];
-            Mirage.Core.Util.HashSet<string> tmpRoles = new Mirage.Core.Util.HashSet<string>(channel.Roles);
+            var tmpRoles = new System.Collections.Generic.HashSet<string>(channel.Roles);
             _roles = tmpRoles.ToArray();
         }
 
