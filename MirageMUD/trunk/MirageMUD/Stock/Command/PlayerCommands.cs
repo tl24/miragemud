@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.Data;
 using Mirage.Core.Command;
-using Mirage.Stock.Data;
-using Mirage.Stock.Data.Skills;
+using Mirage.Core.Data;
+using Mirage.Core.Data.Skills;
 using Mirage.Core.Communication;
 
 namespace Mirage.Stock.Command

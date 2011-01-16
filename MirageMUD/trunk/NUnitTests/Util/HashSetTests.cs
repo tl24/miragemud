@@ -7,12 +7,13 @@ using Mirage.Core.Util;
 namespace NUnitTests.Util
 {
     [TestFixture]
+    [Obsolete("Remove with Mirage.Core.Util.HashSet")]
     public class HashSetTests
     {
         [Test]
         public void TestAddDuplicates()
         {
-            HashSet<int> set = new HashSet<int>();
+            var set = new Mirage.Core.Util.HashSet<int>();
             set.Add(1);
             set.Add(2);
             set.Add(2);
@@ -24,7 +25,7 @@ namespace NUnitTests.Util
         [Test]
         public void TestCaseInsenstiveStrings()
         {
-            HashSet<string> set = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            var set = new Mirage.Core.Util.HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
             set.Add("aaa");
             set.Add("AAA");
             set.Add("BBB");
@@ -35,7 +36,7 @@ namespace NUnitTests.Util
         [Test]
         public void TestAllInSet()
         {
-            HashSet<int> set = new HashSet<int>();
+            var set = new Mirage.Core.Util.HashSet<int>();
             set.Add(8);
             set.Add(6);
             set.Add(4);
@@ -50,7 +51,7 @@ namespace NUnitTests.Util
         [Test]
         public void TestAnyInSet()
         {
-            HashSet<int> set = new HashSet<int>();
+            var set = new Mirage.Core.Util.HashSet<int>();
             set.Add(8);
             set.Add(6);
             set.Add(4);

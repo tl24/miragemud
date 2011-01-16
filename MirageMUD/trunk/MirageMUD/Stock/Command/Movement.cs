@@ -4,7 +4,7 @@ using System.Text;
 using Mirage.Core.Data;
 using Mirage.Core.Communication;
 using Mirage.Core.Data.Attribute;
-using Mirage.Stock.Data;
+using Mirage.Core.Data;
 using Mirage.Core.Command;
 using Mirage.Core.Data.Containers;
 

@@ -6,7 +6,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using NUnit.Framework;
-using Mirage.Stock.Data;
+using Mirage.Core.Data;
 
 namespace NUnitTests.Data
 {

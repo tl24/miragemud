@@ -8,7 +8,7 @@ using System.Configuration;
 using System.Text.RegularExpressions;
 using Mirage.Core.Util;
 using Mirage.Core.IO;
-using Mirage.Stock.Data;
+using Mirage.Core.Data;
 using System.Security.Principal;
 
 namespace Mirage.Stock.IO

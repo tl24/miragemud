@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Mirage.Core.Data;
 using NUnitTests.Mock;
 using Mirage.Core.Data.Query;
-using Mirage.Stock.Data;
+using Mirage.Core.Data;
 
 namespace NUnitTests.Data.Query
 {

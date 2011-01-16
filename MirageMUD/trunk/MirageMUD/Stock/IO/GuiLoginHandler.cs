@@ -11,7 +11,7 @@ using Mirage.Core.Data.Query;
 using Mirage.Core.IO;
 using Mirage.Core.Communication.BuilderMessages;
 using System.Configuration;
-using Mirage.Stock.Data;
+using Mirage.Core.Data;
 
 namespace Mirage.Stock.IO
 {
