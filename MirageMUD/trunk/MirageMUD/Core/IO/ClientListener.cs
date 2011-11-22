@@ -30,8 +30,8 @@ namespace Mirage.Core.IO
         }
 
         public ClientListener(int port)
-        {
-            _listener = new TcpListener(port);
+        {            
+            _listener = new TcpListener(IPAddress.Loopback, port);
         }
 
         /// <summary>
@@ -77,7 +77,9 @@ namespace Mirage.Core.IO
             TcpClient client = _listener.AcceptTcpClient();
             Socket newSocket = client.Client;
             Logger.Info("Connection from " + client.Client.RemoteEndPoint.ToString());
-            return CreateClient(client);            
+            ITelnetClient telnetClient =  CreateClient(client);
+            telnetClient.Initialize();
+            return telnetClient;
         }
 
         protected abstract ITelnetClient CreateClient(TcpClient client);

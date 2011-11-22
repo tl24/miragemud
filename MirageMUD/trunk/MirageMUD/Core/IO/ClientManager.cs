@@ -109,6 +109,7 @@ namespace Mirage.Core.IO
         /// </summary>
         private void PollForIO()
         {
+            //TODO: Use Socket.DuplicateAndClose for copyover support
             List<Socket> checkRead = new List<Socket>(_sockets);
             List<Socket> checkWrite = new List<Socket>(_sockets);
             List<Socket> checkError = new List<Socket>(_sockets);

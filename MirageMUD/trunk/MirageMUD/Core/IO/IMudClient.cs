@@ -73,5 +73,10 @@ namespace Mirage.Core.IO
         bool IsOpen { get; }
 
         string Address { get; }
+
+        /// <summary>
+        /// Called on a new connection
+        /// </summary>
+        void Initialize();
     }
 }

@@ -18,6 +18,10 @@ namespace NUnitTests
         private bool _outputWritten;
         private List<IMessage> _messages = new List<IMessage>();
 
+        public void Initialize()
+        {
+        }
+
         public void Close()
         {
             IsOpen = false;

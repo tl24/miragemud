@@ -95,6 +95,12 @@ namespace Mirage.Core.IO
 
         public abstract void ReadInput();
 
+        /// <summary>
+        /// Initializes the Client
+        /// </summary>
+        public virtual void Initialize()
+        {
+        }
 
         /// <summary>
         /// Process the input from the connection and Execute a command

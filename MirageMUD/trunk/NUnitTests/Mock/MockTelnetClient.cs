@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.IO;
 using System.IO;
+using Mirage.Telnet;
 
 namespace NUnitTests.Mock
 {
-    public class MockTelnetClient : ClientBase, ITextClient
+    public class MockTelnetClient : ClientBase, ITextClient, IClient, IClientNaws
     {
 
         public MockTelnetClient()
@@ -41,5 +42,42 @@ namespace NUnitTests.Mock
         {
             OutputStream.Write(bytes, 0, bytes.Length);
         }
+
+        int IClientNaws.WindowWidth
+        {
+            get
+            {
+                return this.Options.WindowWidth;
+            }
+            set
+            {
+                this.Options.WindowWidth = value;
+            }
+        }
+
+        int IClientNaws.WindowHeight
+        {
+            get
+            {
+                return this.Options.WindowHeight;
+            }
+            set
+            {
+                this.Options.WindowHeight = value;
+            }
+        }
+
+        bool IClient.EchoOn
+        {
+            get
+            {
+                return this.Options.EchoOn;
+            }
+            set
+            {
+                this.Options.EchoOn = value;
+            }
+        }
+
     }
 }
