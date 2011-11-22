@@ -45,60 +45,7 @@ namespace Mirage.Telnet
         public const byte TELNET_EOF = 236;
     }
 
-    /// <summary>
-    /// Telnet option values
-    /// </summary>
-    public static class TelnetOptions
-    {
-        public const byte TELNET_TELOPT_BINARY = 0;
-        public const byte TELNET_TELOPT_ECHO = 1;
-        public const byte TELNET_TELOPT_RCP = 2;
-        public const byte TELNET_TELOPT_SGA = 3;
-        public const byte TELNET_TELOPT_NAMS = 4;
-        public const byte TELNET_TELOPT_STATUS = 5;
-        public const byte TELNET_TELOPT_TM = 6;
-        public const byte TELNET_TELOPT_RCTE = 7;
-        public const byte TELNET_TELOPT_NAOL = 8;
-        public const byte TELNET_TELOPT_NAOP = 9;
-        public const byte TELNET_TELOPT_NAOCRD = 10;
-        public const byte TELNET_TELOPT_NAOHTS = 11;
-        public const byte TELNET_TELOPT_NAOHTD = 12;
-        public const byte TELNET_TELOPT_NAOFFD = 13;
-        public const byte TELNET_TELOPT_NAOVTS = 14;
-        public const byte TELNET_TELOPT_NAOVTD = 15;
-        public const byte TELNET_TELOPT_NAOLFD = 16;
-        public const byte TELNET_TELOPT_XASCII = 17;
-        public const byte TELNET_TELOPT_LOGOUT = 18;
-        public const byte TELNET_TELOPT_BM = 19;
-        public const byte TELNET_TELOPT_DET = 20;
-        public const byte TELNET_TELOPT_SUPDUP = 21;
-        public const byte TELNET_TELOPT_SUPDUPOUTPUT = 22;
-        public const byte TELNET_TELOPT_SNDLOC = 23;
-        public const byte TELNET_TELOPT_TTYPE = 24;
-        public const byte TELNET_TELOPT_EOR = 25;
-        public const byte TELNET_TELOPT_TUID = 26;
-        public const byte TELNET_TELOPT_OUTMRK = 27;
-        public const byte TELNET_TELOPT_TTYLOC = 28;
-        public const byte TELNET_TELOPT_3270REGIME = 29;
-        public const byte TELNET_TELOPT_X3PAD = 30;
-        public const byte TELNET_TELOPT_NAWS = 31;
-        public const byte TELNET_TELOPT_TSPEED = 32;
-        public const byte TELNET_TELOPT_LFLOW = 33;
-        public const byte TELNET_TELOPT_LINEMODE = 34;
-        public const byte TELNET_TELOPT_XDISPLOC = 35;
-        public const byte TELNET_TELOPT_ENVIRON = 36;
-        public const byte TELNET_TELOPT_AUTHENTICATION = 37;
-        public const byte TELNET_TELOPT_ENCRYPT = 38;
-        public const byte TELNET_TELOPT_NEW_ENVIRON = 39;
-        public const byte TELNET_TELOPT_MSSP = 70;
-        public const byte TELNET_TELOPT_COMPRESS2 = 86;
-        public const byte TELNET_TELOPT_ZMP = 93;
-        public const byte TELNET_TELOPT_EXOPL = 255;
-
-        public const byte TELNET_TELOPT_MCCP2 = 86;
-    }
-
-    public static class TelnetSubOptionCodes
+   public static class TelnetSubOptionCodes
     {
         /*Protocol codes for TERMINAL-TYPE commands. */
         public const byte TELNET_TTYPE_IS = 0;

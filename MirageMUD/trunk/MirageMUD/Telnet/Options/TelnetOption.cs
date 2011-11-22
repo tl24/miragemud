@@ -5,7 +5,11 @@ using System.Text;
 
 namespace Mirage.Telnet
 {
-    internal class TelnetOption 
+    /// <summary>
+    /// Base telnet option class which handles state for a single option.  Derived classes
+    /// provide custom behavior for specific options such as sub negotiation
+    /// </summary>
+    public class TelnetOption 
     {
         private int state = 0;
 
@@ -53,8 +57,14 @@ namespace Mirage.Telnet
             }
         }
 
+        /// <summary>
+        /// Called when the state of an option changes
+        /// </summary>
+        /// <param name="enabled">true if the option was enabled, false if disabled</param>
+        /// <param name="local">true if the change in state is for the local side of the option or remote</param>
         public virtual void OnOptionChanged(bool enabled, bool local)
         {
+            Parent.OnOptionStateChanged(new OptionStateChangedEventArgs(OptionValue, enabled, local));
         }
 
         protected void SendResponse(TelnetCodes optionCode)
@@ -71,55 +81,4 @@ namespace Mirage.Telnet
         }
     }
 
-    internal class EchoOption : TelnetOption
-    {
-        public EchoOption(TelnetOptionProcessor parent) : base(parent, TelnetCodes.ECHO)
-        {
-        }
-
-        public override void OnOptionChanged(bool enabled, bool local)
-        {
-            if (local)
-            {
-                Parent.Client.EchoOn = enabled;
-            }
-        }
-    }
-
-    internal class NawsOption : TelnetOption
-    {
-        private bool _enabled;
-
-        public NawsOption(TelnetOptionProcessor parent)
-            : base(parent, TelnetCodes.WINDOW_SIZE)
-        {
-            _enabled = parent.Client is IClientNaws;
-            if (_enabled)
-            {
-                parent.Logger.Debug("Naws processing enabled");
-            }
-            else
-            {
-                parent.Logger.Debug("Naws processing disabled, the client does not implement ITelnetClientNaws");
-            }
-        }
-
-        public override void OnSubNegotiation(byte[] subData)
-        {
-            if (subData.Length == 4)
-            {
-                // data should be transmitted in big endian
-                // if our system is little endian we need to convert before parsing
-                if (BitConverter.IsLittleEndian)
-                {
-                    Array.Reverse(subData, 0, 2);
-                    Array.Reverse(subData, 2, 2);
-                }
-                IClientNaws nawsClient = (IClientNaws)Parent.Client;
-                nawsClient.WindowWidth = BitConverter.ToInt16(subData, 0);
-                nawsClient.WindowHeight = BitConverter.ToInt16(subData, 2);
-            }
-        }
-        
-    }
 }

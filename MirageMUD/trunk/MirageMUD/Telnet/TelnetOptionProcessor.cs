@@ -2,9 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mirage.Telnet.Options;
 
 namespace Mirage.Telnet
 {
+    /// <summary>
+    /// Base event class for subnegotiation
+    /// </summary>
+    public class SubNegotiationEventArgs : System.EventArgs
+    {
+        public SubNegotiationEventArgs(byte option)
+        {
+            this.Option = option;
+        }
+
+        public byte Option { get; protected set; }
+    }
+
+    /// <summary>
+    /// Event sent when the state of an option changes
+    /// </summary>
+    public class OptionStateChangedEventArgs : System.EventArgs    
+    {
+        public OptionStateChangedEventArgs(byte option, bool enabled, bool isLocal)
+        {
+            this.Option = option;
+            this.Enabled = enabled;
+            this.IsLocal = IsLocal;
+        }
+
+        public byte Option { get; protected set; }
+        public bool Enabled { get; protected set; }
+        public bool IsLocal { get; protected set; }
+    }
+
     public class TelnetOptionProcessor
     {
         byte[] inputBuffer;
@@ -18,6 +49,9 @@ namespace Mirage.Telnet
         private List<TelnetOption> options = new List<TelnetOption>();
         private TelnetState currentState;
 
+        public event EventHandler<SubNegotiationEventArgs> SubNegotiationOccurred;
+        public event EventHandler<OptionStateChangedEventArgs> OptionStateChanged;
+
         public TelnetOptionProcessor(OptionSupportList optionSupport, IClient client, Castle.Core.Logging.ILogger logger)
         {
             this.OptionSupport = optionSupport;
@@ -29,7 +63,6 @@ namespace Mirage.Telnet
             states.Add(new TelnetSubNegotiationState(this));
             states.Add(new TelnetUnknownSequenceState(this));
 
-            options.Add(new EchoOption(this));
             options.Add(new NawsOption(this));
             SetState<TelnetTextState>();
         }
@@ -57,20 +90,6 @@ namespace Mirage.Telnet
                 return Encoding.ASCII.GetChars(outputBuffer, 0, outCount);
             else
                 return new char[0];
-        }
-
-        /// <summary>
-        /// Looks behind in the byte sequence
-        /// </summary>
-        /// <param name="numPlaces">the number of places to look back</param>
-        /// <returns>the byte at the position</returns>
-        internal byte LookBehind(int numPlaces)
-        {
-            int nextIndex = index - numPlaces;
-            if (nextIndex >= 0)
-                return inputBuffer[nextIndex];
-            else
-                return 0;
         }
 
         internal void AppendLog(string name)
@@ -140,6 +159,18 @@ namespace Mirage.Telnet
         internal void SendBytes(byte[] data)
         {
             Client.Write(data);
+        }
+
+        internal void OnSubNegotiationOccurred(SubNegotiationEventArgs args)
+        {
+            if (SubNegotiationOccurred != null)
+                SubNegotiationOccurred(this, args);
+        }
+
+        internal void OnOptionStateChanged(OptionStateChangedEventArgs args)
+        {
+            if (OptionStateChanged != null)
+                OptionStateChanged(this, args);
         }
 
         internal void SendNegotiate(byte cmd, byte telopt)
@@ -228,21 +259,6 @@ namespace Mirage.Telnet
                     break;
             }
 
-        }
-
-        /// <summary>
-        /// Initiates telnet option negotiation on a new client connection.  If you want
-        /// the server to start negotiation call this method on a new connection, otherwise
-        /// no negotiation will occur unless the client requests it
-        /// </summary>
-        public void InitiateNegotiation()
-        {
-            // just do NAWS for now
-            if (Client is IClientNaws)
-            {
-                TelnetNegotiate(TelnetCommands.TELNET_DO, TelnetOptions.TELNET_TELOPT_NAWS);                
-            }
-            TelnetNegotiate(TelnetCommands.TELNET_DO, TelnetOptions.TELNET_TELOPT_ECHO);
         }
     }
 
