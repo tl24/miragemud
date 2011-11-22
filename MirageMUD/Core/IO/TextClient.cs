@@ -17,20 +17,10 @@ namespace Mirage.Core.IO
     /// <summary>
     ///     Handles Server for a player
     /// </summary>
-    public class TextClient : ClientBase, ITextClient, IClient
+    public class TextClient : ClientBase, ITextClient
     {
 
         protected NetworkStream socketStream;
-
-        /// <summary>
-        ///     A reader for the tcp client's stream
-        /// </summary>
-        protected StreamReader reader;
-
-        /// <summary>
-        ///     A writer for the tcp client's stream
-        /// </summary>
-        protected StreamWriter writer;
 
         /// <summary>
         ///     The lines that have been read from the socket
@@ -61,7 +51,7 @@ namespace Mirage.Core.IO
         /// <summary>
         ///     The lines that are waiting to be written to the socket
         /// </summary>
-        private ISynchronizedQueue<OutputData> outputQueue;
+        private ISynchronizedQueue<string> outputQueue;
 
         protected bool checkDisconnect = false;
 
@@ -75,10 +65,8 @@ namespace Mirage.Core.IO
         public TextClient(TcpClient client) : base(client)
         {
             socketStream = _client.GetStream();
-            reader = new StreamReader(socketStream);
-            writer = new StreamWriter(socketStream);
             inputQueue = new SynchronizedQueue<string>();
-            outputQueue = new SynchronizedQueue<OutputData>();
+            outputQueue = new SynchronizedQueue<string>();
             Options = new TextClientOptions();
             inputBuffer = new char[512];
             bufferLength = 0;
@@ -88,12 +76,28 @@ namespace Mirage.Core.IO
         {
             var telnetOpts = new OptionSupportList(new[] { 
                 new OptionSupportEntry(OptionCodes.NAWS, true, false),
-                new OptionSupportEntry(OptionCodes.ECHO, true, true)
+                new OptionSupportEntry(OptionCodes.ECHO, true, true),
+                new OptionSupportEntry(OptionCodes.NEW_ENVIRON, true, true),
+                new OptionSupportEntry(OptionCodes.TTYPE, true, true)
             });
-            tnHandler = new TelnetOptionProcessor(telnetOpts, this, Logger);
+            tnHandler = new TelnetOptionProcessor(telnetOpts, socketStream, Logger);
             tnHandler.SubNegotiationOccurred += new EventHandler<SubNegotiationEventArgs>(tnHandler_SubNegotiationOccurred);
-            tnHandler.TelnetNegotiate(TelnetCommands.TELNET_DO, OptionCodes.NAWS);
+            tnHandler.OptionStateChanged += new EventHandler<OptionStateChangedEventArgs>(tnHandler_OptionStateChanged);
+            tnHandler.TelnetNegotiate(TelnetCommands.DO, OptionCodes.NAWS);
+            tnHandler.TelnetNegotiate(TelnetCommands.DO, OptionCodes.TTYPE);
+            tnHandler.TelnetNegotiate(TelnetCommands.WILL, OptionCodes.SGA);
+            tnHandler.TelnetNegotiate(TelnetCommands.WILL, OptionCodes.ECHO);
             Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));            
+        }
+
+        void tnHandler_OptionStateChanged(object sender, OptionStateChangedEventArgs e)
+        {
+            /*
+            if (e.Option == OptionCodes.TTYPE && e.Enabled)
+            {
+                this.tnHandler.SendRawBytes(
+            }
+             */
         }
 
         void tnHandler_SubNegotiationOccurred(object sender, SubNegotiationEventArgs e)
@@ -104,6 +108,13 @@ namespace Mirage.Core.IO
                     NawsEventArgs ne = (NawsEventArgs) e;
                     Options.WindowHeight = ne.Height;
                     Options.WindowWidth = ne.Width;
+                    break;
+                case OptionCodes.TTYPE:
+                    TermTypeEventArgs tte = (TermTypeEventArgs)e;
+                    if (tte.Option == TelnetSubOptionCodes.TELNET_TTYPE_IS)
+                    {
+                        Options.TerminalType = tte.Name;
+                    }
                     break;
             }
         }
@@ -180,9 +191,7 @@ namespace Mirage.Core.IO
         private int ReadFromSocket(int available)
         {
             available = Math.Min(inputBuffer.Length - bufferLength, available);
-            byte[] inBuf = new byte[available];
-            int bRead = socketStream.Read(inBuf, 0, inBuf.Length);
-            char[] outBuf = tnHandler.ProcessBuffer(inBuf, bRead);
+            char[] outBuf = tnHandler.Read(available);
             Array.Copy(outBuf, 0, inputBuffer, bufferLength, outBuf.Length);
             return outBuf.Length;
         }
@@ -238,18 +247,11 @@ namespace Mirage.Core.IO
         {
             if (_closed == 0)
             {
-                outputQueue.Enqueue(new OutputData(message.Render()));
+                outputQueue.Enqueue(message.Render());
                 OutputWritten = true;
             }
         }
 
-        public void Write(byte[] bytes)
-        {
-            if (_closed == 0)
-            {
-                outputQueue.Enqueue(new OutputData(bytes));
-            }
-        }
         /// <summary>
         ///     Process the output waiting in the output buffer.  This
         /// Data will be sent to the socket.
@@ -258,14 +260,13 @@ namespace Mirage.Core.IO
         {
             bool bProcess = false;
             while (outputQueue.Count > 0) {
-                OutputData data = outputQueue.Dequeue();
-                byte[] bytes = data.Bytes;
-                this.socketStream.Write(bytes, 0, bytes.Length);
+                string data = outputQueue.Dequeue();
+                tnHandler.Write(data);
                 bProcess = true;
             }
             if (bProcess)
             {
-                writer.Flush();
+                ;
             }
             else
             {
@@ -273,7 +274,8 @@ namespace Mirage.Core.IO
                 {
                     // if we read 0 bytes in the Read function, then try to send something to see if
                     // the connection is closed
-                    this._client.Client.Send(new byte[1]);
+                    tnHandler.SendTestConnected();
+                    //this.socketStream.Write(new byte[1],0,1);
                     if (!this._client.Connected)
                         Close();
                 }
@@ -283,40 +285,20 @@ namespace Mirage.Core.IO
         public override void Dispose()
         {
             base.Dispose();
-            reader.Dispose();
-            writer.Dispose();
         }
 
         internal struct OutputData
         {
             private object data;
-            private bool isString;
             public OutputData(string data)
             {
                 this.data = data;
-                this.isString = true;
-            }
-            public OutputData(byte[] data)
-            {
-                this.data = data;
-                this.isString = false;
-            }
-
-            public OutputData(object data, bool isString)
-            {
-                this.data = data;
-                this.isString = isString;
-            }
-
-            public bool IsString
-            {
-                get { return this.isString; }
             }
 
             public byte[] Bytes
             {
                 get {
-                    if (IsString)
+                    if (this.data is string)
                         return Encoding.ASCII.GetBytes((string)this.data);
                     else
                         return (byte[])this.data; 

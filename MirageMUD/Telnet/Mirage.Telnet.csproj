@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -50,13 +50,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EnumsAndConstants.cs" />
-    <Compile Include="IClient.cs" />
     <Compile Include="OptionSupportEntry.cs" />
     <Compile Include="OptionSupportList.cs" />
+    <Compile Include="Options\EnvironOption.cs" />
     <Compile Include="Options\NawsOption.cs" />
     <Compile Include="Options\OptionCodes.cs" />
+    <Compile Include="Options\TermTypeOption.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TelnetCodes.cs" />
+    <Compile Include="TelnetCommands.cs" />
     <Compile Include="TelnetOptionProcessor.cs" />
     <Compile Include="Options\TelnetOption.cs" />
     <Compile Include="TelnetState.cs" />

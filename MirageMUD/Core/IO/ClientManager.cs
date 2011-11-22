@@ -33,6 +33,8 @@ namespace Mirage.Core.IO
         private IList<Thread> threads;
         private IList<Socket> _sockets;
         private Hashtable _clientMap;
+        private int _processCount;
+        private ManualResetEvent _allProcessedEvent = new ManualResetEvent(false);
 
         /// <summary>
         /// Creates a new instance of the ClientManager
@@ -116,26 +118,36 @@ namespace Mirage.Core.IO
 
             Socket.Select(checkRead, checkWrite, checkError, 100000);
 
+            List<ClientOperation> ops = new List<ClientOperation>(checkRead.Count + checkWrite.Count + checkError.Count);
+
             foreach (Socket s in checkRead)
             {
                 object client = _clientMap[s];
                 if (client is ClientListener)
-                    workItems.Enqueue(new ClientOperation(client, OpType.Accept));
+                    ops.Add(new ClientOperation(client, OpType.Accept));
                 else
-                    workItems.Enqueue(new ClientOperation(client, OpType.Read));
+                    ops.Add(new ClientOperation(client, OpType.Read));
             }
             foreach (Socket s in checkWrite)
             {
                 object client = _clientMap[s];
-                workItems.Enqueue(new ClientOperation(client, OpType.Write));
+                ops.Add(new ClientOperation(client, OpType.Write));
             }
             foreach (Socket s in checkError)
             {
                 object client = _clientMap[s];
-                workItems.Enqueue(new ClientOperation(client, OpType.Error));
+                ops.Add(new ClientOperation(client, OpType.Error));
             }
-            while (workItems.Count > 0)
-                Thread.Sleep(100);
+
+            _processCount = ops.Count;
+            if (_processCount > 0)
+            {
+                _allProcessedEvent.Reset();
+                foreach (ClientOperation op in ops)
+                    workItems.Enqueue(op);
+
+                _allProcessedEvent.WaitOne();
+            }
         }
 
         private void StartListeners()
@@ -226,15 +238,20 @@ namespace Mirage.Core.IO
                         // error, close the connection, main thread will clean it up
                         ((ITelnetClient)op.Client).Close();
                 }
+                Interlocked.Decrement(ref _processCount);
+                if (_processCount == 0)
+                {
+                    _allProcessedEvent.Set();
+                }
             }
         }
 
         private enum OpType
         {
-            Accept,
-            Read,
-            Write,
-            Error
+            Accept = 1,
+            Read = 2,
+            Write = 4,
+            Error = 8
         }
 
         private struct ClientOperation
