@@ -1,6 +1,6 @@
 ﻿namespace Mirage.Telnet
 {
-    public enum TelnetCodes : byte
+    public enum TelnetCommands : byte
     {
         /*
          * Main Codes
@@ -40,18 +40,5 @@
         /// Subnegotiation end, preceded by IAC
         /// </summary>
         SE = 240,
-        /*
-         * Option Codes
-         */
-        ECHO = 1,
-        /// <summary>
-        /// Supress Go-Ahead
-        /// </summary>
-        SUPRESS_GA = 3,
-        TERMINAL_TYPE = 24,
-        WINDOW_SIZE = 31,
-        TERMINAL_SPEED = 32,
-        ENV_VARIABLES = 36,
-        NEW_ENVIRONMENT = 39
     }
 }

@@ -45,6 +45,7 @@ namespace Mirage.Core.Util
         private int tail;
         // Object used to synchronize the queue.
         private readonly object syncRoot;
+
         #endregion
 
         #region Constructors
@@ -156,8 +157,11 @@ namespace Mirage.Core.Util
                 buffer[tail] = value;
                 tail = (tail + 1) % size;
                 count++;
-                if (count == 1) // Could have blocking Dequeue thread(s).
+
+                if (count == 1)
+                { // Could have blocking Dequeue thread(s).
                     Monitor.PulseAll(syncRoot);
+                }
             }
         }
 

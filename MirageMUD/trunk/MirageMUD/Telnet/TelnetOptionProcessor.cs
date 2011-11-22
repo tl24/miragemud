@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Mirage.Telnet.Options;
+using System.IO;
 
 namespace Mirage.Telnet
 {
@@ -36,11 +37,17 @@ namespace Mirage.Telnet
         public bool IsLocal { get; protected set; }
     }
 
-    public class TelnetOptionProcessor
+    public class TelnetOptionProcessor : IDisposable
     {
-        byte[] inputBuffer;
-        byte[] outputBuffer;
-        int outCount;
+        private byte[] processedInput;
+        private int processedInputCount;
+        private Stream inputStream;
+        private Stream outputStream;
+        private Encoding encoding = Encoding.ASCII;
+
+        private static readonly char[] emptyChars = new char[0];
+        private static readonly byte[] subNegotiateStart = new byte [] { (byte)TelnetCommands.IAC, (byte)TelnetCommands.SB };
+        private static readonly byte[] subNegotiateEnd = new byte[] { (byte)TelnetCommands.IAC, (byte)TelnetCommands.SE };
         private string logString = string.Empty;
         
         int index;
@@ -52,44 +59,105 @@ namespace Mirage.Telnet
         public event EventHandler<SubNegotiationEventArgs> SubNegotiationOccurred;
         public event EventHandler<OptionStateChangedEventArgs> OptionStateChanged;
 
-        public TelnetOptionProcessor(OptionSupportList optionSupport, IClient client, Castle.Core.Logging.ILogger logger)
+        public TelnetOptionProcessor(OptionSupportList optionSupport, Stream ioStream, Castle.Core.Logging.ILogger logger)
+            : this(optionSupport, ioStream, ioStream, logger)
+        {
+        }
+
+        public TelnetOptionProcessor(OptionSupportList optionSupport, Stream input, Stream output, Castle.Core.Logging.ILogger logger)
         {
             this.OptionSupport = optionSupport;
-            this.Client = client;
+            this.inputStream = input;
+            this.outputStream = output;
             this.Logger = logger;
+            InitializeStates();
+
+            InitializeOptions();
+            SetState<TelnetTextState>();
+        }
+
+        private void InitializeOptions()
+        {
+            options.Add(new NawsOption(this));
+            options.Add(new EnvironOption(this));
+            options.Add(new TermTypeOption(this));
+        }
+
+        private void InitializeStates()
+        {
             states.Add(new TelnetTextState(this));
             states.Add(new TelnetIACState(this));
             states.Add(new TelnetNegotiateState(this));
             states.Add(new TelnetSubNegotiationState(this));
             states.Add(new TelnetUnknownSequenceState(this));
-
-            options.Add(new NawsOption(this));
-            SetState<TelnetTextState>();
         }
-
-        public IClient Client { get; private set; }
 
         protected internal Castle.Core.Logging.ILogger Logger { get; set; }
 
         internal OptionSupportList OptionSupport { get; private set; }
 
-        public char[] ProcessBuffer(byte[] buffer)
+        public char[] Read(int availableBytes)
         {
-            return ProcessBuffer(buffer, buffer.Length);
+            // TODO: reuse buffers
+            byte[] inBuf = new byte[availableBytes];
+            int bRead = 0;
+            lock (inputStream)
+            {
+                bRead = inputStream.Read(inBuf, 0, inBuf.Length);
+            }
+            return ProcessInput(inBuf, bRead);
         }
-        public char[] ProcessBuffer(byte[] buffer, int length)
+
+        protected char[] ProcessInput(byte[] buffer)
         {
-            this.inputBuffer = buffer;
-            outputBuffer = new byte[length];
-            outCount = 0;
+            return ProcessInput(buffer, buffer.Length);
+        }
+        protected char[] ProcessInput(byte[] buffer, int length)
+        {
+            byte[] inputBuffer = buffer;
+            processedInput = new byte[length];
+            processedInputCount = 0;
             for (index = 0; index < length; index++)
             {
                 currentState.ProcessByte(inputBuffer[index]);
             }
-            if (outCount > 0)
-                return Encoding.ASCII.GetChars(outputBuffer, 0, outCount);
+            if (processedInputCount > 0)
+                return encoding.GetChars(processedInput, 0, processedInputCount);
             else
-                return new char[0];
+                return emptyChars;
+        }
+
+        /// <summary>
+        /// Convert entire byte array into the string using the proper encoding
+        /// </summary>
+        /// <param name="bytes">byte array to convert</param>
+        /// <returns>string</returns>
+        internal string BytesToString(byte[] bytes)
+        {
+            return BytesToString(bytes, 0, bytes.Length);
+        }
+
+        /// <summary>
+        /// Convert the specified number bytes into the string using the proper encoding
+        /// </summary>
+        /// <param name="bytes">byte array</param>
+        /// <param name="length">number of bytes to convert</param>
+        /// <returns>string</returns>
+        internal string BytesToString(byte[] bytes, int length)
+        {
+            return BytesToString(bytes, 0, length);
+        }
+
+        /// <summary>
+        /// Convert the specified bytes into the string using the proper encoding
+        /// </summary>
+        /// <param name="bytes">byte array</param>
+        /// <param name="offset">the starting offset to start the conversion</param>
+        /// <param name="length">number of bytes to convert</param>
+        /// <returns>string</returns>
+        internal string BytesToString(byte[] bytes, int offset, int length)
+        {
+            return encoding.GetString(bytes, offset, length);
         }
 
         internal void AppendLog(string name)
@@ -142,7 +210,7 @@ namespace Mirage.Telnet
 
         internal TelnetOption LookupOption(byte optionValue)
         {
-            TelnetOption option = options.Find((o) => (o.OptionValue == optionValue));
+            TelnetOption option = options.Find((o) => (o.OptionCode == optionValue));
             if (option == null)
                 option = new TelnetOption(this, optionValue);
             return option;
@@ -151,16 +219,39 @@ namespace Mirage.Telnet
         /// Adds a byte of data to the output buffer
         /// </summary>
         /// <param name="data"></param>
-        internal void AddOutputByte(byte data)
+        internal void AddProcessedByte(byte data)
         {
-            outputBuffer[outCount++] = data;
+            processedInput[processedInputCount++] = data;
         }
 
-        internal void SendBytes(byte[] data)
+        public void SendTestConnected()
         {
-            Client.Write(data);
+            // for now send null...could send NOP
+            WriteRaw(new byte[1]);
         }
 
+        public void Write(string text)
+        {
+            // for now, don't worry about escaping
+            byte[] data = encoding.GetBytes(text);
+            WriteRaw(data);
+        }
+
+        public void WriteRaw(byte[] data)
+        {
+            lock (outputStream)
+            {
+                //TODO: buffering?
+                outputStream.Write(data, 0, data.Length);
+            }
+        }
+
+        internal void SendSubNegotiate(byte[] data)
+        {
+            WriteRaw(subNegotiateStart);
+            WriteRaw(data);
+            WriteRaw(subNegotiateEnd);
+        }
         internal void OnSubNegotiationOccurred(SubNegotiationEventArgs args)
         {
             if (SubNegotiationOccurred != null)
@@ -173,10 +264,15 @@ namespace Mirage.Telnet
                 OptionStateChanged(this, args);
         }
 
-        internal void SendNegotiate(byte cmd, byte telopt)
+        internal void SendNegotiate(TelnetCommands cmd, byte telopt)
         {
             Logger.DebugFormat("Sending IAC {0:g} {1:g}", cmd, telopt);
-            SendBytes(new byte[] { TelnetCommands.TELNET_IAC, cmd, telopt });
+            WriteRaw(new byte[] { (byte) TelnetCommands.IAC, (byte) cmd, telopt });
+        }
+
+        internal void OnProtocolError(string errorText)
+        {
+            LogLine(errorText);
         }
 
         /// <summary>
@@ -184,19 +280,19 @@ namespace Mirage.Telnet
         /// </summary>
         /// <param name="cmd">the command: DO, DONT, WILL, WONT</param>
         /// <param name="telopt">The telnet option</param>
-        public void TelnetNegotiate(byte cmd, byte telopt)
+        public void TelnetNegotiate(TelnetCommands cmd, byte telopt)
         {
             // get current option states
             TelnetOption option = LookupOption(telopt);
             switch (cmd)
             {
                 // advertise willingess to support an option
-                case TelnetCommands.TELNET_WILL:
+                case TelnetCommands.WILL:
                     switch (option.LocalState)
                     {
                         case QState.Q_NO:
                             option.LocalState = QState.Q_WANTYES;
-                            SendNegotiate(TelnetCommands.TELNET_WILL, telopt);
+                            SendNegotiate(TelnetCommands.WILL, telopt);
                             break;
                         case QState.Q_WANTNO:
                             option.LocalState = QState.Q_WANTNO_OP;
@@ -208,12 +304,12 @@ namespace Mirage.Telnet
                     break;
 
                 // force turn-off of locally enabled option
-                case TelnetCommands.TELNET_WONT:
+                case TelnetCommands.WONT:
                     switch (option.LocalState)
                     {
                         case QState.Q_YES:
                             option.LocalState = QState.Q_WANTNO;
-                            SendNegotiate(TelnetCommands.TELNET_WONT, telopt);
+                            SendNegotiate(TelnetCommands.WONT, telopt);
                             break;
                         case QState.Q_WANTYES:
                             option.LocalState = QState.Q_WANTYES_OP;
@@ -225,12 +321,12 @@ namespace Mirage.Telnet
                     break;
 
                 // ask remote end to enable an option
-                case TelnetCommands.TELNET_DO:
+                case TelnetCommands.DO:
                     switch (option.RemoteState)
                     {
                         case QState.Q_NO:
                             option.RemoteState = QState.Q_WANTYES;
-                            SendNegotiate(TelnetCommands.TELNET_DO, telopt);
+                            SendNegotiate(TelnetCommands.DO, telopt);
                             break;
                         case QState.Q_WANTNO:
                             option.RemoteState = QState.Q_WANTNO_OP;
@@ -242,12 +338,12 @@ namespace Mirage.Telnet
                     break;
 
                 // demand remote end disable an option
-                case TelnetCommands.TELNET_DONT:
+                case TelnetCommands.DONT:
                     switch (option.RemoteState)
                     {
                         case QState.Q_YES:
                             option.RemoteState = QState.Q_WANTNO;
-                            SendNegotiate(TelnetCommands.TELNET_DONT, telopt);
+                            SendNegotiate(TelnetCommands.DONT, telopt);
                             break;
                         case QState.Q_WANTYES:
                             option.RemoteState = QState.Q_WANTYES_OP;
@@ -260,6 +356,15 @@ namespace Mirage.Telnet
             }
 
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 
 }

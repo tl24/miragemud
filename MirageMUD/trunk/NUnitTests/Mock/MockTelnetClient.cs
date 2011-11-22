@@ -7,7 +7,7 @@ using Mirage.Telnet;
 
 namespace NUnitTests.Mock
 {
-    public class MockTelnetClient : ClientBase, ITextClient, IClient
+    public class MockTelnetClient : ClientBase, ITextClient
     {
 
         public MockTelnetClient()
@@ -38,7 +38,7 @@ namespace NUnitTests.Mock
             Write(Encoding.ASCII.GetBytes(message.Render()));
         }
 
-        public void Write(byte[] bytes)
+        private void Write(byte[] bytes)
         {
             OutputStream.Write(bytes, 0, bytes.Length);
         }

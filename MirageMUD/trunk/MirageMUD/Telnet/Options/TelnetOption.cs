@@ -13,17 +13,17 @@ namespace Mirage.Telnet
     {
         private int state = 0;
 
-        public TelnetOption(TelnetOptionProcessor parent, TelnetCodes optionValue) : this(parent, (byte) optionValue)
+        public TelnetOption(TelnetOptionProcessor parent, TelnetCommands optionCode) : this(parent, (byte) optionCode)
         {
         }
 
-        public TelnetOption(TelnetOptionProcessor parent, byte optionValue)
+        public TelnetOption(TelnetOptionProcessor parent, byte optionCode)
         {
             this.Parent = parent;
-            this.OptionValue = optionValue;
+            this.OptionCode = optionCode;
         }
 
-        public byte OptionValue { get; private set; }
+        public byte OptionCode { get; private set; }
 
         public TelnetOptionProcessor Parent { get; private set; }
 
@@ -64,19 +64,19 @@ namespace Mirage.Telnet
         /// <param name="local">true if the change in state is for the local side of the option or remote</param>
         public virtual void OnOptionChanged(bool enabled, bool local)
         {
-            Parent.OnOptionStateChanged(new OptionStateChangedEventArgs(OptionValue, enabled, local));
+            Parent.OnOptionStateChanged(new OptionStateChangedEventArgs(OptionCode, enabled, local));
         }
 
-        protected void SendResponse(TelnetCodes optionCode)
+        protected void SendResponse(TelnetCommands optionCode)
         {
-            Parent.LogLine(OptionValue.ToString("d"));
-            Parent.LogLine(string.Format("Sending IAC {0:g} {1:d}", optionCode, OptionValue));
-            Parent.SendBytes(new byte[] { (byte)TelnetCodes.IAC, (byte)optionCode, OptionValue });
+            Parent.LogLine(OptionCode.ToString("d"));
+            Parent.LogLine(string.Format("Sending IAC {0:g} {1:d}", optionCode, OptionCode));
+            Parent.WriteRaw(new byte[] { (byte)TelnetCommands.IAC, (byte)optionCode, OptionCode });
         }
 
         public virtual void OnSubNegotiation(byte[] subData)
         {
-            Parent.LogLine(string.Format("Option {0} does not support sub negotiation.  Received Byte Data: {1}", OptionValue, subData));
+            Parent.LogLine(string.Format("Option {0} does not support sub negotiation.  Received Byte Data: {1}", OptionCode, subData));
 
         }
     }

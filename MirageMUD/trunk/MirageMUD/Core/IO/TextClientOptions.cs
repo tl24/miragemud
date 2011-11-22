@@ -14,5 +14,6 @@ namespace Mirage.Core.IO
         public int WindowHeight { get; set; }
         public int WindowWidth { get; set; }
 
+        public string TerminalType { get; set; }
     }
 }
