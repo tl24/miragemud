@@ -16,7 +16,7 @@ namespace Mirage.Core.IO
     /// <summary>
     ///     Handles Server for a player
     /// </summary>
-    public class TextClient : ClientBase
+    public class TextClient : ClientBase, ITextClient
     {
 
         protected NetworkStream socketStream;
@@ -64,7 +64,7 @@ namespace Mirage.Core.IO
 
         protected bool checkDisconnect = false;
 
-        private TelnetHandler tnHandler;
+        private TelnetOptionProcessor tnHandler;
 
         /// <summary>
         ///     Create a descriptor to read and write to the given
@@ -78,11 +78,13 @@ namespace Mirage.Core.IO
             writer = new StreamWriter(socketStream);
             inputQueue = new SynchronizedQueue<string>();
             outputQueue = new SynchronizedQueue<OutputData>();
+            Options = new TextClientOptions();
             Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));
             inputBuffer = new char[512];
             bufferLength = 0;
-            
         }
+
+        public TextClientOptions Options { get; private set; }
 
         /// <summary>
         ///     Read from the descriptor.  Returns True if successful.
@@ -154,7 +156,7 @@ namespace Mirage.Core.IO
         private int ReadFromSocket(int available)
         {
             if (tnHandler == null) {
-                tnHandler = new TelnetHandler(this, Logger);
+                tnHandler = new TelnetOptionProcessor(this, Logger);
             }
             available = Math.Min(inputBuffer.Length - bufferLength, available);
             byte[] inBuf = new byte[available];
@@ -220,7 +222,7 @@ namespace Mirage.Core.IO
             }
         }
 
-        private void WriteBytes(byte[] bytes)
+        public void Write(byte[] bytes)
         {
             if (_closed == 0)
             {
@@ -301,117 +303,5 @@ namespace Mirage.Core.IO
             }
         }
 
-        internal class TelnetHandler
-        {
-            TextClient client;
-            byte[] inputBuffer;
-            byte[] outputBuffer;
-            Action<byte> currentProcessor;
-            int outCount;
-            private string logString = string.Empty;
-            Castle.Core.Logging.ILogger logger;
-            internal TelnetHandler(TextClient client, Castle.Core.Logging.ILogger logger)
-            {
-                this.client = client;
-                this.logger = logger;
-                this.currentProcessor = ProcessText;
-            }
-
-            internal char[] ProcessBuffer(byte[] buffer, int length)
-            {
-                this.inputBuffer = buffer;
-                outputBuffer = new byte[length];
-                outCount = 0;
-                for (int i = 0; i < length; i++)
-                {
-                    currentProcessor(inputBuffer[i]);
-                }
-                if (outCount > 0)
-                    return Encoding.ASCII.GetChars(outputBuffer, 0, outCount);
-                else
-                    return new char[0];
-            }
-
-            private void ProcessText(byte data)
-            {
-                if (data == (byte)TelnetCodes.IAC)
-                {
-                    currentProcessor = ProcessIAC;
-                    logString += "IAC ";
-                }
-                else
-                {
-                    AddOutputByte(data);
-                }
-            }
-
-            private void ProcessIAC(byte data)
-            {
-                switch ((TelnetCodes)data)
-                {
-                    case TelnetCodes.IAC:
-                        AddOutputByte(data);
-                        logString += ((TelnetCodes)data).ToString("g") + " ";
-                        LogOutput();
-                        currentProcessor = ProcessText;
-                        break;
-                    case TelnetCodes.DO:
-                    case TelnetCodes.DONT:
-                        logString += ((TelnetCodes)data).ToString("g") + " ";
-                        currentProcessor = ProcessDoDont;
-                        break;
-                    case TelnetCodes.WILL:
-                    case TelnetCodes.WONT:
-                        logString += ((TelnetCodes)data).ToString("g") + " ";
-                        currentProcessor = ProcessWillWont;
-                        break;
-                    default:
-                        logString += "Unrecognized byte sequence " + data.ToString("d") + " ";
-                        currentProcessor = ProcessNextByte;
-                        break;
-                }
-            }
-
-            private void ProcessNextByte(byte data)
-            {
-                logString += data.ToString("d");
-                LogOutput();
-                currentProcessor = ProcessText;
-            }
-
-            private void ProcessDoDont(byte data)
-            {
-                // for now, we always Wont
-                logString += data.ToString("d") + " ";
-                LogOutput();
-                logger.DebugFormat("Sending IAC WONT {0}", data);
-                client.WriteBytes(new byte[] { (byte)TelnetCodes.IAC, (byte)TelnetCodes.WONT, data });
-                currentProcessor = ProcessText;
-            }
-
-            private void ProcessWillWont(byte data)
-            {
-                // for now, we always Dont
-                logString += data.ToString("d") + " ";
-                LogOutput();
-                logger.DebugFormat("Sending IAC DONT {0}", data);
-                client.WriteBytes(new byte[] { (byte)TelnetCodes.IAC, (byte)TelnetCodes.DONT, data });
-                currentProcessor = ProcessText;
-            }
-
-            private void LogOutput()
-            {
-                if (!string.IsNullOrEmpty(logString))
-                {
-                    logger.DebugFormat("Recieved IAC sequence: {0}", logString);
-                    logString = "";
-                }
-            }
-
-            private void AddOutputByte(byte data)
-            {
-                outputBuffer[outCount++] = data;
-            }
-        }
     }
 }

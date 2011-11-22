@@ -23,5 +23,7 @@ namespace Mirage.Core.IO
         /// </summary>
         TcpClient TcpClient { get; }
 
+
+
     }
 }
