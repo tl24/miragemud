@@ -4,6 +4,7 @@ using System.Text;
 using Mirage.Core.IO;
 using System.Net.Sockets;
 using System.Net;
+using Mirage.Core.Data;
 
 namespace Mirage.Stock.IO
 {
@@ -33,7 +34,8 @@ namespace Mirage.Stock.IO
         /// <param name="client"></param>
         protected override ITelnetClient CreateClient(TcpClient client)
         {
-            ITelnetClient mudClient = new TextClient(client);
+            ITelnetClient mudClient = MudFactory.GetObject<TextClient>(new {client = client});
+            //ITelnetClient mudClient = new TextClient(client);
             mudClient.LoginHandler = new TextLoginStateHandler(mudClient);
             mudClient.LoginHandler.HandleInput(null);
             return mudClient;

@@ -23,7 +23,6 @@ namespace Mirage.Core.IO
         /// </summary>
         protected int _closed;
 
-        protected static ILog log = LogManager.GetLogger(typeof(ClientBase));
         /// <summary>
         ///     The player object attached to this descriptor
         /// </summary>
@@ -117,6 +116,15 @@ namespace Mirage.Core.IO
             set { _outputWritten = value; }
         }
 
+        #region Logger
+        private Castle.Core.Logging.ILogger logger = Castle.Core.Logging.NullLogger.Instance;
+        public Castle.Core.Logging.ILogger Logger
+        {
+            get { return logger; }
+            set { logger = value; }
+        }
+        #endregion
+
         /// <summary>
         /// Writes a prompt to the client
         /// </summary>
@@ -158,7 +166,7 @@ namespace Mirage.Core.IO
             string remote = _client.Client.RemoteEndPoint.ToString();
             _client.Close();
             _state = ConnectedState.Disconnected;
-            log.Info("Client connection closed: " + remote);
+            Logger.Info("Client connection closed: " + remote);
         }
 
         public TcpClient TcpClient

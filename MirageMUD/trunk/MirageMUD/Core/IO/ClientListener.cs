@@ -17,7 +17,6 @@ namespace Mirage.Core.IO
     /// </summary>
     public abstract class ClientListener : IClientListener, IDisposable
     {
-        private ILogger logger = NullLogger.Instance;
         protected TcpListener _listener;
 
         public ClientListener(string host, int port)
@@ -50,11 +49,14 @@ namespace Mirage.Core.IO
                 throw new ArgumentException("Invalid host name: " + host, "host");
         }
 
+        #region Logger
+        private ILogger logger = NullLogger.Instance;
         public ILogger Logger
         {
             get { return logger; }
             set { logger = value; }
         }
+        #endregion
 
         /// <summary>
         /// Determines if there are connections waiting to be read
