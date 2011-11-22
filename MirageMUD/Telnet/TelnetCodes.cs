@@ -1,4 +1,4 @@
-﻿namespace MirageMUD.Core
+﻿namespace Mirage.Telnet
 {
     public enum TelnetCodes : byte
     {

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MirageMUD.Core;
 
-namespace Mirage.Core.IO
+namespace Mirage.Telnet
 {
-    public class TelnetOption 
+    internal class TelnetOption 
     {
+        private int state = 0;
+
         public TelnetOption(TelnetOptionProcessor parent, TelnetCodes optionValue) : this(parent, (byte) optionValue)
         {
         }
@@ -22,28 +23,38 @@ namespace Mirage.Core.IO
 
         public TelnetOptionProcessor Parent { get; private set; }
 
-        public virtual void OnDo()
+        /// <summary>
+        /// The state of the option on the local end (Us value)
+        /// </summary>
+        public QState LocalState
         {
-            // for now, we always Wont
-            SendResponse(TelnetCodes.WONT);
+            get
+            {
+                return (QState)(state >> 4);
+            }
+            set
+            {
+                state = ((int)value) << 4 | (state & 0x0F);
+
+            }
+        }
+        /// <summary>
+        /// The state of the option on the remote end (Him value)
+        /// </summary>
+        public QState RemoteState
+        {
+            get
+            {
+                return (QState)(state & 0x0F);
+            }
+            set
+            {
+                state = ((state << 4) & 0xF0) | (((int)value) & 0x0F);
+            }
         }
 
-        public virtual void OnDont()
+        public virtual void OnOptionChanged(bool enabled, bool local)
         {
-            // for now, we always Wont
-            SendResponse(TelnetCodes.WONT);
-        }
-
-        public virtual void OnWill()
-        {
-            // by default, we always Dont
-            SendResponse(TelnetCodes.DONT);
-        }
-
-        public virtual void OnWont()
-        {
-            // by default, we always Dont
-            SendResponse(TelnetCodes.DONT);
         }
 
         protected void SendResponse(TelnetCodes optionCode)
@@ -60,37 +71,37 @@ namespace Mirage.Core.IO
         }
     }
 
-    public class EchoOption : TelnetOption
+    internal class EchoOption : TelnetOption
     {
         public EchoOption(TelnetOptionProcessor parent) : base(parent, TelnetCodes.ECHO)
         {
         }
 
-        public override void OnDo()
+        public override void OnOptionChanged(bool enabled, bool local)
         {
-            SendResponse(TelnetCodes.WILL);
-            Parent.Client.Options.EchoOn = true;
-            Parent.SetState<TelnetTextState>();
-        }
-
-        public override void OnDont()
-        {
-            SendResponse(TelnetCodes.WONT);
-            Parent.Client.Options.EchoOn = false;
-            Parent.SetState<TelnetTextState>();
+            if (local)
+            {
+                Parent.Client.EchoOn = enabled;
+            }
         }
     }
 
-    public class NawsOption : TelnetOption
+    internal class NawsOption : TelnetOption
     {
+        private bool _enabled;
+
         public NawsOption(TelnetOptionProcessor parent)
             : base(parent, TelnetCodes.WINDOW_SIZE)
         {
-        }
-
-        public override void OnWill()
-        {
-            SendResponse(TelnetCodes.DO);
+            _enabled = parent.Client is IClientNaws;
+            if (_enabled)
+            {
+                parent.Logger.Debug("Naws processing enabled");
+            }
+            else
+            {
+                parent.Logger.Debug("Naws processing disabled, the client does not implement ITelnetClientNaws");
+            }
         }
 
         public override void OnSubNegotiation(byte[] subData)
@@ -104,8 +115,9 @@ namespace Mirage.Core.IO
                     Array.Reverse(subData, 0, 2);
                     Array.Reverse(subData, 2, 2);
                 }
-                Parent.Client.Options.WindowWidth = BitConverter.ToInt16(subData, 0);
-                Parent.Client.Options.WindowHeight = BitConverter.ToInt16(subData, 2);
+                IClientNaws nawsClient = (IClientNaws)Parent.Client;
+                nawsClient.WindowWidth = BitConverter.ToInt16(subData, 0);
+                nawsClient.WindowHeight = BitConverter.ToInt16(subData, 2);
             }
         }
         

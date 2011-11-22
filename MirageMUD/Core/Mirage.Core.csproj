@@ -208,10 +208,6 @@
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
     <Compile Include="IO\ServiceEntryConverter.cs" />
     <Compile Include="IO\ServiceExecutorBase.cs" />
-    <Compile Include="IO\TelnetCodes.cs" />
-    <Compile Include="IO\TelnetOptionProcessor.cs" />
-    <Compile Include="IO\TelnetOptions.cs" />
-    <Compile Include="IO\TelnetState.cs" />
     <Compile Include="IO\TextClientOptions.cs" />
     <Compile Include="Security\MudIdentity.cs" />
     <Compile Include="Security\MudPrincipal.cs" />
@@ -268,6 +264,12 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Telnet\Mirage.Telnet.csproj">
+      <Project>{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}</Project>
+      <Name>Mirage.Telnet</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Players\" />

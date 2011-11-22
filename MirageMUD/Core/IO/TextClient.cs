@@ -8,7 +8,7 @@ using Mirage.Core.Data;
 using Mirage.Core.Command;
 using Mirage.Core.Communication;
 using Mirage.Core.Util;
-using MirageMUD.Core;
+using Mirage.Telnet;
 
 namespace Mirage.Core.IO
 {
@@ -16,7 +16,7 @@ namespace Mirage.Core.IO
     /// <summary>
     ///     Handles Server for a player
     /// </summary>
-    public class TextClient : ClientBase, ITextClient
+    public class TextClient : ClientBase, ITextClient, IClient, IClientNaws
     {
 
         protected NetworkStream socketStream;
@@ -79,9 +79,19 @@ namespace Mirage.Core.IO
             inputQueue = new SynchronizedQueue<string>();
             outputQueue = new SynchronizedQueue<OutputData>();
             Options = new TextClientOptions();
-            Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));
             inputBuffer = new char[512];
             bufferLength = 0;
+        }
+
+        public override void Initialize()
+        {
+            var telnetOpts = new OptionSupportList(new[] { 
+                new OptionSupportEntry(TelnetOptions.TELNET_TELOPT_NAWS, true, false),
+                new OptionSupportEntry(TelnetOptions.TELNET_TELOPT_ECHO, true, true)
+            });
+            tnHandler = new TelnetOptionProcessor(telnetOpts, this, Logger);
+            tnHandler.InitiateNegotiation();
+            Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));            
         }
 
         public TextClientOptions Options { get; private set; }
@@ -155,9 +165,9 @@ namespace Mirage.Core.IO
 
         private int ReadFromSocket(int available)
         {
-            if (tnHandler == null) {
-                tnHandler = new TelnetOptionProcessor(this, Logger);
-            }
+            //if (tnHandler == null) {
+            //    tnHandler = new TelnetOptionProcessor(this, Logger);
+            //}
             available = Math.Min(inputBuffer.Length - bufferLength, available);
             byte[] inBuf = new byte[available];
             int bRead = socketStream.Read(inBuf, 0, inBuf.Length);
@@ -300,6 +310,49 @@ namespace Mirage.Core.IO
                     else
                         return (byte[])this.data; 
                 }
+            }
+        }
+
+
+        #region IClient Members
+
+
+        bool IClient.EchoOn
+        {
+            get
+            {
+                return this.Options.EchoOn;
+            }
+            set
+            {
+                this.Options.EchoOn = value;
+            }
+        }
+
+        #endregion
+
+
+        int IClientNaws.WindowWidth
+        {
+            get
+            {
+                return this.Options.WindowWidth;
+            }
+            set
+            {
+                this.Options.WindowWidth = value;
+            }
+        }
+
+        int IClientNaws.WindowHeight
+        {
+            get
+            {
+                return this.Options.WindowHeight;
+            }
+            set
+            {
+                this.Options.WindowHeight = value;
             }
         }
 
