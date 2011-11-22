@@ -9,6 +9,7 @@ using Mirage.Core.Command;
 using Mirage.Core.Communication;
 using Mirage.Core.Util;
 using Mirage.Telnet;
+using Mirage.Telnet.Options;
 
 namespace Mirage.Core.IO
 {
@@ -16,7 +17,7 @@ namespace Mirage.Core.IO
     /// <summary>
     ///     Handles Server for a player
     /// </summary>
-    public class TextClient : ClientBase, ITextClient, IClient, IClientNaws
+    public class TextClient : ClientBase, ITextClient, IClient
     {
 
         protected NetworkStream socketStream;
@@ -86,12 +87,25 @@ namespace Mirage.Core.IO
         public override void Initialize()
         {
             var telnetOpts = new OptionSupportList(new[] { 
-                new OptionSupportEntry(TelnetOptions.TELNET_TELOPT_NAWS, true, false),
-                new OptionSupportEntry(TelnetOptions.TELNET_TELOPT_ECHO, true, true)
+                new OptionSupportEntry(OptionCodes.NAWS, true, false),
+                new OptionSupportEntry(OptionCodes.ECHO, true, true)
             });
             tnHandler = new TelnetOptionProcessor(telnetOpts, this, Logger);
-            tnHandler.InitiateNegotiation();
+            tnHandler.SubNegotiationOccurred += new EventHandler<SubNegotiationEventArgs>(tnHandler_SubNegotiationOccurred);
+            tnHandler.TelnetNegotiate(TelnetCommands.TELNET_DO, OptionCodes.NAWS);
             Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));            
+        }
+
+        void tnHandler_SubNegotiationOccurred(object sender, SubNegotiationEventArgs e)
+        {
+            switch (e.Option)
+            {
+                case OptionCodes.NAWS:
+                    NawsEventArgs ne = (NawsEventArgs) e;
+                    Options.WindowHeight = ne.Height;
+                    Options.WindowWidth = ne.Width;
+                    break;
+            }
         }
 
         public TextClientOptions Options { get; private set; }
@@ -165,9 +179,6 @@ namespace Mirage.Core.IO
 
         private int ReadFromSocket(int available)
         {
-            //if (tnHandler == null) {
-            //    tnHandler = new TelnetOptionProcessor(this, Logger);
-            //}
             available = Math.Min(inputBuffer.Length - bufferLength, available);
             byte[] inBuf = new byte[available];
             int bRead = socketStream.Read(inBuf, 0, inBuf.Length);
@@ -312,49 +323,5 @@ namespace Mirage.Core.IO
                 }
             }
         }
-
-
-        #region IClient Members
-
-
-        bool IClient.EchoOn
-        {
-            get
-            {
-                return this.Options.EchoOn;
-            }
-            set
-            {
-                this.Options.EchoOn = value;
-            }
-        }
-
-        #endregion
-
-
-        int IClientNaws.WindowWidth
-        {
-            get
-            {
-                return this.Options.WindowWidth;
-            }
-            set
-            {
-                this.Options.WindowWidth = value;
-            }
-        }
-
-        int IClientNaws.WindowHeight
-        {
-            get
-            {
-                return this.Options.WindowHeight;
-            }
-            set
-            {
-                this.Options.WindowHeight = value;
-            }
-        }
-
     }
 }

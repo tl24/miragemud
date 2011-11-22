@@ -53,10 +53,12 @@
     <Compile Include="IClient.cs" />
     <Compile Include="OptionSupportEntry.cs" />
     <Compile Include="OptionSupportList.cs" />
+    <Compile Include="Options\NawsOption.cs" />
+    <Compile Include="Options\OptionCodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TelnetCodes.cs" />
     <Compile Include="TelnetOptionProcessor.cs" />
-    <Compile Include="TelnetOptions.cs" />
+    <Compile Include="Options\TelnetOption.cs" />
     <Compile Include="TelnetState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
