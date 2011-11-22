@@ -207,6 +207,7 @@
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
     <Compile Include="IO\ServiceEntryConverter.cs" />
     <Compile Include="IO\ServiceExecutorBase.cs" />
+    <Compile Include="IO\TelnetCodes.cs" />
     <Compile Include="Security\MudIdentity.cs" />
     <Compile Include="Security\MudPrincipal.cs" />
     <Compile Include="Util\AbstractStateMachine.cs" />

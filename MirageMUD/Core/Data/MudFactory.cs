@@ -34,6 +34,11 @@ namespace Mirage.Core.Data
             return _instance.Resolve<TObjectInterface>();
         }
 
+        public static TObjectInterface GetObject<TObjectInterface>(object argumentsAsAnonymousType)
+        {
+            return _instance.Resolve<TObjectInterface>(argumentsAsAnonymousType);
+        }
+
         public static object GetObject(Type interfaceType)
         {
             return _instance.Resolve(interfaceType);
@@ -83,14 +88,9 @@ namespace Mirage.Core.Data
                 AssemblyList.Instance.ForEach(
                     (a) =>
                     {
-                        container.Register(
-                        AllTypes.Of<IInitializer>()
-                            .FromAssembly(a)
-                            .WithService.FromInterface()
-                            .Configure(component
-                            => component.LifeStyle.Transient.Named(component.Implementation.Name))
-                        );
+                        RegisterFromAssembly(container, a);
                     });
+
                 /*
                 // install default components
                 AssemblyList.Instance.ForEach(
@@ -100,6 +100,24 @@ namespace Mirage.Core.Data
                                 AllTypes.FromAssembly(a)
                                 .Where((t) => (at
                  */
+            }
+
+            private static void RegisterFromAssembly(IWindsorContainer container, System.Reflection.Assembly a)
+            {
+                container.Register(
+                AllTypes.Of<IInitializer>()
+                    .FromAssembly(a)
+                    .WithService.FromInterface()
+                    .Configure(component
+                    => component.LifeStyle.Transient.Named(component.Implementation.Name))
+                );
+
+                container.Register(
+                    AllTypes.Of<ITelnetClient>()
+                    .FromAssembly(a)
+                    .Configure(component
+                    => component.LifeStyle.Transient.Named(component.Implementation.Name))
+                );
             }
         }
 

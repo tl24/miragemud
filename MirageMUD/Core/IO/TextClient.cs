@@ -8,6 +8,7 @@ using Mirage.Core.Data;
 using Mirage.Core.Command;
 using Mirage.Core.Communication;
 using Mirage.Core.Util;
+using MirageMUD.Core;
 
 namespace Mirage.Core.IO
 {
@@ -17,6 +18,9 @@ namespace Mirage.Core.IO
     /// </summary>
     public class TextClient : ClientBase
     {
+
+        protected NetworkStream socketStream;
+
         /// <summary>
         ///     A reader for the tcp client's stream
         /// </summary>
@@ -56,9 +60,11 @@ namespace Mirage.Core.IO
         /// <summary>
         ///     The lines that are waiting to be written to the socket
         /// </summary>
-        protected ISynchronizedQueue<string> outputQueue;
+        private ISynchronizedQueue<OutputData> outputQueue;
 
         protected bool checkDisconnect = false;
+
+        private TelnetHandler tnHandler;
 
         /// <summary>
         ///     Create a descriptor to read and write to the given
@@ -67,14 +73,15 @@ namespace Mirage.Core.IO
         /// <param name="client"> the client to read and write from</param>
         public TextClient(TcpClient client) : base(client)
         {
-            NetworkStream stm = _client.GetStream();
-            reader = new StreamReader(stm);
-            writer = new StreamWriter(stm);
+            socketStream = _client.GetStream();
+            reader = new StreamReader(socketStream);
+            writer = new StreamWriter(socketStream);
             inputQueue = new SynchronizedQueue<string>();
-            outputQueue = new SynchronizedQueue<string>();
+            outputQueue = new SynchronizedQueue<OutputData>();
             Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));
             inputBuffer = new char[512];
             bufferLength = 0;
+            
         }
 
         /// <summary>
@@ -91,7 +98,7 @@ namespace Mirage.Core.IO
             if (available == 0)
                 available = 1;
 
-            int nRead = reader.ReadBlock(inputBuffer, bufferLength, Math.Min(inputBuffer.Length - bufferLength, available));
+            int nRead = ReadFromSocket(available);
 
             // if we're trying to read, the socket told us there is something to read so there shouldn't be 0 bytes
             checkDisconnect = nRead == 0;
@@ -142,6 +149,19 @@ namespace Mirage.Core.IO
             //    line = " ";
             //}
             inputQueue.Enqueue(line);            
+        }
+
+        private int ReadFromSocket(int available)
+        {
+            if (tnHandler == null) {
+                tnHandler = new TelnetHandler(this, Logger);
+            }
+            available = Math.Min(inputBuffer.Length - bufferLength, available);
+            byte[] inBuf = new byte[available];
+            int bRead = socketStream.Read(inBuf, 0, inBuf.Length);
+            char[] outBuf = tnHandler.ProcessBuffer(inBuf, bRead);
+            Array.Copy(outBuf, 0, inputBuffer, bufferLength, outBuf.Length);
+            return outBuf.Length;
         }
 
         public override void ProcessInput()
@@ -195,11 +215,18 @@ namespace Mirage.Core.IO
         {
             if (_closed == 0)
             {
-                outputQueue.Enqueue(message.Render());
+                outputQueue.Enqueue(new OutputData(message.Render()));
                 OutputWritten = true;
             }
         }
 
+        private void WriteBytes(byte[] bytes)
+        {
+            if (_closed == 0)
+            {
+                outputQueue.Enqueue(new OutputData(bytes));
+            }
+        }
         /// <summary>
         ///     Process the output waiting in the output buffer.  This
         /// Data will be sent to the socket.
@@ -208,8 +235,9 @@ namespace Mirage.Core.IO
         {
             bool bProcess = false;
             while (outputQueue.Count > 0) {
-                string msg = outputQueue.Dequeue();
-                writer.Write(msg);
+                OutputData data = outputQueue.Dequeue();
+                byte[] bytes = data.Bytes;
+                this.socketStream.Write(bytes, 0, bytes.Length);
                 bProcess = true;
             }
             if (bProcess)
@@ -234,6 +262,156 @@ namespace Mirage.Core.IO
             base.Dispose();
             reader.Dispose();
             writer.Dispose();
+        }
+
+        internal struct OutputData
+        {
+            private object data;
+            private bool isString;
+            public OutputData(string data)
+            {
+                this.data = data;
+                this.isString = true;
+            }
+            public OutputData(byte[] data)
+            {
+                this.data = data;
+                this.isString = false;
+            }
+
+            public OutputData(object data, bool isString)
+            {
+                this.data = data;
+                this.isString = isString;
+            }
+
+            public bool IsString
+            {
+                get { return this.isString; }
+            }
+
+            public byte[] Bytes
+            {
+                get {
+                    if (IsString)
+                        return Encoding.ASCII.GetBytes((string)this.data);
+                    else
+                        return (byte[])this.data; 
+                }
+            }
+        }
+
+        internal class TelnetHandler
+        {
+            TextClient client;
+            byte[] inputBuffer;
+            byte[] outputBuffer;
+            Action<byte> currentProcessor;
+            int outCount;
+            private string logString = string.Empty;
+            Castle.Core.Logging.ILogger logger;
+            internal TelnetHandler(TextClient client, Castle.Core.Logging.ILogger logger)
+            {
+                this.client = client;
+                this.logger = logger;
+                this.currentProcessor = ProcessText;
+            }
+
+            internal char[] ProcessBuffer(byte[] buffer, int length)
+            {
+                this.inputBuffer = buffer;
+                outputBuffer = new byte[length];
+                outCount = 0;
+                for (int i = 0; i < length; i++)
+                {
+                    currentProcessor(inputBuffer[i]);
+                }
+                if (outCount > 0)
+                    return Encoding.ASCII.GetChars(outputBuffer, 0, outCount);
+                else
+                    return new char[0];
+            }
+
+            private void ProcessText(byte data)
+            {
+                if (data == (byte)TelnetCodes.IAC)
+                {
+                    currentProcessor = ProcessIAC;
+                    logString += "IAC ";
+                }
+                else
+                {
+                    AddOutputByte(data);
+                }
+            }
+
+            private void ProcessIAC(byte data)
+            {
+                switch ((TelnetCodes)data)
+                {
+                    case TelnetCodes.IAC:
+                        AddOutputByte(data);
+                        logString += ((TelnetCodes)data).ToString("g") + " ";
+                        LogOutput();
+                        currentProcessor = ProcessText;
+                        break;
+                    case TelnetCodes.DO:
+                    case TelnetCodes.DONT:
+                        logString += ((TelnetCodes)data).ToString("g") + " ";
+                        currentProcessor = ProcessDoDont;
+                        break;
+                    case TelnetCodes.WILL:
+                    case TelnetCodes.WONT:
+                        logString += ((TelnetCodes)data).ToString("g") + " ";
+                        currentProcessor = ProcessWillWont;
+                        break;
+                    default:
+                        logString += "Unrecognized byte sequence " + data.ToString("d") + " ";
+                        currentProcessor = ProcessNextByte;
+                        break;
+                }
+            }
+
+            private void ProcessNextByte(byte data)
+            {
+                logString += data.ToString("d");
+                LogOutput();
+                currentProcessor = ProcessText;
+            }
+
+            private void ProcessDoDont(byte data)
+            {
+                // for now, we always Wont
+                logString += data.ToString("d") + " ";
+                LogOutput();
+                logger.DebugFormat("Sending IAC WONT {0}", data);
+                client.WriteBytes(new byte[] { (byte)TelnetCodes.IAC, (byte)TelnetCodes.WONT, data });
+                currentProcessor = ProcessText;
+            }
+
+            private void ProcessWillWont(byte data)
+            {
+                // for now, we always Dont
+                logString += data.ToString("d") + " ";
+                LogOutput();
+                logger.DebugFormat("Sending IAC DONT {0}", data);
+                client.WriteBytes(new byte[] { (byte)TelnetCodes.IAC, (byte)TelnetCodes.DONT, data });
+                currentProcessor = ProcessText;
+            }
+
+            private void LogOutput()
+            {
+                if (!string.IsNullOrEmpty(logString))
+                {
+                    logger.DebugFormat("Recieved IAC sequence: {0}", logString);
+                    logString = "";
+                }
+            }
+
+            private void AddOutputByte(byte data)
+            {
+                outputBuffer[outCount++] = data;
+            }
         }
     }
 }
