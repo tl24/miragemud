@@ -87,7 +87,7 @@ namespace Mirage.Core.IO
             tnHandler.TelnetNegotiate(TelnetCommands.DO, OptionCodes.TTYPE);
             tnHandler.TelnetNegotiate(TelnetCommands.WILL, OptionCodes.SGA);
             tnHandler.TelnetNegotiate(TelnetCommands.WILL, OptionCodes.ECHO);
-            Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));            
+            //Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));            
         }
 
         void tnHandler_OptionStateChanged(object sender, OptionStateChangedEventArgs e)
@@ -221,7 +221,7 @@ namespace Mirage.Core.IO
             {
                 return;
             }
-            _commandRead = false;
+            CommandRead = false;
             string line = inputQueue.Dequeue();
             // Substitute for last Command with '!'
             if (line.Equals("!"))
@@ -236,7 +236,7 @@ namespace Mirage.Core.IO
 
             if (_inputLine != null && _inputLine.Length > 0)
             {
-                _commandRead = true;
+                CommandRead = true;
             }
         }
 
@@ -285,25 +285,6 @@ namespace Mirage.Core.IO
         public override void Dispose()
         {
             base.Dispose();
-        }
-
-        internal struct OutputData
-        {
-            private object data;
-            public OutputData(string data)
-            {
-                this.data = data;
-            }
-
-            public byte[] Bytes
-            {
-                get {
-                    if (this.data is string)
-                        return Encoding.ASCII.GetBytes((string)this.data);
-                    else
-                        return (byte[])this.data; 
-                }
-            }
         }
     }
 }

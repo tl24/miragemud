@@ -7,7 +7,7 @@ using System.IO;
 namespace Mirage.Core.IO.Serialization
 {
     /// <summary>
-    /// Persistence adapater that uses file storage with the object encoded
+    /// Persistence adapter that uses file storage with the object encoded
     /// as JSON text.
     /// </summary>
     class JsonExPersistenceAdapter : FileSerializerAdapterBase

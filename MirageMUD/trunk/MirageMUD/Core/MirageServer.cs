@@ -141,7 +141,11 @@ namespace Mirage.Core
                                 if (NannyClients[i].Player != null && NannyClients[i].State == ConnectedState.Playing)
                                 {
                                     // graduated...remove from the list
-                                    NannyClients[i].WritePrompt();
+                                    //NannyClients[i].WritePrompt();
+                                    //TODO: centralize this
+                                    string clientName = NannyClients[i].Player.Uri;
+                                    NannyClients[i].Player.Client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
+
                                     NannyClients.RemoveAt(i);
                                 }
                             }

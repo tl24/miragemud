@@ -4,7 +4,7 @@ using System.Text;
 using Castle.Core.Configuration;
 using Castle.MicroKernel.SubSystems.Conversion;
 
-namespace Mirage.Core.IO
+namespace Mirage.Core
 {
     /// <summary>
     /// WindsorContainer converter class used to convert configuration nodes into ServiceEntryConverter

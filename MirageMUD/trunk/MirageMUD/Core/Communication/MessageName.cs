@@ -96,6 +96,10 @@ namespace Mirage.Core.Communication
                 return false;
         }
 
+        public override int GetHashCode()
+        {
+            return _fullName.GetHashCode();
+        }
         public bool IsPartOfNamespace(string Namespace)
         {
             return this.Namespace.StartsWith(Namespace);
