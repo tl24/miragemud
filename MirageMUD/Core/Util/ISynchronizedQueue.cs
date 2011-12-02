@@ -1,6 +1,10 @@
 ﻿using System;
 namespace Mirage.Core.Util
 {
+    /// <summary>
+    /// Represents a synchronized thread-safe queue
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface ISynchronizedQueue<T>
     {
         /// <summary>

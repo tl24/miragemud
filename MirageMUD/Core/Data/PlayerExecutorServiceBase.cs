@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.IO;
-using Mirage.Core.IO.Serialization;
+using Mirage.Core;
 using Castle.Core.Logging;
+using Mirage.Core.Communication;
+using Mirage.Core.IO;
 
 namespace Mirage.Core.Data
 {
@@ -99,7 +100,13 @@ namespace Mirage.Core.Data
                 try
                 {
                     if (player.Client.CommandRead || player.Client.OutputWritten)
-                        player.Client.WritePrompt();
+                    {
+                        if (player.Client.State == ConnectedState.Playing)
+                        {
+                            string clientName = player.Uri;
+                            player.Client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
+                        }
+                    }
                 }
                 catch (Exception e)
                 {

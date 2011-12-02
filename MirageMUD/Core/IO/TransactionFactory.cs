@@ -9,12 +9,12 @@ namespace Mirage.Core.IO
 
         private static ITransactionService defaultService;
 
-        public static ITransaction startTransaction()
+        public static ITransaction StartTransaction()
         {
-            return getDefaultService().startTransaction();
+            return GetDefaultService().StartTransaction();
         }
 
-        private static ITransactionService getDefaultService()
+        private static ITransactionService GetDefaultService()
         {
             if (defaultService == null)
             {
@@ -32,22 +32,22 @@ namespace Mirage.Core.IO
 
     public interface ITransactionService
     {
-        ITransaction startTransaction();
+        ITransaction StartTransaction();
     }
 
     public interface ITransaction
     {
-        Stream aquireOutputFileStream(string uri, bool append);
-        Stream aquireInputFileStream(string uri, FileMode mode);
-        void commit();
-        void rollback();
+        Stream AquireOutputFileStream(string uri, bool append);
+        Stream AquireInputFileStream(string uri, FileMode mode);
+        void Commit();
+        void Rollback();
     }
 
     public class SimpleTransactionService : ITransactionService
     {
         #region ITransactionService Members
 
-        public ITransaction startTransaction()
+        public ITransaction StartTransaction()
         {
             return new Transaction();
         }
@@ -61,7 +61,7 @@ namespace Mirage.Core.IO
             private Dictionary<string, string> txnItems = new Dictionary<string, string>();
             #region ITransaction Members
 
-            public Stream aquireOutputFileStream(string uri, bool append)
+            public Stream AquireOutputFileStream(string uri, bool append)
             {
                 string dir = Path.GetDirectoryName(uri);
                 string tmpDir = Path.Combine(dir, ".txn");
@@ -81,12 +81,12 @@ namespace Mirage.Core.IO
                 return new FileStream(newUri, append ? FileMode.Append : FileMode.Create, FileAccess.Write);
             }
 
-            public Stream  aquireInputFileStream(string uri, FileMode mode)
+            public Stream  AquireInputFileStream(string uri, FileMode mode)
             {
                 return new FileStream(uri, mode, FileAccess.Read);              	            
             }
 
-            public void  commit()
+            public void  Commit()
             {
                 //TODO: In a real transaction system we'd probably keep a log of this stuff
                 // so we could roll back
@@ -110,7 +110,7 @@ namespace Mirage.Core.IO
                 inprocess = false;
             }
 
-            public void  rollback()
+            public void  Rollback()
             {
                 //Delete all the temp files, only after we're sure we copied over to the
                 //original files successfully
@@ -130,7 +130,7 @@ namespace Mirage.Core.IO
             {
                 if (inprocess && !committed)
                 {
-                    rollback();
+                    Rollback();
                 }
             }
 

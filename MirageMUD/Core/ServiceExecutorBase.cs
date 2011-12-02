@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mirage.Core.IO
+namespace Mirage.Core
 {
     /// <summary>
     /// Base class for services

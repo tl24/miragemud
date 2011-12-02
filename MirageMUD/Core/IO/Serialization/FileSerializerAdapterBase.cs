@@ -61,15 +61,15 @@ namespace Mirage.Core.IO.Serialization
 
         public virtual void Save(object o, string id)
         {
-            ITransaction txn = TransactionFactory.startTransaction();
+            ITransaction txn = TransactionFactory.StartTransaction();
             try
             {
                 SerializeHelper(o, id, txn);
-                txn.commit();
+                txn.Commit();
             }
             catch (Exception e)
             {
-                txn.rollback();
+                txn.Rollback();
                 Console.WriteLine(e);
             }
         }
@@ -77,7 +77,7 @@ namespace Mirage.Core.IO.Serialization
         protected virtual void SerializeHelper(object o, string id, ITransaction txn)
         {
             string path = Path.Combine(_basePath, id + _ext);
-            using (StreamWriter writer = new StreamWriter(txn.aquireOutputFileStream(path, false)))
+            using (StreamWriter writer = new StreamWriter(txn.AquireOutputFileStream(path, false)))
             {
                 try
                 {

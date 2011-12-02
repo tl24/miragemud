@@ -24,11 +24,6 @@ namespace Mirage.Core.IO
         protected int _closed;
 
         /// <summary>
-        ///     The player object attached to this descriptor
-        /// </summary>
-        protected IPlayer _player;
-
-        /// <summary>
         /// State Handler for this client.  If this is present it takes
         /// precedence over the command interpreter.
         /// </summary>
@@ -39,22 +34,6 @@ namespace Mirage.Core.IO
         /// reads and writes from
         /// </summary>
         protected TcpClient _client;
-
-        /// <summary>
-        ///     The stage of connection that this descriptor is at
-        /// </summary>
-        protected ConnectedState _state;
-
-        /// <summary>
-        ///     Indicates that a Command was read this cycle
-        /// </summary>
-        protected bool _commandRead;
-
-        /// <summary>
-        /// Indicates that output was written this cycle
-        /// </summary>
-        protected bool _outputWritten;
-
 
         /// <summary>
         ///     Create a client to read and write to the given
@@ -69,20 +48,12 @@ namespace Mirage.Core.IO
         /// <summary>
         ///     The stage of connection that this descriptor is at
         /// </summary>
-        public virtual ConnectedState State
-        {
-            get { return _state; }
-            set { _state = value; }
-        }
+        public virtual ConnectedState State { get; set; }
 
         /// <summary>
         ///     The player object attached to this descriptor
         /// </summary>
-        public virtual IPlayer Player
-        {
-            get { return _player; }
-            set { _player = value; }
-        }
+        public virtual IPlayer Player { get; set; }
 
         /// <summary>
         ///     state machine handler for the client
@@ -93,6 +64,9 @@ namespace Mirage.Core.IO
             set { _loginHandler = value; }
         }
 
+        /// <summary>
+        /// Read from the socket and populate the input queue
+        /// </summary>
         public abstract void ReadInput();
 
         /// <summary>
@@ -110,17 +84,13 @@ namespace Mirage.Core.IO
         /// <summary>
         ///     Indicates that a Command was read this cycle
         /// </summary>
-        public virtual bool CommandRead
-        {
-            get { return _commandRead; }
-            set { _commandRead = value; }
-        }
+        public virtual bool CommandRead { get; set; }
 
-        public virtual bool OutputWritten
-        {
-            get { return _outputWritten; }
-            set { _outputWritten = value; }
-        }
+        /// <summary>
+        /// Returns true if the client had a message written to its queue during this execution loop
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool OutputWritten { get; set; }
 
         #region Logger
         private Castle.Core.Logging.ILogger logger = Castle.Core.Logging.NullLogger.Instance;
@@ -132,23 +102,16 @@ namespace Mirage.Core.IO
         #endregion
 
         /// <summary>
-        /// Writes a prompt to the client
-        /// </summary>
-        public void WritePrompt()
-        {
-            if (Player != null && State == ConnectedState.Playing)
-            {
-                string clientName = Player.Uri;
-                Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
-            }
-        }
-
-        /// <summary>
         ///     Process the output waiting in the output buffer.  This
         /// Data will be sent to the socket.
         /// </summary>
         public abstract void FlushOutput();
 
+        /// <summary>
+        /// Write a message to the client's output buffer.  The message will not be sent to the
+        /// client until FlushOutput is called.
+        /// </summary>
+        /// <param name="message">The message to write</param>
         public abstract void Write(IMessage message);
 
         /// <summary>
@@ -167,19 +130,28 @@ namespace Mirage.Core.IO
             Interlocked.Exchange(ref _closed, 1);
         }
 
+        /// <summary>
+        /// Closes the client connection
+        /// </summary>
         public virtual void Dispose()
         {
             string remote = _client.Client.RemoteEndPoint.ToString();
             _client.Close();
-            _state = ConnectedState.Disconnected;
+            State = ConnectedState.Disconnected;
             Logger.Info("Client connection closed: " + remote);
         }
 
+        /// <summary>
+        /// Gets the underlying TcpClient socket
+        /// </summary>
         public TcpClient TcpClient
         {
             get { return _client; }
         }
 
+        /// <summary>
+        /// Gets the local ip address.
+        /// </summary>
         public string Address
         {
             get { return TcpClient.Client.LocalEndPoint.ToString(); }

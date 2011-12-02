@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{05371036-8F2F-40B8-B306-462EFAAF67C8}</ProjectGuid>
     <OutputType>library</OutputType>
@@ -202,12 +202,12 @@
     <Compile Include="IO\ConnectedState.cs" />
     <Compile Include="IO\IClientListener.cs" />
     <Compile Include="IO\ITelnetClient.cs" />
-    <Compile Include="IO\IServiceExecutor.cs" />
+    <Compile Include="IServiceExecutor.cs" />
     <Compile Include="IO\ITextClient.cs" />
     <Compile Include="IO\Serialization\FileSerializerAdapterBase.cs" />
     <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
-    <Compile Include="IO\ServiceEntryConverter.cs" />
-    <Compile Include="IO\ServiceExecutorBase.cs" />
+    <Compile Include="ServiceEntryConverter.cs" />
+    <Compile Include="ServiceExecutorBase.cs" />
     <Compile Include="IO\TextClientOptions.cs" />
     <Compile Include="Security\MudIdentity.cs" />
     <Compile Include="Security\MudPrincipal.cs" />

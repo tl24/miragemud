@@ -1,29 +1,22 @@
 
-
- $$$$$$$
-$$$$$$$$$$
-$$$            III
- $$$           III
-  $$$          III
-   $$$         III
-    $$$        III IIII
-     $$$       IIIIII III     OOOOOOOOO      OOOOOOOOO      OOOOOOOOO
-      $$$      IIIII   III   OOOOOOOOOOO    OOOOOOOOOOO    OOOOOOOOOOO
-       $$$     III      III  OOO     OOO    OOO     OOO    OOO     OOO
-       $$$$    III      III  OOO     OOO    OOO     OOO    OOO     OOO
-$$$    $$$$    III      III  OOO     OOO    OOO     OOO    OOO     OOO
-$$$  $$$$      III      III  OOOOOOOOOOO    0OOOOOOOOO0    0OOOOOOOOO0
- $$$$$$        III      III   OOOOOOOOO      OOOOOOOOO     OOOOOOOOO0
-                                                           000
-                                                           000
- __    __   __   __   ____                                 000
-|  \  /  | | |  | |  |  _ \                                000
-|   \/   | | |  | |  | | \ \                               000
-| |\  /| | | |  | |  | |  | |                              000
+MMM      MMM
+MMMM    MMMM
+MMMMM  MMMMM
+MMMMMMMMMMMM  III  RRR RRR    AAAAA      GGGGGGGGGG    EEEE
+MMM MMMM MMM  III  RRRRRRR   AAA AAA     GGGGGGGGGG  EEE   EE 
+MMM  MM  MMM  III  RRRR     AAA   AAA    GGG    GGG  EEEEEEEE
+MMM      MMM  III  RRR     AAAAAAAAAAA   GGG    GGG  EE
+MMM      MMM  III  RRR     AAA     AAA   GGG    GGG   EE  EEE
+MMM      MMM  III  RRR     AAA     AAA   GGGGGGGGGG    EEEE
+                                                GGG
+                                                GGG
+ __    __   __   __   ____               GGG    GGG
+|  \  /  | | |  | |  |  _ \              GGGGGGGGGG
+|   \/   | | |  | |  | | \ \
+| |\  /| | | |  | |  | |  | |
 | | \/ | | | |__| |  | |_/ /
 |_|    |_| |______|  |____/
 
 
  ~~ The C# MUD ~~
  ~~ Version 0.1 ~~
- 

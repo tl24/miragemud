@@ -33,11 +33,6 @@ namespace Mirage.Core.IO
         void Write(IMessage message);
 
         /// <summary>
-        /// Write the prompt for the client to the output buffer
-        /// </summary>
-        void WritePrompt();
-
-        /// <summary>
         /// Returns true if the client had a message written to its queue during this execution loop
         /// </summary>
         /// <returns></returns>
