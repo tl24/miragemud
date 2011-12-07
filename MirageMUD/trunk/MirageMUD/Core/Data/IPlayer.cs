@@ -14,7 +14,7 @@ namespace Mirage.Core.Data
     /// </summary>
     public interface IPlayer : IUri, IActor
     {
-        IMudClient Client { get; set; }
+        IConnectionAdapter Client { get; set; }
 
         void FirePlayerEvent(PlayerEventType eventType);
 

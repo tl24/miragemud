@@ -8,7 +8,7 @@ namespace Mirage.Core.IO
         /// Accepts a new connection and creates a client for it
         /// </summary>
         /// <returns>the client connection</returns>
-        ITelnetClient Accept();
+        SocketConnection Accept();
 
         /// <summary>
         /// Returns true if there are any pending connection requests

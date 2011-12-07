@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JsonExSerializer;
 
 namespace Mirage.Core.Communication
 {
@@ -47,6 +48,7 @@ namespace Mirage.Core.Communication
         /// <summary>
         /// The fully-qualified name of the message including the namespace
         /// </summary>
+        [ConstructorParameter(0)]
         public string FullName
         {
             get { return _fullName; }

@@ -50,6 +50,8 @@ namespace Mirage.Core
             set { _initializers = value; }
         }
 
+        public IConnectionAdapterFactory AdapterFactory { get; set; }
+
         protected void Init()
         {
             if (_initializers != null)
@@ -77,8 +79,8 @@ namespace Mirage.Core
 
             ClientManager manager = null;
             MudRepositoryBase globalLists = null;
-            List<IMudClient> NannyClients = null;
-            BlockingQueue<IMudClient> NannyQueue = null;
+            List<IConnectionAdapter> NannyClients = null;
+            BlockingQueue<IConnection> NannyQueue = null;
             DateTime lastTime;
             DateTime currentTime;
             TimeSpan delta;
@@ -90,12 +92,14 @@ namespace Mirage.Core
             try
             {
                 Init();
+                //TODO: Create the server with the container
                 manager = MudFactory.GetObject<ClientManager>();
                 //manager.Configure();
                 globalLists = MudFactory.GetObject<MudRepositoryBase>();
-                NannyClients = new List<IMudClient>();
+                AdapterFactory = MudFactory.GetObject<IConnectionAdapterFactory>();
+                NannyClients = new List<IConnectionAdapter>();
                 // These are the new connections waiting to be put in the nanny list
-                NannyQueue = new BlockingQueue<IMudClient>(15);
+                NannyQueue = new BlockingQueue<IConnection>(15);
 
                 manager.NewClients = NannyQueue;
                 manager.Start();
@@ -116,13 +120,13 @@ namespace Mirage.Core
                 try
                 {
                     loopCount++;
-                    IMudClient newClient;
-
+                    
                     try
                     {
-                        while (NannyQueue.TryDequeue(out newClient))
+                        IConnection connection;
+                        while (NannyQueue.TryDequeue(out connection))
                         {
-                            NannyClients.Add(newClient);
+                            NannyClients.Add(AdapterFactory.CreateConnectionAdapter(connection));
                         }
                     }
                     catch (Exception e)

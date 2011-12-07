@@ -28,16 +28,6 @@ namespace Mirage.Core.Util
         private ValidateDelegate _nextState;
 
         /// <summary>
-        /// Flag indicating whether to enter the Final State
-        /// </summary>
-        private bool _finished;
-
-        /// <summary>
-        /// The current client session
-        /// </summary>
-        private IMudClient _client;
-
-        /// <summary>
         /// Delegate type for the validation routines.  Passed as
         /// an argument to Require.
         /// </summary>
@@ -49,10 +39,10 @@ namespace Mirage.Core.Util
         /// object is used to send prompts for information.
         /// </summary>
         /// <param name="client">The current client</param>
-        public AbstractStateMachine(IMudClient client)
+        public AbstractStateMachine(IConnectionAdapter client)
         {
             _properties = new HybridDictionary();
-            this._client = client;
+            this.Client = client;
         }
 
         /// <summary>
@@ -128,20 +118,12 @@ namespace Mirage.Core.Util
         /// <summary>
         /// This flag is set when the state machine should enter into the final state
         /// </summary>
-        public bool Finished
-        {
-            get { return _finished; }
-            set { _finished = value; }
-        }
+        public bool Finished { get; set; }
 
         /// <summary>
         /// The client object that this state machine is managing
         /// </summary>
-        public IMudClient Client
-        {
-            get { return _client; }
-            set { _client = value; }
-        }
+        public IConnectionAdapter Client { get; set; }
 
         /// <summary>
         /// Called when a given parameter is not set.  The user will be prompted with
@@ -165,7 +147,7 @@ namespace Mirage.Core.Util
         /// <param name="nextStep">The next step in the state machine</param>
         public void Require(IMessage prompt, ValidateDelegate nextStep)
         {
-            _client.Write(prompt);
+            Client.Write(prompt);
             _nextState = nextStep;
         }
 
@@ -173,7 +155,7 @@ namespace Mirage.Core.Util
         {
             foreach (IMessage m in messages)
             {
-                _client.Write(m);
+                Client.Write(m);
             }
             _nextState = nextStep;
         }
@@ -195,11 +177,11 @@ namespace Mirage.Core.Util
                 _nextState(input);
             }
 
-            if (!_finished)
+            if (!Finished)
             {
                 DetermineNextState();
             }
-            if (_finished)
+            if (Finished)
             {
                 FinalState();
                 Clear();

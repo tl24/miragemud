@@ -7,7 +7,6 @@ using MirageGUI.ItemEditor;
 using MirageGUI.Forms;
 using Mirage.Core.Data;
 using Mirage.Core.Data.Attribute;
-using Mirage.Stock.Data;
 using Mirage.Core.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls

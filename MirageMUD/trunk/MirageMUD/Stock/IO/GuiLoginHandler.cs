@@ -21,12 +21,11 @@ namespace Mirage.Stock.IO
     /// </summary>
     public class GuiLoginHandler : ILoginInputHandler
     {
-        private IMudClient _client;
         private IPlayerRepository _playerRepository;
 
-        public GuiLoginHandler(IMudClient client)
+        public GuiLoginHandler(IConnectionAdapter client)
         {
-            _client = client;
+            Client = client;
             _playerRepository = MudFactory.GetObject<IPlayerRepository>();
         }
 
@@ -37,7 +36,7 @@ namespace Mirage.Stock.IO
         {
             if (input == null)
             {
-                Client.Write(new Message(MessageType.Prompt, "negotiation.authenticiation.NannyChallenge"));
+                Client.Write(new Message(MessageType.Prompt, "negotiation.authentication.NannyChallenge"));
             }
             else if (input is LoginMessage)
             {
@@ -45,7 +44,7 @@ namespace Mirage.Stock.IO
                 Player p = (Player) _playerRepository.Load(login.Login);
                 if (p == null || !p.ComparePassword(login.Password))
                 {
-                    Client.Write(new StringMessage(MessageType.PlayerError, "negotiation.authenticiation.LoginError", "Invalid Login or password, Please try again"));
+                    Client.Write(new StringMessage(MessageType.PlayerError, "negotiation.authentication.LoginError", "Invalid Login or password, Please try again"));
                 }
                 else
                 {
@@ -61,10 +60,6 @@ namespace Mirage.Stock.IO
 
         #endregion
 
-        public IMudClient Client
-        {
-            get { return this._client; }
-            set { this._client = value; }
-        }
+        public IConnectionAdapter Client { get; set; }
     }
 }

@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Mirage.Core.IO
 {
-    public interface ITextClient : ITelnetClient
+    public interface IConnectionAdapterFactory
     {
-        TextClientOptions Options { get; }
+        IConnectionAdapter CreateConnectionAdapter(IConnection connection);
     }
 }

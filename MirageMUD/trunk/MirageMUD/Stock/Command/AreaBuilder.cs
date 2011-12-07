@@ -17,7 +17,7 @@ namespace Mirage.Stock.Command
     /// Contains the area level commands for the builder
     /// </summary>
     [CommandDefaults(
-        ClientTypes = new Type[] { typeof(GuiClient) },
+        ClientTypes = new Type[] { typeof(AdvancedConnectionAdapter) },
         Roles = "builder")]
     public class AreaBuilder
     {

@@ -8,6 +8,7 @@ using Mirage.Core.Util;
 using System.Threading;
 using System.IO;
 using Castle.Core.Logging;
+using Mirage.Core.Data;
 
 namespace Mirage.Core.IO
 {
@@ -15,7 +16,7 @@ namespace Mirage.Core.IO
     /// Base class for ClientFactory implementations.  Provides most of the framework for a client factory.
     /// Child factory implementations should only need to implement InitConnection.
     /// </summary>
-    public abstract class ClientListener : IClientListener, IDisposable
+    public class ClientListener<T> : IClientListener, IDisposable where T : SocketConnection
     {
         protected TcpListener _listener;
 
@@ -72,17 +73,21 @@ namespace Mirage.Core.IO
         /// returns it
         /// </summary>
         /// <returns>new client object</returns>
-        public ITelnetClient Accept()
+        public SocketConnection Accept()
         {
             TcpClient client = _listener.AcceptTcpClient();
             Socket newSocket = client.Client;
             Logger.Info("Connection from " + client.Client.RemoteEndPoint.ToString());
-            ITelnetClient telnetClient =  CreateClient(client);
-            telnetClient.Initialize();
+            SocketConnection telnetClient = CreateClient(client);
+            //telnetClient.Initialize();
             return telnetClient;
         }
 
-        protected abstract ITelnetClient CreateClient(TcpClient client);
+        protected virtual SocketConnection CreateClient(TcpClient client)
+        {
+            T mudClient = MudFactory.GetObject<T>(new { client = client });
+            return mudClient;
+        }
 
         /// <summary>
         /// Starts this listener listening for connections
@@ -90,7 +95,7 @@ namespace Mirage.Core.IO
         public void Start()
         {
             _listener.Start();
-            Logger.Info(this.GetType().Name + " listening at address " + _listener.LocalEndpoint.ToString());
+            Logger.Info("listening at address " + _listener.LocalEndpoint.ToString());
         }
 
         /// <summary>
@@ -98,7 +103,7 @@ namespace Mirage.Core.IO
         /// </summary>
         public void Stop()
         {
-            Logger.Info(this.GetType().Name + " stopped listening at address " + _listener.LocalEndpoint.ToString());
+            Logger.Info("stopped listening at address " + _listener.LocalEndpoint.ToString());
             _listener.Stop();
         }
 

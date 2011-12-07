@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{182E3263-983B-42A7-A25C-9D18FBE1B29A}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -84,7 +84,6 @@
     <Compile Include="MockClient.cs" />
     <Compile Include="IO\TelnetIACTests.cs" />
     <Compile Include="Mock\MockContainableA.cs" />
-    <Compile Include="Mock\MockTelnetClient.cs" />
     <Compile Include="Mock\MockUriContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\MudPrincipalTests.cs" />

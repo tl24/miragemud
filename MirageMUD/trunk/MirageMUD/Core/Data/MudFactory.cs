@@ -91,6 +91,7 @@ namespace Mirage.Core.Data
                         RegisterFromAssembly(container, a);
                     });
 
+                container.AddComponent<IConnectionAdapterFactory, ConnectionAdapterFactory>();
                 /*
                 // install default components
                 AssemblyList.Instance.ForEach(
@@ -113,11 +114,19 @@ namespace Mirage.Core.Data
                 );
 
                 container.Register(
-                    AllTypes.Of<ITelnetClient>()
+                    AllTypes.Of<IConnection>()
                     .FromAssembly(a)
                     .Configure(component
                     => component.LifeStyle.Transient.Named(component.Implementation.Name))
                 );
+
+                container.Register(
+                    AllTypes.Of<IConnectionAdapter>()
+                    .FromAssembly(a)
+                    .Configure(component
+                    => component.LifeStyle.Transient.Named(component.Implementation.Name))
+                );
+
             }
         }
 
