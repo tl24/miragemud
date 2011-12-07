@@ -23,7 +23,7 @@ namespace Mirage.Stock.IO
         private IPlayerRepository _playerRepository;
         private IRaceRepository _raceRepository;
 
-        public TextLoginStateHandler(IMudClient client)
+        public TextLoginStateHandler(IConnectionAdapter client)
             : base(client)
         {
             _failed = false;

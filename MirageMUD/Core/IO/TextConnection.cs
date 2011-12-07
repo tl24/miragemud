@@ -1,36 +1,22 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Net.Sockets;
-using System.IO;
-using Mirage.Core.Data;
-using Mirage.Core.Command;
-using Mirage.Core.Communication;
 using Mirage.Core.Util;
 using Mirage.Telnet;
 using Mirage.Telnet.Options;
 
 namespace Mirage.Core.IO
 {
-
-    /// <summary>
-    ///     Handles Server for a player
-    /// </summary>
-    public class TextClient : ClientBase, ITextClient
+    public class TextConnection : SocketConnection, IConnection
     {
-
         protected NetworkStream socketStream;
 
         /// <summary>
         ///     The lines that have been read from the socket
         /// </summary>
         protected ISynchronizedQueue<string> inputQueue;
-
-        /// <summary>
-        ///     The incomming line to be processed
-        /// </summary>
-        protected string _inputLine;
 
         /// <summary>
         ///     Buffer to hold input until it forms a complete line
@@ -42,11 +28,18 @@ namespace Mirage.Core.IO
         /// </summary>
         protected int bufferLength;
 
-
-        /// <summary>
-        ///     The last Command read
-        /// </summary>
-        protected string lastRead;
+        public TextConnection(TcpClient client)
+            : base(client)
+        {
+            socketStream = _client.GetStream();
+            inputQueue = new SynchronizedQueue<string>();
+            outputQueue = new SynchronizedQueue<string>();
+            Options = new TextClientOptions();
+            inputBuffer = new char[512];
+            bufferLength = 0;
+            //for now, just call this, not sure we need to expose it
+            Initialize();
+        }
 
         /// <summary>
         ///     The lines that are waiting to be written to the socket
@@ -57,22 +50,7 @@ namespace Mirage.Core.IO
 
         private TelnetOptionProcessor tnHandler;
 
-        /// <summary>
-        ///     Create a descriptor to read and write to the given
-        /// tcp client (Socket)
-        /// </summary>
-        /// <param name="client"> the client to read and write from</param>
-        public TextClient(TcpClient client) : base(client)
-        {
-            socketStream = _client.GetStream();
-            inputQueue = new SynchronizedQueue<string>();
-            outputQueue = new SynchronizedQueue<string>();
-            Options = new TextClientOptions();
-            inputBuffer = new char[512];
-            bufferLength = 0;
-        }
-
-        public override void Initialize()
+        public void Initialize()
         {
             var telnetOpts = new OptionSupportList(new[] { 
                 new OptionSupportEntry(OptionCodes.NAWS, true, false),
@@ -196,60 +174,19 @@ namespace Mirage.Core.IO
             return outBuf.Length;
         }
 
-        public override void ProcessInput()
+        public bool TryGetInput(out string input)
         {
-            string input;
+            input = null;
             if (_closed == 0 && inputQueue.TryDequeue(out input)) {
-                CommandRead = true;
-                if (LoginHandler != null)
-                {
-                    LoginHandler.HandleInput(input);
-                }
-                else if (input.Trim().Length > 0)
-                {
-                    Interpreter.ExecuteCommand(Player, input);
-                }
+                return true;
+            } else {
+                return false;
             }
         }
 
-        /// <summary>
-        ///    Transfer input from buffer to INCOMM so a Command can be processed. 
-        /// </summary>
-        private void ReadFromBuffer() {
-            // If we have a line already, return
-            if (_inputLine != null)
-            {
-                return;
-            }
-            CommandRead = false;
-            string line = inputQueue.Dequeue();
-            // Substitute for last Command with '!'
-            if (line.Equals("!"))
-            {
-                _inputLine = lastRead;
-            }
-            else
-            {
-                _inputLine = line;
-                lastRead = _inputLine;
-            }
-
-            if (_inputLine != null && _inputLine.Length > 0)
-            {
-                CommandRead = true;
-            }
-        }
-
-        /// <summary>
-        /// Write the specified text to the descriptors output buffer. 
-        /// </summary>
-        public override void Write(IMessage message)
+        public void Write(string message)
         {
-            if (_closed == 0)
-            {
-                outputQueue.Enqueue(message.Render());
-                OutputWritten = true;
-            }
+            outputQueue.Enqueue(message);
         }
 
         /// <summary>
@@ -259,7 +196,8 @@ namespace Mirage.Core.IO
         public override void FlushOutput()
         {
             bool bProcess = false;
-            while (outputQueue.Count > 0) {
+            while (outputQueue.Count > 0)
+            {
                 string data = outputQueue.Dequeue();
                 tnHandler.Write(data);
                 bProcess = true;
@@ -280,11 +218,6 @@ namespace Mirage.Core.IO
                         Close();
                 }
             }
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
         }
     }
 }

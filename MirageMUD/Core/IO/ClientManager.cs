@@ -24,11 +24,11 @@ namespace Mirage.Core.IO
     public class ClientManager
     {
         private List<IClientListener> _listeners;
-        private ISynchronizedQueue<IMudClient> _newClients;
+        private ISynchronizedQueue<IConnection> _newClients;
         private bool _started = false;
         private BlockingQueue<ClientOperation> workItems;
         private int _maxThreads = 0;
-        private ISynchronizedQueue<ITelnetClient> _internalNewClients;
+        private ISynchronizedQueue<SocketConnection> _internalNewClients;
 
         private IList<Thread> threads;
         private IList<Socket> _sockets;
@@ -52,7 +52,7 @@ namespace Mirage.Core.IO
             _listeners = new List<IClientListener>(listeners);
             _maxThreads = maxThreads > 0 ? maxThreads : 1;
             workItems = new BlockingQueue<ClientOperation>(15);
-            _internalNewClients = new SynchronizedQueue<ITelnetClient>();
+            _internalNewClients = new SynchronizedQueue<SocketConnection>();
             threads = new List<Thread>();
             _sockets = new List<Socket>();
             _clientMap = new Hashtable();
@@ -96,7 +96,7 @@ namespace Mirage.Core.IO
         /// </summary>
         private void AddNewClients()
         {
-            ITelnetClient newClient;
+            SocketConnection newClient;
             while (_internalNewClients.TryDequeue(out newClient))
             {
                 _sockets.Add(newClient.TcpClient.Client);
@@ -123,7 +123,7 @@ namespace Mirage.Core.IO
             foreach (Socket s in checkRead)
             {
                 object client = _clientMap[s];
-                if (client is ClientListener)
+                if (client is IClientListener)
                     ops.Add(new ClientOperation(client, OpType.Accept));
                 else
                     ops.Add(new ClientOperation(client, OpType.Read));
@@ -156,7 +156,7 @@ namespace Mirage.Core.IO
             _clientMap.Clear();
 
             // start the factories
-            foreach (ClientListener listener in _listeners)
+            foreach (IClientListener listener in _listeners)
             {
                 listener.Start();
                 _sockets.Add(listener.Socket);
@@ -186,7 +186,7 @@ namespace Mirage.Core.IO
             foreach (DictionaryEntry entry in _clientMap)
             {
                 Socket skey = (Socket)entry.Key;
-                ITelnetClient client = entry.Value as ITelnetClient;
+                SocketConnection client = entry.Value as SocketConnection;
                 if (client != null)
                 {
                     if (!client.IsOpen)
@@ -218,25 +218,25 @@ namespace Mirage.Core.IO
                     switch (op.Type)
                     {
                         case OpType.Accept:
-                            ITelnetClient client = ((ClientListener)op.Client).Accept();
+                            SocketConnection client = ((IClientListener)op.Client).Accept();
                             _internalNewClients.Enqueue(client);
                             break;
                         case OpType.Read:
-                            ((ITelnetClient)op.Client).ReadInput();
+                            ((SocketConnection)op.Client).ReadInput();
                             break;
                         case OpType.Write:
-                            ((ITelnetClient)op.Client).FlushOutput();
+                            ((SocketConnection)op.Client).FlushOutput();
                             break;
                         case OpType.Error:
-                            ((ITelnetClient)op.Client).Close();
+                            ((SocketConnection)op.Client).Close();
                             break;
                     }
                 }
                 catch (IOException e)
                 {
-                    if (op.Client is ITelnetClient)
+                    if (op.Client is SocketConnection)
                         // error, close the connection, main thread will clean it up
-                        ((ITelnetClient)op.Client).Close();
+                        ((SocketConnection)op.Client).Close();
                 }
                 Interlocked.Decrement(ref _processCount);
                 if (_processCount == 0)
@@ -288,14 +288,14 @@ namespace Mirage.Core.IO
         public void Stop()
         {
             
-            foreach (ClientListener listener in _listeners)
+            foreach (IClientListener listener in _listeners)
             {
                 listener.Stop();
             }
             _started = false;
         }
 
-        public ISynchronizedQueue<IMudClient> NewClients
+        public ISynchronizedQueue<IConnection> NewClients
         {
             get { return this._newClients; }
             set

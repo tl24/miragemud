@@ -1,19 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Mirage.Core.Communication;
-using System.Net.Sockets;
 using Mirage.Core.Data;
 using Mirage.Core.Command;
-using Mirage.Core.Util;
 
 namespace Mirage.Core.IO
 {
-    /// <summary>
-    /// The IMudClient interface specifies the interface for reading input and
-    /// writing output to the remote client connected to the mud.
-    /// </summary>
-    public interface IMudClient
+    public interface IConnectionAdapter
     {
         /// <summary>
         /// Close the client and its underlying connection
@@ -68,10 +63,10 @@ namespace Mirage.Core.IO
         bool IsOpen { get; }
 
         string Address { get; }
-
-        /// <summary>
-        /// Called on a new connection
-        /// </summary>
-        void Initialize();
     }
+
+    public interface IConnectionAdapter<ConnectionT> : IConnectionAdapter
+    {
+    }
+
 }

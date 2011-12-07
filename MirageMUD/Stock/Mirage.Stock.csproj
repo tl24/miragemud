@@ -79,11 +79,9 @@
     <Compile Include="Command\AreaBuilder.cs" />
     <Compile Include="Command\Movement.cs" />
     <Compile Include="Command\PlayerCommands.cs" />
-    <Compile Include="IO\GuiClientListener.cs" />
     <Compile Include="IO\GuiLoginHandler.cs" />
     <Compile Include="IO\PlayerFinalizer.cs" />
     <Compile Include="IO\TextLoginStateHandler.cs" />
-    <Compile Include="IO\TextClientListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

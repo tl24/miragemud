@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Mirage.Core.Command;
 using Mirage.Core.Data;
-using Mirage.Stock.Data;
 using Mirage.Core.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls

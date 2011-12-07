@@ -15,7 +15,7 @@ namespace MirageGUI.Code
         private object data;
         private Exception inner;
         public ExceptionMessage(string name, Exception inner, object data)
-            : base(MessageType.SystemError, "common.error.GuiError", name, inner.Message)
+            : base(MessageType.SystemError, new MessageName("common.error.GuiError", name), inner.Message)
         {
             this.data = data;
             this.inner = inner;

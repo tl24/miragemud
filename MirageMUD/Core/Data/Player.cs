@@ -28,7 +28,6 @@ namespace Mirage.Core.Data
     public class Player : Living, IPlayer
     {
         private string _password;
-        private IMudClient _client;
         private IInterpret _interpreter;
         private MudPrincipal _principal;
         private string[] _roles;
@@ -119,11 +118,7 @@ namespace Mirage.Core.Data
         /// </summary>
         [XmlIgnore]
         [JsonExIgnore]
-        public IMudClient Client
-        {
-            get { return _client; }
-            set { _client = value; }
-        }
+        public IConnectionAdapter Client { get; set; }
 
         /// <summary>
         ///     The Command interpreters in effect for this player

@@ -6,7 +6,6 @@ using Mirage.Core.Communication;
 using MirageGUI.Code;
 using Mirage.Core.Data;
 using Mirage.Core.Communication.BuilderMessages;
-using Mirage.Stock.Data;
 
 namespace MirageGUI.Controls
 {

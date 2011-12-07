@@ -8,7 +8,7 @@ using Mirage.Core.Communication;
 
 namespace NUnitTests
 {
-    public class MockClient : IMudClient
+    public class MockClient : IConnectionAdapter
     {
         private bool _isOpen = true;
         private ILoginInputHandler _loginHandler;
@@ -36,11 +36,6 @@ namespace NUnitTests
         {
             _messages.Add(message);
             OutputWritten = true;
-        }
-
-        public void WritePrompt()
-        {
-            
         }
 
         public bool OutputWritten
