@@ -6,8 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using MirageGUI.Code;
-using Mirage.Core.Communication;
-using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Game.Communication;
+using Mirage.Game.Communication.BuilderMessages;
 
 namespace MirageGUI.Forms
 {
@@ -57,7 +57,7 @@ namespace MirageGUI.Forms
 
         #region IResponseHandler Members
 
-        public ProcessStatus HandleResponse(Mirage.Core.Communication.Message msg)
+        public ProcessStatus HandleResponse(Mirage.Game.Communication.Message msg)
         {
             if (msg.IsMatch(Namespaces.Authentication))
             {

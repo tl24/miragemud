@@ -14,6 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +46,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\bin\Debug\Mirage.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Mirage.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MirageMUD\bin\Debug\Mirage.Game.dll</HintPath>
+    </Reference>
+    <Reference Include="Mirage.IO, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MirageMUD\bin\Debug\Mirage.IO.dll</HintPath>
+    </Reference>
     <Reference Include="Mirage.Stock, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\Stock\bin\Debug\Mirage.Stock.dll</HintPath>
@@ -60,6 +69,9 @@
       <HintPath>.\NGenerics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />

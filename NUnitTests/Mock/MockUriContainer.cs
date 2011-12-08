@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.Data.Query;
+using Mirage.Game.World.Query;
 
 namespace NUnitTests.Mock
 {

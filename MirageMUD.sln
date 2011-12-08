@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirage.Stock", "MirageMUD\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirage.Telnet", "MirageMUD\Telnet\Mirage.Telnet.csproj", "{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirage.Game", "MirageMUD\Game\Mirage.Game.csproj", "{A8F2A17F-F67D-4BB9-AE09-F3E0784CBB99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mirage.IO", "MirageMUD\IO\Mirage.IO.csproj", "{FEA3E089-043F-4934-9AE6-2E86ED1387B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8F2A17F-F67D-4BB9-AE09-F3E0784CBB99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8F2A17F-F67D-4BB9-AE09-F3E0784CBB99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8F2A17F-F67D-4BB9-AE09-F3E0784CBB99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8F2A17F-F67D-4BB9-AE09-F3E0784CBB99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA3E089-043F-4934-9AE6-2E86ED1387B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA3E089-043F-4934-9AE6-2E86ED1387B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA3E089-043F-4934-9AE6-2E86ED1387B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA3E089-043F-4934-9AE6-2E86ED1387B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

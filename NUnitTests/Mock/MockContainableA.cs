@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.Data.Containers;
+using Mirage.Game.World.Containers;
 
 namespace NUnitTests.Mock
 {

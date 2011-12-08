@@ -8,10 +8,9 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Net;
 using System.IO;
-using Mirage.Core.IO;
 using System.Threading;
 using JsonExSerializer;
-using Mirage.Core.Communication;
+using Mirage.Game.Communication;
 using MirageGUI.Code;
 using log4net.Appender;
 using log4net.Repository;
@@ -61,7 +60,7 @@ namespace MirageGUI.Forms
             }
         }
 
-        public ProcessStatus HandleResponse(Mirage.Core.Communication.Message msg)
+        public ProcessStatus HandleResponse(Mirage.Game.Communication.Message msg)
         {
             if (this.InvokeRequired)
             {

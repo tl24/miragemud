@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.IO;
-using Mirage.Core.Command;
-using Mirage.Core.Data;
-using Mirage.Core.Communication;
+using Mirage.IO.Net;
+using Mirage.Game.Command;
+using Mirage.Game.World;
+using Mirage.Game.Communication;
+using Mirage.Game.IO.Net;
 
 namespace NUnitTests
 {
@@ -56,7 +57,7 @@ namespace NUnitTests
             set { _state = value; }
         }
 
-        public Mirage.Core.Data.IPlayer Player
+        public Mirage.Game.World.IPlayer Player
         {
             get { return _player; }
             set { _player = value; }

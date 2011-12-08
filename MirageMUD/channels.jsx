@@ -1,5 +1,5 @@
 [
-	new "Mirage.Core.Communication.Channel, Mirage.Core" ("newbie", null, null, null) { "IsDefault": true },
-	new "Mirage.Core.Communication.Channel, Mirage.Core" ("global", null, null, null) { "IsDefault": true },
-	new "Mirage.Core.Communication.Channel, Mirage.Core" ("wiztalk", null, null, (string[]) ["immortal"]) { "IsDefault": true }
+	new "Mirage.Game.Communication.Channel, Mirage.Game" ("newbie", null, null, null) { "IsDefault": true },
+	new "Mirage.Game.Communication.Channel, Mirage.Game" ("global", null, null, null) { "IsDefault": true },
+	new "Mirage.Game.Communication.Channel, Mirage.Game" ("wiztalk", null, null, (string[]) ["immortal"]) { "IsDefault": true }
 ]

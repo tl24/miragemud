@@ -8,9 +8,9 @@ using System.Windows.Forms;
 using System.Reflection;
 using MirageGUI.ItemEditor;
 using MirageGUI.Code;
-using Mirage.Core.Communication;
-using Mirage.Core.Command;
-using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Game.Communication;
+using Mirage.Game.Command;
+using Mirage.Game.Communication.BuilderMessages;
 
 namespace MirageGUI.Forms
 {

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.Command;
-using Mirage.Core.Data;
-using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Game.Command;
+using Mirage.Game.World;
+using Mirage.Game.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls
 {

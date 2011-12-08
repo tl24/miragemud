@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.Data;
-using Mirage.Core.Communication;
-using Mirage.Core.Data.Query;
 using System.Configuration;
 using System.Text.RegularExpressions;
-using Mirage.Core.Util;
-using Mirage.Core.IO;
 using System.Security.Principal;
+using Mirage.Game.Command;
+using Mirage.Game.Communication;
+using Mirage.Game.World;
+using Mirage.Game.IO.Net;
+using Mirage.Game.World.Query;
+using Mirage.IO.Net;
 
 namespace Mirage.Stock.IO
 {
@@ -18,7 +19,6 @@ namespace Mirage.Stock.IO
     public class TextLoginStateHandler : AbstractStateMachine
     {
         private bool _failed;
-        private bool _echoOn;
         private IMessageFactory _messageFactory;
         private IPlayerRepository _playerRepository;
         private IRaceRepository _raceRepository;
@@ -27,7 +27,6 @@ namespace Mirage.Stock.IO
             : base(client)
         {
             _failed = false;
-            _echoOn = true;
             _playerRepository = MudFactory.GetObject<IPlayerRepository>();
             _raceRepository = MudFactory.GetObject<IRaceRepository>();
         }
@@ -83,7 +82,6 @@ namespace Mirage.Stock.IO
                     //MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
                     message.Add(MessageFactory.GetMessage("negotiation.authentication.ExistingplayerPassword"));
                     message.Add(MessageFactory.GetMessage("system.EchoOff"));
-                    _echoOn = false;
                     Require(message, new ValidateDelegate(this.ValidateOldPassword));
                 }
                 else
@@ -249,7 +247,6 @@ namespace Mirage.Stock.IO
         {
             string input = (string)data;
             Client.Write(MessageFactory.GetMessage("system.EchoOn"));
-            _echoOn = true;
             Client.Write(MessageFactory.GetMessage("system.Newline"));
             if (!GetValue<Player>("player").ComparePassword(input))
             {
