@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
-using Mirage.Core.Communication;
+using Mirage.Game.Communication;
 using MirageGUI.Code;
-using Mirage.Core.Data;
-using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Game.World;
+using Mirage.Game.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls
 {
@@ -60,7 +60,7 @@ namespace MirageGUI.Controls
             return typeof(Area);
         }
 
-        public override MirageGUI.Code.ProcessStatus HandleResponse(Mirage.Core.Communication.Message response)
+        public override MirageGUI.Code.ProcessStatus HandleResponse(Mirage.Game.Communication.Message response)
         {
             if (response.IsMatch(Namespaces.Area, "AreaList"))
             {

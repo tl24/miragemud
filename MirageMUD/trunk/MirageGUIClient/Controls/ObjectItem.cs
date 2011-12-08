@@ -4,10 +4,10 @@ using System.Text;
 using System.Reflection;
 using JsonExSerializer;
 using System.Collections;
-using Mirage.Core.Data.Query;
-using Mirage.Core.Command;
-using Mirage.Core.Data;
-using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Game.World.Query;
+using Mirage.Game.Command;
+using Mirage.Game.World;
+using Mirage.Game.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls
 {

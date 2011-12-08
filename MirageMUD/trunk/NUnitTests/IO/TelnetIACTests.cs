@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using NUnitTests.Mock;
-using Mirage.Core.IO;
+using Mirage.IO.Net;
 using Castle.Core.Logging;
 using Mirage.Core;
 using Mirage.Telnet;

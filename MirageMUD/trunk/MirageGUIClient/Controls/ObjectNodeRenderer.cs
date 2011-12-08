@@ -5,9 +5,9 @@ using System.Windows.Forms;
 using MirageGUI.Code;
 using MirageGUI.ItemEditor;
 using MirageGUI.Forms;
-using Mirage.Core.Data;
-using Mirage.Core.Data.Attribute;
-using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Game.World;
+using Mirage.Game.World.Attribute;
+using Mirage.Game.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls
 {

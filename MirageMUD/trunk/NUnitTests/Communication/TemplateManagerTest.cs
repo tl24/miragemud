@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-using Mirage.Core.Communication;
+using Mirage.Game.Communication;
 using System.Collections;
 using NUnit.Framework;
 

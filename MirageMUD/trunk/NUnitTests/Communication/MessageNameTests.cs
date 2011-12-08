@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Mirage.Core.Communication;
+using Mirage.Game.Communication;
 
 namespace NUnitTests.Communication
 {

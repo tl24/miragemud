@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
+using Mirage.Game.World;
+using Mirage.Game.World.Query;
 using NUnit.Framework;
-using Mirage.Core.Data;
 using NUnitTests.Mock;
-using Mirage.Core.Data.Query;
-using Mirage.Core.Data;
 
 namespace NUnitTests.Data.Query
 {

@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
-using Mirage.Core.Command;
-using Mirage.Core.Data.Query;
+using Mirage.Game.Command;
+using Mirage.Game.World.Query;
 using System.Reflection;
-using Mirage.Core.Data;
-using Mirage.Core.Communication.BuilderMessages;
+using Mirage.Game.World;
+using Mirage.Game.Communication.BuilderMessages;
 
 namespace MirageGUI.Controls
 {

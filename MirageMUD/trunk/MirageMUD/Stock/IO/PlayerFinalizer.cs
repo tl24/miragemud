@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.Data;
-using Mirage.Core.Communication;
-using Mirage.Core.IO;
-using Mirage.Core.Data;
-using Mirage.Core.Data.Query;
 using System.Configuration;
 using log4net;
+using Mirage.Game.World;
+using Mirage.Game.IO.Net;
+using Mirage.Game.Communication;
+using Mirage.Game.World.Query;
+using Mirage.IO.Net;
 
 namespace Mirage.Stock.IO
 {

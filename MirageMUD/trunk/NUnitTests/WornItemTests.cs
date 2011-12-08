@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Mirage.Core.Data.Items;
+using Mirage.Game.World.Items;
 
 namespace NUnitTests
 {

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.IO;
-using Mirage.Core.Data;
-using Mirage.Core;
 using log4net;
+using Mirage.Game;
+using Mirage.Game.World;
 
 namespace Mirage
 {

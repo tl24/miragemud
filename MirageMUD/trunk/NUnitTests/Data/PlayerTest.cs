@@ -1,12 +1,5 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Mirage.Core.Data;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.IO;
+﻿using Mirage.Game.World;
 using NUnit.Framework;
-using Mirage.Core.Data;
 
 namespace NUnitTests.Data
 {

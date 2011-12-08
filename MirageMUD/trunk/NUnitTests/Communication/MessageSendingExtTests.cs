@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Mirage.Core.Data;
-using Mirage.Core.Communication;
+using Mirage.Game.World;
+using Mirage.Game.Communication;
 
 namespace NUnitTests.Communication
 {

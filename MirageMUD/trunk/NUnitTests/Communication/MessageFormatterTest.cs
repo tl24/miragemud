@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.Data;
-using Mirage.Core.Communication;
+using Mirage.Game.World;
+using Mirage.Game.Communication;
 using NUnit.Framework;
-using Mirage.Core.Data.Skills;
-using Mirage.Core.Data.Items;
+using Mirage.Game.World.Skills;
+using Mirage.Game.World.Items;
 
 namespace NUnitTests.Communication
 {

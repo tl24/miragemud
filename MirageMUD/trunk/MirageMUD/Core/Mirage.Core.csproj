@@ -50,22 +50,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\runtime\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.MicroKernel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\runtime\Castle.MicroKernel.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\runtime\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="JsonExSerializer, Version=2.0.0.100, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\runtime\JsonExSerializer.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\runtime\log4net.dll</HintPath>
@@ -79,177 +63,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command\ActorAttribute.cs" />
-    <Compile Include="Command\ArgumentConversion.cs" />
-    <Compile Include="Command\ArgumentParser.cs" />
-    <Compile Include="Command\BaseArgumentAttribute.cs" />
-    <Compile Include="Command\CommandAttribute.cs" />
-    <Compile Include="Command\CommandBase.cs" />
-    <Compile Include="Command\CommandGroup.cs" />
-    <Compile Include="Command\CommandInitializer.cs" />
-    <Compile Include="Command\ConfirmationAttribute.cs" />
-    <Compile Include="Command\ConfirmationCommand.cs" />
-    <Compile Include="Command\ConfirmationInterpreter.cs" />
-    <Compile Include="Command\ConstAttribute.cs" />
-    <Compile Include="Command\CustomParseAttribute.cs" />
-    <Compile Include="Command\ILoginInputHandler.cs" />
-    <Compile Include="Command\LookupAttribute.cs" />
-    <Compile Include="Command\MudCommands.cs" />
-    <Compile Include="Command\ReflectedCommandGroup.cs" />
-    <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
-    <Compile Include="Communication\BuilderMessages\UpdateConfirmationMessage.cs" />
-    <Compile Include="Communication\ChannelCommand.cs" />
-    <Compile Include="Communication\ChannelRepository.cs" />
-    <Compile Include="Communication\ChannelsInitializer.cs" />
-    <Compile Include="Communication\CommunicationPreferences.cs" />
-    <Compile Include="Communication\DataMessage.cs" />
-    <Compile Include="Communication\IChannelRepository.cs" />
-    <Compile Include="Communication\ICommunicationPreferences.cs" />
-    <Compile Include="Communication\IMessage.cs" />
-    <Compile Include="Communication\IMessageFactory.cs" />
-    <Compile Include="Communication\IReceiveMessages.cs" />
-    <Compile Include="Communication\ITemplate.cs" />
-    <Compile Include="Communication\MessageFactory.cs" />
-    <Compile Include="Communication\MessageFormatter.cs" />
-    <Compile Include="Communication\MessageName.cs" />
-    <Compile Include="Communication\Namespace.cs" />
-    <Compile Include="Communication\ResourceMessage.cs" />
-    <Compile Include="Communication\TemplateDefinition.cs" />
-    <Compile Include="Communication\TemplateManager.cs" />
-    <Compile Include="Communication\TemplateRenderer.cs" />
-    <Compile Include="Communication\ValidationException.cs" />
-    <Compile Include="Data\AbstractSimpleRepository.cs" />
-    <Compile Include="Data\Area.cs" />
-    <Compile Include="Data\AreaLoader.cs" />
-    <Compile Include="Data\AreaRepository.cs" />
-    <Compile Include="Data\AreaReset.cs" />
-    <Compile Include="Data\Attribute\AttributeNotSupportedException.cs" />
-    <Compile Include="Data\Attribute\BaseAttribute.cs" />
-    <Compile Include="Data\Attribute\IAttributable.cs" />
-    <Compile Include="Data\Attribute\IAttribute.cs" />
-    <Compile Include="Data\Attribute\ILockable.cs" />
-    <Compile Include="Data\Attribute\IOpenable.cs" />
-    <Compile Include="Data\Attribute\ISupportAttribute.cs" />
-    <Compile Include="Data\Attribute\LockableAttribute.cs" />
-    <Compile Include="Data\Attribute\OpenableAttribute.cs" />
-    <Compile Include="Data\Containers\ContainerAddException.cs" />
-    <Compile Include="Data\Containers\Containers.cs" />
-    <Compile Include="Data\Containers\GenericCollectionContainer.cs" />
-    <Compile Include="Data\EditorAttribute.cs" />
-    <Compile Include="Data\EditorCollectionAttribute.cs" />
-    <Compile Include="Data\EditorParentAttribute.cs" />
-    <Compile Include="Data\EditorTypeSelectorAttribute.cs" />
-    <Compile Include="Data\Containers\HeterogenousContainer.cs" />
-    <Compile Include="Data\IActor.cs" />
-    <Compile Include="Data\IArea.cs" />
-    <Compile Include="Data\Containers\IContainable.cs" />
-    <Compile Include="Data\Containers\IContainer.cs" />
-    <Compile Include="Data\IAreaRepository.cs" />
-    <Compile Include="Data\IMobileRepository.cs" />
-    <Compile Include="Data\IMudRepository.cs" />
-    <Compile Include="Data\IPlayer.cs" />
-    <Compile Include="Data\IPlayerRepository.cs" />
-    <Compile Include="Data\Items\Armor.cs" />
-    <Compile Include="Data\Items\ItemBase.cs" />
-    <Compile Include="Data\Items\WornItems.cs" />
-    <Compile Include="Data\IViewManager.cs" />
-    <Compile Include="Data\JsonSimpleRepository.cs" />
-    <Compile Include="Data\Living.cs" />
-    <Compile Include="Data\LivingTemplateBase.cs" />
-    <Compile Include="Data\MessageSendingExtensions.cs" />
-    <Compile Include="Data\MobAI\AIProgram.cs" />
-    <Compile Include="Data\MobAI\EchoProgram.cs" />
-    <Compile Include="Data\MobAI\Wanderer.cs" />
-    <Compile Include="Data\Mobile.cs" />
-    <Compile Include="Data\MobileRepository.cs" />
-    <Compile Include="Data\MobileService.cs" />
-    <Compile Include="Data\MobPrincipal.cs" />
-    <Compile Include="Data\MobReset.cs" />
-    <Compile Include="Data\MobTemplate.cs" />
-    <Compile Include="Data\MudFactory.cs" />
-    <Compile Include="Data\ObjectUpdater.cs" />
-    <Compile Include="Data\Player.cs" />
-    <Compile Include="Data\PlayerExecutorServiceBase.cs" />
-    <Compile Include="Data\PlayerRepository.cs" />
-    <Compile Include="Data\Query\IQueryManager.cs" />
-    <Compile Include="Data\Query\IURI.cs" />
-    <Compile Include="Data\Query\IUriContainer.cs" />
-    <Compile Include="Data\Query\QueryManager.cs" />
-    <Compile Include="Data\Race.cs" />
-    <Compile Include="Data\RaceRepository.cs" />
-    <Compile Include="Data\ResetBase.cs" />
-    <Compile Include="Data\Room.cs" />
-    <Compile Include="Data\RoomExit.cs" />
-    <Compile Include="Data\Skills\IPlayerAvailableSkills.cs" />
-    <Compile Include="Data\Skills\ISkillRepository.cs" />
-    <Compile Include="Data\Skills\Skill.cs" />
-    <Compile Include="Data\Skills\SkillLoader.cs" />
-    <Compile Include="Data\Skills\SkillRepository.cs" />
-    <Compile Include="Data\StockRepository.cs" />
-    <Compile Include="Data\Thing.cs" />
-    <Compile Include="Data\ViewableBase.cs" />
-    <Compile Include="Data\ViewManager.cs" />
-    <Compile Include="Data\World.cs" />
-    <Compile Include="Events\EventBase.cs" />
-    <Compile Include="Events\EventEnums.cs" />
-    <Compile Include="Events\IEvent.cs" />
-    <Compile Include="Events\IEventContainer.cs" />
-    <Compile Include="Events\SensoryEvent.cs" />
-    <Compile Include="IInitializer.cs" />
-    <Compile Include="IO\AdvancedConnectionAdapter.cs" />
-    <Compile Include="IO\ConnectionAdapterBase.cs" />
-    <Compile Include="IO\ConnectionAdapterFactory.cs" />
-    <Compile Include="IO\ClientListener.cs" />
-    <Compile Include="IO\ConnectedState.cs" />
-    <Compile Include="IO\AdvancedConnection.cs" />
-    <Compile Include="IO\IClientListener.cs" />
-    <Compile Include="IO\IConnection.cs" />
-    <Compile Include="IO\IConnectionAdapter.cs" />
-    <Compile Include="IO\IConnectionAdapterFactory.cs" />
-    <Compile Include="IO\SocketConnection.cs" />
-    <Compile Include="IO\TextConnectionAdapter.cs" />
-    <Compile Include="IO\TextConnection.cs" />
-    <Compile Include="IServiceExecutor.cs" />
-    <Compile Include="IO\Serialization\FileSerializerAdapterBase.cs" />
-    <Compile Include="IO\Serialization\JsonExSerializerAdapter.cs" />
-    <Compile Include="ServiceEntryConverter.cs" />
-    <Compile Include="ServiceExecutorBase.cs" />
-    <Compile Include="IO\TextClientOptions.cs" />
+    <Compile Include="Collections\AssemblyList.cs" />
+    <Compile Include="Collections\BlockingQueue.cs" />
+    <Compile Include="Collections\CollectionEvent.cs" />
+    <Compile Include="Collections\Collections.cs" />
+    <Compile Include="Collections\ICollectionEvents.cs" />
+    <Compile Include="Collections\ISynchronizedQueue.cs" />
+    <Compile Include="Collections\ListWithEvents.cs" />
+    <Compile Include="Collections\StringUtils.cs" />
+    <Compile Include="Collections\SynchronizedQueue.cs" />
+    <Compile Include="Extensibility\TypeSupports.cs" />
+    <Compile Include="Extensibility\AttributeNotSupportedException.cs" />
+    <Compile Include="Extensibility\IAttributable.cs" />
+    <Compile Include="Extensibility\IAttribute.cs" />
+    <Compile Include="Extensibility\ISupportAttribute.cs" />
     <Compile Include="Security\MudIdentity.cs" />
     <Compile Include="Security\MudPrincipal.cs" />
-    <Compile Include="Util\AbstractStateMachine.cs" />
-    <Compile Include="Command\ICommand.cs" />
-    <Compile Include="Command\Interpret.cs" />
-    <Compile Include="Command\MethodInvoker.cs" />
-    <Compile Include="Command\ReflectedCommand.cs" />
-    <Compile Include="Communication\Channel.cs" />
-    <Compile Include="Communication\Message.cs" />
-    <Compile Include="Communication\MultipartMessage.cs" />
-    <Compile Include="Communication\StringMessage.cs" />
-    <Compile Include="Data\BaseData.cs" />
-    <Compile Include="Data\MudRepositoryBase.cs" />
-    <Compile Include="Data\IViewable.cs" />
-    <Compile Include="Data\ObjectNotFoundException.cs" />
-    <Compile Include="Data\Query\ObjectQuery.cs" />
-    <Compile Include="IO\ClientManager.cs" />
-    <Compile Include="MirageServer.cs" />
-    <Compile Include="IO\Serialization\ObjectSerializer.cs" />
-    <Compile Include="IO\Serialization\XmlSerializerAdapter.cs" />
-    <Compile Include="IO\TransactionFactory.cs" />
+    <Compile Include="Transactions\TransactionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util\AssemblyList.cs" />
-    <Compile Include="Util\BlockingQueue.cs" />
-    <Compile Include="Util\CollectionEvent.cs" />
-    <Compile Include="Util\Collections.cs" />
-    <Compile Include="Util\ICollectionEvents.cs" />
-    <Compile Include="Util\ISynchronizedQueue.cs" />
-    <Compile Include="Util\ListWithEvents.cs" />
-    <Compile Include="Util\StringUtils.cs" />
-    <Compile Include="Util\SynchronizedQueue.cs" />
-    <Compile Include="Util\TypeSupports.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Includes\Welcome.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -267,15 +98,6 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Telnet\Mirage.Telnet.csproj">
-      <Project>{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}</Project>
-      <Name>Mirage.Telnet</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Players\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

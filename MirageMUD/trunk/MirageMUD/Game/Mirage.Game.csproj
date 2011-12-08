@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A8F2A17F-F67D-4BB9-AE09-F3E0784CBB99}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mirage.Game</RootNamespace>
+    <AssemblyName>Mirage.Game</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\runtime\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.MicroKernel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\runtime\Castle.MicroKernel.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\runtime\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="JsonExSerializer, Version=2.0.0.100, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\runtime\JsonExSerializer.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\runtime\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Command\AbstractStateMachine.cs" />
+    <Compile Include="Command\ActorAttribute.cs" />
+    <Compile Include="Command\AdminCommands.cs" />
+    <Compile Include="Command\AreaBuilder.cs" />
+    <Compile Include="Command\ArgumentConversion.cs" />
+    <Compile Include="Command\ArgumentParser.cs" />
+    <Compile Include="Command\BaseArgumentAttribute.cs" />
+    <Compile Include="Command\CoderCommands.cs" />
+    <Compile Include="Command\CommandAttribute.cs" />
+    <Compile Include="Command\CommandBase.cs" />
+    <Compile Include="Command\CommandGroup.cs" />
+    <Compile Include="Command\CommandInitializer.cs" />
+    <Compile Include="Command\ConfirmationAttribute.cs" />
+    <Compile Include="Command\ConfirmationCommand.cs" />
+    <Compile Include="Command\ConfirmationInterpreter.cs" />
+    <Compile Include="Command\ConstAttribute.cs" />
+    <Compile Include="Command\CustomParseAttribute.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\ILoginInputHandler.cs" />
+    <Compile Include="Command\Interpret.cs" />
+    <Compile Include="Command\ItemCommands.cs" />
+    <Compile Include="Command\LookupAttribute.cs" />
+    <Compile Include="Command\MethodInvoker.cs" />
+    <Compile Include="Command\MiscCommands.cs" />
+    <Compile Include="Command\Movement.cs" />
+    <Compile Include="Command\MudCommands.cs" />
+    <Compile Include="Command\PlayerCommands.cs" />
+    <Compile Include="Command\ReflectedCommand.cs" />
+    <Compile Include="Command\ReflectedCommandGroup.cs" />
+    <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
+    <Compile Include="Communication\BuilderMessages\UpdateConfirmationMessage.cs" />
+    <Compile Include="Communication\Channel.cs" />
+    <Compile Include="Communication\ChannelCommand.cs" />
+    <Compile Include="Communication\ChannelRepository.cs" />
+    <Compile Include="Communication\ChannelsInitializer.cs" />
+    <Compile Include="Communication\CommunicationPreferences.cs" />
+    <Compile Include="Communication\DataMessage.cs" />
+    <Compile Include="Communication\IChannelRepository.cs" />
+    <Compile Include="Communication\ICommunicationPreferences.cs" />
+    <Compile Include="Communication\IMessage.cs" />
+    <Compile Include="Communication\IMessageFactory.cs" />
+    <Compile Include="Communication\IReceiveMessages.cs" />
+    <Compile Include="Communication\ITemplate.cs" />
+    <Compile Include="Communication\Message.cs" />
+    <Compile Include="Communication\MessageFactory.cs" />
+    <Compile Include="Communication\MessageFormatter.cs" />
+    <Compile Include="Communication\MessageName.cs" />
+    <Compile Include="Communication\MultipartMessage.cs" />
+    <Compile Include="Communication\Namespace.cs" />
+    <Compile Include="Communication\ResourceMessage.cs" />
+    <Compile Include="Communication\StringMessage.cs" />
+    <Compile Include="Communication\TemplateDefinition.cs" />
+    <Compile Include="Communication\TemplateManager.cs" />
+    <Compile Include="Communication\TemplateRenderer.cs" />
+    <Compile Include="Communication\ValidationException.cs" />
+    <Compile Include="Events\EventBase.cs" />
+    <Compile Include="Events\EventEnums.cs" />
+    <Compile Include="Events\IEvent.cs" />
+    <Compile Include="Events\IEventContainer.cs" />
+    <Compile Include="Events\SensoryEvent.cs" />
+    <Compile Include="IInitializer.cs" />
+    <Compile Include="IO\Net\AdvancedConnectionAdapter.cs" />
+    <Compile Include="IO\Net\ClientListener.cs" />
+    <Compile Include="IO\Net\ConnectionAdapterBase.cs" />
+    <Compile Include="IO\Net\ConnectionAdapterFactory.cs" />
+    <Compile Include="IO\Net\IConnectionAdapter.cs" />
+    <Compile Include="IO\Net\IConnectionAdapterFactory.cs" />
+    <Compile Include="IO\Net\TextConnectionAdapter.cs" />
+    <Compile Include="IServiceExecutor.cs" />
+    <Compile Include="MirageServer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceEntryConverter.cs" />
+    <Compile Include="ServiceExecutorBase.cs" />
+    <Compile Include="World\AbstractSimpleRepository.cs" />
+    <Compile Include="World\Area.cs" />
+    <Compile Include="World\AreaLoader.cs" />
+    <Compile Include="World\AreaRepository.cs" />
+    <Compile Include="World\AreaReset.cs" />
+    <Compile Include="World\Attribute\BaseAttribute.cs" />
+    <Compile Include="World\Attribute\ILockable.cs" />
+    <Compile Include="World\Attribute\IOpenable.cs" />
+    <Compile Include="World\Attribute\LockableAttribute.cs" />
+    <Compile Include="World\Attribute\OpenableAttribute.cs" />
+    <Compile Include="World\BaseData.cs" />
+    <Compile Include="World\Containers\ContainerAddException.cs" />
+    <Compile Include="World\Containers\Containers.cs" />
+    <Compile Include="World\Containers\GenericCollectionContainer.cs" />
+    <Compile Include="World\Containers\HeterogenousContainer.cs" />
+    <Compile Include="World\Containers\IContainable.cs" />
+    <Compile Include="World\Containers\IContainer.cs" />
+    <Compile Include="World\EditorAttribute.cs" />
+    <Compile Include="World\EditorCollectionAttribute.cs" />
+    <Compile Include="World\EditorParentAttribute.cs" />
+    <Compile Include="World\EditorTypeSelectorAttribute.cs" />
+    <Compile Include="World\IActor.cs" />
+    <Compile Include="World\IArea.cs" />
+    <Compile Include="World\IAreaRepository.cs" />
+    <Compile Include="World\IMobileRepository.cs" />
+    <Compile Include="World\IMudRepository.cs" />
+    <Compile Include="World\IPlayer.cs" />
+    <Compile Include="World\IPlayerRepository.cs" />
+    <Compile Include="World\Items\Armor.cs" />
+    <Compile Include="World\Items\ItemBase.cs" />
+    <Compile Include="World\Items\WornItems.cs" />
+    <Compile Include="World\IViewable.cs" />
+    <Compile Include="World\IViewManager.cs" />
+    <Compile Include="World\JsonSimpleRepository.cs" />
+    <Compile Include="World\Living.cs" />
+    <Compile Include="World\LivingTemplateBase.cs" />
+    <Compile Include="World\MessageSendingExtensions.cs" />
+    <Compile Include="World\MobAI\AIProgram.cs" />
+    <Compile Include="World\MobAI\EchoProgram.cs" />
+    <Compile Include="World\MobAI\Wanderer.cs" />
+    <Compile Include="World\Mobile.cs" />
+    <Compile Include="World\MobileRepository.cs" />
+    <Compile Include="World\MobileService.cs" />
+    <Compile Include="World\MobPrincipal.cs" />
+    <Compile Include="World\MobReset.cs" />
+    <Compile Include="World\MobTemplate.cs" />
+    <Compile Include="World\MudFactory.cs" />
+    <Compile Include="World\MudRepositoryBase.cs" />
+    <Compile Include="World\ObjectNotFoundException.cs" />
+    <Compile Include="World\ObjectUpdater.cs" />
+    <Compile Include="World\Player.cs" />
+    <Compile Include="World\PlayerExecutorServiceBase.cs" />
+    <Compile Include="World\PlayerRepository.cs" />
+    <Compile Include="World\Query\IQueryManager.cs" />
+    <Compile Include="World\Query\IURI.cs" />
+    <Compile Include="World\Query\IUriContainer.cs" />
+    <Compile Include="World\Query\ObjectQuery.cs" />
+    <Compile Include="World\Query\QueryManager.cs" />
+    <Compile Include="World\Race.cs" />
+    <Compile Include="World\RaceRepository.cs" />
+    <Compile Include="World\ResetBase.cs" />
+    <Compile Include="World\Room.cs" />
+    <Compile Include="World\RoomExit.cs" />
+    <Compile Include="World\Skills\IPlayerAvailableSkills.cs" />
+    <Compile Include="World\Skills\ISkillRepository.cs" />
+    <Compile Include="World\Skills\Skill.cs" />
+    <Compile Include="World\Skills\SkillLoader.cs" />
+    <Compile Include="World\Skills\SkillRepository.cs" />
+    <Compile Include="World\StockRepository.cs" />
+    <Compile Include="World\Thing.cs" />
+    <Compile Include="World\ViewableBase.cs" />
+    <Compile Include="World\ViewManager.cs" />
+    <Compile Include="World\MudWorld.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Mirage.Core.csproj">
+      <Project>{05371036-8F2F-40B8-B306-462EFAAF67C8}</Project>
+      <Name>Mirage.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IO\Mirage.IO.csproj">
+      <Project>{FEA3E089-043F-4934-9AE6-2E86ED1387B1}</Project>
+      <Name>Mirage.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telnet\Mirage.Telnet.csproj">
+      <Project>{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}</Project>
+      <Name>Mirage.Telnet</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="World\Players\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

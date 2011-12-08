@@ -1,17 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Core.Util;
-using Mirage.Core.Communication;
-using Mirage.Core.Command;
-//using Mirage.Core.Communication.BuilderMessages;
-using Mirage.Core.Data;
-using Mirage.Core.Data.Query;
-//using System.Configuration;
-using Mirage.Core.IO;
-using Mirage.Core.Communication.BuilderMessages;
 using System.Configuration;
-using Mirage.Core.Data;
+using Mirage.Game.Command;
+using Mirage.Game.IO.Net;
+using Mirage.Game.World;
+using Mirage.Game.Communication;
+using Mirage.Game.Communication.BuilderMessages;
 
 namespace Mirage.Stock.IO
 {
