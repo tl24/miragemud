@@ -58,7 +58,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Net\AdvancedConnection.cs" />
     <Compile Include="Net\ClientListener.cs" />
     <Compile Include="Net\ClientManager.cs" />
