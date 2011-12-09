@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Security.Principal;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
-using System.Security.Principal;
 
 namespace Mirage.Game.Command
 {

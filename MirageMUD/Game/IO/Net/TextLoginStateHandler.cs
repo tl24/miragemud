@@ -1,17 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Configuration;
 using System.Text.RegularExpressions;
-using System.Security.Principal;
 using Mirage.Game.Command;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
-using Mirage.Game.IO.Net;
 using Mirage.Game.World.Query;
 using Mirage.IO.Net;
 
-namespace Mirage.Stock.IO
+namespace Mirage.Game.IO.Net
 {
     /// <summary>
     /// StateHandler class that controls Login and player creation for the text client.

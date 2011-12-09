@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 namespace Mirage.Game.World.Skills
 {
     public interface IPlayerAvailableSkills

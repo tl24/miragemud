@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace Mirage.Core.Collections
@@ -19,7 +17,6 @@ namespace Mirage.Core.Collections
         {
             _assemblies = new System.Collections.Generic.HashSet<Assembly>();            
             RegisterAssembly(this.GetType().Assembly);
-            RegisterAssembly(Assembly.Load("Mirage.Stock"));
             RegisterAssembly(Assembly.Load("Mirage.IO"));
             RegisterAssembly(Assembly.Load("Mirage.Game"));
         }

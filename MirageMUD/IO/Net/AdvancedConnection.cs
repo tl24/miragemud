@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mirage.Core.Collections;
-using System.Net.Sockets;
 using System.IO;
+using System.Net.Sockets;
+using Mirage.Core.Collections;
 
 namespace Mirage.IO.Net
 {

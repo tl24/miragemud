@@ -1,5 +1,4 @@
-﻿using System;
-namespace Mirage.Game.Communication
+﻿namespace Mirage.Game.Communication
 {
     public interface IMessageFactory
     {

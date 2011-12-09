@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.Security.Principal;
 using Mirage.Core.Security;
+using NUnit.Framework;
 
 namespace NUnitTests.Security
 {

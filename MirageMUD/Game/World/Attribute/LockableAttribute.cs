@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Mirage.Game.World.Query;
-using Mirage.Game.Communication;
 using Mirage.Core.Extensibility;
+using Mirage.Game.Communication;
+using Mirage.Game.World.Query;
 
 namespace Mirage.Game.World.Attribute
 {

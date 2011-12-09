@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
 using log4net;
-using Mirage.Game.World;
-using Mirage.Game.IO.Net;
 using Mirage.Game.Communication;
+using Mirage.Game.World;
 using Mirage.Game.World.Query;
 using Mirage.IO.Net;
 
-namespace Mirage.Stock.IO
+namespace Mirage.Game.IO.Net
 {
     /// <summary>
     /// Finalizes player state after login or new creation

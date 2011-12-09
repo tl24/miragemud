@@ -1,12 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using log4net;
-using System.Net.Sockets;
 using System.Net;
-using Mirage.Core.Collections;
-using System.Threading;
-using System.IO;
+using System.Net.Sockets;
 using Castle.Core.Logging;
 
 namespace Mirage.IO.Net

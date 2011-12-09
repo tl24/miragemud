@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using NUnitTests.Mock;
-using Mirage.IO.Net;
-using Castle.Core.Logging;
-using Mirage.Core;
-using Mirage.IO.Net.Telnet;
+﻿using NUnit.Framework;
 
 namespace NUnitTests.IO
 {

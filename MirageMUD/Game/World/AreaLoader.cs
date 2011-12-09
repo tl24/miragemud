@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Mirage.Game.World.Attribute;
-using Mirage.IO.Serialization;
-using Mirage.Core;
-using Mirage.Game.World;
-using Mirage.Game.World.MobAI;
 using Mirage.Game.World.Items;
+using Mirage.Game.World.MobAI;
 
 namespace Mirage.Game.World
 {

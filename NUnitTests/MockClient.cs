@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using Mirage.IO.Net;
 using Mirage.Game.Command;
-using Mirage.Game.World;
 using Mirage.Game.Communication;
 using Mirage.Game.IO.Net;
+using Mirage.Game.World;
+using Mirage.IO.Net;
 
 namespace NUnitTests
 {

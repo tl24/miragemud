@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Mirage.Core.Extensibility;
 
 namespace Mirage.Game.World.Attribute

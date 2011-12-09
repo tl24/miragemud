@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using Mirage.Game.Command;
-using Mirage.Game.World.Query;
 using Mirage.Game.World;
 using Mirage.Game.World.Items;
-using Mirage.Game.Communication;
+using Mirage.Game.World.Query;
+using NUnit.Framework;
 
 namespace NUnitTests
 {

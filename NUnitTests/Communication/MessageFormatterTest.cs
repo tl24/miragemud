@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Mirage.Game.World;
+﻿using System.Collections.Generic;
 using Mirage.Game.Communication;
-using NUnit.Framework;
-using Mirage.Game.World.Skills;
+using Mirage.Game.World;
 using Mirage.Game.World.Items;
+using NUnit.Framework;
 
 namespace NUnitTests.Communication
 {

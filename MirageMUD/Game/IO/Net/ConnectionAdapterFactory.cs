@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Mirage.Game.Command;
 using Mirage.IO.Net;
 
@@ -16,9 +13,8 @@ namespace Mirage.Game.IO.Net
         {
             if (connection is TextConnection)
             {
-                // for now, use reflection to get around assembly reference
                 var adapter = new TextConnectionAdapter((TextConnection)connection);
-                adapter.LoginHandler = (ILoginInputHandler) Activator.CreateInstance(Type.GetType("Mirage.Stock.IO.TextLoginStateHandler, Mirage.Stock"), adapter);
+                adapter.LoginHandler = new TextLoginStateHandler(adapter);
                 adapter.LoginHandler.HandleInput(null);
                 return adapter;
             }
@@ -26,11 +22,10 @@ namespace Mirage.Game.IO.Net
             {
                 // for now, use reflection to get around assembly reference
                 var adapter = new AdvancedConnectionAdapter((AdvancedConnection)connection);
-                adapter.LoginHandler = (ILoginInputHandler)Activator.CreateInstance(Type.GetType("Mirage.Stock.IO.GuiLoginHandler, Mirage.Stock"), adapter);
+                adapter.LoginHandler = new GuiLoginHandler(adapter);
                 adapter.LoginHandler.HandleInput(null);
                 return adapter;
             }
-            //TODO: handle gui connection
             throw new Exception("Unknown connection type: " + connection.GetType());
         }
     }
