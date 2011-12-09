@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using Mirage.Core.Collections;
-using Mirage.Telnet;
-using Mirage.Telnet.Options;
+using Mirage.IO.Net.Telnet;
+using Mirage.IO.Net.Telnet.Options;
 
 namespace Mirage.IO.Net
 {

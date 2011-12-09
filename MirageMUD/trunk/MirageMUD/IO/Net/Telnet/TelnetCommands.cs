@@ -1,4 +1,4 @@
-﻿namespace Mirage.Telnet
+﻿namespace Mirage.IO.Net.Telnet
 {
     public enum TelnetCommands : byte
     {
