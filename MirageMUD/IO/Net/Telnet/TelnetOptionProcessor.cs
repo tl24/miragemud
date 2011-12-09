@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Mirage.Telnet.Options;
+using Mirage.IO.Net.Telnet.Options;
 using System.IO;
 
-namespace Mirage.Telnet
+namespace Mirage.IO.Net.Telnet
 {
     /// <summary>
     /// Base event class for subnegotiation

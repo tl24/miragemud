@@ -6,7 +6,7 @@ using NUnitTests.Mock;
 using Mirage.IO.Net;
 using Castle.Core.Logging;
 using Mirage.Core;
-using Mirage.Telnet;
+using Mirage.IO.Net.Telnet;
 
 namespace NUnitTests.IO
 {

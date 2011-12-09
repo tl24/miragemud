@@ -65,6 +65,17 @@
     <Compile Include="Net\IClientListener.cs" />
     <Compile Include="Net\IConnection.cs" />
     <Compile Include="Net\SocketConnection.cs" />
+    <Compile Include="Net\Telnet\EnumsAndConstants.cs" />
+    <Compile Include="Net\Telnet\OptionSupportEntry.cs" />
+    <Compile Include="Net\Telnet\OptionSupportList.cs" />
+    <Compile Include="Net\Telnet\Options\EnvironOption.cs" />
+    <Compile Include="Net\Telnet\Options\NawsOption.cs" />
+    <Compile Include="Net\Telnet\Options\OptionCodes.cs" />
+    <Compile Include="Net\Telnet\Options\TelnetOption.cs" />
+    <Compile Include="Net\Telnet\Options\TermTypeOption.cs" />
+    <Compile Include="Net\Telnet\TelnetCommands.cs" />
+    <Compile Include="Net\Telnet\TelnetOptionProcessor.cs" />
+    <Compile Include="Net\Telnet\TelnetState.cs" />
     <Compile Include="Net\TextClientOptions.cs" />
     <Compile Include="Net\TextConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,10 +88,6 @@
     <ProjectReference Include="..\Core\Mirage.Core.csproj">
       <Project>{05371036-8F2F-40B8-B306-462EFAAF67C8}</Project>
       <Name>Mirage.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Telnet\Mirage.Telnet.csproj">
-      <Project>{61F25FF4-2685-4D18-AA4D-1DADD7F0D4D9}</Project>
-      <Name>Mirage.Telnet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

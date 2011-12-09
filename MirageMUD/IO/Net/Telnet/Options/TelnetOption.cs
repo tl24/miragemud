@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Mirage.Telnet
+namespace Mirage.IO.Net.Telnet
 {
     /// <summary>
     /// Base telnet option class which handles state for a single option.  Derived classes
