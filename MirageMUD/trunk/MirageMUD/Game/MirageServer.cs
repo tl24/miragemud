@@ -1,20 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Net.Sockets;
-using System.Collections;
-using System.Diagnostics;
-using Mirage.Game.World;
-using Mirage.Game.Command;
-using Mirage.Game.Communication;
 using System.Threading;
 using log4net;
 using Mirage.Core.Collections;
-using Mirage.IO.Serialization;
-using System.Configuration;
-using System.Collections.Specialized;
-using Mirage.IO.Net;
+using Mirage.Game.Communication;
 using Mirage.Game.IO.Net;
+using Mirage.Game.World;
+using Mirage.IO.Net;
+using Mirage.IO.Serialization;
 
 namespace Mirage.Game
 {

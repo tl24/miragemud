@@ -131,9 +131,12 @@
     <Compile Include="IO\Net\ClientListener.cs" />
     <Compile Include="IO\Net\ConnectionAdapterBase.cs" />
     <Compile Include="IO\Net\ConnectionAdapterFactory.cs" />
+    <Compile Include="IO\Net\GuiLoginHandler.cs" />
     <Compile Include="IO\Net\IConnectionAdapter.cs" />
     <Compile Include="IO\Net\IConnectionAdapterFactory.cs" />
+    <Compile Include="IO\Net\PlayerFinalizer.cs" />
     <Compile Include="IO\Net\TextConnectionAdapter.cs" />
+    <Compile Include="IO\Net\TextLoginStateHandler.cs" />
     <Compile Include="IServiceExecutor.cs" />
     <Compile Include="MirageServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

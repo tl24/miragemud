@@ -1,8 +1,6 @@
-using System;
-using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using Mirage.Game.Communication;
-using System.Collections;
 using NUnit.Framework;
 
 namespace NUnitTests.Communication

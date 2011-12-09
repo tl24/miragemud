@@ -1,16 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using Mirage.Game.Communication;
-using System.Xml.Serialization;
-using Mirage.Game.World.Query;
-using JsonExSerializer;
-using Mirage.Game.World;
-using System.Security.Principal;
-using Mirage.Game.World.Items;
 using System.Collections;
+using System.Collections.Generic;
+using System.Security.Principal;
+using System.Xml.Serialization;
+using JsonExSerializer;
+using Mirage.Game.Communication;
 using Mirage.Game.World.Containers;
+using Mirage.Game.World.Items;
+using Mirage.Game.World.Query;
 
 namespace Mirage.Game.World
 {

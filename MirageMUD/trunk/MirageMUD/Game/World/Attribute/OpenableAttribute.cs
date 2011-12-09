@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Mirage.Game.Communication;
 using Mirage.Core.Extensibility;
+using Mirage.Game.Communication;
 
 namespace Mirage.Game.World.Attribute
 {

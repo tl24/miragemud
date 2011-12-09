@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Resources;
 using System.Reflection;
+using System.Resources;
 
 namespace Mirage.Game.Communication
 {

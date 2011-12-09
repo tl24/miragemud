@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Mirage.Game.Communication;
 
 namespace Mirage.Game.World.MobAI

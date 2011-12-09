@@ -85,10 +85,6 @@
       <Project>{FEA3E089-043F-4934-9AE6-2E86ED1387B1}</Project>
       <Name>Mirage.IO</Name>
     </ProjectReference>
-    <ProjectReference Include="Stock\Mirage.Stock.csproj">
-      <Project>{BC32299B-763F-4A3C-9FD8-2176CD1366C9}</Project>
-      <Name>Mirage.Stock</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <MessageFiles Include="..\messages\*.msg" />

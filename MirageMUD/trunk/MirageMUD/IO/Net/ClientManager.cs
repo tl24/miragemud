@@ -1,15 +1,11 @@
 using System;
 using System.Collections;
-using System.Text;
-using System.Net.Sockets;
 using System.Collections.Generic;
-using System.Net;
-using System.Diagnostics;
-using Mirage.Core.Collections;
-using System.Threading;
 using System.IO;
-using System.Configuration;
+using System.Net.Sockets;
+using System.Threading;
 using Castle.Core;
+using Mirage.Core.Collections;
 
 namespace Mirage.IO.Net
 {

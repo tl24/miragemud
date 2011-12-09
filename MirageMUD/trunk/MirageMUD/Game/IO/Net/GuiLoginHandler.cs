@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Configuration;
 using Mirage.Game.Command;
-using Mirage.Game.IO.Net;
-using Mirage.Game.World;
 using Mirage.Game.Communication;
 using Mirage.Game.Communication.BuilderMessages;
+using Mirage.Game.World;
 
-namespace Mirage.Stock.IO
+namespace Mirage.Game.IO.Net
 {
     /// <summary>
     /// State handler used to process a Gui client connection until login is

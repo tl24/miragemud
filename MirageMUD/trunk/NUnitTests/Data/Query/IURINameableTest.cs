@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Mirage.Game.World;
-using Mirage.Game.World.Query;
+﻿using Mirage.Game.World.Query;
 using NUnit.Framework;
 
 namespace NUnitTests.Data.Query

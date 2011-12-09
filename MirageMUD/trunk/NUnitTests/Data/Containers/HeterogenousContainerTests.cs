@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using Mirage.Game.World.Containers;
+using NUnit.Framework;
 using NUnitTests.Mock;
 
 namespace NUnitTests.Data.Containers

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using Mirage.IO.Net.Telnet.Options;
-using System.IO;
 
 namespace Mirage.IO.Net.Telnet
 {

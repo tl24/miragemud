@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mirage.Game.Command;
-using Mirage.Game.Communication;
-using Mirage.Game.World.Query;
-using Mirage.Game.World.Containers;
 using Mirage.Game.World;
+using Mirage.Game.World.Containers;
 using Mirage.Game.World.Items;
+using Mirage.Game.World.Query;
 
 namespace Mirage.Game.Command
 {

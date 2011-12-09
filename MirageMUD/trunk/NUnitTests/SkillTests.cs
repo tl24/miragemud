@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
+﻿using System.Linq;
 using Mirage.Game.World.Skills;
-using System.Linq;
+using NUnit.Framework;
 
 namespace NUnitTests
 {
