@@ -1,4 +1,5 @@
 
+using JsonExSerializer;
 namespace Mirage.Game.Communication
 {
     /// <summary>
@@ -10,6 +11,12 @@ namespace Mirage.Game.Communication
 
         public StringMessage()
         {
+        }
+
+        public StringMessage(string name, string text)
+            : base(name)
+        {
+            this._text = text;
         }
 
         public StringMessage(MessageType messageType, string name, string text)
@@ -35,6 +42,7 @@ namespace Mirage.Game.Communication
         /// <summary>
         /// The message string to send to the text client
         /// </summary>
+        [ConstructorParameter]
         public string Text
         {
             get { return this._text; }

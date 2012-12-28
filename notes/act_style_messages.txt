@@ -1,0 +1,55 @@
+Act code for bash
+------------------------------------------------------------------
+	act("$n sends you sprawling with a powerful bash!",
+		ch,NULL,victim,TO_VICT);
+	act("You slam into $N, and send $M flying!",ch,NULL,victim,TO_CHAR);
+	act("$n sends $N sprawling with a powerful bash.",
+		ch,NULL,victim,TO_NOTVICT);
+		
+Potential c# code
+-------------------------------------------------------------------
+    ch.ToTarget("skill.bash", "${actor.name} sends you sprawling with a powerful bash!", victim);
+	ch.ToSelf("skill.bash", "You slam into ${target.name}, and send ${target.him} flying!", victim);
+	ch.ToBystanders("skill.bash", "${subject.name} sends ${target.name} sprawling with a powerful bash.", victim);
+	ch.ToRoom("emote.jump", "${actor.name} jumps for joy!");
+	
+	
+	Some other examples:
+	ch.ToBystanders($"{actor.Name} hits ${target.name} over the head with ${object.short}", victim, weapon);
+	
+Functions and overloads:
+
+ToTarget(this Living actor, string messageID, string formatString, Living target)
+ToTarget(this Living actor, string messageID, string formatString, Living target, params object[] args)
+  Sends a message to the target parameter
+
+ToSelf(this Living actor, string messageID, string formatString, Living target)
+ToSelf(this Living actor, string messageID, string formatString, Living target, params object[] args)
+  Sends a message to the sender
+  
+ToBystanders(this Living actor, string messageID, string formatString, Living target)
+ToBystanders(this Living actor, string messageID, string formatString, Living target, params object[] args)
+  Sends a message to the bystanders in the room (everyone in the room except the sender and target)
+
+ToRoom(this Living actor, string messageID, string formatString)
+ToRoom(this Living actor, string messageID, string formatString, Living target)
+ToRoom(this Living actor, string messageID, string formatString, Living target, params object[] args)
+  Sends a message to everyone in the room except the sender
+
+
+Available formating objects
+----------------------------------
+actor - the person sending the message
+target - the target object parameter
+object - the object parameter (first one)
+objectN - the nth object parameter
+
+Available formatting properties
+------------------------------------
+name/title - the name of the object
+short      - the short description of the person or object
+he/she     -  he, she or it based on the gender of the person.  Always "it" if it is not a instance of "Living"
+him        - him, her or it based on the gender of the person.  Always "it" if it is not a instance of "Living"
+his        - his, her or its based on the gender of the person.  Always "its" if it is not a instance of "Living"
+blank      - If no property is specified, title for a player, short for a mobile or object, otherwise the tostring
+

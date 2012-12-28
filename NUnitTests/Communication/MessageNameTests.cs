@@ -1,5 +1,6 @@
 using Mirage.Game.Communication;
 using NUnit.Framework;
+using JsonExSerializer;
 
 namespace NUnitTests.Communication
 {
@@ -64,6 +65,14 @@ namespace NUnitTests.Communication
         {
             MessageName name = new MessageName("system.Message");
             Assert.AreEqual("system.Message", name.FullName, "FullName not correct");
+        }
+
+        [Test]
+        public void TestSerialization()
+        {
+            StringMessage m = new StringMessage(MessageType.Information, "foo.bar.cmd", "some text");
+            Serializer s = new Serializer(typeof(StringMessage));
+            string output = s.Serialize(m);
         }
     }
 }

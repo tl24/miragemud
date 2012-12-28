@@ -7,13 +7,6 @@ namespace Mirage.Game.World.Query
     /// </summary>
     public interface IQueryManager
     {
-        /// <summary>
-        /// Searches from the root for the nth object matching the given query specified by index
-        /// </summary>
-        /// <param name="criteria">query criteria</param>
-        /// <param name="index">the index in the search results of the object to return</param>
-        /// <returns>the nth matching object</returns>
-        object Find(ObjectQuery criteria, int index);
 
         /// <summary>
         /// Searches an object for the nth object matching the given query specified by index

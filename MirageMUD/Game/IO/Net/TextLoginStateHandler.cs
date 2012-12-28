@@ -52,20 +52,18 @@ namespace Mirage.Game.IO.Net
                 }
                 else if (!Contains("password"))
                 {
-                    MultipartMessage message = new MultipartMessage("negotiation.authentication.password");
-                    message.Parts.Add(MessageFactory.GetMessage("negotiation.authentication.NewplayerPassword"));
-                    ((IMessage)message.Parts[0])["player"] = GetValue<Player>("player").Title;
-                    message.Parts.Add(MessageFactory.GetMessage("system.EchoOff"));
+                    IMessage prompt = MessageFactory.GetMessage("negotiation.authentication.NewplayerPassword");
+                    prompt["player"] = GetValue<Player>("player").Title;
+                    IMessage echoOff = MessageFactory.GetMessage("system.EchoOff"); 
 
-                    Require(message, new ValidateDelegate(this.ValidateNewPassword));
+                    Require(new [] { prompt, echoOff }, new ValidateDelegate(this.ValidateNewPassword));
                 }
                 else if (!Contains("confirmPassword"))
                 {
-                    MultipartMessage message = new MultipartMessage("negotiation.authentication.confirmPassword");
-                    message.Parts.Add(MessageFactory.GetMessage("negotiation.authentication.ConfirmPassword"));
-                    message.Parts.Add(MessageFactory.GetMessage("system.EchoOff"));
+                    IMessage prompt = MessageFactory.GetMessage("negotiation.authentication.ConfirmPassword");
+                    IMessage echoOff = MessageFactory.GetMessage("system.EchoOff");
 
-                    Require(message, new ValidateDelegate(this.ConfirmPassword));
+                    Require(new[] { prompt, echoOff }, new ValidateDelegate(this.ConfirmPassword));
                 }
                 else
                 {

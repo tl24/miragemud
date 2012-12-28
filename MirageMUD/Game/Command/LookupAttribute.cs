@@ -46,7 +46,7 @@ namespace Mirage.Game.Command
 
         public ObjectQuery ConstructQuery(string argument)
         {
-            ObjectQuery query = ObjectQuery.parse(_baseUri, argument);
+            ObjectQuery query = ObjectQuery.Parse(_baseUri, argument);
             query.MatchType = _matchType;
             return query;
         }

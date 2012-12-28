@@ -149,7 +149,7 @@ namespace Mirage.Game.Command
             _nextState = nextStep;
         }
 
-        public void Require(IList<IMessage> messages, ValidateDelegate nextStep)
+        public void Require(IEnumerable<IMessage> messages, ValidateDelegate nextStep)
         {
             foreach (IMessage m in messages)
             {

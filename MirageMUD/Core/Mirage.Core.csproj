@@ -70,7 +70,7 @@
     <Compile Include="Collections\ICollectionEvents.cs" />
     <Compile Include="Collections\ISynchronizedQueue.cs" />
     <Compile Include="Collections\ListWithEvents.cs" />
-    <Compile Include="Collections\StringUtils.cs" />
+    <Compile Include="StringUtils.cs" />
     <Compile Include="Collections\SynchronizedQueue.cs" />
     <Compile Include="Extensibility\TypeSupports.cs" />
     <Compile Include="Extensibility\AttributeNotSupportedException.cs" />

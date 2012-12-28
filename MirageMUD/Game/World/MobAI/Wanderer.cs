@@ -44,7 +44,7 @@ namespace Mirage.Game.World.MobAI
 
         public override AIMessageResult HandleMessage(Mirage.Game.Communication.IMessage message)
         {
-            if (message.IsMatch(Namespaces.Movement, "YouLeaveDirection"))
+            if (message.IsMatch(Namespaces.Movement, "go.self"))
             {
                 processCommand = true;
                 return AIMessageResult.MessageHandledContinue;

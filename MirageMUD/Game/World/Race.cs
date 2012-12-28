@@ -33,7 +33,7 @@ namespace Mirage.Game.World
             this._isPlayerRace = IsPlayerRace;
         }
 
-        [ConstructorParameter(0)]
+        [ConstructorParameter]
         public string Name
         {
             get
@@ -42,7 +42,7 @@ namespace Mirage.Game.World
             }
         }
 
-        [ConstructorParameter(1)]
+        [ConstructorParameter]
         public Mirage.Game.World.BaseStats DefaultStats
         {
             get
@@ -51,7 +51,7 @@ namespace Mirage.Game.World
             }
         }
 
-        [ConstructorParameter(2)]
+        [ConstructorParameter]
         public bool IsPlayerRace
         {
             get
@@ -76,7 +76,7 @@ namespace Mirage.Game.World
             this._magic = Magic;
         }
 
-        [ConstructorParameter(0)]
+        [ConstructorParameter]
         public int Strength
         {
             get
@@ -85,7 +85,7 @@ namespace Mirage.Game.World
             }
         }
 
-        [ConstructorParameter(1)]
+        [ConstructorParameter]
         public int Dexterity
         {
             get
@@ -94,7 +94,7 @@ namespace Mirage.Game.World
             }
         }
 
-        [ConstructorParameter(2)]
+        [ConstructorParameter]
         public int Magic
         {
             get

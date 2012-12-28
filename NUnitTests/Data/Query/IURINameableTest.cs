@@ -16,7 +16,7 @@ namespace NUnitTests.Data.Query
         public void ParseURIOnlyTest()
         {
             string uri = "myTestURI";
-            ObjectQuery query = ObjectQuery.parse(uri);
+            ObjectQuery query = ObjectQuery.Parse(uri);
 
             Assert.AreEqual(uri, query.UriName, "Uri and queryURI are not equal");
             Assert.IsTrue(query.TypeName == null || query.TypeName == string.Empty, "TypeName parameter is not empty");
@@ -34,7 +34,7 @@ namespace NUnitTests.Data.Query
 
             ObjectQuery actual;
 
-            actual = ObjectQuery.parse(uriQueryString);
+            actual = ObjectQuery.Parse(uriQueryString);
 
             ObjectQuery expected = new ObjectQuery(typeName, uriName);
 
@@ -52,7 +52,7 @@ namespace NUnitTests.Data.Query
 
             ObjectQuery actual;
 
-            actual = ObjectQuery.parse(uriQueryString);
+            actual = ObjectQuery.Parse(uriQueryString);
 
             ObjectQuery expected = new ObjectQuery(typeName, uriName, new ObjectQuery(typeName2, uriName2));
 
@@ -130,7 +130,7 @@ namespace NUnitTests.Data.Query
         [Test]
         public void ParseWithSubQueryTest()
         {
-            ObjectQuery q = ObjectQuery.parse("/Players", "SomePlayer/Prop");
+            ObjectQuery q = ObjectQuery.Parse("/Players", "SomePlayer/Prop");
             Assert.AreEqual("Players", q.UriName);
             Assert.AreEqual("SomePlayer/Prop", q.Subquery.UriName);
         }

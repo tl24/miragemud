@@ -60,5 +60,6 @@
 		"DoorClosed" : new StringMessage("PlayerError", "DoorClosed", "The door is closed.\r\n"),
 		
 		"DoorNotLockable" : new StringMessage("PlayerError", "DoorNotLockable", "The exit in that direction can not be locked.\r\n")
+
 	}
 }

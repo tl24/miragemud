@@ -70,7 +70,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Includes\Welcome.txt" />
+    <Content Include="Includes\Welcome.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Core\Mirage.Core.csproj">
