@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JsonExSerializer;
 
 namespace Mirage.Game.Communication
 {
@@ -15,13 +16,18 @@ namespace Mirage.Game.Communication
         {
         }
 
-        protected ResourceMessage(MessageType messageType, MessageName name)
+        public ResourceMessage(MessageType messageType, MessageName name)
             : base(messageType, name)
         {
         }
 
-        public ResourceMessage(MessageType messageType, string messageName)
-            : base(messageType, messageName)
+        public ResourceMessage(MessageType messageType, string name)
+            : base(messageType, name)
+        {
+        }
+
+        public ResourceMessage(string name)
+            : base(name)
         {
         }
 

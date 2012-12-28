@@ -38,7 +38,7 @@ namespace Mirage.Game.Communication
 
         }
         
-        [ConstructorParameter(0)]
+        [ConstructorParameter]
         public string Name
         {
             get { return _name; }
@@ -52,7 +52,7 @@ namespace Mirage.Game.Communication
         /// any player can join as long as they meet security requirements and
         /// they aren't denied.
         /// </summary>
-        [ConstructorParameter(1)]
+        [ConstructorParameter]
         public IEnumerable<string> Allowed
         {
            get { return _allowed.ToArray(); }
@@ -109,7 +109,7 @@ namespace Mirage.Game.Communication
         /// <summary>
         /// The players that are not allowed to join
         /// </summary>
-        [ConstructorParameter(2)]
+        [ConstructorParameter]
         public IEnumerable<string> Banned
         {
             get { return _banned.ToArray(); }
@@ -182,7 +182,7 @@ namespace Mirage.Game.Communication
         /// specified roles to join.  If roles are applied to this channel, only objects implementing
         /// IActor(which includes players) may join.
         /// </summary>
-        [ConstructorParameter(3)]
+        [ConstructorParameter]
         public IEnumerable<string> Roles
         {
             get { return _roles.ToArray(); }

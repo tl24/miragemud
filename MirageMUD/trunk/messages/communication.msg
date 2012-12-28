@@ -23,7 +23,7 @@
 		{ Template: "[${channel}] ${sender}: ${message}" },
 		
 		"ChannelOn" : new ResourceMessage( "Confirmation", "ChannelOn" )
-		{ Template: "Channel ${channel} is now on.\r\n" }
+		{ Template: "Channel ${channel} is now on.\r\n" },
 
 		"ChannelOff" : new ResourceMessage( "Confirmation", "ChannelOff" )
 		{ Template: "Channel ${channel} is now off.\r\n" },

@@ -1,5 +1,5 @@
 ﻿
-namespace Mirage.Core.Collections
+namespace Mirage.Core
 {
     public static class StringUtils
     {

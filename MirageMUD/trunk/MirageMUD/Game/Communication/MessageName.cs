@@ -1,11 +1,13 @@
 using System;
 using JsonExSerializer;
+using JsonExSerializer.TypeConversion;
 
 namespace Mirage.Game.Communication
 {
     /// <summary>
     /// The name for a message, consisting of a namespace and name
     /// </summary>
+    [JsonConvert(typeof(StringConverter))]
     public struct MessageName
     {
         public static MessageName Empty = new MessageName();
@@ -46,7 +48,7 @@ namespace Mirage.Game.Communication
         /// <summary>
         /// The fully-qualified name of the message including the namespace
         /// </summary>
-        [ConstructorParameter(0)]
+        [ConstructorParameter]
         public string FullName
         {
             get { return _fullName; }
@@ -108,6 +110,11 @@ namespace Mirage.Game.Communication
         public bool IsSameAs(string FullName)
         {
             return new MessageName(FullName).Equals(this);
+        }
+
+        public override string ToString()
+        {
+            return FullName;
         }
     }
 }

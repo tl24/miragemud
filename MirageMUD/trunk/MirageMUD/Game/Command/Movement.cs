@@ -8,6 +8,65 @@ namespace Mirage.Game.Command
 {
     public class Movement : CommandGroupBase
     {
+        class Messages
+        {
+            public static ResourceMessage Arrival = new ResourceMessage("movement.go.arrived") { Template = "${player} has arrived.\r\n" };
+
+            public static ResourceMessage Departure = new ResourceMessage("movement.go.depart") { Template = "${player} leaves ${direction}.\r\n" };
+
+            public static ResourceMessage GoSelf = new ResourceMessage("movement.go.self") { Template = "You go ${direction}.\r\n" };
+
+            public static StringMessage InvalidDirection = new StringMessage("movement.go.self.failed.invaliddirection",
+                "That's not a valid direction.\r\n");
+
+            public static ResourceMessage CloseDoorAnonymous = new ResourceMessage("movement.door.close.anonymous") { Template = "A door closes.\r\n" };
+
+            public static ResourceMessage OpenDoorAnonymous = new ResourceMessage("movement.door.open.anonymous") { Template = "A door opens.\r\n" };
+
+            public static ResourceMessage CloseDoor = new ResourceMessage("movement.door.close") { Template = "${player} closes the ${direction} door.\r\n" };
+
+            public static ResourceMessage CloseDoorSelf = new ResourceMessage("movement.door.self.close") { Template = "You close the ${direction} door.\r\n" };
+
+            public static ResourceMessage OpenDoor = new ResourceMessage("movement.door.open") { Template = "${player} opens the ${direction} door.\r\n" };
+
+            public static ResourceMessage OpenDoorSelf = new ResourceMessage("movement.door.self.open") { Template = "You open the ${direction} door.\r\n" };
+
+            /*
+
+            "PlayerUnlockDoorSelf" :  new ResourceMessage ("Confirmation", "PlayerUnlockDoorSelf")
+            { Template = "You unlock the ${direction} door.\r\n" };
+
+            "PlayerUnlockDoorOthers" :  new ResourceMessage (MessageType.Information, "PlayerUnlockDoorOthers")
+            { Template = "${player} unlocks the ${direction} door.\r\n" };
+
+            "PlayerLockDoorSelf" :  new ResourceMessage ("Confirmation", "PlayerLockDoorSelf")
+            { Template = "You lock the ${direction} door.\r\n" };
+
+            "PlayerLockDoorOthers" :  new ResourceMessage (MessageType.Information, "PlayerLockDoorOthers")
+            { Template = "${player} locks the ${direction} door.\r\n" };
+		
+		
+            "NotInRoom" : new StringMessage("PlayerError", "NotInRoom", "You aren't in a room.\r\nYou need to get out first.\r\n"),
+	
+            "NoExit" : new StringMessage("PlayerError", "NoExit", "There's no door in that direction.\r\n"),
+		
+            "CantGoExit" : new StringMessage("PlayerError", "CantGoExit", "You can't go that way.\r\n"),
+		
+            "NotADoor" : new StringMessage("PlayerError", "NotADoor", "The exit in that direction does not have a door.\r\n"),
+		
+            "DoorAlreadyOpen" : new StringMessage("PlayerError", "DoorAlreadyOpen", "The door is already open.\r\n"),
+		
+            "DoorAlreadyClosed" : new StringMessage("PlayerError", "DoorAlreadyClosed", "The door is already closed.\r\n"),
+		
+            "DoorLocked" : new StringMessage("PlayerError", "DoorLocked", "The door is locked.\r\n"),
+		
+            "DoorClosed" : new StringMessage("PlayerError", "DoorClosed", "The door is closed.\r\n"),
+		
+            "DoorNotLockable" : new StringMessage("PlayerError", "DoorNotLockable", "The exit in that direction can not be locked.\r\n")
+            */
+
+        }
+
         private IMessageFactory _messageFactory;
 
         public IMessageFactory MessageFactory
@@ -66,11 +125,11 @@ namespace Mirage.Game.Command
                 return MessageFactory.GetMessage("movement.DoorClosed");
 
             // create the messages
-            IMessage departMessage = MessageFactory.GetMessage("movement.PlayerLeavesDirection");
+            IMessage departMessage = Messages.Departure.Copy();
             departMessage["player"] = actor.Title;
             departMessage["direction"] = dirName;
 
-            IMessage arrivalMessage = MessageFactory.GetMessage("movement.PlayerArrival");
+            IMessage arrivalMessage = Messages.Arrival.Copy();
             arrivalMessage["player"] = actor.Title;
 
             try
@@ -79,7 +138,7 @@ namespace Mirage.Game.Command
                 room.Write(actor, departMessage);
                 exit.TargetRoom.Write(actor, arrivalMessage);
 
-                IMessage confirmation = MessageFactory.GetMessage("movement.YouLeaveDirection");
+                IMessage confirmation = Messages.GoSelf.Copy();
                 confirmation["direction"] = dirName;
                 actor.Write(confirmation);
                 if (actor is IPlayer)

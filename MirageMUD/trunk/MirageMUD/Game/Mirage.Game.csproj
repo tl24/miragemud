@@ -113,7 +113,6 @@
     <Compile Include="Communication\MessageFactory.cs" />
     <Compile Include="Communication\MessageFormatter.cs" />
     <Compile Include="Communication\MessageName.cs" />
-    <Compile Include="Communication\MultipartMessage.cs" />
     <Compile Include="Communication\Namespace.cs" />
     <Compile Include="Communication\ResourceMessage.cs" />
     <Compile Include="Communication\StringMessage.cs" />
@@ -200,6 +199,7 @@
     <Compile Include="World\Query\IUriContainer.cs" />
     <Compile Include="World\Query\ObjectQuery.cs" />
     <Compile Include="World\Query\QueryManager.cs" />
+    <Compile Include="World\Query\UriChildAttribute.cs" />
     <Compile Include="World\Race.cs" />
     <Compile Include="World\RaceRepository.cs" />
     <Compile Include="World\ResetBase.cs" />

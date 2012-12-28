@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace Mirage.Game.World.Query
 {
@@ -71,7 +72,7 @@ namespace Mirage.Game.World.Query
         /// <returns>the first matching object</returns>
         public object Find(object searched, string query)
         {
-            return Find(searched, ObjectQuery.parse(query));
+            return Find(searched, ObjectQuery.Parse(query));
         }
 
         /// <summary>
@@ -93,32 +94,35 @@ namespace Mirage.Game.World.Query
         /// <returns>the first matching object</returns>
         public object Find(string query)
         {
-            return Find(ObjectQuery.parse(query));
+            return Find(ObjectQuery.Parse(query));
         }
 
         public object Find(object searched, ObjectQuery query, int index)
         {
-            IEnumerable result = FindAll(searched, query, index, 1);
-            foreach (object o in result)
-            {
-                return o;
-            }
-            return null;
-        }
-        
-        public object Find(ObjectQuery query, int index)
-        {
-            return Find(Root, query, index);
+            return FindAll(searched, query).Cast<object>().ElementAtOrDefault(index);
         }
 
         public object Find(object searched, string query, int index)
         {
-            return Find(searched, ObjectQuery.parse(query), index);
+            return Find(searched, ObjectQuery.Parse(query), index);
         }
 
         public object Find(string query, int index)
         {
-            return Find(Root, ObjectQuery.parse(query), index);
+            return Find(Root, ObjectQuery.Parse(query), index);
+        }
+
+        /// <summary>
+        /// Finds all matches for a given query.
+        /// </summary>
+        /// <param name="searched">object to be searched</param>
+        /// <param name="query">the query</param>
+        /// <param name="start">starting match</param>
+        /// <param name="count">number of matches to return or 0 for all matches</param>
+        /// <returns></returns>
+        public IEnumerable FindAll(object searched, ObjectQuery query)
+        {
+            return FindAll(searched, query, 0, 0, 0);
         }
 
         /// <summary>
@@ -152,7 +156,6 @@ namespace Mirage.Game.World.Query
             }
             if (searched == null)
                 return emptyList;
-
             bool hasSubQuery = query.Subquery != null;
 
             if (!hasSubQuery)

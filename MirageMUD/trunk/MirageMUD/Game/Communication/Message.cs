@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JsonExSerializer;
 
 namespace Mirage.Game.Communication
 {
@@ -13,13 +14,7 @@ namespace Mirage.Game.Communication
         /// <summary>
         /// Information to the player
         /// </summary>
-        Information,
-
-        /// <summary>
-        /// Message contains multiple parts
-        /// </summary>
-        Multiple,
-         
+        Information,        
 
         /// <summary>
         /// Message contains a prompt for input from the player
@@ -48,12 +43,6 @@ namespace Mirage.Game.Communication
         UIControl
     }
 
-    public enum MessageTarget
-    {
-        Self,
-        Other
-    }
-
     /// <summary>
     /// Base class for messages that are sent to the client
     /// </summary>
@@ -67,6 +56,15 @@ namespace Mirage.Game.Communication
         {
         }
 
+        public Message(string name)
+            : this(new MessageName(name))
+        {
+        }
+
+        public Message(MessageName name)
+            : this(DiscoverMessageType(name.FullName), name)
+        {
+        }
         public Message(MessageType messageType, string name) : this(messageType, new MessageName(name))
         {
         }
@@ -83,11 +81,23 @@ namespace Mirage.Game.Communication
             this._parameters = parameters;
         }
 
+        private static MessageType DiscoverMessageType(string messageName)
+        {
+            if (!string.IsNullOrEmpty(messageName) && messageName.Contains(".failed") || messageName.Contains(".error"))
+            {
+                return MessageType.PlayerError;
+            }
+            else
+            {
+                return MessageType.Information;
+            }
+        }
         /// <summary>
         /// The general type of message.  This should be a broad
         /// category that the client can use to figure out how to
         /// process the message.
         /// </summary>
+        [ConstructorParameter]
         public MessageType MessageType
         {
             get { return this._messageType; }
@@ -97,6 +107,7 @@ namespace Mirage.Game.Communication
         /// <summary>
         /// The Name of the message, every message should have an Name.
         /// </summary>
+        [ConstructorParameter]
         public MessageName Name
         {
             get { return this._name; }

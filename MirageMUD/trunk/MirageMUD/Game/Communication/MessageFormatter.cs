@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Mirage.Core.Collections;
+using Mirage.Core;
 using Mirage.Game.World;
 
 namespace Mirage.Game.Communication

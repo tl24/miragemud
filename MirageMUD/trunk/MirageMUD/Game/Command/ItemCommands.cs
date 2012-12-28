@@ -25,7 +25,7 @@ namespace Mirage.Game.Command
                     get_item(actor, item);
                 }
             } else {
-                ItemBase item = QueryManager.Find(actor.Container, ObjectQuery.parse("Items", target)) as ItemBase;
+                ItemBase item = QueryManager.Find(actor.Container, ObjectQuery.Parse("Items", target)) as ItemBase;
                 if (item == null)
                     actor.Write("item.error.nothere.self", "I don't see that here.\r\n");
                 else
@@ -71,7 +71,7 @@ namespace Mirage.Game.Command
                     return;
                 }
 
-                ItemBase item = QueryManager.Find(actor, ObjectQuery.parse("Inventory", target)) as ItemBase;
+                ItemBase item = QueryManager.Find(actor, ObjectQuery.Parse("Inventory", target)) as ItemBase;
                 if (item == null)
                 {
                     actor.Write("item.error.donthaveitem.self", "You don't have that.\r\n");
@@ -107,7 +107,7 @@ namespace Mirage.Game.Command
         [CommandAttribute(Description="Wear an item")]
         public void wear([Actor] Living actor, string target)
         {
-            ItemBase item = QueryManager.Find(actor, ObjectQuery.parse("Inventory", target)) as ItemBase;
+            ItemBase item = QueryManager.Find(actor, ObjectQuery.Parse("Inventory", target)) as ItemBase;
             if (item == null)
             {
                 actor.Write("item.error.donthaveitem.self", "You don't have that!\r\n");
@@ -133,7 +133,7 @@ namespace Mirage.Game.Command
         [CommandAttribute(Description = "Remove an item")]
         public void remove([Actor] Living actor, string target)
         {
-            Armor item = QueryManager.Find(actor, ObjectQuery.parse("Equipment", target)) as Armor;
+            Armor item = QueryManager.Find(actor, ObjectQuery.Parse("Equipment", target)) as Armor;
             if (item == null)
             {
                 actor.Write("item.error.itemnotworn.self", "You're not wearing that!\r\n");

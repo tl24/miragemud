@@ -1,0 +1,45 @@
+Messaging
+-------------------------------------------------------------------------------
+Having consistent and discoverable message ID's is important for AI (mob 
+programs).  Mob AI will work primarily off of messages sent for different 
+events, just like a player would react to.
+
+Types of Messages
+-------------------------------------------------------------------------------
+Self-only Response: This is a response to a command that only affects the 
+player and does not send any message to any other player.  Examples include 
+score, look, equipment and other informational or administrative commands.
+
+Prompt: This usually prompts the player for information or just the standard 
+prompt.  Examples include login, character creation, confirmation and the 
+standard prompt.
+
+Multi response: This is a response to a command by a user or mob that not only
+affects them but others as well.  Examples include directional commands, combat,
+chat, etc.
+
+
+Message Naming:
+-------------------------------------------------------------------------------
+Messages should generally share the namespace of the command they are triggered 
+by with the exception of certain common error messages or other shared messages.
+
+Response to the initiating player (for self-only and multi-targeting commands)
+For Success:
+	<namespace>.<command>.<self>[.<substatus>] substatus can be present if there
+		multiple results
+For Failure (including validation failure)
+	<namespace>.<command>.<self>.failed[.<substatus>]
+	
+Response to non-initiating players:
+	<namespace>.<command>[.<substatus>]
+	Failures broadcast to others aren't as common, but are similar to the response to the player
+	<namespace>.<command>.failed[.<substatus>]
+
+Prompts:
+	<namespace>.prompt.<name>
+
+Any common or shared messages should begin with common in the namespace and possibly
+other elements if there is a need to subdivide further.
+
+

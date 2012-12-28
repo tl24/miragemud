@@ -173,7 +173,7 @@ namespace Mirage.Game.Command
         [Command]
         public void look([Actor] Living actor, string target)
         {
-            Living lookAt = QueryManager.Find(actor.Container, ObjectQuery.parse("LivingThings", target)) as Living;
+            Living lookAt = QueryManager.Find(actor.Container, ObjectQuery.Parse("LivingThings", target)) as Living;
             if (lookAt == null || ViewManager.GetVisibility(actor, lookAt) == VisiblityType.NotVisible)
             {
                 // couldn't find them

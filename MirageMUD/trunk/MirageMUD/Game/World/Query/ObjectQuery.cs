@@ -17,32 +17,26 @@ namespace Mirage.Game.World.Query
     /// </summary>
     public class ObjectQuery
     {
-        private string _typeName;
-        private string _uriName;
-        private ObjectQuery _subquery;
-        private QueryMatchType _matchType;
-        private string _toString;
-        private bool _isAbsolute;
 
         public ObjectQuery(string type, string uri, ObjectQuery subQuery)
         {
             //TODO: escape special characters in the type and name ":/;"            
-            this._typeName = type;
-            this._uriName = uri;
-            this._subquery = subQuery;
+            this.TypeName = type;
+            this.UriName = uri;
+            this.Subquery = subQuery;
 
-            if (this._uriName != null && this._uriName.StartsWith("/"))
+            if (this.UriName != null && this.UriName.StartsWith("/"))
             {
-                this._uriName = this._uriName.Substring(1);
+                this.UriName = this.UriName.Substring(1);
             }
 
             // parse the flag values
-            if (this._uriName == "*")
+            if (this.UriName == "*")
             {
-                _matchType = QueryMatchType.All;
-            } else if (this._uriName.EndsWith("*")) {
-                _matchType = QueryMatchType.Partial;
-                this._uriName = this._uriName.Substring(0, this._uriName.Length - 1);
+                MatchType = QueryMatchType.All;
+            } else if (this.UriName.EndsWith("*")) {
+                MatchType = QueryMatchType.Partial;
+                this.UriName = this.UriName.Substring(0, this.UriName.Length - 1);
             }
         }
 
@@ -55,7 +49,7 @@ namespace Mirage.Game.World.Query
         /// </summary>
         /// <param name="uriQueryString"></param>
         /// <returns></returns>
-        public static ObjectQuery parse(string uriQueryString, string subQueryUri)
+        public static ObjectQuery Parse(string uriQueryString, string subQueryUri)
         {
             bool isAbsolute = false;
             if (uriQueryString.StartsWith("/"))
@@ -72,22 +66,22 @@ namespace Mirage.Game.World.Query
                 if (pieces.Length > 1)
                 {
                     result = new ObjectQuery(pieces[0], pieces[1]);
-                    result._isAbsolute = isAbsolute;
+                    result.IsAbsolute = isAbsolute;
                 }
                 else if (pieces[0] != null && pieces[0] != string.Empty)
                 {
                     result = new ObjectQuery(pieces[0]);
-                    result._isAbsolute = isAbsolute;
+                    result.IsAbsolute = isAbsolute;
                 }
             }
 
             if (result != null && root.Length > 1)
             {
-                result._subquery = parse(root[1], subQueryUri);
+                result.Subquery = Parse(root[1], subQueryUri);
             }
             else if (result != null && subQueryUri != null)
             {
-                result._subquery = new ObjectQuery(subQueryUri);
+                result.Subquery = new ObjectQuery(subQueryUri);
             }
             return result;
         }
@@ -102,33 +96,35 @@ namespace Mirage.Game.World.Query
         /// <param name="uriQueryString">the uri query string</param>
         /// <param name="subQueryUri">the subquery, will be the final subquery</param>
         /// <returns></returns>
-        public static ObjectQuery parse(string uriQueryString) {
-            return parse(uriQueryString, null);
+        public static ObjectQuery Parse(string uriQueryString) {
+            return Parse(uriQueryString, null);
         }
+
+        private string _toString;
         public override string ToString()
         {
             if (_toString == null)
             {
                 StringBuilder sb = new StringBuilder();
-                if (_typeName != null && _typeName != string.Empty)
+                if (TypeName != null && TypeName != string.Empty)
                 {
-                    sb.Append(_typeName);
+                    sb.Append(TypeName);
                     sb.Append(':');
                 }
-                if (_uriName != null)
+                if (UriName != null)
                 {
-                    sb.Append(_uriName);
+                    sb.Append(UriName);
                 }
 
-                if (_matchType == QueryMatchType.Partial || _matchType == QueryMatchType.All)
+                if (MatchType == QueryMatchType.Partial || MatchType == QueryMatchType.All)
                 {
                     sb.Append('*');
                 }
 
-                if (_subquery != null)
+                if (Subquery != null)
                 {
                     sb.Append('/');
-                    sb.Append(_subquery.ToString());
+                    sb.Append(Subquery.ToString());
                 }
                 _toString = sb.ToString();
             }
@@ -160,34 +156,15 @@ namespace Mirage.Game.World.Query
             return ToString().GetHashCode();
         }
 
-        public string TypeName
-        {
-            get { return this._typeName; }
-            set { this._typeName = value; }
-        }
+        public string TypeName { get; set; }
 
-        public string UriName
-        {
-            get { return this._uriName; }
-            set { this._uriName = value; }
-        }
+        public string UriName { get; set; }
 
-        public ObjectQuery Subquery
-        {
-            get { return this._subquery; }
-            set { this._subquery = value; }
-        }
+        public ObjectQuery Subquery { get; set; }
 
-        public QueryMatchType MatchType
-        {
-            get { return _matchType;  }
-            set { _matchType = value; }
-        }
+        public QueryMatchType MatchType { get; set; } 
 
-        public bool IsAbsolute
-        {
-            get { return this._isAbsolute; }
-        }
+        public bool IsAbsolute { get; private set; }
 
         /// <summary>
         /// Checks the object against the given query to see if there is a match
