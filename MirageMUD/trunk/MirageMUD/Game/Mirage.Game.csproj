@@ -53,19 +53,19 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\runtime\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.MicroKernel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.MicroKernel">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\runtime\Castle.MicroKernel.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Windsor, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Windsor">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\runtime\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="JsonExSerializer, Version=2.0.0.100, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="JsonExSerializer">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\runtime\JsonExSerializer.dll</HintPath>
     </Reference>
@@ -98,6 +98,7 @@
     <Compile Include="Command\CoderCommands.cs" />
     <Compile Include="Command\CommandAttribute.cs" />
     <Compile Include="Command\CommandBase.cs" />
+    <Compile Include="Command\CommandDefaults.cs" />
     <Compile Include="Command\CommandGroup.cs" />
     <Compile Include="Command\CommandInitializer.cs" />
     <Compile Include="Command\ConfirmationAttribute.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="World\BaseData.cs" />
     <Compile Include="World\Containers\ContainerAddException.cs" />
     <Compile Include="World\Containers\Containers.cs" />
+    <Compile Include="World\Containers\IGenericContainer.cs" />
     <Compile Include="World\Containers\GenericCollectionContainer.cs" />
     <Compile Include="World\Containers\HeterogenousContainer.cs" />
     <Compile Include="World\Containers\IContainable.cs" />
@@ -210,18 +212,20 @@
     <Compile Include="World\MobReset.cs" />
     <Compile Include="World\MobTemplate.cs" />
     <Compile Include="World\MudFactory.cs" />
-    <Compile Include="World\MudRepositoryBase.cs" />
     <Compile Include="World\ObjectNotFoundException.cs" />
     <Compile Include="World\ObjectUpdater.cs" />
     <Compile Include="World\Player.cs" />
     <Compile Include="World\PlayerExecutorServiceBase.cs" />
     <Compile Include="World\PlayerRepository.cs" />
-    <Compile Include="World\Query\IQueryManager.cs" />
-    <Compile Include="World\Query\IURI.cs" />
+    <Compile Include="World\Query\ISupportUri.cs" />
     <Compile Include="World\Query\IUriContainer.cs" />
-    <Compile Include="World\Query\ObjectQuery.cs" />
-    <Compile Include="World\Query\QueryManager.cs" />
+    <Compile Include="World\Query\ObjectUri.cs" />
+    <Compile Include="World\Query\ObjectUriResolver.cs" />
+    <Compile Include="World\Query\QueryExtensions.cs" />
+    <Compile Include="World\Query\QueryHints.cs" />
+    <Compile Include="World\Query\QueryMatchType.cs" />
     <Compile Include="World\Query\UriChildAttribute.cs" />
+    <Compile Include="World\Query\UriContainerProvider.cs" />
     <Compile Include="World\Race.cs" />
     <Compile Include="World\RaceRepository.cs" />
     <Compile Include="World\ResetBase.cs" />
@@ -232,7 +236,6 @@
     <Compile Include="World\Skills\Skill.cs" />
     <Compile Include="World\Skills\SkillLoader.cs" />
     <Compile Include="World\Skills\SkillRepository.cs" />
-    <Compile Include="World\StockRepository.cs" />
     <Compile Include="World\Thing.cs" />
     <Compile Include="World\ViewableBase.cs" />
     <Compile Include="World\ViewManager.cs" />

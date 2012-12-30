@@ -8,33 +8,11 @@ namespace Mirage.Game.Command
     /// <summary>
     /// Core mud commands
     /// </summary>
-    public class MudCommands
+    public class MudCommands : CommandDefaults
     {
+        public IMessageFactory MessageFactory { get; set; }
 
-        private IQueryManager _queryManager;
-
-        public IQueryManager QueryManager
-        {
-            get { return this._queryManager; }
-            set { this._queryManager = value; }
-        }
-
-        private IMessageFactory _messageFactory;
-
-        public IMessageFactory MessageFactory
-        {
-            get { return _messageFactory; }
-            set { _messageFactory = value; }
-        }
-
-        private IChannelRepository _channelRespository;
-
-        public IChannelRepository ChannelRespository
-        {
-            get { return this._channelRespository; }
-            set { this._channelRespository = value; }
-        }
-
+        public IChannelRepository ChannelRespository  { get; set; }
 
         /// <summary>
         /// Lists the available channels
@@ -98,7 +76,7 @@ namespace Mirage.Game.Command
             {
                 // they're not ignored, so start ignoring them
                 // try and find them first to validate its a valid name
-                IPlayer p = (IPlayer) QueryManager.Find(ObjectQuery.Parse("/Players", player));
+                IPlayer p = (IPlayer) World.Players.FindOne(player);
                 if (p == null)
                 {
                     // they're not playing

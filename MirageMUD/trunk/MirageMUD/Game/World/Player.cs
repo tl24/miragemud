@@ -132,7 +132,7 @@ namespace Mirage.Game.World
         {
             get
             {
-                Room room = Container as Room;
+                Room room = Room;
                 if (room != null)
                 {
                     return room.FullUri;
@@ -146,15 +146,15 @@ namespace Mirage.Game.World
             {
                 if (value != null)
                 {
-                    Container = (Room)MudFactory.GetObject<IQueryManager>().Find(value);
-                    if (Container == null)
+                    Room = (Room)MudFactory.GetObject<MudWorld>().ResolveUri(value);
+                    if (Room == null)
                     {
                         throw new ObjectNotFoundException("Could not find room with value: " + value);
                     }
                 }
                 else
                 {
-                    Container = null;
+                    Room = null;
                 }
             }
         }

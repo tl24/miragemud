@@ -6,10 +6,10 @@ namespace Mirage.Game.World
 {
     public class AreaRepository<T> : IAreaRepository
     {
-        private MudRepositoryBase mudRepository;
+        private MudWorld mudRepository;
         private IPersistenceManager persistenceManager;
 
-        public AreaRepository(MudRepositoryBase mudRepository)
+        public AreaRepository(MudWorld mudRepository)
         {
             this.mudRepository = mudRepository;
             persistenceManager = ObjectStorageFactory.GetPersistenceManager(typeof(T));

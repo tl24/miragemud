@@ -84,7 +84,7 @@ namespace Mirage.Game.Command
                 args = parser.GetRest().TrimStart(null);
             }
 
-            IList<ICommand> methods = GetAvailableCommands(commandName);
+            IEnumerable<ICommand> methods = GetAvailableCommands(commandName);
             bool fCommandInvoked = false;
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
 
@@ -169,7 +169,7 @@ namespace Mirage.Game.Command
         public static bool Interpret(IActor actor, string commandName, object[] arguments)
         {
 
-            IList<ICommand> methods = GetAvailableCommands(commandName);
+            IEnumerable<ICommand> methods = GetAvailableCommands(commandName);
             bool fCommandInvoked = false;
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
 
@@ -233,7 +233,7 @@ namespace Mirage.Game.Command
         /// </summary>
         /// <param name="commandName">command string to search for</param>
         /// <returns>list of commands</returns>
-        public static IList<ICommand> GetAvailableCommands(string commandName)
+        public static IEnumerable<ICommand> GetAvailableCommands(string commandName)
         {
             return methods.FindStartsWith(commandName);
         }
@@ -243,9 +243,9 @@ namespace Mirage.Game.Command
         /// </summary>
         /// <param name="commandName">command string to search for</param>
         /// <returns>list of commands</returns>
-        public static IList<ICommand> GetAvailableCommands()
+        public static IEnumerable<ICommand> GetAvailableCommands()
         {
-            return methods.GetAllValues();
+            return methods;
         }
 
         private class CanidateCommand : IComparable<CanidateCommand>

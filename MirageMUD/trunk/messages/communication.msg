@@ -1,13 +1,13 @@
 {
 	"Namespace" : "communication",
 	"Messages" : {
-		"SayOthers" :  new ResourceMessage ("Communication", "SayOthers")
+		"SayOthers" :  new ResourceMessage ("Information", "SayOthers")
 		{ Template: "${player} says '${message}'.\r\n" },
 
 		"SaySelf" :  new ResourceMessage ("Confirmation", "SaySelf")
 		{ Template: "You said '${message}'.\r\n" },
 		
-		"TellOthers" :  new ResourceMessage ("Communication", "TellOthers")
+		"TellOthers" :  new ResourceMessage ("Information", "TellOthers")
 		{ Template: "${player} tells you '${message}'.\r\n" },
 
 		"TellSelf" :  new ResourceMessage ("Confirmation", "TellSelf")
@@ -19,7 +19,7 @@
 		"MemberNotAllowed" : new ResourceMessage( "Information", "MemberNotAllowed" )
 		{ Template: "You are no longer allowed in ${channel} channel!\r\n" },
 		
-		"ChannelText" : new ResourceMessage( "Communication", "ChannelText" )
+		"ChannelText" : new ResourceMessage( "Information", "ChannelText" )
 		{ Template: "[${channel}] ${sender}: ${message}" },
 		
 		"ChannelOn" : new ResourceMessage( "Confirmation", "ChannelOn" )

@@ -1,7 +1,7 @@
 
 namespace Mirage.Game.World.Query
 {
-    public interface IUri
+    public interface ISupportUri
     {
         /// <summary>
         /// Returns the Uri for this object.

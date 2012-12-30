@@ -60,13 +60,13 @@ namespace Mirage.Game.World
         {
             get {
                 if (_targetRoom == null) {
-                    IQueryManager queryManager = MudFactory.GetObject<IQueryManager>();
+                    MudWorld world = MudFactory.GetObject<MudWorld>();
                     if (_toRoomURI.StartsWith("/") || _toRoomURI.StartsWith("Areas")) {
                         // absolute link
-                        _targetRoom = (Room)queryManager.Find(_toRoomURI);
+                        _targetRoom = (Room)world.ResolveUri(_toRoomURI);
                     } else {
                         // relative
-                        _targetRoom = (Room)queryManager.Find(_parentRoom.Area, "Rooms/" + _toRoomURI);
+                        _targetRoom = (Room)world.ResolveUri(_parentRoom.Area, "Rooms/" + _toRoomURI);
                     }
                 }
                 return _targetRoom;

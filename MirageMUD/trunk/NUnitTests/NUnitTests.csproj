@@ -53,27 +53,27 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Facilities.Logging, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Facilities.Logging">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\Castle.Facilities.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.MicroKernel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.MicroKernel">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\Castle.MicroKernel.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Services.Logging.log4netIntegration, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Services.Logging.log4netIntegration">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\Castle.Services.Logging.log4netIntegration.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Windsor, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Windsor">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="JsonExSerializer, Version=3.1.1.279, Culture=neutral, PublicKeyToken=6be1316762335bd4, processorArchitecture=MSIL">
+    <Reference Include="JsonExSerializer">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\JsonExSerializer.dll</HintPath>
     </Reference>
@@ -81,7 +81,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.4.0.2, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -101,8 +101,8 @@
     <Compile Include="Communication\TemplateManagerTest.cs" />
     <Compile Include="Data\Containers\HeterogenousContainerTests.cs" />
     <Compile Include="Data\PlayerTest.cs" />
-    <Compile Include="Data\Query\IURINameableTest.cs" />
-    <Compile Include="Data\Query\QueryManagerTest.cs" />
+    <Compile Include="Game\World\Query\ObjectUriResolverTests.cs" />
+    <Compile Include="Game\World\Query\ObjectUriTests.cs" />
     <Compile Include="ItemCommandTests.cs" />
     <Compile Include="MockClient.cs" />
     <Compile Include="IO\TelnetIACTests.cs" />

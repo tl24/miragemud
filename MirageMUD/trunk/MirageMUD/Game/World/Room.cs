@@ -12,18 +12,35 @@ namespace Mirage.Game.World
     public class Room : ViewableBase, IContainer, IReceiveMessages
     {
         private Area _area;
-        private LinkedList<Living> _livingThings;
         private IDictionary<DirectionType, RoomExit> _exits;
-        private LinkedList<ItemBase> _items;
+        private HeterogenousContainer _containerHelper;
 
         public Room()
             : base()
         {
-            _livingThings = new LinkedList<Living>();
-            _items = new LinkedList<ItemBase>();
-            _uriChildCollections.Add("LivingThings", new BaseData.ChildCollectionPair(_livingThings, QueryHints.DefaultPartialMatch));
-            _uriChildCollections.Add("Items", new BaseData.ChildCollectionPair(_items, QueryHints.DefaultPartialMatch));
+            var livingThings = new GenericCollectionContainer<Living>(new LinkedList<Living>(), this);
+            livingThings.ItemAdded += new EventHandler<CollectionModifiedEventArgs>(_livingThings_ItemAdded);
+            livingThings.ItemRemoved += new EventHandler<CollectionModifiedEventArgs>(_livingThings_ItemRemoved);
+            LivingThings = livingThings;
+            Items = new GenericCollectionContainer<ItemBase>(new LinkedList<ItemBase>(), this);
+
+            _containerHelper = new HeterogenousContainer();
+            _containerHelper.AddContainer(LivingThings);
+            _containerHelper.AddContainer(Items);
+
             _exits = new Dictionary<DirectionType, RoomExit>();
+        }
+
+        void _livingThings_ItemAdded(object sender, CollectionModifiedEventArgs e)
+        {
+            if (e.Item is Player)
+                ((Player)e.Item).PlayerEvent += new PlayerEventHandler(player_PlayerEvent);
+        }
+
+        void _livingThings_ItemRemoved(object sender, CollectionModifiedEventArgs e)
+        {
+            if (e.Item is Player)
+                ((Player)e.Item).PlayerEvent -= player_PlayerEvent;
         }
 
         [EditorParent(2)]
@@ -34,15 +51,10 @@ namespace Mirage.Game.World
         }
 
         [JsonExIgnore]
-        public ICollection<Living> LivingThings
-        {
-            get { return this._livingThings; }
-        }
+        public IContainer<Living> LivingThings  { get; private set; }
 
         [JsonExIgnore]
-        public ICollection<ItemBase> Items {
-            get { return this._items; }
-        }
+        public IContainer<ItemBase> Items { get; private set; }
 
         public override string FullUri
         {
@@ -58,9 +70,9 @@ namespace Mirage.Game.World
         void player_PlayerEvent(object sender, PlayerEventArgs eventArgs)
         {
             Player player = (Player)sender;
-            if (player.Container != null)
+            if (player.Room != null)
             {
-                player.Container.Remove(player);
+                player.Room.Remove(player);
             }
         }
 
@@ -87,107 +99,39 @@ namespace Mirage.Game.World
         
         #region IContainer Members
 
-        public void Add(IContainable item)
+        int IContainer.Count
         {
-            if (CanAdd(item))
+            get
             {
-                if (item is Living)
-                {
-                    if (item.Container != this || !this._livingThings.Contains((Living)item))
-                    {
-                        this._livingThings.AddLast((Living)item);
-                        item.Container = this;
-                        if (item is Player)
-                            ((Player)item).PlayerEvent += new PlayerEventHandler(player_PlayerEvent);
-
-                    }
-                }
-                else if (item is ItemBase)
-                {
-                    if (item.Container != this || !this._items.Contains((ItemBase)item))
-                    {
-                        this._items.AddLast((ItemBase)item);
-                        item.Container = this;
-
-                    }
-                }
-            }
-            else
-            {
-                throw new ContainerAddException("item could not be added to the room", this, item);
+                return _containerHelper.Count;
             }
         }
 
-        public void Remove(IContainable item)
+        public void Add(object item)
         {
-            if (CanAdd(item))
-            {
-                if (item is Living)
-                {
-                    this._livingThings.Remove((Living)item);
-                    if (item.Container == this)
-                        item.Container = null;
-
-                    if (item is Player)
-                        ((Player)item).PlayerEvent -= player_PlayerEvent;
-                }
-                else if (item is ItemBase)
-                {
-                    this._items.Remove((ItemBase)item);
-                    if (item.Container == this)
-                        item.Container = null;
-                }
-            }
+            _containerHelper.Add(item);
         }
 
-        public bool Contains(IContainable item)
+        public void Remove(object item)
         {
-            if (item is Living)
-                return this._livingThings.Contains((Living)item);
-            else if (item is ItemBase)
-                return this._items.Contains((ItemBase) item);
-            else
-                return false;
+            _containerHelper.Remove(item);
         }
 
-        public bool CanContain(Type item)
+        public bool Contains(object item)
         {
-            return typeof(Living).IsAssignableFrom(item)
-                || typeof(ItemBase).IsAssignableFrom(item);
+            return _containerHelper.Contains(item);
         }
 
-        public bool CanAdd(IContainable item)
+        public bool CanAdd(object item)
         {
-            return (item is Living) || (item is ItemBase);
+            return _containerHelper.CanAdd(item);
         }
 
-        public IEnumerable Contents(Type t)
+        public IEnumerator GetEnumerator()
         {
-            if (typeof(Living).IsAssignableFrom(t))
-            {
-                return _livingThings;
-            }
-            else if (typeof(ItemBase).IsAssignableFrom(t)) {
-                return _items;
-            }
-            else
-            {
-                return new List<object>();
-            }
+            return _containerHelper.GetEnumerator();
         }
 
-        public System.Collections.Generic.IEnumerable<T> Contents<T>()
-        {
-            foreach (object item in this.Contents(typeof(T)))
-            {
-                yield return (T)item;
-            }
-        }
-
-        public IEnumerable Contents()
-        {
-            throw new Exception("Not Implemented");
-        }
         #endregion      
     
         #region IReceiveMessages Members

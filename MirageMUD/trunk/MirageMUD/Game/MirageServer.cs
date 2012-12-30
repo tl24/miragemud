@@ -67,7 +67,7 @@ namespace Mirage.Game
             logger.Info("Starting up");
 
             ClientManager manager = null;
-            MudRepositoryBase globalLists = null;
+            MudWorld globalLists = null;
             List<IConnectionAdapter> NannyClients = null;
             BlockingQueue<IConnection> NannyQueue = null;
             DateTime lastTime;
@@ -84,7 +84,7 @@ namespace Mirage.Game
                 //TODO: Create the server with the container
                 manager = MudFactory.GetObject<ClientManager>();
                 //manager.Configure();
-                globalLists = MudFactory.GetObject<MudRepositoryBase>();
+                globalLists = MudFactory.GetObject<MudWorld>();
                 AdapterFactory = MudFactory.GetObject<IConnectionAdapterFactory>();
                 NannyClients = new List<IConnectionAdapter>();
                 // These are the new connections waiting to be put in the nanny list

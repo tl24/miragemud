@@ -69,7 +69,7 @@ namespace Mirage.Game.World
         /// <param name="newArea">the new area</param>
         public void CopyTo(Area newArea)
         {
-            Room defaultRoom = (Room)MudFactory.GetObject<IQueryManager>().Find(ConfigurationManager.AppSettings["default.room"]);
+            Room defaultRoom = (Room)MudFactory.GetObject<MudWorld>().ResolveUri(ConfigurationManager.AppSettings["default.room"]);
             if (defaultRoom.Area.Uri == this.Uri)
             {
                 // check to see if it still exists

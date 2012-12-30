@@ -18,9 +18,6 @@ namespace NUnitTests
         public void TestSetup()
         {
             cmd = new ItemCommands();
-            QueryManager qmgr = new QueryManager();
-            cmd.QueryManager = qmgr;
-
             player = new Player();
             MockClient client = new MockClient();
             client.Player = player;
@@ -32,7 +29,7 @@ namespace NUnitTests
             room.Uri = "Room";
             area.Rooms["Room"] = room;
 
-            player.Container = room;
+            player.Room = room;
         }
 
         [Test]

@@ -66,14 +66,14 @@ namespace Mirage.Game.IO.Net
 
                 
                 playerRepository.Add(Player);
-                if (Player.Container == null)
+                if (Player.Room == null)
                 {
-                    Room defaultRoom = (Room)MudFactory.GetObject<IQueryManager>().Find(ConfigurationManager.AppSettings["default.room"]);
+                    Room defaultRoom = (Room)MudFactory.GetObject<MudWorld>().ResolveUri(ConfigurationManager.AppSettings["default.room"]);
                     defaultRoom.Add(Player);
                 }
                 else
                 {
-                    Player.Container.Add(Player);
+                    Player.Room.Add(Player);
                 }
 
                 Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("negotiation.welcome"));
@@ -104,7 +104,7 @@ namespace Mirage.Game.IO.Net
 
         public bool CheckAlreadyPlaying()
         {
-            Player isPlaying = (Player)MudFactory.GetObject<IQueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(Player.Uri)));
+            Player isPlaying = (Player)MudFactory.GetObject<MudWorld>().Players.FindOne(Player.Uri, QueryMatchType.Exact);
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
                 Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("negotiation.authentication.PlayerAlreadyPlaying"));

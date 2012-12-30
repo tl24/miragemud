@@ -64,11 +64,18 @@ namespace MirageGUI.Code
         {
             if (ctrl.IsDisposed)
                 return ProcessStatus.NotProcessed;
-
-            if (ctrl.InvokeRequired)
-                return (ProcessStatus)ctrl.Invoke(new ResponseHandler(((IResponseHandler)ctrl).HandleResponse), msg);
-            else
-                return ((IResponseHandler)ctrl).HandleResponse(msg);
+            try
+            {
+                if (ctrl.InvokeRequired)
+                    return (ProcessStatus)ctrl.Invoke(new ResponseHandler(((IResponseHandler)ctrl).HandleResponse), msg);
+                else
+                    return ((IResponseHandler)ctrl).HandleResponse(msg);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                // sometimes we can't catch this above, just ignore it
+                return ProcessStatus.NotProcessed;
+            }
         }
 
         /// <summary>

@@ -10,9 +10,9 @@ namespace Mirage.Game.World
     public class PlayerRepository<T> : IPlayerRepository
     {
         private IPersistenceManager persistenceManager;
-        private MudRepositoryBase mudRepository;
+        private MudWorld mudRepository;
 
-        public PlayerRepository(MudRepositoryBase mudRepository)
+        public PlayerRepository(MudWorld mudRepository)
         {
             persistenceManager = ObjectStorageFactory.GetPersistenceManager(typeof(T));
             this.mudRepository = mudRepository;

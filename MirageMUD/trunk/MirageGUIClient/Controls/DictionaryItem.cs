@@ -56,9 +56,9 @@ namespace MirageGUI.Controls
             if (_keyProperty != null && _keyProperty != string.Empty)
             {
                 newKey = itemData.GetType().GetProperty(_keyProperty).GetValue(itemData, null);
-            } else if (itemData is IUri)
+            } else if (itemData is ISupportUri)
             {
-                newKey = ((IUri)itemData).Uri;
+                newKey = ((ISupportUri)itemData).Uri;
             }
             else
             {

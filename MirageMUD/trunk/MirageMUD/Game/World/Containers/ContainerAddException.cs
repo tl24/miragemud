@@ -7,8 +7,8 @@ namespace Mirage.Game.World.Containers
     /// </summary>
     public class ContainerAddException : ApplicationException
     {
-        private IContainer _container;
-        private IContainable _item;
+        private object _container;
+        private object _item;
 
         public ContainerAddException() : base() { }
 
@@ -16,23 +16,27 @@ namespace Mirage.Game.World.Containers
 
         public ContainerAddException(string message, Exception innerException) : base(message, innerException) { }
 
-        public ContainerAddException(string message, IContainer container, IContainable item) : base(message) {
+        public ContainerAddException(string message, object container, object item)
+            : base(message)
+        {
             this._container = container;
             this._item = item;
         }
 
-        public ContainerAddException(string message, Exception innerException, IContainer container, IContainable item) : base(message, innerException) {
+        public ContainerAddException(string message, Exception innerException, object container, object item)
+            : base(message, innerException)
+        {
             this._container = container;
             this._item = item;
         }
 
-        public IContainer Container
+        public object Container
         {
             get { return this._container; }
             set { this._container = value; }
         }
 
-        public IContainable Item
+        public object Item
         {
             get { return this._item; }
             set { this._item = value; }

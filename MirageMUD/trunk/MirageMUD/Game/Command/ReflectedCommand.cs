@@ -4,6 +4,7 @@ using log4net;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
 using Mirage.Game.World.Query;
+using System.Collections;
 
 
 namespace Mirage.Game.Command
@@ -264,8 +265,9 @@ namespace Mirage.Game.Command
             }
             else if (target is string)
             {
-                ObjectQuery query = attr.ConstructQuery((string)target);
-                result = MudFactory.GetObject<IQueryManager>().Find(context.Actor, query);
+                var collection = MudFactory.GetObject<MudWorld>().ResolveUri(context.Actor, attr.BaseUri) as IEnumerable;
+                if (collection != null)
+                    result = collection.FindOne((string)target, attr.MatchType);
             }
             if (result == null && attr.IsRequired)
             {

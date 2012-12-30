@@ -74,7 +74,7 @@ namespace Mirage.Game.World.Attribute
             _isLocked = true;
         }
 
-        public void Lock(IUri key)
+        public void Lock(ISupportUri key)
         {
             ValidateKey(key);
             Lock();
@@ -88,7 +88,7 @@ namespace Mirage.Game.World.Attribute
             _isLocked = false;
         }
 
-        public void Unlock(IUri key)
+        public void Unlock(ISupportUri key)
         {
             ValidateKey(key);
             Unlock();
@@ -100,7 +100,7 @@ namespace Mirage.Game.World.Attribute
         /// </summary>
         /// <param name="key">the key object to compare to this lock's key</param>
         /// <exception cref="ValidationException">if the key is not the right key</exception>
-        private void ValidateKey(IUri key)
+        private void ValidateKey(ISupportUri key)
         {
             if (!IsKey(key))
                 throw new ValidationException("common.error.WrongKey");
@@ -130,7 +130,7 @@ namespace Mirage.Game.World.Attribute
         /// </summary>
         /// <param name="keyObj"></param>
         /// <returns></returns>
-        public bool IsKey(IUri keyObj)
+        public bool IsKey(ISupportUri keyObj)
         {
             if (_key == null || _key.Length == 0)
                 return keyObj == null;

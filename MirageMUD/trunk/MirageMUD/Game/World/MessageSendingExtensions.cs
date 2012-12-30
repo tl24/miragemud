@@ -76,9 +76,9 @@ namespace Mirage.Game.World
             var dct = FormatArgs(args);
             if (actor == null)
                 return;
-            if (actor.Container == null)
+            if (actor.Room == null)
                 return;
-            foreach(Living liv in actor.Container.Contents<Living>()) {
+            foreach(Living liv in actor.Room.LivingThings) {
                 if (liv == actor)
                     continue;
                 if (!includeTarget && liv == target)
@@ -90,9 +90,19 @@ namespace Mirage.Game.World
             }
         }
 
+        public static void WriteLine(this IReceiveMessages receiver, string messageName, string messageText)
+        {
+            Write(receiver, messageName, messageText + Environment.NewLine);
+        }
+
         public static void Write(this IReceiveMessages receiver, string messageName, string messageText)
         {
             Write(receiver, new MessageName(messageName), messageText);
+        }
+
+        public static void WriteLine(this IReceiveMessages receiver, MessageName name, string messageText)
+        {
+            Write(receiver, name, messageText + Environment.NewLine);
         }
 
         public static void Write(this IReceiveMessages receiver, MessageName name, string messageText)
@@ -103,9 +113,19 @@ namespace Mirage.Game.World
             Write(receiver, type, name, messageText);
         }
 
+        public static void WriteLine(this IReceiveMessages receiver, MessageType type, string messageName, string messageText)
+        {
+            Write(receiver, type, messageName, messageText + Environment.NewLine);
+        }
+
         public static void Write(this IReceiveMessages receiver, MessageType type, string messageName, string messageText)
         {
             Write(receiver, type, new MessageName(messageName), messageText);
+        }
+
+        public static void WriteLine(this IReceiveMessages receiver, MessageType type, MessageName name, string messageText)
+        {
+            Write(receiver, type, name, messageText + Environment.NewLine);
         }
 
         public static void Write(this IReceiveMessages receiver, MessageType type, MessageName name, string messageText)

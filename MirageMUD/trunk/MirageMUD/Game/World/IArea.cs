@@ -5,7 +5,7 @@ namespace Mirage.Game.World
     /// <summary>
     /// Interface to represent an area
     /// </summary>
-    public interface IArea : IUri
+    public interface IArea : ISupportUri
     {
     }
 }

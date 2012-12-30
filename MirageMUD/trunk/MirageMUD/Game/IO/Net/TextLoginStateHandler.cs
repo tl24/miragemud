@@ -149,7 +149,7 @@ namespace Mirage.Game.IO.Net
                 return;
 	        }
 
-            Player isPlaying = (Player)MudFactory.GetObject<IQueryManager>().Find(new ObjectQuery(null, "Players", new ObjectQuery(input)));
+            Player isPlaying = (Player)MudFactory.GetObject<MudWorld>().Players.FindOne(input, QueryMatchType.Exact);
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
                 Client.Write(MessageFactory.GetMessage("negotiation.authentication.ErrorAlreadyPlaying"));

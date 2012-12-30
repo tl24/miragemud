@@ -22,7 +22,7 @@ namespace Mirage.Game.World.MobAI
             {
                 lastTime = DateTime.Now;
 
-                Room room = Mob.Container as Room;
+                Room room = Mob.Room;
                 if (room == null)
                     return;
 
