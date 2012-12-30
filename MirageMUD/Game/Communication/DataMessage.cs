@@ -18,8 +18,8 @@ namespace Mirage.Game.Communication
         public DataMessage(string Namespace, string name, object data)
             : base(MessageType.Data, new MessageName(Namespace, name))
         {
-            if (_data is IUri)
-                this._itemUri = ((IUri) _data).FullUri;
+            if (_data is ISupportUri)
+                this._itemUri = ((ISupportUri) _data).FullUri;
             this._data = data;
         }
 

@@ -27,5 +27,28 @@ namespace Mirage.Game.World.Containers
                 item.Container = newContainer;
 
         }
+
+        public static bool TryTransfer<T>(T item, IContainer<T> newContainer)
+        {
+            Transfer(item, newContainer);
+            return true;
+        }
+
+        public static void Transfer<T>(T item, IContainer<T> newContainer)
+        {
+            IContainable containable = item as IContainable;
+            if (containable != null)
+            {
+                IContainer oldContainer = containable.Container;
+                if (oldContainer != null)
+                    oldContainer.Remove(item);
+            }
+            newContainer.Add(item);
+            if (containable != null && containable.Container != newContainer)
+            {
+                containable.Container = newContainer;
+            }
+        }
+
     }
 }

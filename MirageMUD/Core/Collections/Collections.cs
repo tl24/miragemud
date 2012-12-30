@@ -33,28 +33,21 @@ namespace Mirage.Core.Collections
 
         #region IIndexedDictionary<TVal> Members
 
-        public IList<TVal> GetAllValues()
+        public IEnumerable<TVal> FindStartsWith(string substring)
         {
-            return new List<TVal>(this);
+            return Find(substring, ComparisonType.Partial);
         }
 
-
-        public IList<TVal> FindStartsWith(string substring)
+        public IEnumerable<TVal> FindExact(string key)
         {
-            return find(substring, ComparisonType.Partial);
+            return Find(key, ComparisonType.Exact);
         }
 
-        public IList<TVal> FindExact(string key)
-        {
-            return find(key, ComparisonType.Exact);
-        }
-
-        private IList<TVal> find(string key, ComparisonType compType)
+        private IEnumerable<TVal> Find(string key, ComparisonType compType)
         {
             Debug.Assert(compType != ComparisonType.Insertion, "Insertion mode not valid for Find");
-            List<TVal> items = new List<TVal>();
-            key = normalizeKey(key);
-            LinkedListNode<IndexPage> page = findPage(key, ComparisonType.Partial);
+            key = NormalizeKey(key);
+            LinkedListNode<IndexPage> page = FindPage(key, ComparisonType.Partial);
             if (page != null)
             {
                 LinkedListNode<KeyNode> item = null;
@@ -71,7 +64,7 @@ namespace Mirage.Core.Collections
                     if (compType == ComparisonType.Partial && item.Value.Key.StartsWith(key)
                         || compType == ComparisonType.Exact && item.Value.Key.Equals(key))
                     {
-                        items.Add(item.Value.value);
+                       yield return item.Value.Value;
                     }
                     else
                     {
@@ -79,7 +72,6 @@ namespace Mirage.Core.Collections
                     }
                 }
             }
-            return items;
         }
 
         public void Put(string key, TVal item)
@@ -88,18 +80,18 @@ namespace Mirage.Core.Collections
             {
                 throw new ArgumentException("Key can not be null or empty");
             }
-            key = normalizeKey(key);
-            LinkedListNode<IndexPage> pageNode = findPage(key, ComparisonType.Insertion);
+            key = NormalizeKey(key);
+            LinkedListNode<IndexPage> pageNode = FindPage(key, ComparisonType.Insertion);
             Debug.Assert(pageNode != null, "Index page should always be found for insertion");
-            pageNode.Value.add(new KeyNode(key, item));
+            pageNode.Value.Add(new KeyNode(key, item));
             if (pageNode.Value.size > maxIndexSize)
             {
-                index.AddAfter(pageNode, pageNode.Value.splitPage());
+                index.AddAfter(pageNode, pageNode.Value.SplitPage());
             }
             _count++;
         }
 
-        private string normalizeKey(string key)
+        private string NormalizeKey(string key)
         {
             return (key == null ? null : key.ToLower());
         }
@@ -111,7 +103,7 @@ namespace Mirage.Core.Collections
         /// <param name="key">the key to search on</param>
         /// <param name="type">The type of operation to be performed</param>
         /// <returns>the node for the index page</returns>
-        private LinkedListNode<IndexPage> findPage(string key, ComparisonType type)
+        private LinkedListNode<IndexPage> FindPage(string key, ComparisonType type)
         {
             if (index.Count == 0)
             {
@@ -126,7 +118,7 @@ namespace Mirage.Core.Collections
             }
 
             for (LinkedListNode<IndexPage> page = index.First; page != null; page = page.Next) {
-                int comp = page.Value.compare(key);
+                int comp = page.Value.Compare(key);
                 if (comp == 0)
                 {
                     return page;
@@ -216,7 +208,7 @@ namespace Mirage.Core.Collections
                     {
                         throw new InvalidOperationException("MoveNext must be called first");
                     }
-                    return lastNode.Value.value;
+                    return lastNode.Value.Value;
                 }
             }
 
@@ -298,7 +290,7 @@ namespace Mirage.Core.Collections
             /// page for the node.
             /// </summary>
             /// <param name="node">the node to add</param>
-            public void add(KeyNode node) {
+            public void Add(KeyNode node) {
                 LinkedListNode<KeyNode> added = null;
 
                 // search through the list to Find the insertion point
@@ -344,7 +336,7 @@ namespace Mirage.Core.Collections
             /// The new page will come sorted after the existing page.
             /// </summary>
             /// <returns>The new page</returns>
-            public IndexPage splitPage()
+            public IndexPage SplitPage()
             {
                 int splitIndex = size / 2;
                 if (splitIndex >= 1)
@@ -376,7 +368,7 @@ namespace Mirage.Core.Collections
             /// </summary>
             /// <param name="key">The key to compare</param>
             /// <returns>comparison result</returns>
-            public int compare(string key) {
+            public int Compare(string key) {
                 int comp = this.start.Value.Key.CompareTo(key);
                 if (comp >= 0)
                     return comp * -1;
@@ -406,12 +398,12 @@ namespace Mirage.Core.Collections
         private class KeyNode
         {
             public string Key;
-            public TVal value;
+            public TVal Value;
 
             public KeyNode(string Key, TVal value)
             {
                 this.Key = Key;
-                this.value = value;
+                this.Value = value;
             }
         }
 
@@ -419,9 +411,8 @@ namespace Mirage.Core.Collections
 
     public interface IIndexedDictionary<TVal> : IEnumerable<TVal>
     {
-        IList<TVal> FindStartsWith(string substring);
-        IList<TVal> FindExact(string key);
-        IList<TVal> GetAllValues();
+        IEnumerable<TVal> FindStartsWith(string substring);
+        IEnumerable<TVal> FindExact(string key);        
         void Put(string key, TVal item);
         int Count { get; }
     }

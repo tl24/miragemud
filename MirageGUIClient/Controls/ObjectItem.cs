@@ -129,8 +129,8 @@ namespace MirageGUI.Controls
         public override string ToString()
         {
             string display;
-            if (_data is IUri)
-                display = ((IUri)_data).Uri;
+            if (_data is ISupportUri)
+                display = ((ISupportUri)_data).Uri;
             else
                 display = _data == null ? "" : _data.ToString();
 

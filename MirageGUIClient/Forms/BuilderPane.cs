@@ -133,9 +133,9 @@ namespace MirageGUI.Forms
         {
             EditorForm form = (EditorForm)sender;
             TabPage page = (TabPage)form.Parent;
-            if (e.Data is IUri)
+            if (e.Data is ISupportUri)
             {
-                page.Name = ((IUri)e.Data).Uri;
+                page.Name = ((ISupportUri)e.Data).Uri;
             }
         }
 

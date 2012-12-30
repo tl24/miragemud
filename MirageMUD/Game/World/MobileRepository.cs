@@ -4,10 +4,10 @@ namespace Mirage.Game.World
 {
     public class MobileRepository : IMobileRepository
     {
-        private StockRepository _mudRepository;
-        public MobileRepository(MudRepositoryBase MudRepository)
+        private MudWorld _mudRepository;
+        public MobileRepository(MudWorld MudRepository)
         {
-            _mudRepository = (StockRepository)MudRepository;
+            _mudRepository = MudRepository;
         }
 
         #region IMobileRepository Members

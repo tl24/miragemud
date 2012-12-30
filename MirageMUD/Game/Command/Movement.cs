@@ -109,11 +109,11 @@ namespace Mirage.Game.Command
 
         public IMessage Go(Living actor, DirectionType direction)
         {
-            if (!(actor.Container is Room))
+            if (actor.Room == null)
                 return MessageFactory.GetMessage("movement.NotInRoom");
 
             string dirName = direction.ToString().ToLower();
-            Room room = (Room)actor.Container;
+            Room room = actor.Room;
             if (!room.Exits.ContainsKey(direction))
                 return MessageFactory.GetMessage("movement.CantGoExit");
 
@@ -175,11 +175,11 @@ namespace Mirage.Game.Command
 
         private IMessage OpenCloseDoorHelper(Living actor, DirectionType direction, bool open)
         {
-            if (!(actor.Container is Room))
+            if (actor.Room == null)
                 return MessageFactory.GetMessage("movement.NotInRoom");
 
             string dirName = direction.ToString().ToLower();
-            Room room = (Room)actor.Container;
+            Room room = actor.Room;
             if (!room.Exits.ContainsKey(direction))
                 return MessageFactory.GetMessage("movement.NoExit");
 
@@ -223,11 +223,11 @@ namespace Mirage.Game.Command
 
         private IMessage UnlockLockDoorHelper(Living actor, DirectionType direction, bool unlock)
         {
-            if (!(actor.Container is Room))
+            if (actor.Room == null)
                 return MessageFactory.GetMessage("movement.NotInRoom");
 
             string dirName = direction.ToString().ToLower();
-            Room room = (Room)actor.Container;
+            Room room = actor.Room;
             if (!room.Exits.ContainsKey(direction))
                 return MessageFactory.GetMessage("movement.NoExit");
 

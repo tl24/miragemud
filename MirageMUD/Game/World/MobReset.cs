@@ -25,10 +25,10 @@ namespace Mirage.Game.World
         {
             if (_targetRoom == null)
             {
-                IQueryManager queryManager = MudFactory.GetObject<IQueryManager>();
+                MudWorld world = MudFactory.GetObject<MudWorld>();
 
                 // absolute link
-                _targetRoom = (Room)queryManager.Find(_roomUri);
+                _targetRoom = (Room)world.ResolveUri(_roomUri);
 
             }
             return _targetRoom;

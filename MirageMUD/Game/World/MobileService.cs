@@ -4,9 +4,9 @@ namespace Mirage.Game.World
 {
     public class MobileService : ServiceExecutorBase
     {
-        private StockRepository _repository;
+        private MudWorld _repository;
 
-        public MobileService(StockRepository repository)
+        public MobileService(MudWorld repository)
         {
             _repository = repository;
         }

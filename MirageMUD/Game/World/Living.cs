@@ -35,9 +35,8 @@ namespace Mirage.Game.World
     ///     A base class for living breathing things such as players
     /// and mobiles.
     /// </summary>
-    public abstract class Living : LivingTemplateBase, IContainable, IActor, IReceiveMessages, IContainer
+    public abstract class Living : LivingTemplateBase, IActor, IReceiveMessages, IContainer, IContainable
     {
-        private Room _room;
         private LinkedList<ItemBase> _inventory;
         protected IContainer _itemContainer;
         protected WornItems _equipment;
@@ -57,23 +56,23 @@ namespace Mirage.Game.World
 
         public abstract IPrincipal Principal { get; }
 
-
-        #region IContainable Members
+        [XmlIgnore]
+        [JsonExIgnore]
+        public Room Room
+        {
+            get
+            {
+                return Container as Room;
+            }
+            set
+            {
+                Container = value;
+            }
+        }
 
         [XmlIgnore]
         [JsonExIgnore]
-        public IContainer Container
-        {
-            get { return _room; }
-            set { _room = (Room)value; }
-        }
-
-        public bool CanBeContainedBy(IContainer container)
-        {
-            return (container is Room);
-        }
-
-        #endregion
+        public IContainer Container { get; set; }
 
         public ICollection<ItemBase> Inventory
         {
@@ -169,45 +168,39 @@ namespace Mirage.Game.World
 
         #region IContainer Members
 
-        public void Add(IContainable item)
+        int IContainer.Count
+        {
+            get
+            {
+                return _itemContainer.Count;
+            }
+        }
+
+        public void Add(object item)
         {
             _itemContainer.Add(item);
         }
 
-        public void Remove(IContainable item)
+        public void Remove(object item)
         {
             _itemContainer.Remove(item);
         }
 
-        public bool Contains(IContainable item)
+        public bool Contains(object item)
         {
             return _itemContainer.Contains(item);
         }
 
-        public bool CanContain(Type item)
-        {
-            return _itemContainer.CanContain(item);
-        }
-
-        public bool CanAdd(IContainable item)
+        public bool CanAdd(object item)
         {
             return _itemContainer.CanAdd(item);
         }
 
-        public IEnumerable Contents(Type t)
+        public IEnumerator GetEnumerator()
         {
-            return _itemContainer.Contents(t);
+            return _itemContainer.GetEnumerator();
         }
 
-        public IEnumerable Contents()
-        {
-            return _itemContainer.Contents();
-        }
-
-        public System.Collections.Generic.IEnumerable<T> Contents<T>()
-        {
-            return _itemContainer.Contents<T>();
-        }
         #endregion
     }
 }

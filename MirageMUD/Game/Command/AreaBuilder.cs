@@ -15,33 +15,9 @@ namespace Mirage.Game.Command
     [CommandDefaults(
         ClientTypes = new Type[] { typeof(AdvancedConnectionAdapter) },
         Roles = "builder")]
-    public class AreaBuilder
+    public class AreaBuilder : CommandDefaults
     {
-        private IQueryManager _queryManager;
-
-        public IQueryManager QueryManager
-        {
-            get { return this._queryManager; }
-            set { this._queryManager = value; }
-        }
-
-        private IAreaRepository _areaRepository;
-
-        public IAreaRepository AreaRepository
-        {
-            get { return _areaRepository; }
-            set { _areaRepository = value; }
-        }
-
-        /// <summary>
-        /// Get the top node of the area hierarchy
-        /// </summary>
-        /// <returns></returns>
-        [Command]
-        public IMessage GetWorld()
-        {
-            return new DataMessage(Namespaces.Area, "World", new MudWorld());
-        }
+        public IAreaRepository AreaRepository { get; set; }
 
         /// <summary>
         /// Retrieves the names of all the areas in the mud
@@ -111,7 +87,7 @@ namespace Mirage.Game.Command
         [Command]
         public IMessage GetArea(string itemUri)
         {
-            Area area = (Area) QueryManager.Find(itemUri);
+            Area area = (Area) World.ResolveUri(itemUri);
             return new DataMessage(Namespaces.Area, "Area", itemUri, area);
         }
 
@@ -124,7 +100,7 @@ namespace Mirage.Game.Command
         [Command]
         public IMessage GetRooms(string itemUri)
         {
-            IDictionary<string, Room> rooms = (IDictionary<string, Room>)QueryManager.Find(itemUri);
+            IDictionary<string, Room> rooms = (IDictionary<string, Room>)World.ResolveUri(itemUri);
             List<string> roomList = new List<string>(rooms.Keys);
             return new DataMessage(Namespaces.Area, "Rooms", itemUri, roomList);
         }
@@ -138,7 +114,7 @@ namespace Mirage.Game.Command
         [Command]
         public IMessage GetRoom(string itemUri)
         {
-            Room room = (Room)QueryManager.Find(itemUri);
+            Room room = (Room)World.ResolveUri(itemUri);
             return new DataMessage(Namespaces.Area, "Room", itemUri, room);
         }
     }

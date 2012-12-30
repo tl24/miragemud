@@ -12,12 +12,5 @@ namespace Mirage.Game.World.Containers
         /// another object
         /// </summary>
         IContainer Container { get; set; }
-
-        /// <summary>
-        /// Returns true if this object can be contained inside the given container
-        /// </summary>
-        /// <param name="container">the container the object is being added to</param>
-        /// <returns>true if the object can be contained inside this container</returns>
-        bool CanBeContainedBy(IContainer container);
     }
 }

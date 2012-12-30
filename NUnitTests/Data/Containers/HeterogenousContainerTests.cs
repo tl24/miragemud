@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Mirage.Game.World.Containers;
 using NUnit.Framework;
 using NUnitTests.Mock;
+using System.Linq;
 
 namespace NUnitTests.Data.Containers
 {
@@ -18,11 +19,11 @@ namespace NUnitTests.Data.Containers
             container = new HeterogenousContainer();
             AList = new LinkedList<MockContainableA>();
             container.AddContainer(typeof(MockContainableA), 
-                new GenericCollectionContainer<MockContainableA>(AList));
+                new GenericCollectionContainer<MockContainableA>(AList, container));
 
             BList = new LinkedList<MockContainableB>();
             container.AddContainer(typeof(MockContainableB),
-                new GenericCollectionContainer<MockContainableB>(BList));
+                new GenericCollectionContainer<MockContainableB>(BList, container));
         }
 
 
@@ -88,7 +89,7 @@ namespace NUnitTests.Data.Containers
             container.Add(itemB);
             container.Add(itemSubA);
 
-            foreach (object item in container.Contents(typeof(MockContainableA)))
+            foreach (object item in container.OfType<MockContainableA>())
             {
                 // should get itemA, anditemSubA
                 if (item == itemA)
@@ -116,7 +117,7 @@ namespace NUnitTests.Data.Containers
             container.Add(itemB);
             container.Add(itemSubA);
 
-            foreach (object item in container.Contents())
+            foreach (object item in container)
             {
                 // should get itemA, anditemSubA
                 if (item == itemA)

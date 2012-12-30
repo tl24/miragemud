@@ -53,7 +53,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JsonExSerializer, Version=2.0.0.100, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="JsonExSerializer">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\JsonExSerializer.dll</HintPath>
     </Reference>
@@ -61,29 +61,29 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\runtime\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Mirage.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirage.Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\bin\Debug\Mirage.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Mirage.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirage.Game">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\bin\Debug\Mirage.Game.dll</HintPath>
     </Reference>
-    <Reference Include="Mirage.IO, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirage.IO">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\bin\Debug\Mirage.IO.dll</HintPath>
     </Reference>
-    <Reference Include="Mirage.Stock, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mirage.Stock">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MirageMUD\Stock\bin\Debug\Mirage.Stock.dll</HintPath>
     </Reference>
-    <Reference Include="MirageMUD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MirageMUD">
       <SpecificVersion>False</SpecificVersion>
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\MirageMUD\bin\Debug\MirageMUD.exe</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NGenerics, Version=1.2.0.0, Culture=neutral, PublicKeyToken=e4b41be133ea7faf, processorArchitecture=MSIL">
+    <Reference Include="NGenerics">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\NGenerics.dll</HintPath>
     </Reference>

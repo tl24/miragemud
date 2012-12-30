@@ -1,48 +1,31 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Mirage.Game.World
 {
     public class MobTemplate : LivingTemplateBase
     {
-        private LinkedList<Mobile> _mobiles;
-        private int _maxRoomCount;
-        private int _maxCount;
-        private List<MobReset> _resets;
-        private Area _area;
-
         public MobTemplate()
         {
-            _mobiles = new LinkedList<Mobile>();
+            Mobiles = new LinkedList<Mobile>();
         }
 
-        public ICollection<Mobile> Mobiles
-        {
-            get { return this._mobiles; }
-        }
+        /// <summary>
+        /// The list of mobs created from this template
+        /// </summary>
+        public ICollection<Mobile> Mobiles { get; private set; }
 
         /// <summary>
         /// Maximum number of this mobile allowed to be created in a room at one time
         /// </summary>
-        public int MaxRoomCount
-        {
-            get { return this._maxRoomCount; }
-            set { this._maxRoomCount = value; }
-        }
+        public int MaxRoomCount { get; set; }
 
         /// <summary>
         /// Maximum total number of this mobile allowed
         /// </summary>
-        public int MaxCount
-        {
-            get { return this._maxCount; }
-            set { this._maxCount = value; }
-        }
+        public int MaxCount { get; set; }
 
-        public List<MobReset> Resets
-        {
-            get { return this._resets; }
-            set { this._resets = value; }
-        }
+        public List<MobReset> Resets { get; set; }
 
         /// <summary>
         /// Creates a new mobile from this template and returns it.  No checks for
@@ -75,7 +58,7 @@ namespace Mirage.Game.World
         private int GetMobRoomCount(Room room)
         {
             int count = 0;
-            foreach (Mobile mob in room.Contents(typeof(Mobile)))
+            foreach (Mobile mob in room.OfType<Mobile>())
             {
                 if (mob.Template == this)
                     count++;
@@ -84,10 +67,6 @@ namespace Mirage.Game.World
         }
 
         [EditorParent(2)]
-        public Area Area
-        {
-            get { return this._area; }
-            set { this._area = value; }
-        }
+        public Area Area { get; set; }
     }
 }

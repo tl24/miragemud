@@ -5,40 +5,17 @@ using Mirage.Game.World;
 using Mirage.Game.World.Attribute;
 using Mirage.Game.World.Query;
 using Mirage.IO.Net;
+using System.Collections;
 
 namespace Mirage.Game.Command
 {
-    public class MiscCommands
-    {
+    public class MiscCommands : CommandDefaults
+    {       
+        public IMessageFactory MessageFactory { get; set; }
 
-        private IQueryManager _queryManager;
-        private IMessageFactory _messageFactory;
-        private IViewManager _viewManager;
-        private IPlayerRepository _playerRepository;
+        public IViewManager ViewManager { get; set; }
 
-        public IQueryManager QueryManager
-        {
-            get { return this._queryManager; }
-            set { this._queryManager = value; }
-        }
-
-        public IMessageFactory MessageFactory
-        {
-            get { return _messageFactory; }
-            set { _messageFactory = value; }
-        }
-
-        public IViewManager ViewManager
-        {
-            get { return _viewManager; }
-            set { _viewManager = value; }
-        }
-
-        public IPlayerRepository PlayerRepository
-        {
-            get { return _playerRepository; }
-            set { _playerRepository = value; }
-        }
+        public IPlayerRepository PlayerRepository { get; set; }
         /// <summary>
         ///     Say something to everyone in the room
         /// </summary>
@@ -52,7 +29,7 @@ namespace Mirage.Game.Command
             IMessage msgToOthersTemplate = MessageFactory.GetMessage("communication.SayOthers");
             msgToOthersTemplate["player"] = actor.Title;
             msgToOthersTemplate["message"] = message;
-            foreach (Living am in actor.Container.Contents(typeof(Living)))
+            foreach (Living am in actor.Room.LivingThings)
             {
                 if (am != actor)
                 {
@@ -74,7 +51,8 @@ namespace Mirage.Game.Command
         public IMessage tell([Actor] Living actor, string target, [CustomParse] string message)
         {
             // look up the target
-            Player p = (Player)QueryManager.Find(new ObjectQuery(null, "/Players", new ObjectQuery(target)));
+            Player p = (Player)World.Players.FindOne(target, QueryMatchType.Exact);
+            
             if (p == null)
             {
                 // couldn't find them, send an error
@@ -124,48 +102,44 @@ namespace Mirage.Game.Command
         public string look([Actor] Living actor)
         {
             string result = "";
-            IViewable viewableContainer = actor.Container as IViewable;
-            if (viewableContainer != null)
+            var room = actor.Room;
+            if (room == null)
+                return "";
+
+            result += room.Title + "\r\n";
+            result += room.ShortDescription + "\r\n";
+            result += "\r\n";
+            if (room.LivingThings.Count > 1)
             {
-                result += viewableContainer.Title + "\r\n";
-                result += viewableContainer.ShortDescription + "\r\n";
-                result += "\r\n";
+                result += "Players:\r\n";
+                foreach (Living animate in room.LivingThings)
+                {
+                    if (animate != actor)
+                    {
+                        result += animate.Title + "\r\n";
+                    }
+                }
             }
-            if (actor.Container is Room)
+
+            if (room.Items.Count > 0)
+                result += ItemCommands.DisplayItemList("Items:", room.Items);
+
+            if (room.Exits.Count > 0)
             {
-                Room room = actor.Container as Room;
-                if (room.LivingThings.Count > 1)
+                result += "Available Exits: [ ";
+                foreach (RoomExit exit in room.Exits.Values)
                 {
-                    result += "Players:\r\n";
-                    foreach (Living animate in room.LivingThings)
+                    if (OpenableAttribute.IsOpen(exit))
                     {
-                        if (animate != actor)
-                        {
-                            result += animate.Title + "\r\n";
-                        }
+                        result += exit.Direction;
+                        result += " ";
                     }
                 }
-
-                if (room.Items.Count > 0)
-                    result += ItemCommands.DisplayItemList("Items:", room.Items);
-
-                if (room.Exits.Count > 0)
-                {
-                    result += "Available Exits: [ ";
-                    foreach (RoomExit exit in room.Exits.Values)
-                    {
-                        if (OpenableAttribute.IsOpen(exit))
-                        {
-                            result += exit.Direction;
-                            result += " ";
-                        }
-                    }
-                    result += "]\r\n";
-                }
-                else
-                {
-                    result += "Available Exits: none\r\n.";
-                }
+                result += "]\r\n";
+            }
+            else
+            {
+                result += "Available Exits: none\r\n.";
             }
             return result;
         }
@@ -173,7 +147,15 @@ namespace Mirage.Game.Command
         [Command]
         public void look([Actor] Living actor, string target)
         {
-            Living lookAt = QueryManager.Find(actor.Container, ObjectQuery.Parse("LivingThings", target)) as Living;
+            if (actor.Room == null)
+            {
+                IMessage message = MessageFactory.GetMessage("common.error.NotHere");
+                message["target"] = target;
+                actor.Write(message);
+                return;
+            }
+
+            Living lookAt = actor.Room.LivingThings.FindOne(target);
             if (lookAt == null || ViewManager.GetVisibility(actor, lookAt) == VisiblityType.NotVisible)
             {
                 // couldn't find them
@@ -194,7 +176,7 @@ namespace Mirage.Game.Command
         [CommandAttribute(Description="Lists commands available to a user")]
         public IMessage commands([Actor] Player actor, string searchText)
         {
-            IList<ICommand> commandList = MethodInvoker.GetAvailableCommands(searchText);
+            var commandList = MethodInvoker.GetAvailableCommands(searchText);
             StringBuilder sb = new StringBuilder();
 
             SortedList<string, ICommand> list = FilterAndSortCommands(commandList, actor);
@@ -211,7 +193,7 @@ namespace Mirage.Game.Command
         [CommandAttribute(Description = "Lists commands available to a user")]
         public IMessage commands([Actor] Player actor)
         {
-            IList<ICommand> commandList = MethodInvoker.GetAvailableCommands();
+            var commandList = MethodInvoker.GetAvailableCommands();
             StringBuilder sb = new StringBuilder();
 
             SortedList<string, ICommand> list = FilterAndSortCommands(commandList, actor);
@@ -229,7 +211,7 @@ namespace Mirage.Game.Command
             return MessageFactory.GetMessage("common.CommandListAll", sb.ToString());
         }
 
-        private SortedList<string, ICommand> FilterAndSortCommands(IList<ICommand> commands, Player actor)
+        private SortedList<string, ICommand> FilterAndSortCommands(IEnumerable<ICommand> commands, Player actor)
         {
             SortedList<string, ICommand> list = new SortedList<string, ICommand>();
             foreach (ICommand cmd in commands)

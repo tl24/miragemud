@@ -3,7 +3,7 @@ using Mirage.Game.World.Query;
 
 namespace NUnitTests.Mock
 {
-    public class MockUriContainer : IUri, IUriContainer
+    public class MockUriContainer : ISupportUri, IUriContainer
     {
         private string _uri = "global";
         private IDictionary<string, object> _objects;

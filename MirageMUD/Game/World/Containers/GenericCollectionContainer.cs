@@ -4,34 +4,76 @@ using System.Collections.Generic;
 
 namespace Mirage.Game.World.Containers
 {
-    public class GenericCollectionContainer<T> : IContainer
+    public class CollectionModifyingEventArgs : EventArgs
     {
-        private ICollection<T> _items;
-        private IContainer _parentContainer;
+        public CollectionModifyingEventArgs(object item)
+        {
+            this.Item = item;
+            this.Cancel = false;
+        }
 
+        /// <summary>
+        /// Set to true to cancel the operation
+        /// </summary>
+        public bool Cancel { get; set; }
+
+        /// <summary>
+        /// The item changing in the collection
+        /// </summary>
+        public object Item { get; private set; }
+    }
+
+    public class CollectionModifiedEventArgs : EventArgs
+    {
+        public CollectionModifiedEventArgs(object item)
+        {
+            this.Item = item;
+        }
+
+        /// <summary>
+        /// The item changing in the collection
+        /// </summary>
+        public object Item { get; private set; }
+    }
+
+    public class GenericCollectionContainer<T> : IContainer<T>
+    {
+        private ICollection<T> Items;
+        public IContainer ParentContainer { get; set; }
+
+        public event EventHandler<CollectionModifyingEventArgs> ItemAdding;
+        public event EventHandler<CollectionModifiedEventArgs> ItemAdded;
+        public event EventHandler<CollectionModifyingEventArgs> ItemRemoving;
+        public event EventHandler<CollectionModifiedEventArgs> ItemRemoved;
         public GenericCollectionContainer(ICollection<T> items)
         {
-            _items = items;
-            _parentContainer = this;
+            Items = items;
         }
 
-        public GenericCollectionContainer(ICollection<T> items, IContainer parentContainer)
+        public GenericCollectionContainer(ICollection<T> items, IContainer parentContainer) : this(items)
         {
-            _items = items;
-            _parentContainer = parentContainer;
+            ParentContainer = parentContainer;
         }
 
-
-        #region IContainer Members
-
-        public virtual void Add(IContainable item)
+        public int Count
         {
-            if (ParentContainer.CanAdd(item))
+            get
             {
-                    if (item.Container != this.ParentContainer || !this.Items.Contains((T)item))
+                return Items.Count;
+            }
+        }
+
+        public virtual void Add(T item)
+        {
+            if (CanAdd(item))
+            {
+                    if (!Items.Contains((T)item))
                     {
-                        _items.Add((T)item);
-                        item.Container = this.ParentContainer;
+                        Items.Add((T)item);
+                        if (item is IContainable)
+                        {
+                            ((IContainable)item).Container = ParentContainer;
+                        }
                     }
             }
             else
@@ -40,17 +82,19 @@ namespace Mirage.Game.World.Containers
             }
         }
 
-        public virtual void Remove(IContainable item)
+        public virtual void Remove(T item)
         {
-            if (ParentContainer.CanAdd(item))
+            if (CanRemove(item))
             {
-                this.Items.Remove((T)item);
-                if (item.Container == this.ParentContainer)
-                    item.Container = null;
+                this.Items.Remove(item);
+                if (item is IContainable && ((IContainable)item).Container == ParentContainer)
+                {
+                    ((IContainable)item).Container = null;
+                }
             }
         }
 
-        public virtual  bool Contains(IContainable item)
+        public virtual bool Contains(object item)
         {
             if (item is T)
                 return Items.Contains((T)item);
@@ -58,55 +102,62 @@ namespace Mirage.Game.World.Containers
                 return false;
         }
 
-        public virtual bool CanContain(Type item)
+        public virtual bool Contains(T item)
         {
-            return typeof(T).IsAssignableFrom(item);
+            return Items.Contains(item);
         }
 
-        public virtual bool CanAdd(IContainable item)
+        private bool CanAdd(T item)
         {
-            return (item is T);
+            return OnCollectionModifying(ItemAdding, item);
         }
 
-        public virtual IEnumerable Contents(Type t)
+        private bool CanRemove(T item)
         {
-            foreach (T item in Items)
+            return OnCollectionModifying(ItemAdding, item);
+        }
+
+        private bool OnCollectionModifying(EventHandler<CollectionModifyingEventArgs> evt, T item)
+        {
+            if (evt != null)
             {
-                if (t.IsInstanceOfType(item))
-                    yield return item;
+                var e = new CollectionModifyingEventArgs(item);
+                evt(this, e);
+                return !e.Cancel;
             }
+            return true;
         }
 
-        public virtual System.Collections.Generic.IEnumerable<IT> Contents<IT>() 
+        public void Add(object item)
         {
-            foreach (T item in Items)
-            {
-                if (item is IT)
-                {
-                    object o = item;
-
-                    yield return (IT) o;
-                }
-            }
+            if (item is T)
+                Add((T)item);
+            else
+                throw new ContainerAddException("item could not be added", this, item);
         }
 
-        public virtual IEnumerable Contents()
+        public void Remove(object item)
         {
-            return Contents(typeof(object));
+            if (item is T)
+                Remove((T)item);
         }
 
-        #endregion
-
-        public ICollection<T> Items
+        public bool CanAdd(object item)
         {
-            get { return this._items; }
-            set { this._items = value; }
+            if (item is T)
+                return CanAdd((T)item);
+            else
+                return false;
         }
 
-        public IContainer ParentContainer
+        public IEnumerator GetEnumerator()
         {
-            get { return this._parentContainer; }
-            set { this._parentContainer = value; }
+            return Items.GetEnumerator();
+        }
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return Items.GetEnumerator();
         }
     }
 }

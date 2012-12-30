@@ -3,7 +3,7 @@ using Mirage.Game.World.Query;
 
 namespace Mirage.Game.World
 {
-    public class BaseData : Thing, IUriContainer, IUri
+    public class BaseData : Thing, IUriContainer, ISupportUri
     {
         protected string _uri;
         protected Dictionary<string, ChildCollectionPair> _uriChildCollections;

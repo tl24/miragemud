@@ -97,7 +97,7 @@ namespace Mirage.Game.Communication
         /// category that the client can use to figure out how to
         /// process the message.
         /// </summary>
-        [ConstructorParameter]
+        //[ConstructorParameter]
         public MessageType MessageType
         {
             get { return this._messageType; }
@@ -107,7 +107,7 @@ namespace Mirage.Game.Communication
         /// <summary>
         /// The Name of the message, every message should have an Name.
         /// </summary>
-        [ConstructorParameter]
+        //[ConstructorParameter]
         public MessageName Name
         {
             get { return this._name; }

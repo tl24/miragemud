@@ -42,7 +42,7 @@ namespace Mirage.Game.Communication
         /// <summary>
         /// The message string to send to the text client
         /// </summary>
-        [ConstructorParameter]
+        //[ConstructorParameter]
         public string Text
         {
             get { return this._text; }

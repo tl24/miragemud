@@ -26,7 +26,7 @@ namespace Mirage.Game.World.Attribute
         /// if so, the lock will proceed.
         /// </summary>
         /// <param name="key">the proposed key object for the lock</param>
-        void Lock(IUri key);
+        void Lock(ISupportUri key);
 
         /// <summary>
         /// Unlocks the object.  The object must first be locked.
@@ -41,7 +41,7 @@ namespace Mirage.Game.World.Attribute
         /// if so, the unlock will proceed.
         /// </summary>
         /// <param name="key">the proposed key object for the lock</param>
-        void Unlock(IUri key);
+        void Unlock(ISupportUri key);
 
         /// <summary>
         /// Returns the uri for the key object that locks/unlocks this object.
@@ -53,7 +53,7 @@ namespace Mirage.Game.World.Attribute
         /// </summary>
         /// <param name="keyObj"></param>
         /// <returns>true if this is the key that unlocks the object</returns>
-        bool IsKey(IUri keyObj);
+        bool IsKey(ISupportUri keyObj);
     }
 
     

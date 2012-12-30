@@ -388,7 +388,7 @@ namespace Mirage.Game.Communication
         /// <returns>name if it can be determined</returns>
         private string GetName(object participant)
         {
-            IUri uri = participant as IUri;
+            ISupportUri uri = participant as ISupportUri;
             if (uri != null)
                 return uri.Uri;
             return null;

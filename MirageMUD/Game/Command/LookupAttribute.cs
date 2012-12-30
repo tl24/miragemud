@@ -43,12 +43,5 @@ namespace Mirage.Game.Command
             get { return this._errorResource; }
             set { this._errorResource = value; }
         }
-
-        public ObjectQuery ConstructQuery(string argument)
-        {
-            ObjectQuery query = ObjectQuery.Parse(_baseUri, argument);
-            query.MatchType = _matchType;
-            return query;
-        }
     }
 }

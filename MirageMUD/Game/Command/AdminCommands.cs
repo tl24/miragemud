@@ -7,7 +7,7 @@ using System.Linq;
 namespace Mirage.Game.Command
 {
     [CommandDefaults(Roles="Admin")]
-    public class AdminCommands
+    public class AdminCommands : CommandDefaults
     {
         private ILogger logger = NullLogger.Instance;
 
@@ -35,27 +35,30 @@ namespace Mirage.Game.Command
         [Command]
         public void DumpUri([Actor] IActor actor, string uri)
         {
-            IQueryManager queryMgr = MudFactory.GetObject<IQueryManager>();
-            object result = queryMgr.Find(uri);
+            object result = World.ResolveUri(actor, uri);
             if (result == null)
             {
-                actor.Write("common.error.notfound", "No object found with uri: " + uri);
+                actor.WriteLine("common.error.notfound", "No object found with uri: " + uri);
             }
             else
             {
-                actor.Write("object.uri", DumpObject(result));
+                actor.WriteLine("object.uri", DumpObject(result));
             }
         }
 
         private string DumpObject(object result) {
+
             var q = from p in result.GetType().GetProperties()
                     orderby p.Name
                     select new { Name = p.Name, Value = p.GetGetMethod().Invoke(result, null) };
             string msg = "";
+            msg += result.GetType().Name + "\r\n";
+            msg += "--------------------------------------\r\n";
             foreach (var pv in q)
             {
                 msg += string.Format("{0}: {1}\r\n", pv.Name, pv.Value);
             }
+            msg += "\r\n";
             return msg;
         }
     }

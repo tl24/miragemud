@@ -10,22 +10,15 @@ namespace Mirage.Game.Command
 {
     public class ItemCommands
     {
-        private IQueryManager _queryManager;
-        public IQueryManager QueryManager
-        {
-            get { return this._queryManager; }
-            set { this._queryManager = value; }
-        }
-
         [CommandAttribute(Aliases = new string[] { "get" })]
         public void get_item([Actor] Living actor, string target)
         {
             if ("all".Equals(target, StringComparison.CurrentCultureIgnoreCase)) {
-                foreach(ItemBase item in new List<ItemBase>(actor.Container.Contents<ItemBase>())) {
+                foreach(ItemBase item in new List<ItemBase>(actor.Room.Items)) {
                     get_item(actor, item);
                 }
             } else {
-                ItemBase item = QueryManager.Find(actor.Container, ObjectQuery.Parse("Items", target)) as ItemBase;
+                ItemBase item = actor.Room.Items.FindOne(target);
                 if (item == null)
                     actor.Write("item.error.nothere.self", "I don't see that here.\r\n");
                 else
@@ -49,7 +42,7 @@ namespace Mirage.Game.Command
         [Command]
         public void drop([Actor] Living actor, string target)
         {
-            Room room = actor.Container as Room;
+            Room room = actor.Room;
             if (target.Equals("all", StringComparison.CurrentCultureIgnoreCase))
             {
                 if (room == null)
@@ -71,7 +64,7 @@ namespace Mirage.Game.Command
                     return;
                 }
 
-                ItemBase item = QueryManager.Find(actor, ObjectQuery.Parse("Inventory", target)) as ItemBase;
+                ItemBase item = actor.Inventory.FindOne(target);
                 if (item == null)
                 {
                     actor.Write("item.error.donthaveitem.self", "You don't have that.\r\n");
@@ -107,7 +100,7 @@ namespace Mirage.Game.Command
         [CommandAttribute(Description="Wear an item")]
         public void wear([Actor] Living actor, string target)
         {
-            ItemBase item = QueryManager.Find(actor, ObjectQuery.Parse("Inventory", target)) as ItemBase;
+            ItemBase item = actor.Inventory.FindOne(target);
             if (item == null)
             {
                 actor.Write("item.error.donthaveitem.self", "You don't have that!\r\n");
@@ -133,7 +126,7 @@ namespace Mirage.Game.Command
         [CommandAttribute(Description = "Remove an item")]
         public void remove([Actor] Living actor, string target)
         {
-            Armor item = QueryManager.Find(actor, ObjectQuery.Parse("Equipment", target)) as Armor;
+            Armor item = actor.Equipment.FindOne(target);
             if (item == null)
             {
                 actor.Write("item.error.itemnotworn.self", "You're not wearing that!\r\n");
@@ -168,7 +161,7 @@ namespace Mirage.Game.Command
             actor.Write("item.inventory", DisplayItemList("You have the following items:", actor.Inventory));
         }
 
-        public static string DisplayItemList(string title, ICollection<ItemBase> items)
+        public static string DisplayItemList(string title, IEnumerable<ItemBase> items)
         {
             string result = "";
             if (!string.IsNullOrEmpty(title))
