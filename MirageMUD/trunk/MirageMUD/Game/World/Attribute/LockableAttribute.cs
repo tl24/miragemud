@@ -13,6 +13,15 @@ namespace Mirage.Game.World.Attribute
         protected bool _isLocked;
         protected string _key;
 
+        new public class Messages
+        {
+            public static readonly MessageDefinition CantLockWhenOpen = new MessageDefinition("common.lock.error.cantlockwhenopen", "You can't lock that, it's not closed!");
+            public static readonly MessageDefinition ObjectAlreadyLocked = new MessageDefinition("common.lock.error.objectalreadylocked", "It's already locked.");
+            public static readonly MessageDefinition ObjectAlreadyUnlocked = new MessageDefinition("common.unlock.error.objectalreadyunlocked", "It's already unlocked.");
+            public static readonly MessageDefinition WrongKey = new MessageDefinition("common.lockunlock.error.wrongkey", "You don't have the right key.");
+            public static readonly MessageDefinition ObjectLocked = new MessageDefinition("common.open.error.objectlocked", "You can't open that, it's locked.");
+        }
+
         /// <summary>
         /// Constructs the lockable object with no target
         /// </summary>
@@ -66,10 +75,10 @@ namespace Mirage.Game.World.Attribute
         public void Lock()
         {
             if (Opened)
-                throw new ValidationException("common.error.CantLockWhenOpen");
+                throw new ValidationException(Messages.CantLockWhenOpen);
             
             if (Locked)
-                throw new ValidationException("common.error.ObjectAlreadyLocked");
+                throw new ValidationException(Messages.ObjectAlreadyLocked);
 
             _isLocked = true;
         }
@@ -83,7 +92,7 @@ namespace Mirage.Game.World.Attribute
         public void Unlock()
         {
             if (!Locked)
-                throw new ValidationException("common.error.ObjectAlreadyUnlocked");
+                throw new ValidationException(Messages.ObjectAlreadyUnlocked);
 
             _isLocked = false;
         }
@@ -103,7 +112,7 @@ namespace Mirage.Game.World.Attribute
         private void ValidateKey(ISupportUri key)
         {
             if (!IsKey(key))
-                throw new ValidationException("common.error.WrongKey");
+                throw new ValidationException(Messages.WrongKey);
         }
 
         /// <summary>
@@ -121,7 +130,7 @@ namespace Mirage.Game.World.Attribute
         public override void Open()
         {
             if (Locked)
-                throw new ValidationException("common.error.ObjectLocked");
+                throw new ValidationException(Messages.ObjectLocked);
             base.Open();
         }
 

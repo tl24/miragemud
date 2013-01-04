@@ -102,7 +102,6 @@
     <Compile Include="Code\ExceptionMessage.cs" />
     <Compile Include="Code\IMasterPresenter.cs" />
     <Compile Include="Code\ItemChanged.cs" />
-    <Compile Include="Code\RealSortedList.cs" />
     <Compile Include="Controls\AreaItem.cs" />
     <Compile Include="Controls\BaseItem.cs" />
     <Compile Include="Controls\CollectionItem.cs" />

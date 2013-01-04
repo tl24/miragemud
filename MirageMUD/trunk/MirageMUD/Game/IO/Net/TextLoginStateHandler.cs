@@ -6,6 +6,7 @@ using Mirage.Game.Communication;
 using Mirage.Game.World;
 using Mirage.Game.World.Query;
 using Mirage.IO.Net;
+using Mirage.Core;
 
 namespace Mirage.Game.IO.Net
 {
@@ -15,7 +16,6 @@ namespace Mirage.Game.IO.Net
     public class TextLoginStateHandler : AbstractStateMachine
     {
         private bool _failed;
-        private IMessageFactory _messageFactory;
         private IPlayerRepository _playerRepository;
         private IRaceRepository _raceRepository;
 
@@ -26,42 +26,45 @@ namespace Mirage.Game.IO.Net
             _playerRepository = MudFactory.GetObject<IPlayerRepository>();
             _raceRepository = MudFactory.GetObject<IRaceRepository>();
         }
-        
-        public IMessageFactory MessageFactory
+       
+        private IMessage FormatMessage(MessageDefinition definition, object args = null)
         {
-            get
+            if (args != null)
             {
-                if (_messageFactory == null)
-                {
-                    _messageFactory = MudFactory.GetObject<IMessageFactory>();
-                }
-                return this._messageFactory;
+                var tmp = ReflectionUtils.ObjectToDictionary(args);
+                tmp[MessageFormatter.AddNewLine] = false;
+                args = tmp;
             }
-            set { this._messageFactory = value; }
+            else
+            {
+                args = new Dictionary<string, object> { { MessageFormatter.AddNewLine, false } };
+            }
+            var msg = MessageFormatter.Instance.Format(null, null, definition, null, args);
+            if (msg.MessageType != MessageType.PlayerError)
+                msg.MessageType = MessageType.Prompt;
+            return msg;
         }
 
         protected override void DetermineNextState()
         {
             if (!Contains("name"))
-                Require(MessageFactory.GetMessage("negotiation.authentication.EnterName"), new ValidateDelegate(this.ValidateName));
+                Require(FormatMessage(LoginAndPlayerCreationMessages.EnterName), new ValidateDelegate(this.ValidateName));
             else if (GetValue<bool>("isNew") == true) {
                 if (!Contains("confirmName")) {
-                    IMessage rm = MessageFactory.GetMessage("negotiation.authentication.ConfirmNewName");
-                    rm["player"] = GetValue<Player>("player").Title;
+                    IMessage rm = FormatMessage(LoginAndPlayerCreationMessages.ConfirmNewName, new {player = GetValue<Player>("player").Title});
                     Require(rm, new ValidateDelegate(this.ConfirmName));
                 }
                 else if (!Contains("password"))
                 {
-                    IMessage prompt = MessageFactory.GetMessage("negotiation.authentication.NewplayerPassword");
-                    prompt["player"] = GetValue<Player>("player").Title;
-                    IMessage echoOff = MessageFactory.GetMessage("system.EchoOff"); 
+                    IMessage prompt = FormatMessage(LoginAndPlayerCreationMessages.NewplayerPassword, new { player = GetValue<Player>("player").Title });
+                    IMessage echoOff = FormatMessage(CommonMessages.EchoOff); 
 
                     Require(new [] { prompt, echoOff }, new ValidateDelegate(this.ValidateNewPassword));
                 }
                 else if (!Contains("confirmPassword"))
                 {
-                    IMessage prompt = MessageFactory.GetMessage("negotiation.authentication.ConfirmPassword");
-                    IMessage echoOff = MessageFactory.GetMessage("system.EchoOff");
+                    IMessage prompt = FormatMessage(LoginAndPlayerCreationMessages.ConfirmPassword);
+                    IMessage echoOff = FormatMessage(CommonMessages.EchoOff);
 
                     Require(new[] { prompt, echoOff }, new ValidateDelegate(this.ConfirmPassword));
                 }
@@ -73,9 +76,8 @@ namespace Mirage.Game.IO.Net
                 if (!Contains("password"))
                 {
                     List<IMessage> message = new List<IMessage>();
-                    //MultipartMessage message = new MultipartMessage(MessageType.Multiple, "Nanny.Password");
-                    message.Add(MessageFactory.GetMessage("negotiation.authentication.ExistingplayerPassword"));
-                    message.Add(MessageFactory.GetMessage("system.EchoOff"));
+                    message.Add(FormatMessage(LoginAndPlayerCreationMessages.ExistingplayerPassword));
+                    message.Add(FormatMessage(CommonMessages.EchoOff));
                     Require(message, new ValidateDelegate(this.ValidateOldPassword));
                 }
                 else
@@ -145,14 +147,14 @@ namespace Mirage.Game.IO.Net
 	        }   
 	
 	        if (!CheckName( input )) {
-	            Client.Write(MessageFactory.GetMessage("negotiation.authentication.ErrorIllegalName"));
+	            Client.Write(FormatMessage(LoginAndPlayerCreationMessages.ErrorIllegalName));
                 return;
 	        }
 
             Player isPlaying = (Player)MudFactory.GetObject<MudWorld>().Players.FindOne(input, QueryMatchType.Exact);
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
-                Client.Write(MessageFactory.GetMessage("negotiation.authentication.ErrorAlreadyPlaying"));
+                Client.Write(FormatMessage(LoginAndPlayerCreationMessages.ErrorAlreadyPlaying));
                 return;
             }
 
@@ -188,12 +190,12 @@ namespace Mirage.Game.IO.Net
             }
             else if (input.StartsWith("n", StringComparison.CurrentCultureIgnoreCase))
             {  // No
-                Client.Write(MessageFactory.GetMessage("negotiation.authentication.EnterAnotherName"));
+                Client.Write(FormatMessage(LoginAndPlayerCreationMessages.EnterAnotherName));
                 Clear();                
             }
             else
             {
-                Client.Write(MessageFactory.GetMessage("negotiation.authentication.ErrorConfirmName"));
+                Client.Write(FormatMessage(LoginAndPlayerCreationMessages.ErrorConfirmName));
             }
         }
 
@@ -204,10 +206,10 @@ namespace Mirage.Game.IO.Net
         private void ValidateOldPassword(object data)
         {
             string input = (string)data;
-            Client.Write(MessageFactory.GetMessage("system.EchoOn"));
+            Client.Write(FormatMessage(CommonMessages.EchoOn));
             if (!GetValue<Player>("player").ComparePassword(input))
             {
-                Client.Write(MessageFactory.GetMessage("negotiation.authentication.ErrorInvalidPassword"));
+                Client.Write(FormatMessage(LoginAndPlayerCreationMessages.ErrorWrongPassword));
                 Finished = _failed = true;
                 return;
             }
@@ -222,10 +224,10 @@ namespace Mirage.Game.IO.Net
         private void ValidateNewPassword(object data)
         {
             string input = (string)data;
-            Client.Write(MessageFactory.GetMessage("system.EchoOn"));
+            Client.Write(FormatMessage(CommonMessages.EchoOn));
             if (input.Length < 5)
             {
-                Client.Write(MessageFactory.GetMessage("negotiation.authentication.ErrorPasswordLength"));
+                Client.Write(FormatMessage(LoginAndPlayerCreationMessages.ErrorPasswordLength));
                 return;
             }
             GetValue<Player>("player").SetPassword(input);
@@ -240,15 +242,19 @@ namespace Mirage.Game.IO.Net
         private void ConfirmPassword(object data)
         {
             string input = (string)data;
-            Client.Write(MessageFactory.GetMessage("system.EchoOn"));
-            Client.Write(MessageFactory.GetMessage("system.Newline"));
+            Client.Write(FormatMessage(CommonMessages.EchoOn));
+            Client.Write(FormatMessage(CommonMessages.Newline));
             if (!GetValue<Player>("player").ComparePassword(input))
             {
-                Client.Write(MessageFactory.GetMessage("negotiation.authentication.ErrorPasswordsDontMatch"));
+                Client.Write(FormatMessage(LoginAndPlayerCreationMessages.ErrorPasswordsDontMatch));
                 GetValue<Player>("player").SetPassword("");
                 Remove("password");
+                Remove("confirmPassword");
             }
-            SetValue<string>("confirmPassword", input);
+            else
+            {
+                SetValue<string>("confirmPassword", input);
+            }
         }
 
         private void SetRace(object data)

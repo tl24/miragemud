@@ -1,5 +1,5 @@
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
     public abstract class CommandGroupBase : ICommandGroup
     {

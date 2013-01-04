@@ -2,35 +2,26 @@ using System.Collections.Generic;
 using System.Reflection;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
+using System;
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
     public class Argument
     {
-        private ParameterInfo _parameter;
-        private ConvertArgumentHandler _handler;
-
         public Argument(ParameterInfo parameter)
         {
-            _parameter = parameter;
+            Parameter = parameter;
         }
 
         /// <summary>
         /// The System.Reflection.ParameterInfo behind this argument
         /// </summary>
-        public ParameterInfo Parameter
-        {
-            get { return this._parameter; }
-        }
+        public ParameterInfo Parameter { get; private set; }
 
         /// <summary>
         /// The handler that converts this argument
         /// </summary>
-        public ConvertArgumentHandler Handler
-        {
-            get { return this._handler; }
-            set { this._handler = value; }
-        }
+        public Func<Argument, ArgumentConversionContext, object> Handler { get; set; }
 
         public object Convert(ArgumentConversionContext context)
         {
@@ -59,11 +50,7 @@ namespace Mirage.Game.Command
     /// </summary>
     public class ArgumentConversionContext
     {
-        private int _currentIndex = 0;
         private object[] _arguments;
-        private IActor _actor;
-        private IMessage _errorMessage;
-        private string _invokedName;
 
         /// <summary>
         /// Creates a context for an argument conversion with the specified input parameters
@@ -73,9 +60,9 @@ namespace Mirage.Game.Command
         /// <param name="arguments">the input arguments to be converted</param>
         public ArgumentConversionContext(string invokedName, IActor actor, object[] arguments)
         {
-            _invokedName = invokedName;
             _arguments = arguments;
-            _actor = actor;
+            InvokedName = invokedName;
+            Actor = actor;
         }
 
         /// <summary>
@@ -101,7 +88,7 @@ namespace Mirage.Game.Command
         /// </summary>
         public object Current
         {
-            get { return this[_currentIndex]; }
+            get { return this[CurrentIndex]; }
         }
 
         /// <summary>
@@ -116,38 +103,23 @@ namespace Mirage.Game.Command
         /// <summary>
         /// Gets or sets the index currently being looked at in the argument list
         /// </summary>
-        public int CurrentIndex
-        {
-            get { return _currentIndex; }
-            set { _currentIndex = value; }
-        }
+        public int CurrentIndex { get; set; }
 
         /// <summary>
         /// Gets or sets the error message for this context that
         /// will be returned when a conversion error occurs
         /// </summary>
-        public IMessage ErrorMessage
-        {
-            get { return _errorMessage; }
-            set { _errorMessage = value; }
-        }
+        public IMessage ErrorMessage { get; set; }
 
         /// <summary>
         /// Gets the actor invoking the command
         /// </summary>
-        public IActor Actor
-        {
-            get { return this._actor; }
-        }
+        public IActor Actor { get; private set; }
 
         /// <summary>
         /// Gets the name or alias used to invoke the command
         /// </summary>
-        public string InvokedName
-        {
-            get { return this._invokedName; }
-        }
-
+        public string InvokedName { get; private set; }
 
     }
 }

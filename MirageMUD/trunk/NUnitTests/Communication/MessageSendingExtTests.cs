@@ -42,7 +42,7 @@ namespace NUnitTests.Communication
             Player actor = GetPlayer("foo", GenderType.Male);
             Player victim = GetPlayer("vic", GenderType.Female);
 
-            actor.ToSelf("testself", "You hit ${target} with ${object}!", victim, "a bat");
+            actor.ToSelf("testself", "You hit ${target} with ${item}!", victim, new { item = "a bat" });
             MockClient actClient = (MockClient)actor.Client;
             MockClient vicClient = (MockClient)victim.Client;
             Assert.AreEqual(1, actClient.Messages.Count, "actor message count");
@@ -50,7 +50,7 @@ namespace NUnitTests.Communication
 
             Assert.AreEqual("You hit vic with a bat!\r\n", actClient.Messages[0].Render(), "Actor message text");
             Assert.AreEqual("vic", actClient.Messages[0]["target"], "actor message title property");
-            Assert.AreEqual("a bat", actClient.Messages[0]["object"], "actor message title property");
+            Assert.AreEqual("a bat", actClient.Messages[0]["item"], "actor message title property");
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace NUnitTests.Communication
             Player actor = GetPlayer("foo", GenderType.Male);
             Player victim = GetPlayer("vic", GenderType.Female);
 
-            actor.ToTarget("testtarget", "${actor} hits you with ${object}!", victim, "a bat");
+            actor.ToTarget("testtarget", "${actor} hits you with ${item}!", victim, new { item = "a bat" });
             MockClient actClient = (MockClient)actor.Client;
             MockClient vicClient = (MockClient)victim.Client;
             Assert.AreEqual(0, actClient.Messages.Count, "actor shouldn't have messages");
@@ -118,7 +118,7 @@ namespace NUnitTests.Communication
             room.Add(actor);
             room.Add(victim);
             room.Add(bystander);
-            actor.ToBystanders("testbystander", "${actor} hits ${target} with ${object}!", victim, "a bat");
+            actor.ToBystanders("testbystander", "${actor} hits ${target} with ${item}!", victim, new { item = "a bat" });
             MockClient actClient = (MockClient)actor.Client;
             MockClient vicClient = (MockClient)victim.Client;
             MockClient bsClient = (MockClient)bystander.Client;
@@ -166,7 +166,7 @@ namespace NUnitTests.Communication
             room.Add(actor);
             room.Add(victim);
             room.Add(bystander);
-            actor.ToRoom("testroom", "${actor} hits ${target} with ${object}!", victim, "a bat");
+            actor.ToRoom("testroom", "${actor} hits ${target} with ${item}!", victim, new { item = "a bat" });
             MockClient actClient = (MockClient)actor.Client;
             MockClient vicClient = (MockClient)victim.Client;
             MockClient bsClient = (MockClient)bystander.Client;

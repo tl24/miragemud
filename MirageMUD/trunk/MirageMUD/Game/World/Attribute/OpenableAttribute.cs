@@ -7,6 +7,14 @@ namespace Mirage.Game.World.Attribute
     {
         protected bool _isOpen;
 
+        public class Messages
+        {
+            public static readonly MessageDefinition ObjectAlreadyOpen = new MessageDefinition("common.open.error.alreadyopen", "It's already open.");
+            public static readonly MessageDefinition ObjectAlreadyClosed = new MessageDefinition("common.close.error.alreadyclosed", "It's already closed.");
+            public static readonly MessageDefinition NotOpenable = new MessageDefinition("common.open.error.notopenable", "You can't open that.");
+            public static readonly MessageDefinition NotCloseable = new MessageDefinition("common.close.error.notcloseable", "You can't close that.");
+        }
+
         public OpenableAttribute(IAttributable target)
             : base(target)
         {
@@ -34,7 +42,7 @@ namespace Mirage.Game.World.Attribute
         {
             if (Opened)
             {
-                throw new ValidationException("common.error.ObjectAlreadyOpen");
+                throw new ValidationException(Messages.ObjectAlreadyOpen);
             }
             else
             {
@@ -46,7 +54,7 @@ namespace Mirage.Game.World.Attribute
         {
             if (!Opened)
             {
-                throw new ValidationException("common.error.ObjectAlreadyClosed");
+                throw new ValidationException(Messages.ObjectAlreadyClosed);
             }
             else
             {
@@ -81,7 +89,7 @@ namespace Mirage.Game.World.Attribute
             if (o != null)
                 o.Open();
             else
-                throw new ValidationException("common.error.NotOpenable");
+                throw new ValidationException(Messages.NotOpenable);
         }
 
         /// <summary>
@@ -96,7 +104,7 @@ namespace Mirage.Game.World.Attribute
             if (o != null)
                 o.Close();
             else
-                throw new ValidationException("common.error.NotCloseable");
+                throw new ValidationException(Messages.NotCloseable);
         }
     }
 }

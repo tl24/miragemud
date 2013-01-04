@@ -15,38 +15,28 @@ namespace Mirage.Game
     {
         private static ILog logger = LogManager.GetLogger(typeof(MirageServer));
 
-        /// <summary>
-        ///     Stop flag to cause the Server loop to stop
-        /// </summary>
-        private bool _shutdown;
-
-        private IInitializer[] _initializers;
-        private List<ServiceEntry> _services;
-
         public MirageServer()
         {
             Shutdown = true;
         }
 
-        public bool Shutdown {
-            get { return _shutdown; }
-            set { _shutdown = value; }
-        }
+        /// <summary>
+        ///     Stop flag to cause the Server loop to stop
+        /// </summary>
+        public bool Shutdown { get; set; }
 
-        public IInitializer[] Initializers
-        {
-            get { return _initializers; }
-            set { _initializers = value; }
-        }
+        public IInitializer[] Initializers { get; set; }
 
         public IConnectionAdapterFactory AdapterFactory { get; set; }
 
+        public List<ServiceEntry> Services { get; set; }
+
         protected void Init()
         {
-            if (_initializers != null)
+            if (Initializers != null)
             {
                
-                foreach (IInitializer initModule in _initializers)
+                foreach (IInitializer initModule in Initializers)
                 {
                     logger.Info("Loading initializer " + initModule.Name);
                     initModule.Execute();                    
@@ -62,7 +52,7 @@ namespace Mirage.Game
         /// </summary>
         public void Run()
         {
-            _shutdown = false;
+            Shutdown = false;
             Thread.CurrentThread.Name = "Main";
             logger.Info("Starting up");
 
@@ -104,7 +94,7 @@ namespace Mirage.Game
             currentTime = DateTime.Now;
             delta = new TimeSpan();
 
-            while (!_shutdown)
+            while (!Shutdown)
             {
                 try
                 {
@@ -201,10 +191,5 @@ namespace Mirage.Game
             persister.Save(player, player.Uri);
         }
 
-        public List<ServiceEntry> Services
-        {
-            get { return this._services; }
-            set { this._services = value; }
-        }
     }
 }

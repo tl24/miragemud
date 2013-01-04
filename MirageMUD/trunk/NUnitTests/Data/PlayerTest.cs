@@ -3,10 +3,6 @@ using NUnit.Framework;
 
 namespace NUnitTests.Data
 {
-    /// <summary>
-    ///This is a test class for rom.Data.Player and is intended
-    ///to contain all rom.Data.Player Unit Tests
-    ///</summary>
     [TestFixture]
     public class PlayerTest
     {

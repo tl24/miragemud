@@ -1,11 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mirage.Game.Communication;
+using Mirage.Core;
+using Mirage.Game.World.Containers;
+using System.Linq;
 
 namespace Mirage.Game.World
 {
     public static class MessageSendingExtensions
     {
+
+        /// <summary>
+        /// Formats a message to the character only
+        /// </summary>
+        /// <param name="actor">the actor and recipient</param>
+        /// <param name="messageDefinition">The message definition</param>
+        /// <param name="target">The target parameter</param>
+        /// <param name="args">an optional list of arguments used in the format string</param>
+        public static IMessage ForSelf(this IReceiveMessages actor, MessageDefinition messageDefinition, object target = null, object anonymousTypeAsArgs = null)
+        {
+            IMessage msg = MessageFormatter.Instance.Format(actor, actor, messageDefinition, target, FormatArgs(anonymousTypeAsArgs));
+            return msg;
+        }
+        /// <summary>
+        /// Sends a message to the character only
+        /// </summary>
+        /// <param name="actor">the actor and recipient</param>
+        /// <param name="messageDefinition">The message definition</param>
+        /// <param name="target">The target parameter</param>
+        /// <param name="args">an optional list of arguments used in the format string</param>
+        public static void ToSelf(this IReceiveMessages actor, MessageDefinition messageDefinition, object target = null, object anonymousTypeAsArgs = null)
+        {
+            IMessage msg = MessageFormatter.Instance.Format(actor, actor, messageDefinition, target, FormatArgs(anonymousTypeAsArgs));
+            if (msg != null)
+                actor.Write(msg);
+        }
+
+        /// <summary>
+        /// Formats a message for the character only
+        /// </summary>
+        /// <param name="actor">the actor and recipient</param>
+        /// <param name="messageID">The message ID of the message, ".self" will be appended to it</param>
+        /// <param name="formatString">Format of the message string or template</param>
+        /// <param name="target">The target parameter</param>
+        /// <param name="args">an optional list of arguments used in the format string</param>
+        public static IMessage ForSelf(this IReceiveMessages actor, string messageID, string formatString, object target = null, object anonymousTypeAsArgs = null)
+        {
+            IMessage msg = MessageFormatter.Instance.Format(actor, actor, messageID + ".self", formatString, target, FormatArgs(anonymousTypeAsArgs));
+            return msg;
+        }
 
         /// <summary>
         /// Sends a message to the character only
@@ -15,11 +58,25 @@ namespace Mirage.Game.World
         /// <param name="formatString">Format of the message string or template</param>
         /// <param name="target">The target parameter</param>
         /// <param name="args">an optional list of arguments used in the format string</param>
-        public static void ToSelf(this Living actor, string messageID, string formatString, Living target, params object[] args)
+        public static void ToSelf(this IReceiveMessages actor, string messageID, string formatString, object target = null, object anonymousTypeAsArgs = null)
         {
-            IMessage msg = MessageFormatter.Instance.Format(actor, actor, messageID + ".self", formatString, target, FormatArgs(args));
+            IMessage msg = MessageFormatter.Instance.Format(actor, actor, messageID + ".self", formatString, target, FormatArgs(anonymousTypeAsArgs));
             if (msg != null)
                 actor.Write(msg);
+        }
+
+        /// <summary>
+        /// Sends a message to the target only
+        /// </summary>
+        /// <param name="actor">the actor</param>
+        /// <param name="messageDefinition">The message definition</param>
+        /// <param name="target">The target and recipient</param>
+        /// <param name="args">an optional list of arguments used in the format string</param>
+        public static void ToTarget(this IReceiveMessages actor, MessageDefinition messageDefinition, IReceiveMessages target = null, object anonymousTypeAsArgs = null)
+        {
+            IMessage msg = MessageFormatter.Instance.Format(target, actor, messageDefinition, target, FormatArgs(anonymousTypeAsArgs));
+            if (msg != null)
+                target.Write(msg);
         }
 
         /// <summary>
@@ -30,9 +87,9 @@ namespace Mirage.Game.World
         /// <param name="formatString">Format of the message string or template</param>
         /// <param name="target">The target and recipient</param>
         /// <param name="args">an optional list of arguments used in the format string</param>
-        public static void ToTarget(this Living actor, string messageID, string formatString, Living target, params object[] args)
+        public static void ToTarget(this IReceiveMessages actor, string messageID, string formatString, IReceiveMessages target = null, object anonymousTypeAsArgs = null)
         {
-            IMessage msg = MessageFormatter.Instance.Format(target, actor, messageID + ".target", formatString, target, FormatArgs(args));
+            IMessage msg = MessageFormatter.Instance.Format(target, actor, messageID + ".target", formatString, target, FormatArgs(anonymousTypeAsArgs));
             if (msg != null)
                 target.Write(msg);
         }
@@ -55,30 +112,68 @@ namespace Mirage.Game.World
             return dct;
         }
 
-
-        public static void ToBystanders(this Living actor, string messageID, string formatString, Living target, params object[] args)
+        /// <summary>
+        /// Formats a param array into the dictionary the formatter expects
+        /// </summary>
+        /// <param name="args">param list of args</param>
+        /// <returns>Dictionary</returns>
+        private static IDictionary<string, object> FormatArgs(object argsAsAnonymousType)
         {
-            ToRoomImpl(actor, messageID, formatString, target, false, args);
+            return ReflectionUtils.ObjectToDictionary(argsAsAnonymousType);
         }
 
-        public static void ToRoom(this Living actor, string messageID, string formatString)
+        public static void ToBystanders(this IReceiveMessages actor, MessageDefinition messageDefinition, Living target = null, object anonymousTypeAsArgs = null)
         {
-            ToRoom(actor, messageID, formatString, null);
+            ToBystanders(actor, null, messageDefinition, target, anonymousTypeAsArgs);
         }
 
-        public static void ToRoom(this Living actor, string messageID, string formatString, Living target, params object[] args)
+        public static void ToBystanders(this IReceiveMessages actor, IContainer room, MessageDefinition messageDefinition, Living target = null, object anonymousTypeAsArgs = null)
         {
-            ToRoomImpl(actor, messageID, formatString, target, true, args);
+            ToRoomImpl(actor, room, messageDefinition.Name, messageDefinition.Text, target, false, anonymousTypeAsArgs);
         }
 
-        private static void ToRoomImpl(this Living actor, string messageID, string formatString, Living target, bool includeTarget, params object[] args)
+        public static void ToBystanders(this IReceiveMessages actor, string messageID, string formatString, Living target = null, object anonymousTypeAsArgs = null)
         {
-            var dct = FormatArgs(args);
+            ToRoomImpl(actor, null, messageID, formatString, target, false, anonymousTypeAsArgs);
+        }
+
+        public static void ToBystanders(this IReceiveMessages actor, IContainer room, string messageID, string formatString, Living target = null, object anonymousTypeAsArgs = null)
+        {
+            ToRoomImpl(actor, room, messageID, formatString, target, false, anonymousTypeAsArgs);
+        }
+
+        public static void ToRoom(this IReceiveMessages actor, MessageDefinition messageDefinition, Living target = null, object anonymousTypeAsArgs = null)
+        {
+            ToRoom(actor, null, messageDefinition, target, anonymousTypeAsArgs);
+        }
+
+        public static void ToRoom(this IReceiveMessages actor, string messageID, string formatString, Living target = null, object anonymousTypeAsArgs = null)
+        {
+            ToRoomImpl(actor, null, messageID, formatString, target, true, anonymousTypeAsArgs);
+        }
+
+        public static void ToRoom(this IReceiveMessages actor, IContainer room, MessageDefinition messageDefinition, Living target = null, object anonymousTypeAsArgs = null)
+        {
+            ToRoomImpl(actor, room, messageDefinition.Name, messageDefinition.Text, target, true, anonymousTypeAsArgs);
+        }
+
+        public static void ToRoom(this IReceiveMessages actor, IContainer room, string messageID, string formatString, Living target = null, object anonymousTypeAsArgs = null)
+        {
+            ToRoomImpl(actor, room, messageID, formatString, target, true, anonymousTypeAsArgs);
+        }
+
+        private static void ToRoomImpl(this IReceiveMessages actor, IContainer room, string messageID, string formatString, Living target, bool includeTarget, object anonymousTypeAsArgs = null)
+        {
+            var dct = FormatArgs(anonymousTypeAsArgs);
             if (actor == null)
                 return;
-            if (actor.Room == null)
+            if (room == null && (!(actor is IContainable) || ((IContainable)actor).Container == null))
                 return;
-            foreach(Living liv in actor.Room.LivingThings) {
+
+            IContainer container = room ?? ((IContainable)actor).Container;
+
+            foreach (IReceiveMessages liv in container.OfType<IReceiveMessages>())
+            {
                 if (liv == actor)
                     continue;
                 if (!includeTarget && liv == target)

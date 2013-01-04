@@ -30,12 +30,12 @@ namespace Mirage.Game.Command
             if (actor.CanAdd(item))
             {
                 ContainerUtils.Transfer(item, actor);
-                actor.ToRoom("item.get", "${actor} gets ${object.short}", null, item);
-                actor.ToSelf("item.get", "You get ${object.short}", null, item);
+                actor.ToRoom("item.get", "${actor} gets ${item.short}", null, new { item });
+                actor.ToSelf("item.get", "You get ${item.short}", null, new { item });
             }
             else
             {
-                actor.ToSelf("item.error.cantgetitem.self", "You can't pick up ${object.short}!", null, item); 
+                actor.ToSelf("item.error.cantgetitem.self", "You can't pick up ${item.short}!", null, new { item }); 
             }
         }
 
@@ -86,8 +86,8 @@ namespace Mirage.Game.Command
             if (room.CanAdd(item))
             {
                 ContainerUtils.Transfer(item, room);
-                actor.ToRoom("item.drop", "${actor} drops ${object.short}.", null, item);
-                actor.ToSelf("item.drop", "You drop ${object.short}.", null, item);
+                actor.ToRoom("item.drop", "${actor} drops ${item.short}.", null, new { item });
+                actor.ToSelf("item.drop", "You drop ${item.short}.", null, new { item });
                 return true;
             }
             else
@@ -116,11 +116,11 @@ namespace Mirage.Game.Command
             Armor removed = actor.EquipItem(armor, true);
             if (removed != null)
             {
-                actor.ToSelf("item.remove", "You remove ${object.short}.", null, removed);
-                actor.ToRoom("item.remove", "${actor} removes ${object.short}.", null, removed);
+                actor.ToSelf("item.remove", "You remove ${item.short}.", null, new { item = removed });
+                actor.ToRoom("item.remove", "${actor} removes ${item.short}.", null, new { item = removed });
             }
-            actor.ToSelf("item.wear", "You wear ${object.short}.", null, armor);
-            actor.ToRoom("item.remove", "${actor} wears ${object.short}.", null, armor);
+            actor.ToSelf("item.wear", "You wear ${item.short}.", null, new { item = armor });
+            actor.ToRoom("item.remove", "${actor} wears ${item.short}.", null, new { item = armor });
         }
 
         [CommandAttribute(Description = "Remove an item")]
@@ -134,8 +134,8 @@ namespace Mirage.Game.Command
             }
 
             actor.UnequipItem(item);
-            actor.ToSelf("item.remove", "You remove ${object.short}.", null, item);
-            actor.ToRoom("item.remove", "${actor} removes ${object.short}.", null, item);
+            actor.ToSelf("item.remove", "You remove ${item.short}.", null, new { item });
+            actor.ToRoom("item.remove", "${actor} removes ${item.short}.", null, new { item });
         }
 
         [CommandAttribute(Description="Shows the equipment currently being worn")]

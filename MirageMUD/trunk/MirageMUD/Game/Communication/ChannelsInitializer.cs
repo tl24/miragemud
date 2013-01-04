@@ -1,4 +1,5 @@
 using Mirage.Game.Command;
+using Mirage.Game.Command.Infrastructure;
 
 namespace Mirage.Game.Communication
 {

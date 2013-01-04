@@ -3,14 +3,17 @@ using log4net;
 using Mirage.Game;
 using Mirage.Game.World;
 
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
+
 namespace Mirage
 {
+    
     class Program
     {
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-            log4net.Config.XmlConfigurator.Configure();            
+            //log4net.Config.XmlConfigurator.Configure(new Uri("log4net.config"));
             //MirageServer listener = new MirageServer(4500);
             //listener.Run();
             try

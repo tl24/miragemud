@@ -1,7 +1,7 @@
 using System;
 using Mirage.Game.World;
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
     /// <summary>
     /// Placeholder for the class that contains commands

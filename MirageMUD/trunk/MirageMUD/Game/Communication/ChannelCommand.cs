@@ -8,29 +8,14 @@ namespace Mirage.Game.Communication
     /// Base class for channel commands
     /// </summary>
     public abstract class ChannelCommandBase : CommandBase
-    {
-    
-        private Channel _channel;
-        private IMessageFactory _messageFactory;
-
-        
-        public ChannelCommandBase(Channel channel, IMessageFactory messageFactory)
+    {           
+        public ChannelCommandBase(Channel channel)
         {
-            _channel = channel;
-            _messageFactory = messageFactory;
-            _name = channel.Name;
-            _aliases = new string[0];
+            Channel = channel;
+            Name = channel.Name;
+            Aliases = new string[0];
             var tmpRoles = new System.Collections.Generic.HashSet<string>(channel.Roles);
-            _roles = tmpRoles.ToArray();
-        }
-
-        /// <summary>
-        /// Gets or sets the message factory for creating messages
-        /// </summary>
-        public IMessageFactory MessageFactory
-        {
-            get { return this._messageFactory; }
-            set { this._messageFactory = value; }
+            Roles = tmpRoles.ToArray();
         }
 
         /// <summary>
@@ -48,9 +33,7 @@ namespace Mirage.Game.Communication
                 }
                 if (sendConfirmation)
                 {
-                    IMessage message = MessageFactory.GetMessage("communication.ChannelOn");
-                    message["channel"] = Channel.Name;
-                    actor.Write(message);
+                    actor.ToSelf(Channel.Messages.ChannelOn, null, new { channel = Channel.Name });
                 }
             }
         }
@@ -70,9 +53,7 @@ namespace Mirage.Game.Communication
                 }
                 if (sendConfirmation)
                 {
-                    IMessage message = MessageFactory.GetMessage("communication.ChannelOff");
-                    message["channel"] = Channel.Name;
-                    actor.Write(message);
+                    actor.ToSelf(Channel.Messages.ChannelOff, null, new { channel = Channel.Name });
                 }
             }
         }
@@ -80,10 +61,7 @@ namespace Mirage.Game.Communication
         /// <summary>
         /// The channel for this command
         /// </summary>
-        public Channel Channel
-        {
-            get { return _channel; }
-        }
+        public Channel Channel { get; private set; }
     }
 
     /// <summary>
@@ -92,11 +70,11 @@ namespace Mirage.Game.Communication
     /// </summary>
     public class ChannelSendCommand : ChannelCommandBase
     {
-        public ChannelSendCommand(Channel channel, IMessageFactory messageFactory)
-            : base(channel, messageFactory)
+        public ChannelSendCommand(Channel channel)
+            : base(channel)
         {
-            _argCount = 1;
-            _customParse = true;            
+            ArgCount = 1;
+            CustomParse = true;            
         }
 
         public override IMessage Invoke(string invokedName, IActor actor, object[] arguments)
@@ -125,10 +103,10 @@ namespace Mirage.Game.Communication
     /// </summary>
     public class ChannelToggleCommand : ChannelCommandBase
     {
-        public ChannelToggleCommand(Channel channel, IMessageFactory messageFactory)
-            : base(channel, messageFactory)
+        public ChannelToggleCommand(Channel channel)
+            : base(channel)
         {
-            _argCount = 0;
+            ArgCount = 0;
         }
 
         public override IMessage Invoke(string invokedName, IActor actor, object[] arguments)

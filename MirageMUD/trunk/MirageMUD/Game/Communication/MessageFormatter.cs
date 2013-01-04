@@ -10,6 +10,7 @@ namespace Mirage.Game.Communication
     {
         IViewManager viewManager;
 
+        public const string AddNewLine = "AddNewLine";
         static MessageFormatter()
         {
             Instance = new MessageFormatter();
@@ -27,21 +28,30 @@ namespace Mirage.Game.Communication
 
         public static MessageFormatter Instance { get; set; }
 
-        public StringMessage Format(Living recipient, Living actor, string messageID, string formatSpec)
+        public StringMessage Format(IReceiveMessages recipient, object actor, MessageDefinition messageDefinition, object target = null, object anonymousTypeOrDictArgs = null)
         {
-            return Format(recipient, actor, messageID, formatSpec, null);
+            var msg = Format(recipient, actor, messageDefinition.Name, messageDefinition.Text, target, anonymousTypeOrDictArgs);
+            if (messageDefinition.MessageType != MessageType.Unknown)
+                msg.MessageType = messageDefinition.MessageType;
+            return msg;
         }
 
-        public StringMessage Format(Living recipient, Living actor, string messageID, string formatSpec, Living target)
-        {
-            return Format(recipient, actor, messageID, formatSpec, target, null);
-        }
-
-        public StringMessage Format(Living recipient, Living actor, string messageID, string formatSpec, Living target, IDictionary<string, object> args)
+        public StringMessage Format(IReceiveMessages recipient, object actor, string messageID, string formatSpec, object target = null, object anonymousTypeOrDictArgs = null)
         {
             StringMessage result = new StringMessage();
             bool messageInvalid = false;
-            args = args ?? new Dictionary<string, object>(0);
+            IDictionary<string, object> args = null;
+            if (anonymousTypeOrDictArgs is IDictionary<string, object>) {
+                args = (IDictionary<string, object>) anonymousTypeOrDictArgs;
+            }
+            else if (anonymousTypeOrDictArgs != null)
+            {
+                args = ReflectionUtils.ObjectToDictionary(anonymousTypeOrDictArgs);
+            }
+            else
+            {
+                args = new Dictionary<string, object>(0);
+            }
 
             result.Text = Regex.Replace(formatSpec, @"\$\{([^}]+)\}",
                 (match) =>
@@ -84,14 +94,14 @@ namespace Mirage.Game.Communication
                         case "name":
                         case "title":
                         case "":
-                            if (specTarget is IViewable)
-                                value = viewManager.GetTitle(recipient, (IViewable)specTarget);
+                            if (specTarget is IViewable && recipient is Living)
+                                value = viewManager.GetTitle((Living)recipient, (IViewable)specTarget);
                             else
                                 value = specTarget.ToString();
                             break;
                         case "short":
-                            if (specTarget is IViewable)
-                                value = viewManager.GetShort(recipient, (IViewable)specTarget);
+                            if (specTarget is IViewable && recipient is Living)
+                                value = viewManager.GetShort((Living)recipient, (IViewable)specTarget);
                             else
                                 value = specTarget.ToString();
                             break;
@@ -116,9 +126,18 @@ namespace Mirage.Game.Communication
                 return null;
 
             result.Text = result.Text.ToUpperFirst();
-            if (!result.Text.EndsWith(Environment.NewLine))
-                result.Text += Environment.NewLine;
-
+            bool doAddNewLine = true;
+            object addNewlineprop = null;
+            args.TryGetValue(AddNewLine, out addNewlineprop);
+            if (addNewlineprop != null)
+            {
+                doAddNewLine = Convert.ToBoolean(addNewlineprop);
+            }
+            if (doAddNewLine)
+            {
+                if (!result.Text.EndsWith(Environment.NewLine))
+                    result.Text += Environment.NewLine;
+            }
             result.MessageType = MessageType.Information;
             result.Name = new MessageName(messageID);
             if (result.Name.Namespace.Contains("error"))
