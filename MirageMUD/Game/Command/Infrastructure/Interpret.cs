@@ -1,7 +1,7 @@
 using Mirage.Game.Communication;
 using Mirage.Game.World;
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace Mirage.Game.Command
             {
                 if (!player.Interpreter.Execute(actor, input))
                 {
-                    player.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("common.error.InvalidCommand"));
+                    player.ToSelf(CommonMessages.ErrorInvalidCommand);
                 }
             }
             else

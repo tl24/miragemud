@@ -2,7 +2,7 @@ using System;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
     class ConfirmationCommand : ICommand
     {

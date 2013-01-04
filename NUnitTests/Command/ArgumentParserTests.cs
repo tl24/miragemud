@@ -1,5 +1,6 @@
 using Mirage.Game.Command;
 using NUnit.Framework;
+using Mirage.Game.Command.Infrastructure;
 
 namespace NUnitTests.Command
 {

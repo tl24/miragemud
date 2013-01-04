@@ -4,6 +4,7 @@ using System.Security.Principal;
 using Mirage.Game.Command;
 using Mirage.Game.Communication;
 using Mirage.Game.World.MobAI;
+using Mirage.Game.Command.Infrastructure;
 
 namespace Mirage.Game.World
 {

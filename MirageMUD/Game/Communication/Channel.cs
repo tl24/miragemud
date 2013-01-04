@@ -5,6 +5,7 @@ using JsonExSerializer;
 using Mirage.Game.Command;
 using Mirage.Game.World;
 using Mirage.Game.World.Query;
+using Mirage.Core;
 
 namespace Mirage.Game.Communication
 {
@@ -16,7 +17,15 @@ namespace Mirage.Game.Communication
         private System.Collections.Generic.HashSet<IReceiveMessages> _members;
         private System.Collections.Generic.HashSet<string> _roles;
         private bool _isDefault;
-        private IMessageFactory _messageFactory;
+
+        public class Messages
+        {
+            public static readonly MessageDefinition MemberNotAllowed = new MessageDefinition("communication.channel.banned", "You are no longer allowed in ${channel} channel!");
+            public static readonly MessageDefinition ChannelMessage = new MessageDefinition("communication.channel.message", "[${channel}] ${actor}: ${message}");
+            public static readonly MessageDefinition CantJoin = new MessageDefinition("communication.channel.join.error", "You're not allowed to join the ${channel} channel.");
+            public static readonly MessageDefinition ChannelOn = new MessageDefinition("communication.channel.on", "Channel ${channel} is now on.");
+            public static readonly MessageDefinition ChannelOff = new MessageDefinition("communication.channel.off", "Channel ${channel} is now off.");
+        }
 
         public Channel() : this("", null, null, null)
         {
@@ -146,11 +155,9 @@ namespace Mirage.Game.Communication
             _allowed.Remove(name);
             foreach (IReceiveMessages member in _members)
             {
-                if (IsBanned(member))
+                if (name.Equals(GetName(member), StringComparison.CurrentCultureIgnoreCase))
                 {
-                    IMessage message = MessageFactory.GetMessage("communication.MemberNotAllowed");
-                    message["channel"] = this.Name;
-                    member.Write(message);
+                    member.ToSelf(Messages.MemberNotAllowed, null, new { channel = Name });
                     Remove(member);
                     break;
                 }
@@ -248,9 +255,7 @@ namespace Mirage.Game.Communication
             {
                 if (!IsInRole(member))
                 {
-                    IMessage message = MessageFactory.GetMessage("communication.MemberNotAllowed");
-                    message["channel"] = this.Name;
-                    member.Write(message);
+                    member.ToSelf(Messages.MemberNotAllowed, new { channel = Name });
                     Remove(member);
                 }
             }
@@ -278,20 +283,6 @@ namespace Mirage.Game.Communication
         public int MemberCount
         {
             get { return _members.Count; }
-        }
-
-        [JsonExIgnore]
-        public IMessageFactory MessageFactory
-        {
-            get
-            {
-                if (_messageFactory == null)
-                {
-                    _messageFactory = MudFactory.GetObject<IMessageFactory>();
-                }
-                return this._messageFactory;
-            }
-            set { this._messageFactory = value; }
         }
 
         /// <summary>
@@ -330,8 +321,7 @@ namespace Mirage.Game.Communication
             }
             else
             {
-                IMessage message = MessageFactory.GetMessage("communication.CantJoinChannel");
-                message["channel"] = this.Name;
+                var message = MessageFormatter.Instance.Format(participant, null, Messages.CantJoin, null, ReflectionUtils.ObjectToDictionary(new { channel = Name }));
                 throw new ValidationException(message);
             }
         }
@@ -400,14 +390,8 @@ namespace Mirage.Game.Communication
         /// <param name="sender">the message sender</param>
         /// <param name="message">the message to send</param>
         public void Send(IReceiveMessages sender, string messageText) {
-            IMessage message = MessageFactory.GetMessage("communication.ChannelText");
-            string senderName = GetName(sender) ?? "someone";
-            message["sender"] = senderName;
-            message["channel"] = this.Name;
-            message["message"] = messageText;
-
             foreach (IReceiveMessages recipient in _members)
-                recipient.Write(sender, message);
+                sender.ToTarget(Messages.ChannelMessage, recipient, new { channel = Name, message = messageText });
         }
 
         /// <summary>
@@ -417,8 +401,8 @@ namespace Mirage.Game.Communication
         {
             List<ICommand> commands = new List<ICommand>();
 
-            commands.Add(new ChannelSendCommand(this, MessageFactory));
-            commands.Add(new ChannelToggleCommand(this, MessageFactory));
+            commands.Add(new ChannelSendCommand(this));
+            commands.Add(new ChannelToggleCommand(this));
             return commands;
         }
 

@@ -4,7 +4,7 @@ using System.Reflection;
 using Castle.Core.Logging;
 using Mirage.Core.Collections;
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {    
     public class CommandInitializer : IInitializer
     {

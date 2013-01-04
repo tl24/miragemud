@@ -82,6 +82,9 @@
     <None Include="channels.jsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">
@@ -110,9 +113,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <MessageFiles Include="..\messages\*.msg" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -136,11 +136,6 @@
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-    <!--
-	<MakeDir
-            Directories="$(OutputPath)messages"/>  
-	-->
-    <Copy SourceFiles="@(MessageFiles)" DestinationFolder="$(OutputPath)messages" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy "$(SolutionDir)lib\runtime\*.*" "$(TargetDir)"</PostBuildEvent>

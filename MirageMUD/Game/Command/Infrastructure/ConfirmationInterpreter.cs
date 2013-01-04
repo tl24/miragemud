@@ -1,29 +1,19 @@
 using Mirage.Game.Communication;
 using Mirage.Game.World;
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
     public class ConfirmationInterpreter : IInterpret
     {
-        private IMessage _message;
-        private IMessage _cancellationMessage;
         private ICommand _method;
         private IInterpret priorInterpreter;
         private IPlayer _actor;
         private string _invokedName;
         private object[] args;
 
-        public IMessage Message
-        {
-            get { return _message; }
-            set { _message = value; }
-        }
+        public IMessage Message { get; set; }
 
-        public IMessage CancellationMessage
-        {
-            get { return _cancellationMessage; }
-            set { _cancellationMessage = value; }
-        }
+        public IMessage CancellationMessage { get; set; }
 
         public ConfirmationInterpreter(IPlayer player, ICommand method, string invokedName, object[] arguments)
         {
@@ -83,9 +73,9 @@ namespace Mirage.Game.Command
         public void RequestConfirmation()
         {
             if (Message == null)
-                Message = MudFactory.GetObject<IMessageFactory>().GetMessage("system.ConfirmationPrompt");
+                Message = MessageFormatter.Instance.Format(_actor, _actor, CommonMessages.ConfirmationPrompt);
             if (CancellationMessage == null)
-                CancellationMessage = MudFactory.GetObject<IMessageFactory>().GetMessage("system.ConfirmationCancel");
+                CancellationMessage = MessageFormatter.Instance.Format(_actor, _actor, CommonMessages.ConfirmationCancel);
             _actor.Write(Message);
         }
     }

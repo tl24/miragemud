@@ -10,86 +10,52 @@ namespace Mirage.Game.Command
     /// </summary>
     public abstract class CommandBase : ICommand
     {
-        #region Member Variables
-
-        protected string _name;
-        protected int _argCount;
-        protected string[] _aliases;
-        protected string[] _roles;
-        protected Type[] _clientTypes;
-
-        protected int _priority = 50;
-        protected bool _customParse;
-        protected int _level;
-
-        #endregion Member Variables
-
+        protected CommandBase()
+        {
+            Priority = 50;
+        }
         #region ICommand Members
 
         /// <summary>
         /// The name of the method
         /// </summary>
-        public virtual string Name
-        {
-            get { return _name; }
-        }
+        public virtual string Name { get; protected set; }
 
         /// <summary>
         /// Aliases for the method name.  If specified, Name property is not used
         /// </summary>
-        public virtual string[] Aliases
-        {
-            get { return _aliases; }
-        }
+        public virtual string[] Aliases { get; protected set; }
 
         /// <summary>
         /// Necessary roles to invoke the command
         /// </summary>
-        public virtual string[] Roles
-        {
-            get { return _roles; }
-        }
+        public virtual string[] Roles { get; protected set; }
 
         /// <summary>
         /// The required player level to Execute the Command
         /// </summary>
-        public virtual int Level
-        {
-            get { return _level; }
-        }
+        public virtual int Level { get; protected set; }
 
         /// <summary>
         /// Priority is used to sort the commands when multiple commands match for a given command string.
         /// The highest priority command will be tried first.
         /// </summary>
-        public virtual int Priority
-        {
-            get { return _priority; }
-        }
+        public virtual int Priority { get; protected set; }
 
         /// <summary>
         /// Number of arguments to the Command, not including private arguments such as "self"
         /// </summary>
-        public virtual int ArgCount
-        {
-            get { return _argCount; }
-        }
+        public virtual int ArgCount { get; protected set; }
 
         /// <summary>
         /// Types of available clients
         /// </summary>
-        public virtual Type[] ClientTypes
-        {
-            get { return _clientTypes; }
-        }
+        public virtual Type[] ClientTypes { get; protected set; }
 
         /// <summary>
         /// True if the Command has a ToEOL argument, which means it has a variable number of arguments
         /// </summary>
-        public virtual bool CustomParse
-        {
-            get { return _customParse; }
-        }
+        public virtual bool CustomParse { get; protected set; }
 
         /// <summary>
         /// Checks the actor's security, level and client type to see if they

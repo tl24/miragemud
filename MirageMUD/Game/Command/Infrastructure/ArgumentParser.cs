@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
     /// <summary>
     /// Class for tokenizing input into arguments.  The parser

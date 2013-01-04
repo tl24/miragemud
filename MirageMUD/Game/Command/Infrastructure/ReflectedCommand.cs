@@ -7,11 +7,8 @@ using Mirage.Game.World.Query;
 using System.Collections;
 
 
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
-
-    public delegate object ConvertArgumentHandler(Argument argument, ArgumentConversionContext context);
-
     /// <summary>
     /// Helper class for holding Attributes about a Command and invoking it.
     /// </summary>
@@ -21,10 +18,8 @@ namespace Mirage.Game.Command
 
         #region Member Variables
 
-        private string _description;
-        private MethodInfo _methodInfo;
         private ArgumentList _arguments;
-        private ReflectedCommandGroup group;
+        private ReflectedCommandGroup _group;
 
         #endregion Member Variables
 
@@ -58,51 +53,51 @@ namespace Mirage.Game.Command
         /// <param name="description">A description of the method</param>
         private ReflectedCommand(MethodInfo methInfo, ReflectedCommandGroup group)
         {
-            _name = methInfo.Name;
-            _methodInfo = methInfo;
+            Name = methInfo.Name;
+            Method = methInfo;
 
             // set defaults
-            this._level = 1;
-            this._roles = new string[0];
+            Level = 1;
+            Roles = new string[0];
 
-            if (!_methodInfo.IsStatic)
+            if (!Method.IsStatic)
             {
                 // only use the group if this method is an instance method
-                this.group = group;
+                this._group = group;
             }
             // Check for defaults at the class level
             if (methInfo.DeclaringType.IsDefined(typeof(CommandDefaultsAttribute), false))
             {
                 CommandDefaultsAttribute defaults = (CommandDefaultsAttribute) methInfo.DeclaringType.GetCustomAttributes(typeof(CommandDefaultsAttribute), false)[0];
                 if (defaults.Level != -1)
-                    this._level = defaults.Level;
+                    Level = defaults.Level;
 
                 if (defaults.Roles != null && defaults.Roles != "")
-                    this._roles = defaults.Roles.Split(',', ' ');
+                    Roles = defaults.Roles.Split(',', ' ');
 
                 if (defaults.ClientTypes != null)
-                    this._clientTypes = defaults.ClientTypes;
+                    ClientTypes = defaults.ClientTypes;
             }
             CommandAttribute cmdAttr = (CommandAttribute) methInfo.GetCustomAttributes(typeof(CommandAttribute), false)[0];
 
             if (cmdAttr.Level != -1)
-                this._level = cmdAttr.Level;
+                Level = cmdAttr.Level;
 
-            this._description = cmdAttr.Description;
+            this.Description = cmdAttr.Description;
 
 
             if (cmdAttr.Roles != null && cmdAttr.Roles != "")
-                this._roles = cmdAttr.Roles.Split(',', ' ');
+                Roles = cmdAttr.Roles.Split(',', ' ');
 
             if (cmdAttr.ClientTypes != null)
-                this._clientTypes = cmdAttr.ClientTypes;
+                ClientTypes = cmdAttr.ClientTypes;
 
             if (cmdAttr.Priority != 0)
-                this._priority = cmdAttr.Priority;
+                Priority = cmdAttr.Priority;
 
-            this._aliases = cmdAttr.Aliases ?? new string[0];
+            Aliases = cmdAttr.Aliases ?? new string[0];
 
-            _argCount = 0;
+            ArgCount = 0;
             foreach (ParameterInfo param in methInfo.GetParameters())
             {
                 if (param.IsDefined(typeof(ActorAttribute), false))
@@ -111,12 +106,12 @@ namespace Mirage.Game.Command
                 }
                 else if (param.IsDefined(typeof(CustomParseAttribute), false))
                 {
-                    _argCount++;
-                    _customParse = true;
+                    ArgCount++;
+                    CustomParse = true;
                 }
                 else
                 {
-                    _argCount++;
+                    ArgCount++;
                 }
             }
         }
@@ -129,19 +124,13 @@ namespace Mirage.Game.Command
         /// <summary>
         /// A description of what the Command does
         /// </summary>
-        public string Description
-        {
-            get { return _description; }
-        }
+        public string Description { get; private set; }
 
 
         /// <summary>
         /// Gets the System.Reflection.MethodInfo for this method
         /// </summary>
-        public MethodInfo method
-        {
-            get { return _methodInfo; }
-        }
+        public MethodInfo Method { get; private set; }
 
         /// <summary>
         /// Returns the expected arguments for this command's method
@@ -152,7 +141,7 @@ namespace Mirage.Game.Command
             {
                 if (_arguments == null)
                 {
-                    _arguments = new ArgumentList(_methodInfo.GetParameters());
+                    _arguments = new ArgumentList(Method.GetParameters());
                     InitializeArgumentHandlers(_arguments);
                 }
                 return _arguments;
@@ -192,12 +181,12 @@ namespace Mirage.Game.Command
         /// <param name="arguments"></param>
         protected void InitializeArgumentHandlers(ArgumentList arguments)
         {
-            if (group != null)
+            if (_group != null)
             {
                 //the group is the class that contains this method
                 //if it implements ICommandGroup then give it a chance to define
                 // custom conversion handlers
-                ICommandGroup commandGroup = group.GetInstance() as ICommandGroup;
+                ICommandGroup commandGroup = _group.GetInstance() as ICommandGroup;
                 if (commandGroup != null)
                     commandGroup.InitializeArgumentHandlers(arguments);
             }
@@ -207,15 +196,15 @@ namespace Mirage.Game.Command
                     continue;
 
                 if (argument.Parameter.IsDefined(typeof(CustomParseAttribute), false))
-                    argument.Handler = new ConvertArgumentHandler(ConvertCustomParse);
+                    argument.Handler = ConvertCustomParse;
                 else if (argument.Parameter.IsDefined(typeof(ActorAttribute), false))
-                    argument.Handler = new ConvertArgumentHandler(ConvertActor);
+                    argument.Handler = ConvertActor;
                 else if (argument.Parameter.IsDefined(typeof(LookupAttribute), false))
-                    argument.Handler = new ConvertArgumentHandler(ConvertLookupArgument);
+                    argument.Handler = ConvertLookupArgument;
                 else if (argument.Parameter.IsDefined(typeof(ConstAttribute), true))
-                    argument.Handler = new ConvertArgumentHandler(ConvertConstArgument);
+                    argument.Handler = ConvertConstArgument;
                 else
-                    argument.Handler = new ConvertArgumentHandler(DefaultConverter);
+                    argument.Handler = DefaultConverter;
             }
         }
 
@@ -243,9 +232,7 @@ namespace Mirage.Game.Command
             }
             else
             {
-                ResourceMessage rmsg = (ResourceMessage)MudFactory.GetObject<IMessageFactory>().GetMessage("common.error.InvalidActor");
-                rmsg["ActorType"] = context.Actor.GetType().Name;
-                context.ErrorMessage = rmsg;
+                context.ErrorMessage = MessageFormatter.Instance.Format(context.Actor, context.Actor, CommonMessages.ErrorInvalidActor, null, new { actorType = context.Actor.GetType().Name });
                 return null;
             }
         }
@@ -271,8 +258,9 @@ namespace Mirage.Game.Command
             }
             if (result == null && attr.IsRequired)
             {
-                ResourceMessage errorMessage = (ResourceMessage) MudFactory.GetObject<IMessageFactory>().GetMessage("common.error.NotHere");
-                errorMessage["target"] = target;
+                //ResourceMessage errorMessage = (ResourceMessage) MudFactory.GetObject<IMessageFactory>().GetMessage("common.error.NotHere");
+                //errorMessage["target"] = target;
+                var errorMessage = MessageFormatter.Instance.Format(context.Actor as Living, context.Actor, CommonMessages.ErrorNotHere, target);
                 context.ErrorMessage = errorMessage;
                 // return null below
             }
@@ -327,12 +315,12 @@ namespace Mirage.Game.Command
             try
             {
                 object instance = null;
-                if (_methodInfo.DeclaringType == actor.GetType())
+                if (Method.DeclaringType == actor.GetType())
                     instance = actor;
-                else if (group != null)
-                    instance = group.GetInstance();
+                else if (_group != null)
+                    instance = _group.GetInstance();
 
-                object result = _methodInfo.Invoke(instance, arguments);
+                object result = Method.Invoke(instance, arguments);
                 if (result is IMessage)
                 {
                     return (IMessage)result;
@@ -346,11 +334,11 @@ namespace Mirage.Game.Command
                     return null;
                 }
             } catch (ValidationException ve) {
-                return ve.MessageObject;            
+                return ve.CreateMessage(actor);            
             } catch (Exception e) {
                 if (e.InnerException is ValidationException)
                 {
-                    return ((ValidationException)e.InnerException).MessageObject;
+                    return ((ValidationException)e.InnerException).CreateMessage(actor);
                 }
                 else
                 {
@@ -369,7 +357,7 @@ namespace Mirage.Game.Command
                     error += " invoked by {1}.";
                     logger.Error(string.Format(error, invokedName, actor), e);
                     // send generic message to player
-                    return MudFactory.GetObject<IMessageFactory>().GetMessage("common.error.SystemError");
+                    return MessageFormatter.Instance.Format(actor, actor, CommonMessages.ErrorSystem);
                 }
             }
         }
@@ -383,7 +371,7 @@ namespace Mirage.Game.Command
                 nameOrAlias = Name;
 
             string args = "";
-            ParameterInfo[] parms = _methodInfo.GetParameters();
+            ParameterInfo[] parms = Method.GetParameters();
             foreach (ParameterInfo info in parms)
             {
                 if (info.IsDefined(typeof(ActorAttribute), false))

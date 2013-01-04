@@ -11,8 +11,30 @@ namespace Mirage.Game.Communication
     /// </summary>
     public class ValidationException : Exception
     {
-        private IMessage messageObject;
+        private IMessage _messageObject;
+        private MessageDefinition _messageDefinition;
 
+        /// <summary>
+        /// Constructs the validation exception with the given <paramref name="messageDefinition"/>
+        /// </summary>
+        /// <param name="messageDefition">message definition</param>
+        public ValidationException(MessageDefinition messageDefition)
+            : this(messageDefition, null)
+        {
+        }
+
+        /// <summary>
+        /// Constructs the validation exception with the given message uri and inner exception
+        /// </summary>
+        /// <param name="messageUri">message uri</param>
+        /// <param name="innerException">the exception that is the cause of the current exception, or null if there is no inner exception</param>
+        public ValidationException(MessageDefinition messageDefition, Exception innerException)
+            : base(null, innerException)
+        {
+            _messageDefinition = messageDefition;
+        }
+
+        /*
         /// <summary>
         /// Constructs the validation exception with the given message uri
         /// </summary>
@@ -31,6 +53,7 @@ namespace Mirage.Game.Communication
             : this(MudFactory.GetObject<IMessageFactory>().GetMessage(messageUri), innerException)
         {
         }
+        */
 
         /// <summary>
         /// Constructs the validation exception with the given message
@@ -49,7 +72,7 @@ namespace Mirage.Game.Communication
         public ValidationException(IMessage message, Exception innerException)
             : base(null, innerException)
         {
-            messageObject = message;
+            _messageObject = message;
         }
 
 
@@ -71,25 +94,18 @@ namespace Mirage.Game.Communication
         {
             get
             {
-                return MessageObject.Render();
+                return _messageObject != null ? _messageObject.Render() : _messageDefinition.Text;
             }
         }
-        
-        /// <summary>
-        /// The fully qualified message uri for this exception
-        /// </summary>
-        public string MessageUri
-        {
-            get { return MessageObject.Name.FullName; }
-        }
+       
 
         /// <summary>
         /// Gets a message object that represents the error for this message
         /// </summary>
         /// <returns></returns>
-        public IMessage MessageObject
+        public IMessage CreateMessage(IActor actor)
         {
-            get { return this.messageObject; }
+            return _messageObject ?? MessageFormatter.Instance.Format(actor, actor, _messageDefinition);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Reflection;
 using Mirage.Core.Collections;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
-namespace Mirage.Game.Command
+namespace Mirage.Game.Command.Infrastructure
 {
     public static class MethodInvoker
     {

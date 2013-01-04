@@ -76,7 +76,7 @@ namespace Mirage.Game.IO.Net
                     Player.Room.Add(Player);
                 }
 
-                Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("negotiation.welcome"));
+                Client.Write(Player.ForSelf(CommonMessages.Welcome));
                 // Try to turn on channels
                 foreach (Channel channel in channelRepository)
                 {
@@ -107,7 +107,7 @@ namespace Mirage.Game.IO.Net
             Player isPlaying = (Player)MudFactory.GetObject<MudWorld>().Players.FindOne(Player.Uri, QueryMatchType.Exact);
             if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
             {
-                Client.Write(MudFactory.GetObject<IMessageFactory>().GetMessage("negotiation.authentication.PlayerAlreadyPlaying"));
+                Client.Write(MessageFormatter.Instance.Format(null, null, LoginAndPlayerCreationMessages.PlayerAlreadyPlaying));
                 Client.Player = null;
                 Client.State = ConnectedState.Connecting;
                 Client.Close();
