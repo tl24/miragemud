@@ -6,7 +6,7 @@ using Mirage.IO.Serialization;
 
 namespace Mirage.Game.World
 {
-    [CastleComponent("PlayerRepository", typeof(IPlayerRepository), LifestyleType.Singleton)]
+    [CastleComponent("PlayerRepository", LifestyleType.Singleton, typeof(IPlayerRepository))]
     public class PlayerRepository<T> : IPlayerRepository
     {
         private IPersistenceManager persistenceManager;

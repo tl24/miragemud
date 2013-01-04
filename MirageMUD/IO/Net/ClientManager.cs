@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using Castle.Core;
 using Mirage.Core.Collections;
+using Castle.Core;
 
 namespace Mirage.IO.Net
 {
