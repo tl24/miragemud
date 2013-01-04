@@ -6,11 +6,18 @@ using Castle.MicroKernel.SubSystems.Conversion;
 using Castle.Windsor;
 using Castle.Windsor.Configuration;
 using Castle.Windsor.Configuration.Interpreters;
+using Mirage.Core;
 using Mirage.Core.Collections;
 using Mirage.Game.IO.Net;
 using Mirage.IO.Net;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Facilities.FactorySupport;
+using System.Configuration;
+using Mirage.Game.Server;
+using Mirage.Game.Communication;
+using Mirage.Game.World.Skills;
+using Castle.Facilities.Startable;
+using Castle.Facilities.Logging;
 
 namespace Mirage.Game.World
 {
@@ -54,16 +61,16 @@ namespace Mirage.Game.World
             {
                 // Registers the type converter:
 
-                IConversionManager manager = (IConversionManager)
-                    Kernel.GetSubSystem(Castle.MicroKernel.SubSystemConstants.ConversionManagerKey);
-
-                manager.Add(new ServiceEntryConverter());
+                //IConversionManager manager = (IConversionManager)
+                //    Kernel.GetSubSystem(Castle.MicroKernel.SubSystemConstants.ConversionManagerKey);
 
                 Kernel.AddFacility(new FactorySupportFacility());
-                interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore, Kernel);
+                Kernel.AddFacility<StartableFacility>();
+                Kernel.AddFacility(new LoggingFacility(LoggerImplementation.Log4net));
+                //interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore, Kernel);
 
                 // Install the components                
-                Installer.SetUp(this, Kernel.ConfigurationStore);
+                //Installer.SetUp(this, Kernel.ConfigurationStore);
                 this.Install(new MudWindsorInstaller());
                 
             }
@@ -78,9 +85,6 @@ namespace Mirage.Game.World
                 IConversionManager manager = (IConversionManager)
                     container.Kernel.GetSubSystem(Castle.MicroKernel.SubSystemConstants.ConversionManagerKey);
 
-                manager.Add(new ServiceEntryConverter());
-
-                //container.Kernel.AddFacility(new FactorySupportFacility());
                 container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
                 container.Kernel.Resolver.AddSubResolver(new ListResolver(container.Kernel));                
                 AssemblyList.Instance.ForEach(
@@ -89,7 +93,33 @@ namespace Mirage.Game.World
                         RegisterFromAssembly(container, a);
                     });
 
+                // I/O
+                var textClientRegistration = Component.For<IClientListener>()
+                                    .ImplementedBy<ClientListener<TextConnection>>()
+                                    //.Named("TextClientListener")
+                                    .DependsOnAppSetting(typeof(int), "textclient.port", "port")
+                                    .OptionallyDependsOnAppSetting(typeof(string), "textclient.host", "host");
+                var guiClientRegistration = Component.For<IClientListener>()
+                                    .ImplementedBy<ClientListener<AdvancedConnection>>()
+                                    //.Named("GuiClientListener")
+                                    .DependsOnAppSetting(typeof(int), "guiclient.port", "port")
+                                    .OptionallyDependsOnAppSetting(typeof(string), "guiclient.host", "host");
+                container.Register(textClientRegistration, guiClientRegistration);
+                container.Register(Component.For<ClientManager>()
+                                    //.Named("ClientManager")
+                                    .OptionallyDependsOnAppSetting(typeof(int), "clientmanager.maxthreads", "maxthreads"));
+
                 container.Register(Component.For<IConnectionAdapterFactory>().ImplementedBy<ConnectionAdapterFactory>());
+                container.Register(Component.For<ServiceProcessor>());
+                container.Register(Component.For<MirageServer>());
+                container.Register(Component.For<IRaceRepository>().ImplementedBy<RaceRepository>());
+                container.Register(Component.For<MudWorld>()); // check channel dependency
+			    container.Register(Component.For<IPlayerRepository>().ImplementedBy<PlayerRepository<Player>>());
+			    container.Register(Component.For<IAreaRepository>().ImplementedBy<AreaRepository<Area>>());
+			    container.Register(Component.For<IChannelRepository>().ImplementedBy<ChannelRepository>());
+			    container.Register(Component.For<IMobileRepository>().ImplementedBy<MobileRepository>());
+			    container.Register(Component.For<ISkillRepository>().ImplementedBy<SkillRepository>());
+			    container.Register(Component.For<IViewManager>().ImplementedBy<ViewManager>().LifestyleTransient());
                 /*
                 // install default components
                 AssemblyList.Instance.ForEach(

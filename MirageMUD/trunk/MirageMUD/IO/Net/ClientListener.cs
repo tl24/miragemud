@@ -25,7 +25,7 @@ namespace Mirage.IO.Net
 
         public ClientListenerBase(int port)
         {            
-            _listener = new TcpListener(IPAddress.Loopback, port);
+            _listener = new TcpListener(IPAddress.Any, port);
         }
 
         /// <summary>
