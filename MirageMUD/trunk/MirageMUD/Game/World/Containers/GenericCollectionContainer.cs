@@ -74,6 +74,8 @@ namespace Mirage.Game.World.Containers
                         {
                             ((IContainable)item).Container = ParentContainer;
                         }
+                        if (ItemAdded != null)
+                            ItemAdded(this, new CollectionModifiedEventArgs(item));
                     }
             }
             else
@@ -91,6 +93,8 @@ namespace Mirage.Game.World.Containers
                 {
                     ((IContainable)item).Container = null;
                 }
+                if (ItemRemoved != null)
+                    ItemRemoved(this, new CollectionModifiedEventArgs(item));
             }
         }
 
@@ -114,7 +118,7 @@ namespace Mirage.Game.World.Containers
 
         private bool CanRemove(T item)
         {
-            return OnCollectionModifying(ItemAdding, item);
+            return OnCollectionModifying(ItemRemoving, item);
         }
 
         private bool OnCollectionModifying(EventHandler<CollectionModifyingEventArgs> evt, T item)

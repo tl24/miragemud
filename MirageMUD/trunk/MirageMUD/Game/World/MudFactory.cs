@@ -9,6 +9,8 @@ using Castle.Windsor.Configuration.Interpreters;
 using Mirage.Core.Collections;
 using Mirage.Game.IO.Net;
 using Mirage.IO.Net;
+using Castle.MicroKernel.SubSystems.Configuration;
+using Castle.Facilities.FactorySupport;
 
 namespace Mirage.Game.World
 {
@@ -43,7 +45,7 @@ namespace Mirage.Game.World
 
         public static void RegisterService(Type classType)
         {
-            _instance.AddComponent(classType.FullName, classType);
+            _instance.Register(Component.For(classType).Named(classType.FullName));
         }
 
         private class MyContainer : WindsorContainer
@@ -57,8 +59,8 @@ namespace Mirage.Game.World
 
                 manager.Add(new ServiceEntryConverter());
 
-                Kernel.AddFacility("", new Castle.Facilities.FactorySupport.FactorySupportFacility());
-                interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore);
+                Kernel.AddFacility(new FactorySupportFacility());
+                interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore, Kernel);
 
                 // Install the components                
                 Installer.SetUp(this, Kernel.ConfigurationStore);
@@ -78,7 +80,7 @@ namespace Mirage.Game.World
 
                 manager.Add(new ServiceEntryConverter());
 
-                container.Kernel.AddFacility("", new Castle.Facilities.FactorySupport.FactorySupportFacility());
+                //container.Kernel.AddFacility(new FactorySupportFacility());
                 container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
                 container.Kernel.Resolver.AddSubResolver(new ListResolver(container.Kernel));                
                 AssemblyList.Instance.ForEach(
@@ -87,7 +89,7 @@ namespace Mirage.Game.World
                         RegisterFromAssembly(container, a);
                     });
 
-                container.AddComponent<IConnectionAdapterFactory, ConnectionAdapterFactory>();
+                container.Register(Component.For<IConnectionAdapterFactory>().ImplementedBy<ConnectionAdapterFactory>());
                 /*
                 // install default components
                 AssemblyList.Instance.ForEach(
@@ -102,23 +104,23 @@ namespace Mirage.Game.World
             private static void RegisterFromAssembly(IWindsorContainer container, System.Reflection.Assembly a)
             {
                 container.Register(
-                AllTypes.Of<IInitializer>()
-                    .FromAssembly(a)
+                    Classes.FromAssembly(a)
+                    .BasedOn<IInitializer>()
                     .WithService.FromInterface()
                     .Configure(component
                     => component.LifeStyle.Transient.Named(component.Implementation.Name))
                 );
 
                 container.Register(
-                    AllTypes.Of<IConnection>()
-                    .FromAssembly(a)
+                    Classes.FromAssembly(a)
+                    .BasedOn<IConnection>()
                     .Configure(component
                     => component.LifeStyle.Transient.Named(component.Implementation.Name))
                 );
 
                 container.Register(
-                    AllTypes.Of<IConnectionAdapter>()
-                    .FromAssembly(a)
+                    Classes.FromAssembly(a)
+                    .BasedOn<IConnectionAdapter>()
                     .Configure(component
                     => component.LifeStyle.Transient.Named(component.Implementation.Name))
                 );

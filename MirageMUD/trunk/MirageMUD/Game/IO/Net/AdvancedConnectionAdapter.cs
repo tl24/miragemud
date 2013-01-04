@@ -25,7 +25,7 @@ namespace Mirage.Game.IO.Net
                 if (msg.type == AdvancedClientTransmitType.JsonEncodedMessage)
                 {
                     Serializer serializer = new Serializer(typeof(object));
-                    serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
+                    serializer.Config.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
                     msg.data = serializer.Deserialize((string)msg.data);
                 }
                 if (msg.type == AdvancedClientTransmitType.StringMessage)
@@ -71,7 +71,7 @@ namespace Mirage.Game.IO.Net
                 advMsg.type = AdvancedClientTransmitType.JsonEncodedMessage;
                 advMsg.name = message.Name.FullName;
                 Serializer serializer = new Serializer(typeof(object));
-                serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
+                serializer.Config.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
                 advMsg.data = serializer.Serialize(message);
 
                 _connection.Write(advMsg);
