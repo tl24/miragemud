@@ -9,7 +9,7 @@ using Mirage.Game.World;
 using Mirage.IO.Net;
 using Mirage.IO.Serialization;
 
-namespace Mirage.Game
+namespace Mirage.Game.Server
 {
     public class MirageServer
     {
@@ -29,7 +29,7 @@ namespace Mirage.Game
 
         public IConnectionAdapterFactory AdapterFactory { get; set; }
 
-        public List<ServiceEntry> Services { get; set; }
+        public ServiceProcessor Services { get; set; }
 
         protected void Init()
         {
@@ -146,12 +146,9 @@ namespace Mirage.Game
                         }
                     }
 
-                    foreach (ServiceEntry service in Services)
-                    {
-                        if (!service.Service.IsStarted)
-                            service.Service.Start();
-                        service.Execute();
-                    }
+                    if (!Services.IsStarted)
+                        Services.Start();
+                    Services.Process();
 
                 }
                 catch (Exception e)
@@ -174,22 +171,13 @@ namespace Mirage.Game
 	            lastTime = currentTime;
 
             }
-            foreach (ServiceEntry service in Services)
+
+            if (Services.IsStarted)
             {
-                if (service.Service.IsStarted)
-                {
-                    service.Service.Stop();
-                }
+                Services.Stop();
             }
             manager.Stop();
             logger.Info("The mud has shutdown successfully.");
         }
-
-        protected void SavePlayer(IPlayer player)
-        {
-            IPersistenceManager persister = ObjectStorageFactory.GetPersistenceManager(player.GetType());
-            persister.Save(player, player.Uri);
-        }
-
     }
 }

@@ -60,6 +60,9 @@
     <Reference Include="Castle.Facilities.FactorySupport">
       <HintPath>..\..\lib\runtime\Castle.Facilities.FactorySupport.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Facilities.Logging">
+      <HintPath>..\..\lib\runtime\Castle.Facilities.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Windsor">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\runtime\Castle.Windsor.dll</HintPath>
@@ -159,11 +162,9 @@
     <Compile Include="IO\Net\PlayerFinalizer.cs" />
     <Compile Include="IO\Net\TextConnectionAdapter.cs" />
     <Compile Include="IO\Net\TextLoginStateHandler.cs" />
-    <Compile Include="IServiceExecutor.cs" />
-    <Compile Include="MirageServer.cs" />
+    <Compile Include="Server\MirageServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceEntryConverter.cs" />
-    <Compile Include="ServiceExecutorBase.cs" />
+    <Compile Include="Server\ServiceProcessor.cs" />
     <Compile Include="World\AbstractSimpleRepository.cs" />
     <Compile Include="World\Area.cs" />
     <Compile Include="World\AreaLoader.cs" />
@@ -207,7 +208,6 @@
     <Compile Include="World\MobAI\Wanderer.cs" />
     <Compile Include="World\Mobile.cs" />
     <Compile Include="World\MobileRepository.cs" />
-    <Compile Include="World\MobileService.cs" />
     <Compile Include="World\MobPrincipal.cs" />
     <Compile Include="World\MobReset.cs" />
     <Compile Include="World\MobTemplate.cs" />
@@ -215,7 +215,6 @@
     <Compile Include="World\ObjectNotFoundException.cs" />
     <Compile Include="World\ObjectUpdater.cs" />
     <Compile Include="World\Player.cs" />
-    <Compile Include="World\PlayerExecutorServiceBase.cs" />
     <Compile Include="World\PlayerRepository.cs" />
     <Compile Include="World\Query\ISupportUri.cs" />
     <Compile Include="World\Query\IUriContainer.cs" />

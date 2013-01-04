@@ -3,6 +3,7 @@ using Mirage.Game.Communication;
 using Mirage.Game.World;
 using Mirage.Game.World.Query;
 using System.Linq;
+using Mirage.Game.Server;
 
 namespace Mirage.Game.Command
 {

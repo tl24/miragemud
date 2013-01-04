@@ -2,6 +2,7 @@ using System;
 using log4net;
 using Mirage.Game;
 using Mirage.Game.World;
+using Mirage.Game.Server;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
 
