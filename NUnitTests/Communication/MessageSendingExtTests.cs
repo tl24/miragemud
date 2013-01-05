@@ -1,6 +1,7 @@
 ﻿using Mirage.Game.Communication;
 using Mirage.Game.World;
 using NUnit.Framework;
+using Mirage.Core.Messaging;
 
 namespace NUnitTests.Communication
 {

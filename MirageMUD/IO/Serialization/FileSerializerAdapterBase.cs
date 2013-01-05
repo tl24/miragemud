@@ -60,16 +60,10 @@ namespace Mirage.IO.Serialization
 
         public virtual void Save(object o, string id)
         {
-            ITransaction txn = TransactionFactory.StartTransaction();
-            try
+            using (ITransaction txn = TransactionFactory.StartTransaction())
             {
                 SerializeHelper(o, id, txn);
                 txn.Commit();
-            }
-            catch (Exception e)
-            {
-                txn.Rollback();
-                Console.WriteLine(e);
             }
         }
 

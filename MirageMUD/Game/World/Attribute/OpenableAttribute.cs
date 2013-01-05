@@ -1,5 +1,6 @@
 using Mirage.Core.Extensibility;
 using Mirage.Game.Communication;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.World.Attribute
 {

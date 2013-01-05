@@ -1,5 +1,5 @@
 
-namespace Mirage.Game.Communication
+namespace Mirage.Core.Messaging
 {
     /// <summary>
     /// Interface for an object that can receive messages

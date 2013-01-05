@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Mirage.Core;
 using Mirage.Game.World;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Communication
 {

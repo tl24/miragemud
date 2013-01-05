@@ -1,5 +1,6 @@
 using System.Security.Principal;
 using Mirage.Game.Communication;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.World
 {

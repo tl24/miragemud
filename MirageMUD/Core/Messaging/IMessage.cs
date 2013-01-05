@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-namespace Mirage.Game.Communication
+namespace Mirage.Core.Messaging
 {
     public interface IMessage
     {

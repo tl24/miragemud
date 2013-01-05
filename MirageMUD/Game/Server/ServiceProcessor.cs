@@ -6,6 +6,7 @@ using Mirage.Game.World;
 using Castle.Core.Logging;
 using Mirage.IO.Net;
 using Mirage.Game.Communication;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Server
 {

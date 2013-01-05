@@ -3,6 +3,7 @@ using System.Reflection;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
 using System;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Command.Infrastructure
 {

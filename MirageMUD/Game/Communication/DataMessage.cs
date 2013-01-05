@@ -1,4 +1,5 @@
 using Mirage.Game.World.Query;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Communication
 {

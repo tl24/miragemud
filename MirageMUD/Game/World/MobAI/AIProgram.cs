@@ -1,4 +1,5 @@
 using Mirage.Game.Communication;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.World.MobAI
 {

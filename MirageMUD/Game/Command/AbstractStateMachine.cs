@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using Mirage.Game.Communication;
 using Mirage.Game.IO.Net;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Command
 {

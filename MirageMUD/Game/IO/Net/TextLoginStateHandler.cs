@@ -9,6 +9,7 @@ using Mirage.IO.Net;
 using Mirage.Core;
 using System.IO;
 using System.Configuration;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.IO.Net
 {

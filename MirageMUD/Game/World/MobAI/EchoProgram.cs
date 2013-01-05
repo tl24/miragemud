@@ -13,7 +13,7 @@ namespace Mirage.Game.World.MobAI
         {
         }
 
-        public override AIMessageResult HandleMessage(Mirage.Game.Communication.IMessage message)
+        public override AIMessageResult HandleMessage(Mirage.Core.Messaging.IMessage message)
         {
             if (message.IsMatch(CommunicationCommands.Messages.SayOthers))
             {

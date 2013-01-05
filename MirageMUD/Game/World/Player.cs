@@ -12,6 +12,7 @@ using Mirage.Game.IO.Net;
 using Mirage.Game.World.Query;
 using Mirage.Game.World.Skills;
 using Mirage.Game.Command.Infrastructure;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.World
 {

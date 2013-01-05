@@ -23,5 +23,21 @@ namespace Mirage.Core
                 .GetProperties()
                 .ToDictionary(p => p.Name, p => p.GetValue(anonymousType, null), StringComparer.CurrentCultureIgnoreCase);
         }
+
+        public static bool IsGenericDictionary(object instance)
+        {
+            if (instance == null)
+                return false;
+            Type t = (instance as Type) ?? instance.GetType();
+            return t.GetInterfaces().Any(i => IsGenericDictionaryInterface(i));
+        }
+
+        private static bool IsGenericDictionaryInterface(Type t)
+        {
+            if (!t.IsGenericType && !t.IsGenericTypeDefinition)
+                return false;
+            t = !t.IsGenericTypeDefinition ? t.GetGenericTypeDefinition() : t;
+            return t == typeof(IDictionary<,>);
+        }
     }
 }

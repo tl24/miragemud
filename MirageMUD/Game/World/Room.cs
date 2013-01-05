@@ -6,6 +6,7 @@ using Mirage.Game.Communication;
 using Mirage.Game.World.Containers;
 using Mirage.Game.World.Items;
 using Mirage.Game.World.Query;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.World
 {

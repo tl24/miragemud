@@ -1,5 +1,6 @@
 using System;
 using Mirage.Game.Communication;
+using Mirage.Game.Command;
 
 namespace Mirage.Game.World.MobAI
 {
@@ -42,9 +43,9 @@ namespace Mirage.Game.World.MobAI
             }
         }
 
-        public override AIMessageResult HandleMessage(Mirage.Game.Communication.IMessage message)
+        public override AIMessageResult HandleMessage(Mirage.Core.Messaging.IMessage message)
         {
-            if (message.IsMatch(Namespaces.Movement, "go.self"))
+            if (message.IsMatch(MovementCommands.Messages.GoSelf))
             {
                 processCommand = true;
                 return AIMessageResult.MessageHandledContinue;

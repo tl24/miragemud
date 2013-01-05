@@ -3,6 +3,7 @@ using Mirage.Game.Communication;
 using Mirage.Game.World;
 using Mirage.Game.World.Items;
 using NUnit.Framework;
+using Mirage.Core.Messaging;
 
 namespace NUnitTests.Communication
 {

@@ -4,6 +4,7 @@ using Mirage.Game.Communication;
 using Mirage.Core;
 using Mirage.Game.World.Containers;
 using System.Linq;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.World
 {

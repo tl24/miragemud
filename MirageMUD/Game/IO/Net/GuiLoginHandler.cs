@@ -2,6 +2,7 @@ using Mirage.Game.Command;
 using Mirage.Game.Communication;
 using Mirage.Game.Communication.BuilderMessages;
 using Mirage.Game.World;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.IO.Net
 {

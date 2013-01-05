@@ -1,5 +1,6 @@
 using System.Configuration;
 using log4net;
+using Mirage.Core.Messaging;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
 using Mirage.Game.World.Query;
