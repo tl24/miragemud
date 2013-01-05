@@ -1,4 +1,5 @@
 using Mirage.Game.Communication;
+using Mirage.Game.Command;
 
 namespace Mirage.Game.World.MobAI
 {
@@ -14,10 +15,9 @@ namespace Mirage.Game.World.MobAI
 
         public override AIMessageResult HandleMessage(Mirage.Game.Communication.IMessage message)
         {
-            if (message.IsMatch(Namespaces.Communication, "SayOthers"))
+            if (message.IsMatch(CommunicationCommands.Messages.SayOthers))
             {
-                ResourceMessage msg = (ResourceMessage)message;
-                this.Mob.Commands.Enqueue(new MobileStringCommand("say '" + msg["player"] + " said \"" + msg["message"] + "\""));
+                this.Mob.Commands.Enqueue(new MobileStringCommand("say '" + message["actor"] + " said \"" + message["message"] + "\""));
                 return AIMessageResult.MessageHandledContinue;
             }
             return AIMessageResult.MessageNotHandled;

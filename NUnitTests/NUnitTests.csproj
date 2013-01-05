@@ -98,7 +98,6 @@
     <Compile Include="Communication\MessageNameTests.cs" />
     <Compile Include="Communication\MessageSendingExtTests.cs" />
     <Compile Include="Communication\MessageTest.cs" />
-    <Compile Include="Communication\TemplateManagerTest.cs" />
     <Compile Include="Data\Containers\HeterogenousContainerTests.cs" />
     <Compile Include="Data\PlayerTest.cs" />
     <Compile Include="Game\World\Query\ObjectUriResolverTests.cs" />

@@ -176,6 +176,11 @@ namespace Mirage.Game.Communication
             return IsMatch(new MessageName(baseNamespace, name));
         }
 
+        public bool IsMatch(MessageDefinition messageDefinition)
+        {
+            return IsMatch(new MessageName(messageDefinition.Name));
+        }
+
         public override bool Equals(object obj)
         {
             if (!base.Equals(obj) && obj is IMessage)

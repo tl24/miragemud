@@ -34,6 +34,13 @@ namespace Mirage.Game.Communication
         bool IsMatch(MessageType type);
 
         /// <summary>
+        /// Checks to see if the message matches the specified definition
+        /// </summary>
+        /// <param name="messageDefinition">the message definition to check</param>
+        /// <returns>true if it matches</returns>
+        bool IsMatch(MessageDefinition messageDefinition);
+
+        /// <summary>
         /// The general type of the message such as error or confirmation
         /// </summary>
         MessageType MessageType { get; set; }
