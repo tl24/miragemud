@@ -1,0 +1,16 @@
+2010-05-25 23:29:02,770 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Recieved IAC sequence: IAC WILL 31 (Window Size)
+2010-05-25 23:29:02,775 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Sending IAC DONT 31
+2010-05-25 23:29:02,777 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Recieved IAC sequence: IAC WILL 32 (Terminal Speed)
+2010-05-25 23:29:02,778 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Sending IAC DONT 32
+2010-05-25 23:29:02,779 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Recieved IAC sequence: IAC WILL 24 (Terminal Type)
+2010-05-25 23:29:02,779 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Sending IAC DONT 24
+2010-05-25 23:29:02,780 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Recieved IAC sequence: IAC WILL 39 (New Environment)
+2010-05-25 23:29:02,781 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Sending IAC DONT 39
+2010-05-25 23:29:02,784 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Recieved IAC sequence: IAC DO 1 (Echo)
+2010-05-25 23:29:02,785 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Sending IAC WONT 1
+2010-05-25 23:29:02,786 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Recieved IAC sequence: IAC WILL 3 (Supress Go Ahead)
+2010-05-25 23:29:02,787 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Sending IAC DONT 3
+2010-05-25 23:29:02,788 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Recieved IAC sequence: IAC DO 3 (Supress Go Ahead)
+2010-05-25 23:29:02,789 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Sending IAC WONT 3
+2010-05-25 23:29:02,863 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Recieved IAC sequence: IAC WILL 36 (Environment variables)
+2010-05-25 23:29:02,864 [IOWorker0] DEBUG Mirage.Core.IO.TextClient - Sending IAC DONT 36
