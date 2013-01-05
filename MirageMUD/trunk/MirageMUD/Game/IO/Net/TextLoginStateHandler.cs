@@ -7,6 +7,8 @@ using Mirage.Game.World;
 using Mirage.Game.World.Query;
 using Mirage.IO.Net;
 using Mirage.Core;
+using System.IO;
+using System.Configuration;
 
 namespace Mirage.Game.IO.Net
 {
@@ -87,9 +89,26 @@ namespace Mirage.Game.IO.Net
             }
         }
 
+        private string _splashScreenText;
+
+        public string SplashScreenText
+        {
+            get
+            {
+                if (_splashScreenText == null)
+                {
+                    _splashScreenText = File.ReadAllText(ConfigurationManager.AppSettings["textclient.splash"]);
+                }
+                return _splashScreenText;
+            }
+            set
+            {
+                _splashScreenText = value;
+            }
+        }
         protected override void InitialState()
         {
-            Client.Write(new ResourceMessage(MessageType.Information, "negotiation.splash"));
+            Client.Write(new StringMessage(MessageType.Information, "negotiation.splash", SplashScreenText));
         }
 
         protected override void FinalState()
