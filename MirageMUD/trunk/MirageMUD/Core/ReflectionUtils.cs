@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Mirage.Core
+{
+    public static class ReflectionUtils
+    {
+        /// <summary>
+        /// Converts an anonymous type or any type with properties into a dictionary
+        /// </summary>
+        /// <param name="anonymousType">the anonymous type instance</param>
+        /// <returns>a dictionary</returns>
+        public static IDictionary<string, object> ObjectToDictionary(object anonymousType)
+        {
+            if (anonymousType == null)
+                return null;
+            if (anonymousType is IDictionary<string, object>)
+                return (IDictionary<string, object>)anonymousType;
+
+            return anonymousType.GetType()
+                .GetProperties()
+                .ToDictionary(p => p.Name, p => p.GetValue(anonymousType, null), StringComparer.CurrentCultureIgnoreCase);
+        }
+    }
+}

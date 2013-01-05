@@ -26,12 +26,11 @@ namespace Mirage.Game.World
     /// </summary>
     public class MudFactory
     {
-        private static MyContainer _instance;
+        private static WindsorContainer _instance;
 
         static MudFactory()
         {
-            _instance = new MyContainer(new XmlInterpreter());
-            
+            _instance = new MyContainer();            
         }
 
         public static TObjectInterface GetObject<TObjectInterface>()
@@ -57,7 +56,7 @@ namespace Mirage.Game.World
 
         private class MyContainer : WindsorContainer
         {
-            public MyContainer(IConfigurationInterpreter interpreter)
+            public MyContainer()
             {
                 // Registers the type converter:
 
