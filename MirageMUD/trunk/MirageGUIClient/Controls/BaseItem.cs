@@ -123,7 +123,7 @@ namespace MirageGUI.Controls
             get { return _level; }
         }
 
-        public virtual ProcessStatus HandleResponse(Mirage.Game.Communication.Message response)
+        public virtual ProcessStatus HandleResponse(Mirage.Core.Messaging.Message response)
         {
             return ProcessStatus.NotProcessed;
         }

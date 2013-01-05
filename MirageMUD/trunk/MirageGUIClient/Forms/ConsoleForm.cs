@@ -14,13 +14,16 @@ using Mirage.Game.Communication;
 using MirageGUI.Code;
 using log4net.Appender;
 using log4net.Repository;
+using Mirage.Core.Messaging;
 
 namespace MirageGUI.Forms
 {
     public partial class ConsoleForm : Form, IResponseHandler, IAppender
     {
         private IOHandler _handler;
-
+        private string[] _commandHistory = new string[20];
+        private int _currentHistoryIndex = -1;
+        private int _historyOffset = 0;
         public ConsoleForm(IOHandler handler)
         {
             InitializeComponent();
@@ -53,6 +56,7 @@ namespace MirageGUI.Forms
                 if (!InputText.UseSystemPasswordChar)
                 {
                     OutputText.AppendText(InputText.Text);
+                    _commandHistory[++_currentHistoryIndex % _commandHistory.Length] = InputText.Text;
                 }
                 OutputText.AppendText("\r\n");
                 _handler.SendString(InputText.Text);
@@ -60,7 +64,7 @@ namespace MirageGUI.Forms
             }
         }
 
-        public ProcessStatus HandleResponse(Mirage.Game.Communication.Message msg)
+        public ProcessStatus HandleResponse(Mirage.Core.Messaging.Message msg)
         {
             if (this.InvokeRequired)
             {
@@ -157,6 +161,39 @@ namespace MirageGUI.Forms
         {
 
             ((log4net.Repository.Hierarchy.Hierarchy)log4net.LogManager.GetLoggerRepository()).Root.AddAppender(this);
+        }
+
+        private bool IsHistoryKey = false;
+        private void InputText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up)
+            {
+                if (_historyOffset < _commandHistory.Length && _currentHistoryIndex >= 0 && _historyOffset <= _currentHistoryIndex)
+                {
+                    IsHistoryKey = true;
+                    InputText.Text = _commandHistory[(_currentHistoryIndex - _historyOffset) % _commandHistory.Length];
+                    IsHistoryKey = false;
+                    _historyOffset++;
+                }
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                if (_historyOffset > 0)
+                {
+                    _historyOffset--;
+                    IsHistoryKey = true;
+                    InputText.Text = _commandHistory[(_currentHistoryIndex - _historyOffset) % _commandHistory.Length];
+                    IsHistoryKey = false;
+                }
+            }
+        }
+
+        private void InputText_TextChanged(object sender, EventArgs e)
+        {
+            if (IsHistoryKey)
+                return;
+            if (InputText.Text != "")
+                _historyOffset = 0;
         }
     }
 }

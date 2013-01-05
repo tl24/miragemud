@@ -4,6 +4,8 @@ using Mirage.Game.World;
 using Mirage.Game.World.Query;
 using System.Linq;
 using Mirage.Game.Server;
+using System.Collections;
+using Mirage.Core;
 
 namespace Mirage.Game.Command
 {
@@ -45,18 +47,51 @@ namespace Mirage.Game.Command
 
         private string DumpObject(object result) {
 
-            var q = from p in result.GetType().GetProperties()
-                    orderby p.Name
-                    select new { Name = p.Name, Value = p.GetGetMethod().Invoke(result, null) };
             string msg = "";
             msg += result.GetType().Name + "\r\n";
             msg += "--------------------------------------\r\n";
-            foreach (var pv in q)
+            if (result is IDictionary)
             {
-                msg += string.Format("{0}: {1}\r\n", pv.Name, pv.Value);
+                msg += string.Format("{0}: {1}\r\n", "Keys", DumpDictionaryKeys(result as IDictionary));
+                msg += string.Format("{0}: {1}\r\n", "Count", ((IDictionary)result).Count);
+            }
+            else
+            {
+                var q = from p in result.GetType().GetProperties()
+                        let getter = p.GetGetMethod()
+                        where getter.GetParameters().Length == 0
+                        orderby p.Name
+                        select new { Name = p.Name, Value = p.GetGetMethod().Invoke(result, null) };
+                foreach (var pv in q)
+                {
+                    msg += string.Format("{0}: {1}\r\n", pv.Name, DumpValue(pv.Value));
+                }
             }
             msg += "\r\n";
             return msg;
+        }
+
+        private string DumpValue(object result)
+        {
+            if (result == null)
+                return "";
+
+            if (result is IDictionary)
+            {
+                IDictionary dict = result as IDictionary;
+                return DumpDictionaryKeys(dict);
+            }
+            return result.ToString();
+        }
+
+        private static string DumpDictionaryKeys(IDictionary dict, int max = 5)
+        {
+            int count = dict.Count;
+            string text = string.Join(", ", from object k in dict.Keys.Cast<object>().Take(max)
+                                            select k.ToString());
+            if (count > max)
+                text += "...";
+            return text;
         }
     }
 }

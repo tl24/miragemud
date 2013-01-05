@@ -2,6 +2,7 @@ using System;
 using Mirage.Core.Extensibility;
 using Mirage.Game.Communication;
 using Mirage.Game.World.Query;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.World.Attribute
 {

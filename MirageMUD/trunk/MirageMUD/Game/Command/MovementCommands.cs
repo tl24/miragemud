@@ -4,12 +4,13 @@ using Mirage.Game.World;
 using Mirage.Game.World.Attribute;
 using Mirage.Game.World.Containers;
 using Mirage.Game.Command.Infrastructure;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Command
 {
     public class MovementCommands : CommandGroupBase
     {
-        class Messages
+        public class Messages
         {
             /* go */
             public static readonly MessageDefinition Arrival = new MessageDefinition("movement.go.arrived", "${actor} has arrived.");

@@ -22,7 +22,7 @@ namespace MirageGUI.Controls
             _root = new RootItem(this);
         }
 
-        public ProcessStatus HandleResponse(Mirage.Game.Communication.Message response)
+        public ProcessStatus HandleResponse(Mirage.Core.Messaging.Message response)
         {
             ProcessStatus result = ProcessStatus.NotProcessed;
             if (response.IsMatch(Namespaces.Area, "AreaList"))

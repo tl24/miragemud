@@ -2,7 +2,7 @@ using System;
 using JsonExSerializer;
 using JsonExSerializer.TypeConversion;
 
-namespace Mirage.Game.Communication
+namespace Mirage.Core.Messaging
 {
     /// <summary>
     /// The name for a message, consisting of a namespace and name

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Mirage.Game.Communication;
+using Mirage.Core.Messaging;
 
 namespace MirageGUI.Code
 {

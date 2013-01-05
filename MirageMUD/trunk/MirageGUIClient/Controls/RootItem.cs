@@ -60,7 +60,7 @@ namespace MirageGUI.Controls
             return typeof(Area);
         }
 
-        public override MirageGUI.Code.ProcessStatus HandleResponse(Mirage.Game.Communication.Message response)
+        public override MirageGUI.Code.ProcessStatus HandleResponse(Mirage.Core.Messaging.Message response)
         {
             if (response.IsMatch(Namespaces.Area, "AreaList"))
             {

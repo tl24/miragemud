@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using JsonExSerializer;
 
-namespace Mirage.Game.Communication
+namespace Mirage.Core.Messaging
 {
     public enum MessageType
     {

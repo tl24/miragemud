@@ -74,9 +74,9 @@ namespace MirageGUI.Forms
             // 
             // OutputText
             // 
-            this.OutputText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.OutputText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OutputText.BackColor = global::MirageGUI.AppSettings.Default.ConsoleBackColor;
             this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUI.AppSettings.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.OutputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUI.AppSettings.Default, "ConsoleBackColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -94,8 +94,8 @@ namespace MirageGUI.Forms
             // 
             // InputText
             // 
-            this.InputText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.InputText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.InputText.BackColor = global::MirageGUI.AppSettings.Default.ConsoleBackColor;
             this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("Font", global::MirageGUI.AppSettings.Default, "ConsoleFont", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.InputText.DataBindings.Add(new System.Windows.Forms.Binding("BackColor", global::MirageGUI.AppSettings.Default, "ConsoleBackColor", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -109,6 +109,8 @@ namespace MirageGUI.Forms
             this.InputText.Size = new System.Drawing.Size(292, 20);
             this.InputText.TabIndex = 1;
             this.InputText.WordWrap = false;
+            this.InputText.TextChanged += new System.EventHandler(this.InputText_TextChanged);
+            this.InputText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputText_KeyDown);
             // 
             // ConsoleForm
             // 

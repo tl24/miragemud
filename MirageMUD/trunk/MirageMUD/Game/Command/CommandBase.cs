@@ -2,6 +2,7 @@ using System;
 using System.Security.Principal;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Command
 {

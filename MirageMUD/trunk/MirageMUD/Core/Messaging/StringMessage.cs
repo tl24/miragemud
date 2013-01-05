@@ -1,6 +1,6 @@
 
 using JsonExSerializer;
-namespace Mirage.Game.Communication
+namespace Mirage.Core.Messaging
 {
     /// <summary>
     /// Simple message type that contains a formatted string

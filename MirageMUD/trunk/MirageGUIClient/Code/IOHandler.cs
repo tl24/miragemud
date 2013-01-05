@@ -7,6 +7,7 @@ using System.Threading;
 using JsonExSerializer;
 using Mirage.Game.Communication;
 using Mirage.IO.Net;
+using Mirage.Core.Messaging;
 
 namespace MirageGUI.Code
 {
@@ -112,7 +113,7 @@ namespace MirageGUI.Code
                             data = reader.ReadString();
                             try
                             {
-                                data = (Mirage.Game.Communication.Message)serializer.Deserialize((string)data);
+                                data = (Mirage.Core.Messaging.Message)serializer.Deserialize((string)data);
                             }
                             catch (Exception e)
                             {
@@ -124,12 +125,12 @@ namespace MirageGUI.Code
                     }
                     try
                     {
-                        OnResponseReceived((Mirage.Game.Communication.Message)data);
+                        OnResponseReceived((Mirage.Core.Messaging.Message)data);
                     }
                     catch (Exception e)
                     {
                         // event handler errored out, try to send out the error
-                        Mirage.Game.Communication.Message error = new ExceptionMessage("ResponseHandlerException", e, data);
+                        Mirage.Core.Messaging.Message error = new ExceptionMessage("ResponseHandlerException", e, data);
                         OnResponseReceived(error);
                     }
                 }
@@ -150,7 +151,7 @@ namespace MirageGUI.Code
             }
         }
 
-        protected void OnResponseReceived(Mirage.Game.Communication.Message response)
+        protected void OnResponseReceived(Mirage.Core.Messaging.Message response)
         {
             if (ResponseReceived != null)
                 ResponseReceived(response);

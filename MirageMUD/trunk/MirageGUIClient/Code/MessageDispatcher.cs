@@ -28,7 +28,7 @@ namespace MirageGUI.Code
             _ioHandler.ResponseReceived += new ResponseHandler(HandleResponse);            
         }
 
-        public ProcessStatus HandleResponse(Mirage.Game.Communication.Message msg)
+        public ProcessStatus HandleResponse(Mirage.Core.Messaging.Message msg)
         {
             ProcessStatus result = ProcessStatus.NotProcessed;
             ProcessUpdates();
@@ -60,7 +60,7 @@ namespace MirageGUI.Code
         /// <param name="form">the form to receive the message</param>
         /// <param name="msg">the message</param>
         /// <returns>the processing status</returns>
-        private ProcessStatus SendToControl(Control ctrl, Mirage.Game.Communication.Message msg)
+        private ProcessStatus SendToControl(Control ctrl, Mirage.Core.Messaging.Message msg)
         {
             if (ctrl.IsDisposed)
                 return ProcessStatus.NotProcessed;

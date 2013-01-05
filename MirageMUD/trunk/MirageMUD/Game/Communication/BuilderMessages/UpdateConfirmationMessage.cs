@@ -1,4 +1,5 @@
 
+using Mirage.Core.Messaging;
 namespace Mirage.Game.Communication.BuilderMessages
 {
 

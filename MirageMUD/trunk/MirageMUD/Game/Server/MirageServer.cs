@@ -8,6 +8,7 @@ using Mirage.Game.IO.Net;
 using Mirage.Game.World;
 using Mirage.IO.Net;
 using Mirage.IO.Serialization;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Server
 {

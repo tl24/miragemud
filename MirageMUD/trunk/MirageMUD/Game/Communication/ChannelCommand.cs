@@ -1,6 +1,7 @@
 using System.Linq;
 using Mirage.Game.Command;
 using Mirage.Game.World;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Communication
 {

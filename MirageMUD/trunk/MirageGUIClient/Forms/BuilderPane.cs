@@ -102,7 +102,7 @@ namespace MirageGUI.Forms
         }
 
 
-        public ProcessStatus HandleResponse(Mirage.Game.Communication.Message response)
+        public ProcessStatus HandleResponse(Mirage.Core.Messaging.Message response)
         {
             return ProcessStatus.NotProcessed;
         }

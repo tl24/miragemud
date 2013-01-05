@@ -131,15 +131,11 @@
     <Compile Include="Communication\DataMessage.cs" />
     <Compile Include="Communication\IChannelRepository.cs" />
     <Compile Include="Communication\ICommunicationPreferences.cs" />
-    <Compile Include="Communication\IMessage.cs" />
-    <Compile Include="Communication\IReceiveMessages.cs" />
     <Compile Include="Communication\LoginAndPlayerCreationMessages.cs" />
-    <Compile Include="Communication\Message.cs" />
-    <Compile Include="Communication\MessageDefinition.cs" />
     <Compile Include="Communication\MessageFormatter.cs" />
-    <Compile Include="Communication\MessageName.cs" />
-    <Compile Include="Communication\Namespace.cs" />
-    <Compile Include="Communication\StringMessage.cs" />
+    <Compile Include="Communication\Namespace.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Communication\ValidationException.cs" />
     <Compile Include="Events\EventBase.cs" />
     <Compile Include="Events\EventEnums.cs" />

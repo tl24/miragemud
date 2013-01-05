@@ -5,6 +5,7 @@ using Mirage.Game.Communication.BuilderMessages;
 using Mirage.Game.IO.Net;
 using Mirage.Game.World;
 using Mirage.Game.World.Query;
+using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Command
 {
