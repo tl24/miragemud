@@ -232,8 +232,8 @@ namespace Mirage.IO.Net
                         // error, close the connection, main thread will clean it up
                         ((SocketConnection)op.Client).Close();
                 }
-                Interlocked.Decrement(ref _processCount);
-                if (_processCount == 0)
+                int count = Interlocked.Decrement(ref _processCount);
+                if (count == 0)
                 {
                     _allProcessedEvent.Set();
                 }

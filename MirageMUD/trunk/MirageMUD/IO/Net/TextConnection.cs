@@ -47,7 +47,7 @@ namespace Mirage.IO.Net
 
         private TelnetOptionProcessor tnHandler;
 
-        public void Initialize()
+        private void Initialize()
         {
             var telnetOpts = new OptionSupportList(new[] { 
                 new OptionSupportEntry(OptionCodes.NAWS, true, false),
@@ -149,17 +149,11 @@ namespace Mirage.IO.Net
                 bufferLength -= endPos + endLen;
             }
 
-            //string line = reader.ReadLine();
-            //string line = new string(buf, 0, nRead);
             if (line == null)
             {
                 return;
             }
-            // Insert space for Command holder if necessary
-            //if (line.Length == 0)
-            //{
-            //    line = " ";
-            //}
+
             inputQueue.Enqueue(line);            
         }
 
