@@ -2,6 +2,7 @@ using System.Linq;
 using Mirage.Game.Command;
 using Mirage.Game.World;
 using Mirage.Core.Messaging;
+using Mirage.Game.Command.Infrastructure.Guards;
 
 namespace Mirage.Game.Communication
 {
@@ -15,8 +16,7 @@ namespace Mirage.Game.Communication
             Channel = channel;
             Name = channel.Name;
             Aliases = new string[0];
-            var tmpRoles = new System.Collections.Generic.HashSet<string>(channel.Roles);
-            Roles = tmpRoles.ToArray();
+            Guards.Add(new RoleGuard(channel.Roles));
         }
 
         /// <summary>

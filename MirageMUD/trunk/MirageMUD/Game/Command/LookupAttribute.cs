@@ -5,7 +5,7 @@ using Mirage.Game.Command.Infrastructure;
 namespace Mirage.Game.Command
 {
     [AttributeUsageAttribute(System.AttributeTargets.Parameter)]
-    public class LookupAttribute : BaseArgumentAttribute
+    public class LookupAttribute : CommandArgumentAttribute
     {
         private string _baseUri;
         private QueryMatchType _matchType = QueryMatchType.Default;

@@ -18,12 +18,6 @@ namespace Mirage.Game.Command
         string[] Aliases { get; }
 
         /// <summary>
-        /// The roles required to invoke this command.  A player having any one of the
-        /// roles listed can invoke the command
-        /// </summary>
-        string[] Roles { get; }
-
-        /// <summary>
         /// The minimum level required to invoke this command
         /// </summary>
         int Level { get; }
@@ -37,13 +31,6 @@ namespace Mirage.Game.Command
         /// The number of arguments to this command
         /// </summary>
         int ArgCount { get; }
-
-        /// <summary>
-        /// The types of mud clients that are allowed to Execute this command.  Generally this should be
-        /// left blank which includes all, unless only certain clients have the capability to provide inputs
-        /// to this command or are incapable of recieving the output from it.
-        /// </summary>
-        Type[] ClientTypes { get; }
 
         /// <summary>
         /// True if this Command does custom parsing

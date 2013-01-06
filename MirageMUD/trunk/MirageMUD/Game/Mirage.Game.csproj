@@ -94,9 +94,12 @@
     <Compile Include="Command\ActorAttribute.cs" />
     <Compile Include="Command\AdminCommands.cs" />
     <Compile Include="Command\AreaBuilder.cs" />
+    <Compile Include="Command\CommandRestriction.cs" />
+    <Compile Include="Command\ClientTypesRestrictionAttribute.cs" />
+    <Compile Include="Command\RoleRestrictionAttribute.cs" />
     <Compile Include="Command\Infrastructure\ArgumentConversion.cs" />
     <Compile Include="Command\Infrastructure\ArgumentParser.cs" />
-    <Compile Include="Command\Infrastructure\BaseArgumentAttribute.cs" />
+    <Compile Include="Command\Infrastructure\CommandArgumentAttribute.cs" />
     <Compile Include="Command\CoderCommands.cs" />
     <Compile Include="Command\CommandAttribute.cs" />
     <Compile Include="Command\CommandBase.cs" />
@@ -110,8 +113,13 @@
     <Compile Include="Command\CustomParseAttribute.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\ILoginInputHandler.cs" />
+    <Compile Include="Command\Infrastructure\Guards\ClientTypeGuard.cs" />
+    <Compile Include="Command\Infrastructure\Guards\ICommandGuard.cs" />
     <Compile Include="Command\Infrastructure\Interpret.cs" />
+    <Compile Include="Command\Infrastructure\Guards\LevelGuard.cs" />
+    <Compile Include="Command\Infrastructure\Guards\RoleGuard.cs" />
     <Compile Include="Command\ItemCommands.cs" />
+    <Compile Include="Command\LevelRestrictionAttribute.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
     <Compile Include="Command\Infrastructure\MethodInvoker.cs" />
     <Compile Include="Command\MiscCommands.cs" />

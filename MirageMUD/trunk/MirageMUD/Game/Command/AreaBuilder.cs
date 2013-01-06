@@ -13,9 +13,8 @@ namespace Mirage.Game.Command
     /// <summary>
     /// Contains the area level commands for the builder
     /// </summary>
-    [CommandDefaults(
-        ClientTypes = new Type[] { typeof(AdvancedClient) },
-        Roles = "builder")]
+    [ClientTypesRestriction(typeof(AdvancedClient))]
+    [RoleRestriction("builder")]
     public class AreaBuilder : CommandDefaults
     {
         public IAreaRepository AreaRepository { get; set; }

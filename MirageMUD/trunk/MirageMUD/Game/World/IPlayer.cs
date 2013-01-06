@@ -10,7 +10,7 @@ namespace Mirage.Game.World
     /// <summary>
     /// A minimal interface for identifying a player
     /// </summary>
-    public interface IPlayer :/* ISupportUri,*/ IActor
+    public interface IPlayer : IActor
     {
         IClient Client { get; set; }
 

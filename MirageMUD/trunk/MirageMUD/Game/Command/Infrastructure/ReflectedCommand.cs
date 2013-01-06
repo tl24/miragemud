@@ -6,6 +6,8 @@ using Mirage.Game.World;
 using Mirage.Game.World.Query;
 using System.Collections;
 using Mirage.Core.Messaging;
+using Mirage.Game.Command.Infrastructure.Guards;
+using System.Collections.Generic;
 
 
 namespace Mirage.Game.Command.Infrastructure
@@ -59,43 +61,39 @@ namespace Mirage.Game.Command.Infrastructure
 
             // set defaults
             Level = 1;
-            Roles = new string[0];
 
             if (!Method.IsStatic)
             {
                 // only use the group if this method is an instance method
                 this._group = group;
             }
+            // create a dictionary by type so that the method can override the default guards
+            var guardMap = new Dictionary<Type, ICommandGuard>();
             // Check for defaults at the class level
-            if (methInfo.DeclaringType.IsDefined(typeof(CommandDefaultsAttribute), false))
+            foreach (CommandRestrictionAttribute restriction in methInfo.DeclaringType.GetCustomAttributes(typeof(CommandRestrictionAttribute), true))
             {
-                CommandDefaultsAttribute defaults = (CommandDefaultsAttribute) methInfo.DeclaringType.GetCustomAttributes(typeof(CommandDefaultsAttribute), false)[0];
-                if (defaults.Level != -1)
-                    Level = defaults.Level;
-
-                if (defaults.Roles != null && defaults.Roles != "")
-                    Roles = defaults.Roles.Split(',', ' ');
-
-                if (defaults.ClientTypes != null)
-                    ClientTypes = defaults.ClientTypes;
+                var guard = restriction.CreateGuard();
+                guardMap[guard.GetType()] = guard;
             }
-            CommandAttribute cmdAttr = (CommandAttribute) methInfo.GetCustomAttributes(typeof(CommandAttribute), false)[0];
 
-            if (cmdAttr.Level != -1)
-                Level = cmdAttr.Level;
+            foreach (CommandRestrictionAttribute restriction in methInfo.GetCustomAttributes(typeof(CommandRestrictionAttribute), true))
+            {
+                var guard = restriction.CreateGuard();
+                guardMap[guard.GetType()] = guard;
+            }
+            // set the guards now
+            Guards.AddRange(guardMap.Values);
+            CommandAttribute cmdAttr = (CommandAttribute)methInfo.GetCustomAttributes(typeof(CommandAttribute), false)[0];
+
+            if (guardMap.ContainsKey(typeof(LevelGuard)))
+            {
+                Level = ((LevelGuard)guardMap[typeof(LevelGuard)]).Level;
+            }
 
             this.Description = cmdAttr.Description;
 
-
-            if (cmdAttr.Roles != null && cmdAttr.Roles != "")
-                Roles = cmdAttr.Roles.Split(',', ' ');
-
-            if (cmdAttr.ClientTypes != null)
-                ClientTypes = cmdAttr.ClientTypes;
-
             if (cmdAttr.Priority != 0)
                 Priority = cmdAttr.Priority;
-
             Aliases = cmdAttr.Aliases ?? new string[0];
 
             ArgCount = 0;

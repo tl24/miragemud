@@ -4,7 +4,7 @@ using Mirage.Game.Command.Infrastructure;
 namespace Mirage.Game.Command
 {
     [AttributeUsageAttribute(System.AttributeTargets.Parameter)]
-    public class CustomParseAttribute : BaseArgumentAttribute
+    public class CustomParseAttribute : CommandArgumentAttribute
     {
     }
 }
