@@ -5,7 +5,7 @@ namespace Mirage.Game.Communication
     /// <summary>
     /// Communication preferences for channels
     /// </summary>
-    public class CommunicationPreferences : ICommunicationPreferences
+    public class CommunicationPreferences
     {
         private System.Collections.Generic.HashSet<string> _ignored;
         private System.Collections.Generic.HashSet<string> _channels;

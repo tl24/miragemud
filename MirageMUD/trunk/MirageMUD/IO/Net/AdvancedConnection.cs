@@ -5,19 +5,35 @@ using Mirage.Core.Collections;
 
 namespace Mirage.IO.Net
 {
-    public enum AdvancedClientTransmitType
+    /// <summary>
+    /// transmit type
+    /// </summary>
+    public enum AdvancedMessageBodyType
     {
+        /// <summary>
+        /// a simple string message
+        /// </summary>
         StringMessage,
+        /// <summary>
+        /// A json encoded message
+        /// </summary>
         JsonEncodedMessage
     }
 
+    /// <summary>
+    /// A message for the advanced connection
+    /// </summary>
     public class AdvancedMessage
     {
-        public AdvancedClientTransmitType type;
-        public string name;
-        public object data;
+        public AdvancedMessageBodyType BodyType { get; set; }
+        public string Name { get; set; }
+        public object Body { get; set; }
     }
 
+    /// <summary>
+    /// A connection type that is capable of sending/receiving serialized
+    /// messages as well as text
+    /// </summary>
     public class AdvancedConnection : SocketConnection, IConnection
     {
         protected BinaryReader reader;
@@ -48,15 +64,15 @@ namespace Mirage.IO.Net
         {
             int type = reader.ReadInt32();
             AdvancedMessage msg = new AdvancedMessage();
-            msg.type = (AdvancedClientTransmitType)type;
-            switch ((AdvancedClientTransmitType)type)
+            msg.BodyType = (AdvancedMessageBodyType)type;
+            switch ((AdvancedMessageBodyType)type)
             {
-                case AdvancedClientTransmitType.StringMessage:
-                    msg.data = reader.ReadString();
+                case AdvancedMessageBodyType.StringMessage:
+                    msg.Body = reader.ReadString();
                     break;
-                case AdvancedClientTransmitType.JsonEncodedMessage:
-                    msg.name = reader.ReadString();
-                    msg.data = reader.ReadString();
+                case AdvancedMessageBodyType.JsonEncodedMessage:
+                    msg.Name = reader.ReadString();
+                    msg.Body = reader.ReadString();
                     break;
                 default:
                     throw new Exception("Unrecognized message type: " + type);
@@ -71,9 +87,9 @@ namespace Mirage.IO.Net
             while (outputQueue.Count > 0)
             {
                 AdvancedMessage advMsg = outputQueue.Dequeue();
-                writer.Write((int)advMsg.type);
-                writer.Write(advMsg.name);
-                writer.Write((string)advMsg.data);
+                writer.Write((int)advMsg.BodyType);
+                writer.Write(advMsg.Name);
+                writer.Write((string)advMsg.Body);
                 bProcess = true;
             }
             if (bProcess)

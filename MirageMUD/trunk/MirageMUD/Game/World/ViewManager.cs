@@ -11,7 +11,7 @@ namespace Mirage.Game.World
 
         public string GetTitle(Living observer, IViewable target)
         {
-            return target.Title;
+            return target.Name;
         }
 
         public string GetShort(Living observer, IViewable target)

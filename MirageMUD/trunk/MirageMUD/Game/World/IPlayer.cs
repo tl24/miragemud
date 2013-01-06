@@ -10,9 +10,11 @@ namespace Mirage.Game.World
     /// <summary>
     /// A minimal interface for identifying a player
     /// </summary>
-    public interface IPlayer : ISupportUri, IActor
+    public interface IPlayer :/* ISupportUri,*/ IActor
     {
-        IConnectionAdapter Client { get; set; }
+        IClient Client { get; set; }
+
+        string Name { get; }
 
         void FirePlayerEvent(PlayerEventType eventType);
 
@@ -22,16 +24,12 @@ namespace Mirage.Game.World
         ///     The Command interpreters in effect for this player
         /// </summary>
         IInterpret Interpreter { get; set; }
-
-        ICommunicationPreferences CommunicationPreferences { get; }
-
     }
 
     public delegate void PlayerEventHandler(object sender, PlayerEventArgs eventArgs);
 
     public enum PlayerEventType
     {
-        Disconnected,
         Quiting
     }
 

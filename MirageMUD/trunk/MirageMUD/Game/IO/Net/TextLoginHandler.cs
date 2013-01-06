@@ -16,13 +16,13 @@ namespace Mirage.Game.IO.Net
     /// <summary>
     /// StateHandler class that controls Login and player creation for the text client.
     /// </summary>
-    public class TextLoginStateHandler : AbstractStateMachine
+    public class TextLoginHandler : AbstractStateMachine
     {
         private bool _failed;
         private IPlayerRepository _playerRepository;
         private IRaceRepository _raceRepository;
 
-        public TextLoginStateHandler(IConnectionAdapter client)
+        public TextLoginHandler(IClient client)
             : base(client)
         {
             _failed = false;
@@ -54,12 +54,12 @@ namespace Mirage.Game.IO.Net
                 Require(FormatMessage(LoginAndPlayerCreationMessages.EnterName), new ValidateDelegate(this.ValidateName));
             else if (GetValue<bool>("isNew") == true) {
                 if (!Contains("confirmName")) {
-                    IMessage rm = FormatMessage(LoginAndPlayerCreationMessages.ConfirmNewName, new {player = GetValue<Player>("player").Title});
+                    IMessage rm = FormatMessage(LoginAndPlayerCreationMessages.ConfirmNewName, new {player = GetValue<Player>("player").Name});
                     Require(rm, new ValidateDelegate(this.ConfirmName));
                 }
                 else if (!Contains("password"))
                 {
-                    IMessage prompt = FormatMessage(LoginAndPlayerCreationMessages.NewplayerPassword, new { player = GetValue<Player>("player").Title });
+                    IMessage prompt = FormatMessage(LoginAndPlayerCreationMessages.NewplayerPassword, new { player = GetValue<Player>("player").Name });
                     IMessage echoOff = FormatMessage(CommonMessages.EchoOff); 
 
                     Require(new [] { prompt, echoOff }, new ValidateDelegate(this.ValidateNewPassword));

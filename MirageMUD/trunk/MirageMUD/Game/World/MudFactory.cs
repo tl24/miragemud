@@ -93,22 +93,22 @@ namespace Mirage.Game.World
                     });
 
                 // I/O
-                var textClientRegistration = Component.For<IClientListener>()
+                var textClientRegistration = Component.For<IConnectionListener>()
                                     .ImplementedBy<ClientListener<TextConnection>>()
                                     //.Named("TextClientListener")
                                     .DependsOnAppSetting(typeof(int), "textclient.port", "port")
                                     .OptionallyDependsOnAppSetting(typeof(string), "textclient.host", "host");
-                var guiClientRegistration = Component.For<IClientListener>()
+                var guiClientRegistration = Component.For<IConnectionListener>()
                                     .ImplementedBy<ClientListener<AdvancedConnection>>()
                                     //.Named("GuiClientListener")
                                     .DependsOnAppSetting(typeof(int), "guiclient.port", "port")
                                     .OptionallyDependsOnAppSetting(typeof(string), "guiclient.host", "host");
                 container.Register(textClientRegistration, guiClientRegistration);
-                container.Register(Component.For<ClientManager>()
+                container.Register(Component.For<ConnectionManager>()
                                     //.Named("ClientManager")
                                     .OptionallyDependsOnAppSetting(typeof(int), "clientmanager.maxthreads", "maxthreads"));
 
-                container.Register(Component.For<IConnectionAdapterFactory>().ImplementedBy<ConnectionAdapterFactory>());
+                container.Register(Component.For<IClientFactory>().ImplementedBy<ClientFactory>());
                 container.Register(Component.For<ServiceProcessor>());
                 container.Register(Component.For<MirageServer>());
                 container.Register(Component.For<IRaceRepository>().ImplementedBy<RaceRepository>());
@@ -149,7 +149,7 @@ namespace Mirage.Game.World
 
                 container.Register(
                     Classes.FromAssembly(a)
-                    .BasedOn<IConnectionAdapter>()
+                    .BasedOn<IClient>()
                     .Configure(component
                     => component.LifeStyle.Transient.Named(component.Implementation.Name))
                 );

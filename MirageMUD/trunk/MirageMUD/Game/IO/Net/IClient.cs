@@ -6,7 +6,12 @@ using Mirage.Core.Messaging;
 
 namespace Mirage.Game.IO.Net
 {
-    public interface IConnectionAdapter
+    /// <summary>
+    /// Handles communication to the Connection, such as translating messages
+    /// into the the correct format that the connection understands.  A client type
+    /// is usually paired to a connection type.
+    /// </summary>
+    public interface IClient
     {
         /// <summary>
         /// Close the client and its underlying connection
@@ -62,9 +67,4 @@ namespace Mirage.Game.IO.Net
 
         string Address { get; }
     }
-
-    public interface IConnectionAdapter<ConnectionT> : IConnectionAdapter
-    {
-    }
-
 }

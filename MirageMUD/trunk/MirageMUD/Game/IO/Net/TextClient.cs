@@ -6,11 +6,14 @@ using Mirage.Core.Messaging;
 
 namespace Mirage.Game.IO.Net
 {
-    public class TextConnectionAdapter : ConnectionAdapterBase, IConnectionAdapter<TextConnection>
+    /// <summary>
+    /// Handles communication with a text connection
+    /// </summary>
+    public class TextClient : ClientBase
     {
         TextConnection _connection;
 
-        public TextConnectionAdapter(TextConnection connection) : base(connection)
+        public TextClient(TextConnection connection) : base(connection)
         {
             _connection = connection;
         }

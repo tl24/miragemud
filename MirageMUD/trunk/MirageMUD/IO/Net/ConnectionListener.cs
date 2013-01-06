@@ -9,21 +9,21 @@ namespace Mirage.IO.Net
     /// Base class for ClientFactory implementations.  Provides most of the framework for a client factory.
     /// Child factory implementations should only need to implement InitConnection.
     /// </summary>
-    public abstract class ClientListenerBase : IClientListener, IDisposable
+    public abstract class ConnectionListenerBase : IConnectionListener, IDisposable
     {
         protected TcpListener _listener;
 
-        public ClientListenerBase(string host, int port)
+        public ConnectionListenerBase(string host, int port)
             : this(GetEndpoint(host, port))
         {
         }
 
-        public ClientListenerBase(IPEndPoint listeningEndPoint)
+        public ConnectionListenerBase(IPEndPoint listeningEndPoint)
         {
             _listener = new TcpListener(listeningEndPoint);
         }
 
-        public ClientListenerBase(int port)
+        public ConnectionListenerBase(int port)
         {            
             _listener = new TcpListener(IPAddress.Any, port);
         }

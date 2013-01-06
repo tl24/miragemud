@@ -168,8 +168,8 @@ namespace Mirage.Game.Command
                         return;
                     }
                     // found them, ignore them
-                    actor.ToSelf(Messages.IgnoreTarget, p.Uri);
-                    actor.CommunicationPreferences.Ignore(p.Uri);
+                    actor.ToSelf(Messages.IgnoreTarget, p.Name);
+                    actor.CommunicationPreferences.Ignore(p.Name);
                     return;
                 }
             }

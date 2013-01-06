@@ -84,10 +84,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Net\AdvancedConnection.cs" />
-    <Compile Include="Net\ClientListener.cs" />
-    <Compile Include="Net\ClientManager.cs" />
+    <Compile Include="Net\ConnectionListener.cs" />
+    <Compile Include="Net\ConnectionManager.cs" />
     <Compile Include="Net\ConnectedState.cs" />
-    <Compile Include="Net\IClientListener.cs" />
+    <Compile Include="Net\IConnectionListener.cs" />
     <Compile Include="Net\IConnection.cs" />
     <Compile Include="Net\SocketConnection.cs" />
     <Compile Include="Net\Telnet\EnumsAndConstants.cs" />

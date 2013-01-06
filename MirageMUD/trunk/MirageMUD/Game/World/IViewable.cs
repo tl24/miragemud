@@ -3,7 +3,7 @@ namespace Mirage.Game.World
 {
     public interface IViewable
     {
-        string Title { get; }
+        string Name { get; }
         string ShortDescription { get; }
         string LongDescription { get; }
     }

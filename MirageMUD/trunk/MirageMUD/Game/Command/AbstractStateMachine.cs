@@ -38,7 +38,7 @@ namespace Mirage.Game.Command
         /// object is used to send prompts for information.
         /// </summary>
         /// <param name="client">The current client</param>
-        public AbstractStateMachine(IConnectionAdapter client)
+        public AbstractStateMachine(IClient client)
         {
             _properties = new HybridDictionary();
             this.Client = client;
@@ -122,7 +122,7 @@ namespace Mirage.Game.Command
         /// <summary>
         /// The client object that this state machine is managing
         /// </summary>
-        public IConnectionAdapter Client { get; set; }
+        public IClient Client { get; set; }
 
         /// <summary>
         /// Called when a given parameter is not set.  The user will be prompted with

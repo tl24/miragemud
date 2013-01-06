@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 namespace Mirage.IO.Net
 {
-    public interface IClientListener
+    public interface IConnectionListener
     {
         /// <summary>
         /// Accepts a new connection and creates a client for it

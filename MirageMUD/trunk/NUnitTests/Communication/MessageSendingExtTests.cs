@@ -11,7 +11,7 @@ namespace NUnitTests.Communication
         private Player GetPlayer(string title, GenderType gender)
         {
             Player p = new Player();
-            p.Title = title;
+            p.Name = title;
             p.ShortDescription = "a " + title;
             p.Gender = gender;
             MockClient client = new MockClient();

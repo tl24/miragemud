@@ -14,7 +14,7 @@ namespace Mirage.Game.Command
     /// Contains the area level commands for the builder
     /// </summary>
     [CommandDefaults(
-        ClientTypes = new Type[] { typeof(AdvancedConnectionAdapter) },
+        ClientTypes = new Type[] { typeof(AdvancedClient) },
         Roles = "builder")]
     public class AreaBuilder : CommandDefaults
     {
