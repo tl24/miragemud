@@ -10,11 +10,11 @@ namespace Mirage.Game.IO.Net
     /// State handler used to process a Gui client connection until login is
     /// completed.
     /// </summary>
-    public class GuiLoginHandler : ILoginInputHandler
+    public class AdvancedLoginHandler : ILoginInputHandler
     {
         private IPlayerRepository _playerRepository;
 
-        public GuiLoginHandler(IConnectionAdapter client)
+        public AdvancedLoginHandler(IClient client)
         {
             Client = client;
             _playerRepository = MudFactory.GetObject<IPlayerRepository>();
@@ -50,6 +50,6 @@ namespace Mirage.Game.IO.Net
 
         #endregion
 
-        public IConnectionAdapter Client { get; set; }
+        public IClient Client { get; set; }
     }
 }

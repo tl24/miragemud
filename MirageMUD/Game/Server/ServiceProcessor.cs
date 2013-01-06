@@ -59,7 +59,7 @@ namespace Mirage.Game.Server
                 {
                     try
                     {
-                        logger.InfoFormat("{0} has left the game.", player.Uri);
+                        logger.InfoFormat("{0} has left the game.", player.Name);
                         SavePlayer(player);
                     }
                     catch (Exception e)
@@ -93,7 +93,7 @@ namespace Mirage.Game.Server
                 }
                 catch (Exception e)
                 {
-                    logger.Error("Error processing client input for player: " + player.Uri, e);
+                    logger.Error("Error processing client input for player: " + player.Name, e);
                 }
             }
         }
@@ -108,14 +108,14 @@ namespace Mirage.Game.Server
                     {
                         if (player.Client.State == ConnectedState.Playing)
                         {
-                            string clientName = player.Uri;
+                            string clientName = player.Name;
                             player.Client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    logger.Error("Error writing prompt for player: " + player.Uri, e);
+                    logger.Error("Error writing prompt for player: " + player.Name, e);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace Mirage.Game.Server
             {
                 try
                 {
-                    logger.InfoFormat("Saving player {0}.", player.Uri);
+                    logger.InfoFormat("Saving player {0}.", player.Name);
                     SavePlayer(player);
                 }
                 catch (Exception e)

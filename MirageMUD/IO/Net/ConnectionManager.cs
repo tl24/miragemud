@@ -14,10 +14,9 @@ namespace Mirage.IO.Net
     /// Manages client factorys and polls them all for readable, writeable and errored clients.
     /// Follows the same calling sequence as a normal IClientFactory instance.
     /// </summary>
-    [CastleComponent("ClientManager")]
-    public class ClientManager
+    public class ConnectionManager
     {
-        private List<IClientListener> _listeners;
+        private List<IConnectionListener> _listeners;
         private ISynchronizedQueue<IConnection> _newClients;
         private bool _started = false;
         private BlockingQueue<ClientOperation> workItems;
@@ -33,7 +32,7 @@ namespace Mirage.IO.Net
         /// <summary>
         /// Creates a new instance of the ClientManager
         /// </summary>
-        public ClientManager(IList<IClientListener> listeners)
+        public ConnectionManager(IList<IConnectionListener> listeners)
             : this(listeners, Environment.ProcessorCount)
         {
         }
@@ -41,9 +40,9 @@ namespace Mirage.IO.Net
         /// <summary>
         /// Creates a new instance of the ClientManager
         /// </summary>
-        public ClientManager(IList<IClientListener> listeners, int maxThreads)
+        public ConnectionManager(IList<IConnectionListener> listeners, int maxThreads)
         {
-            _listeners = new List<IClientListener>(listeners);
+            _listeners = new List<IConnectionListener>(listeners);
             _maxThreads = maxThreads > 0 ? maxThreads : 1;
             workItems = new BlockingQueue<ClientOperation>(15);
             _internalNewClients = new SynchronizedQueue<SocketConnection>();
@@ -117,7 +116,7 @@ namespace Mirage.IO.Net
             foreach (Socket s in checkRead)
             {
                 object client = _clientMap[s];
-                if (client is IClientListener)
+                if (client is IConnectionListener)
                     ops.Add(new ClientOperation(client, OpType.Accept));
                 else
                     ops.Add(new ClientOperation(client, OpType.Read));
@@ -150,7 +149,7 @@ namespace Mirage.IO.Net
             _clientMap.Clear();
 
             // start the factories
-            foreach (IClientListener listener in _listeners)
+            foreach (IConnectionListener listener in _listeners)
             {
                 listener.Start();
                 _sockets.Add(listener.Socket);
@@ -212,7 +211,7 @@ namespace Mirage.IO.Net
                     switch (op.Type)
                     {
                         case OpType.Accept:
-                            SocketConnection client = ((IClientListener)op.Client).Accept();
+                            SocketConnection client = ((IConnectionListener)op.Client).Accept();
                             _internalNewClients.Enqueue(client);
                             break;
                         case OpType.Read:
@@ -282,7 +281,7 @@ namespace Mirage.IO.Net
         public void Stop()
         {
             
-            foreach (IClientListener listener in _listeners)
+            foreach (IConnectionListener listener in _listeners)
             {
                 listener.Stop();
             }

@@ -8,51 +8,22 @@ namespace Mirage.Game.World
 {
     public class Area : ViewableBase, IArea
     {
-        private IDictionary<string, Room> _rooms;
-        private IDictionary<string, MobTemplate> _mobiles;
-
-        private bool _isDirty;
-
         public Area()
         {
-            _rooms = new Dictionary<string, Room>(StringComparer.CurrentCultureIgnoreCase);
-            _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
-            _mobiles = new Dictionary<string, MobTemplate>(StringComparer.CurrentCultureIgnoreCase);
-            _uriChildCollections["Mobiles"] = new BaseData.ChildCollectionPair(_mobiles, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
+            Rooms = new Dictionary<string, Room>(StringComparer.CurrentCultureIgnoreCase);
+            Mobiles = new Dictionary<string, MobTemplate>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         [EditorCollection(typeof(Room))]
         [JsonExProperty]
-        public IDictionary<string, Room> Rooms
-        {
-            get { return this._rooms; }
-            /*
-            set { 
-                this._rooms = value;
-                _uriChildCollections["Rooms"] = new BaseData.ChildCollectionPair(_rooms, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
-            }
-             */ 
-        }
+        public IDictionary<string, Room> Rooms { get; private set; }
 
         [EditorCollection(typeof(MobTemplate))]
         [JsonExProperty]
-        public IDictionary<string, MobTemplate> Mobiles
-        {
-            get { return this._mobiles; }
-            /*
-            set
-            {
-                this._mobiles = value;
-                _uriChildCollections["Mobiles"] = new BaseData.ChildCollectionPair(_mobiles, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
-            }
-             */ 
-        }
+        public IDictionary<string, MobTemplate> Mobiles{ get; private set; }
+
         [JsonExIgnore]
-        public bool IsDirty
-        {
-            get { return this._isDirty; }
-            set { this._isDirty = value; }
-        }
+        public bool IsDirty { get; set; }
 
         public override string FullUri
         {

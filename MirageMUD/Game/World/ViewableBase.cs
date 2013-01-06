@@ -1,32 +1,20 @@
 
 namespace Mirage.Game.World
 {
-    public class ViewableBase : BaseData, IViewable
+    public abstract class ViewableBase : BaseData, IViewable
     {
-        private string _title;
-        private string _shortDescription;
-        private string _longDescription;
+        //private string _title;
+        //private string _shortDescription;
+        //private string _longDescription;
 
         [Editor(Priority = 3)]
-        public virtual string Title
-        {
-            get { return this._title; }
-            set { this._title = value; }
-        }
+        public string Name { get; set; }
 
         [Editor(Priority = 4)]
-        public virtual string ShortDescription
-        {
-            get { return this._shortDescription; }
-            set { this._shortDescription = value; }
-        }
+        public string ShortDescription { get; set; }
 
         [Editor(Priority = 5, EditorType = "Multiline")]
-        public virtual string LongDescription
-        {
-            get { return this._longDescription; }
-            set { this._longDescription = value; }
-        }
+        public string LongDescription { get; set; }
 
         public override void CopyTo(BaseData other)
         {
@@ -34,7 +22,7 @@ namespace Mirage.Game.World
             ViewableBase otherViewable = other as ViewableBase;
             if (otherViewable != null)
             {
-                otherViewable.Title = this.Title;
+                otherViewable.Name = this.Name;
                 otherViewable.ShortDescription = this.ShortDescription;
                 otherViewable.LongDescription = this.LongDescription;
             }

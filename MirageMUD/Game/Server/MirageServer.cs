@@ -28,7 +28,7 @@ namespace Mirage.Game.Server
 
         public IInitializer[] Initializers { get; set; }
 
-        public IConnectionAdapterFactory AdapterFactory { get; set; }
+        public IClientFactory AdapterFactory { get; set; }
 
         public ServiceProcessor Services { get; set; }
 
@@ -57,9 +57,9 @@ namespace Mirage.Game.Server
             Thread.CurrentThread.Name = "Main";
             logger.Info("Starting up");
 
-            ClientManager manager = null;
+            ConnectionManager manager = null;
             MudWorld globalLists = null;
-            List<IConnectionAdapter> NannyClients = null;
+            List<IClient> NannyClients = null;
             BlockingQueue<IConnection> NannyQueue = null;
             DateTime lastTime;
             DateTime currentTime;
@@ -73,11 +73,11 @@ namespace Mirage.Game.Server
             {
                 Init();
                 //TODO: Create the server with the container
-                manager = MudFactory.GetObject<ClientManager>();
+                manager = MudFactory.GetObject<ConnectionManager>();
                 //manager.Configure();
                 globalLists = MudFactory.GetObject<MudWorld>();
-                AdapterFactory = MudFactory.GetObject<IConnectionAdapterFactory>();
-                NannyClients = new List<IConnectionAdapter>();
+                AdapterFactory = MudFactory.GetObject<IClientFactory>();
+                NannyClients = new List<IClient>();
                 // These are the new connections waiting to be put in the nanny list
                 NannyQueue = new BlockingQueue<IConnection>(15);
 
@@ -127,7 +127,7 @@ namespace Mirage.Game.Server
                                     // graduated...remove from the list
                                     //NannyClients[i].WritePrompt();
                                     //TODO: centralize this
-                                    string clientName = NannyClients[i].Player.Uri;
+                                    string clientName = NannyClients[i].Player.Name;
                                     NannyClients[i].Player.Client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
 
                                     NannyClients.RemoveAt(i);

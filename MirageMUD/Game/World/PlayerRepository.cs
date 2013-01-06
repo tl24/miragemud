@@ -20,11 +20,11 @@ namespace Mirage.Game.World
 
         #region IPlayerRepository Members
 
-        public IPlayer Load(string playerUri)
+        public IPlayer Load(string name)
         {
             try
             {
-                return (IPlayer)persistenceManager.Load(playerUri);
+                return (IPlayer)persistenceManager.Load(name);
             }
             catch (FileNotFoundException)
             {
@@ -34,34 +34,34 @@ namespace Mirage.Game.World
 
         public void Save(IPlayer player)
         {
-            persistenceManager.Save(player, player.Uri);
+            persistenceManager.Save(player, player.Name);
         }
 
         public void Add(IPlayer player)
         {
             // just use the repository for now
-            mudRepository.AddPlayer(player);
+            mudRepository.AddPlayer((Player)player);
         }
 
         public void Remove(IPlayer player)
         {
-            mudRepository.RemovePlayer(player);
+            mudRepository.RemovePlayer((Player)player);
         }
 
-        public IPlayer Find(string playerUri)
+        public IPlayer Find(string name)
         {
-            return Find(playerUri, false);
+            return Find(name, false);
         }
 
-        public IPlayer Find(string playerUri, bool loadIfNotFound)
+        public IPlayer Find(string name, bool loadIfNotFound)
         {
             foreach (IPlayer p in this)
             {
-                if (p.Uri.Equals(playerUri, StringComparison.CurrentCultureIgnoreCase))
+                if (p.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
                     return p;
             }
             if (loadIfNotFound)
-                return Load(playerUri);
+                return Load(name);
             else
                 return null;
         }

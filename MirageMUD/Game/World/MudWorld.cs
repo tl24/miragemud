@@ -8,9 +8,10 @@ namespace Mirage.Game.World
     /// <summary>
     /// Facade class for accessing most global collections and commonly used objects
     /// </summary>
-    public class MudWorld : BaseData
+    public class MudWorld : BaseData, IUriContainer
     {
         private ObjectUriResolver _resolver;
+        protected Dictionary<string, ChildCollectionPair> _uriChildCollections;
 
         /// <summary>
         /// Creates the mud repository.  NOTE: this is not meant to be called directly.
@@ -19,20 +20,18 @@ namespace Mirage.Game.World
         public MudWorld()
             : base()
         {
-            _uri = "global";
-            Players = new LinkedList<IPlayer>();
+            Uri = "global";
+            _uriChildCollections = new Dictionary<string, ChildCollectionPair>();
+            Players = new LinkedList<Player>();
             Areas = new Dictionary<string, IArea>();
-            RegisterQueryableObject("Players", Players, QueryHints.DefaultPartialMatch);
-            RegisterQueryableObject("Areas", Areas, QueryHints.UriKeyedDictionary | QueryHints.UniqueItems);
             Mobiles = new LinkedList<Mobile>();
-            _uriChildCollections.Add("Mobiles", new ChildCollectionPair(Mobiles, QueryHints.DefaultPartialMatch));
             _resolver = new ObjectUriResolver(this);
         }
 
         /// <summary>
         /// The list of actively playing Players
         /// </summary>
-        public ICollection<IPlayer> Players { get; private set; }
+        public ICollection<Player> Players { get; private set; }
 
         /// <summary>
         /// Loaded areas
@@ -52,7 +51,7 @@ namespace Mirage.Game.World
         /// Adds a player to the list of active players
         /// </summary>
         /// <param name="p"></param>
-        public void AddPlayer(IPlayer p)
+        public void AddPlayer(Player p)
         {
             Players.Add(p);
             p.PlayerEvent += new PlayerEventHandler(OnPlayerEvent);
@@ -62,7 +61,7 @@ namespace Mirage.Game.World
         /// Removes a player from the list of active players
         /// </summary>
         /// <param name="p"></param>
-        public void RemovePlayer(IPlayer p)
+        public void RemovePlayer(Player p)
         {
             Players.Remove(p);            
             p.PlayerEvent -= OnPlayerEvent;
@@ -73,7 +72,7 @@ namespace Mirage.Game.World
             IPlayer player = (IPlayer)sender;
             if (eventArgs.EventType == PlayerEventType.Quiting)
             {
-                RemovePlayer(player);
+                RemovePlayer((Player)player);
             }
         }
 
@@ -145,5 +144,38 @@ namespace Mirage.Game.World
             RegisterQueryableObject(ObjectUri, QueryableObject, 0);
         }
 
+        #region IUriContainer Members
+
+        public object GetChild(string uri)
+        {
+            return _uriChildCollections.ContainsKey(uri) ? _uriChildCollections[uri].Child : null;
+        }
+
+        public QueryHints GetChildHints(string uri)
+        {
+            return _uriChildCollections.ContainsKey(uri) ? _uriChildCollections[uri].Flags : 0;
+        }
+
+        /// <summary>
+        /// struct to hold data about a child collection exposed under Uri interfaces
+        /// </summary>
+        protected struct ChildCollectionPair
+        {
+            public object Child;
+            public QueryHints Flags;
+
+            public ChildCollectionPair(object Child, QueryHints flags)
+            {
+                this.Child = Child;
+                this.Flags = flags;
+            }
+
+            public ChildCollectionPair(object Child)
+                : this(Child, 0)
+            {
+            }
+
+        }
+        #endregion
     }
 }

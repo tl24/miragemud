@@ -8,7 +8,7 @@ using Mirage.Core.Messaging;
 
 namespace NUnitTests
 {
-    public class MockClient : IConnectionAdapter
+    public class MockClient : IClient
     {
         private bool _isOpen = true;
         private ILoginInputHandler _loginHandler;

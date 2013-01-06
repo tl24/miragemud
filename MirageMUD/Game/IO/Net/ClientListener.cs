@@ -5,7 +5,7 @@ using Mirage.IO.Net;
 
 namespace Mirage.Game.IO.Net
 {
-    public class ClientListener<T> : ClientListenerBase where T : SocketConnection
+    public class ClientListener<T> : ConnectionListenerBase where T : SocketConnection
     {
 
         public ClientListener(string host, int port)

@@ -38,17 +38,13 @@ namespace Mirage.Game.World
     /// </summary>
     public abstract class Living : LivingTemplateBase, IActor, IReceiveMessages, IContainer, IContainable
     {
-        private LinkedList<ItemBase> _inventory;
         protected IContainer _itemContainer;
-        protected WornItems _equipment;
 
         public Living()
         {
-            _inventory = new LinkedList<ItemBase>();
-            _uriChildCollections.Add("Inventory", new ChildCollectionPair(_inventory, QueryHints.DefaultPartialMatch));
-            _itemContainer = new GenericCollectionContainer<ItemBase>(_inventory, this);
-            _equipment = new WornItems();
-            _uriChildCollections.Add("Equipment", new ChildCollectionPair(_equipment, QueryHints.DefaultPartialMatch));
+            Inventory = new LinkedList<ItemBase>();
+            _itemContainer = new GenericCollectionContainer<ItemBase>(Inventory, this);
+            Equipment = new WornItems();
         }
 
         public abstract void Write(IMessage message);
@@ -75,19 +71,13 @@ namespace Mirage.Game.World
         [JsonExIgnore]
         public IContainer Container { get; set; }
 
-        public ICollection<ItemBase> Inventory
-        {
-            get { return _inventory; }
-        }
+        public ICollection<ItemBase> Inventory { get; private set; }
 
         #region Equipment
         /// <summary>
         /// Equipment that is currently being worn on the body
         /// </summary>
-        public WornItems Equipment
-        {
-            get { return _equipment; }
-        }
+        public WornItems Equipment { get; private set; }
 
         /// <summary>
         /// Equips an item from the inventory.  If an item is already worn in the same location that the

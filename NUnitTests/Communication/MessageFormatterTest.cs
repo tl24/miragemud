@@ -13,7 +13,7 @@ namespace NUnitTests.Communication
         private Player GetPlayer(string title, GenderType gender)
         {
             Player p = new Player();
-            p.Title = title;
+            p.Name = title;
             p.ShortDescription = "a " + title;
             p.Gender = gender;
             return p;
@@ -23,7 +23,7 @@ namespace NUnitTests.Communication
         {
             MobTemplate template = new MobTemplate();
             Mobile m = new Mobile(template);
-            m.Title = title;
+            m.Name = title;
             m.ShortDescription = "a " + title;
             m.Gender = gender;
             return m;
@@ -118,7 +118,7 @@ namespace NUnitTests.Communication
         {
             Player chr = GetPlayer("foo", GenderType.Male);
             Armor helmet = new Armor();
-            helmet.Title = "Gold Helmet";
+            helmet.Name = "Gold Helmet";
             helmet.ShortDescription = "a gold helmet";
             StringMessage msg = formatter.Format(chr, chr, "test", "${object.short} is here.", null, new Dictionary<string, object> { { "object", helmet }});
             Assert.AreEqual("A gold helmet is here.\r\n", GetMessageText(msg));
@@ -129,7 +129,7 @@ namespace NUnitTests.Communication
         {
             Player chr = GetPlayer("foo", GenderType.Male);
             Armor helmet = new Armor();
-            helmet.Title = "Gold Helmet";
+            helmet.Name = "Gold Helmet";
             helmet.ShortDescription = "a gold helmet";
             StringMessage msg = formatter.Format(chr, chr, "test", "${object.short} is here.", null, new Dictionary<string, object> { { "object0", helmet } });
             Assert.AreEqual("A gold helmet is here.\r\n", GetMessageText(msg));
@@ -142,10 +142,10 @@ namespace NUnitTests.Communication
             Player actor = GetPlayer("boo", GenderType.Male);
             Player target = GetPlayer("goo", GenderType.Female);
             Armor helmet = new Armor();
-            helmet.Title = "Gold Helmet";
+            helmet.Name = "Gold Helmet";
             helmet.ShortDescription = "a gold helmet";
             ItemBase bag = new ItemBase();
-            bag.Title = "bag";
+            bag.Name = "bag";
             bag.ShortDescription = "a bag";
             var args = new Dictionary<string, object> { { "object0", helmet }, { "object1", bag } };
             StringMessage msg = formatter.Format(recipient, actor, "test", "${actor.title} sees ${target.title} put ${target.his} ${object} in ${object1.short}.", target, args);

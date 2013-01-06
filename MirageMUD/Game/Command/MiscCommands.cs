@@ -52,7 +52,7 @@ namespace Mirage.Game.Command
             if (room == null)
                 return "";
 
-            result += room.Title + "\r\n";
+            result += room.Name + "\r\n";
             result += room.ShortDescription + "\r\n";
             result += "\r\n";
             if (room.LivingThings.Count > 1)
@@ -62,7 +62,7 @@ namespace Mirage.Game.Command
                 {
                     if (animate != actor)
                     {
-                        result += animate.Title + "\r\n";
+                        result += animate.Name + "\r\n";
                     }
                 }
             }

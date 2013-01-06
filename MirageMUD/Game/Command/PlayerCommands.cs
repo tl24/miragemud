@@ -27,7 +27,7 @@ namespace Mirage.Game.Command
         public string kill([Actor] Player self,
                           [Lookup("/Players")] Player target)
         {
-            return "You started a fight with " + target.Title + ".\r\n";
+            return "You started a fight with " + target.Name + ".\r\n";
         }
 
         [Command(Description = "Saves the current progress")]

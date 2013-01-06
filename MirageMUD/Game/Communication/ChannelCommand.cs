@@ -28,9 +28,9 @@ namespace Mirage.Game.Communication
             if (!sendConfirmation || !Channel.ContainsMember(actor))
             {
                 Channel.Add(actor);
-                if (actor is IPlayer)
+                if (actor is Player)
                 {
-                    ((IPlayer)actor).CommunicationPreferences.ChannelOn(Channel.Name);
+                    ((Player)actor).CommunicationPreferences.ChannelOn(Channel.Name);
                 }
                 if (sendConfirmation)
                 {
@@ -48,9 +48,9 @@ namespace Mirage.Game.Communication
             if (!sendConfirmation || Channel.ContainsMember(actor))
             {
                 Channel.Remove(actor);
-                if (actor is IPlayer)
+                if (actor is Player)
                 {
-                    ((IPlayer)actor).CommunicationPreferences.ChannelOff(Channel.Name);
+                    ((Player)actor).CommunicationPreferences.ChannelOff(Channel.Name);
                 }
                 if (sendConfirmation)
                 {

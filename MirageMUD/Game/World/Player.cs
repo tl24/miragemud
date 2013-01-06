@@ -23,12 +23,8 @@ namespace Mirage.Game.World
     /// </summary>
     public class Player : Living, IPlayer
     {
-        private string _password;
-        private IInterpret _interpreter;
         private MudPrincipal _principal;
         private string[] _roles;
-        private ICommunicationPreferences _commPrefs = new CommunicationPreferences();
-        private Dictionary<SkillDefinition, Skill> _skills = new Dictionary<SkillDefinition, Skill>();
         public event PlayerEventHandler PlayerEvent;
 
         /// <summary>
@@ -36,6 +32,8 @@ namespace Mirage.Game.World
         /// </summary>
         public Player() : base()
         {
+            this.CommunicationPreferences = new CommunicationPreferences();
+            this.Skills = new Dictionary<SkillDefinition, Skill>();
         }
 
         /// <summary>
@@ -44,21 +42,17 @@ namespace Mirage.Game.World
         /// <param name="name">player's name</param>
         /// <param name="plainPassword">plaintext password</param>
         /// <param name="roles">the user's security roles</param>
-        public Player(string name)
+        public Player(string name) : this()
         {
             Uri = name;
-            Title = name;
+            Name = name;
         }
 
         #region Password Items
         /// <summary>
         ///     The player's password
         /// </summary>
-        public string Password        
-        {            
-            get { return _password; }
-            set { _password = value; }
-        }
+        public string Password { get; set; }       
 
         /// <summary>
         ///     Sets the password for the character, encrypting it first.
@@ -66,7 +60,7 @@ namespace Mirage.Game.World
         /// <param name="password">plain text password</param>
         public void SetPassword(string password)
         {
-            _password = EncryptPassword(password);
+            Password = EncryptPassword(password);
         }
 
         /// <summary>
@@ -78,13 +72,13 @@ namespace Mirage.Game.World
         {
             // allow empty password to compare
             if (string.IsNullOrEmpty(otherPassword) &&
-                string.IsNullOrEmpty(_password))
+                string.IsNullOrEmpty(Password))
             {
                 return true;
             }
             else
             {
-                return EncryptPassword(otherPassword).Equals(_password);
+                return EncryptPassword(otherPassword).Equals(Password);
             }
         }
 
@@ -114,18 +108,14 @@ namespace Mirage.Game.World
         /// </summary>
         [XmlIgnore]
         [JsonExIgnore]
-        public IConnectionAdapter Client { get; set; }
+        public IClient Client { get; set; }
 
         /// <summary>
         ///     The Command interpreters in effect for this player
         /// </summary>
         [XmlIgnore]
         [JsonExIgnore]
-        public IInterpret Interpreter
-        {
-            get { return _interpreter; }
-            set { _interpreter = value; }
-        }
+        public IInterpret Interpreter { get; set; }
 
         /// <summary>
         /// The uri to the room that they are in
@@ -178,7 +168,7 @@ namespace Mirage.Game.World
 
         public override void Write(object sender, IMessage message)
         {
-            if (sender is IPlayer && this.CommunicationPreferences.IsIgnored(((IPlayer)sender).Uri))
+            if (sender is IPlayer && this.CommunicationPreferences.IsIgnored(((IPlayer)sender).Name))
                 return;
 
             if (Client != null)
@@ -234,19 +224,12 @@ namespace Mirage.Game.World
 
         public override string ToString()
         {
-            return this.GetType().Name + " " + Title;
+            return this.GetType().Name + " " + Name;
         }
 
-        public ICommunicationPreferences CommunicationPreferences
-        {
-            get { return this._commPrefs; }
-            set { this._commPrefs = value; }
-        }
+        public CommunicationPreferences CommunicationPreferences { get; set; }
 
         [JsonExProperty]
-        public IDictionary<SkillDefinition, Skill> Skills
-        {
-            get { return _skills; }
-        }
+        public IDictionary<SkillDefinition, Skill> Skills { get; private set; }
     }
 }

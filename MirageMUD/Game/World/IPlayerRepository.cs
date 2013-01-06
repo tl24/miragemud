@@ -30,20 +30,13 @@ namespace Mirage.Game.World
         void Remove(IPlayer player);
 
         /// <summary>
-        /// Finds a player that is currently playing
-        /// </summary>
-        /// <param name="playerUri">the uri of the player to load</param>
-        /// <returns>the player if found</returns>
-        IPlayer Find(string playerUri);
-
-        /// <summary>
         /// Finds a player that is currently playing.  If the player is not playing and the loadIfNotFound
         /// flag is set then the player will be loaded from storage.
         /// </summary>
-        /// <param name="playerUri"></param>
+        /// <param name="name">the name of the player to load</param>
         /// <param name="loadIfNotFound"></param>
         /// <returns></returns>
-        IPlayer Find(string playerUri, bool loadIfNotFound);
+        IPlayer Find(string name, bool loadIfNotFound = false);
 
         
     }
