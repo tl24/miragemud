@@ -9,11 +9,9 @@ using Mirage.Core;
 
 namespace Mirage.Game.Command
 {
-    [CommandDefaults(Roles="Admin")]
+    [RoleRestriction("Admin")]
     public class AdminCommands : CommandDefaults
     {
-
-
         [Command]
         public void Shutdown([Actor]IActor actor)
         {

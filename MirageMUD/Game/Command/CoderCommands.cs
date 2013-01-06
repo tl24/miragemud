@@ -2,7 +2,7 @@ using Mirage.Game.Communication;
 
 namespace Mirage.Game.Command
 {
-    [CommandDefaults(Roles="coder")]
+    [RoleRestriction("coder")]
     public class CoderCommands
     {
     }

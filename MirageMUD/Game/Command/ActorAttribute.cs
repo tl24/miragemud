@@ -8,7 +8,7 @@ namespace Mirage.Game.Command
     /// or invoker of the command.
     /// </summary>
     [AttributeUsageAttribute(System.AttributeTargets.Parameter)]
-    public class ActorAttribute : BaseArgumentAttribute
+    public class ActorAttribute : CommandArgumentAttribute
     {
     }
 }

@@ -17,7 +17,6 @@ namespace Mirage.Game.Command.Infrastructure
             this._promptMessage = prompt;
             this._cancellationMessage = cancellationMessage;
         }
-        #region ICommand Members
 
         public string Name
         {
@@ -27,11 +26,6 @@ namespace Mirage.Game.Command.Infrastructure
         public string[] Aliases
         {
             get { return _innerCommand.Aliases; }
-        }
-
-        public string[] Roles
-        {
-            get { return _innerCommand.Roles; }
         }
 
         public int Level
@@ -90,26 +84,10 @@ namespace Mirage.Game.Command.Infrastructure
             return _innerCommand.ShortHelp();
         }
 
-        #endregion
-
-        #region ICommand Members
-
-
-        public Type[] ClientTypes
-        {
-            get { return _innerCommand.ClientTypes; }
-        }
-
-        #endregion
-
-        #region ICommand Members
-
-
         public bool CanInvoke(IActor actor)
         {
             return _innerCommand.CanInvoke(actor);
         }
 
-        #endregion
     }
 }

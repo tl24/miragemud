@@ -3,10 +3,6 @@ namespace Mirage.Game.World
 {
     public abstract class ViewableBase : BaseData, IViewable
     {
-        //private string _title;
-        //private string _shortDescription;
-        //private string _longDescription;
-
         [Editor(Priority = 3)]
         public string Name { get; set; }
 
