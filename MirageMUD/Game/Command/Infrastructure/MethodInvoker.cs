@@ -251,47 +251,21 @@ namespace Mirage.Game.Command.Infrastructure
 
         private class CanidateCommand : IComparable<CanidateCommand>
         {
-            private ICommand _command;
-            private string _invokedName;
-            private object[] _arguments;
-            private IMessage _errorMessage;
-            private bool _validated;
-
             public CanidateCommand(ICommand command, string invokedName)
             {
-                this._command = command;
-                this._invokedName = invokedName;
+                this.Command = command;
+                this.InvokedName = invokedName;
             }
 
-            public ICommand Command
-            {
-                get { return this._command; }
-                set { this._command = value; }
-            }
+            public ICommand Command { get; set; }
 
-            public string InvokedName
-            {
-                get { return this._invokedName; }
-                set { this._invokedName = value; }
-            }
+            public string InvokedName { get; set; }
 
-            public object[] Arguments
-            {
-                get { return this._arguments; }
-                set { this._arguments = value; }
-            }
+            public object[] Arguments { get; set; }
 
-            public IMessage ErrorMessage
-            {
-                get { return this._errorMessage; }
-                set { this._errorMessage = value; }
-            }
+            public IMessage ErrorMessage { get; set; }
 
-            public bool Validated
-            {
-                get { return this._validated; }
-                set { this._validated = value; }
-            }
+            public bool Validated { get; set; }
 
             public bool IsExactName
             {

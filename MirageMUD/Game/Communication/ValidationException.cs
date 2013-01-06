@@ -35,27 +35,6 @@ namespace Mirage.Game.Communication
             _messageDefinition = messageDefition;
         }
 
-        /*
-        /// <summary>
-        /// Constructs the validation exception with the given message uri
-        /// </summary>
-        /// <param name="messageUri">message uri</param>
-        public ValidationException(string messageUri) 
-            : this(messageUri, null)
-        {
-        }
-
-        /// <summary>
-        /// Constructs the validation exception with the given message uri and inner exception
-        /// </summary>
-        /// <param name="messageUri">message uri</param>
-        /// <param name="innerException">the exception that is the cause of the current exception, or null if there is no inner exception</param>
-        public ValidationException(string messageUri, Exception innerException)
-            : this(MudFactory.GetObject<IMessageFactory>().GetMessage(messageUri), innerException)
-        {
-        }
-        */
-
         /// <summary>
         /// Constructs the validation exception with the given message
         /// </summary>
