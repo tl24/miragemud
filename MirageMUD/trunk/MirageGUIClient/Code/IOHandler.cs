@@ -102,13 +102,13 @@ namespace MirageGUI.Code
                 while (true)
                 {
                     int type = reader.ReadInt32();
-                    switch ((AdvancedClientTransmitType)type)
+                    switch ((AdvancedMessageBodyType)type)
                     {
-                        case AdvancedClientTransmitType.StringMessage:
+                        case AdvancedMessageBodyType.StringMessage:
                             name = "";
                             data = reader.ReadString();
                             break;
-                        case AdvancedClientTransmitType.JsonEncodedMessage:
+                        case AdvancedMessageBodyType.JsonEncodedMessage:
                             name = reader.ReadString();
                             data = reader.ReadString();
                             try
@@ -174,13 +174,13 @@ namespace MirageGUI.Code
         /// <param name="data">the data to send</param>
         public void SendString(string data)
         {
-            writer.Write((int)AdvancedClientTransmitType.StringMessage);
+            writer.Write((int)AdvancedMessageBodyType.StringMessage);
             writer.Write(data);
         }
 
         public void SendObject(string name, object o)
         {
-            writer.Write((int)AdvancedClientTransmitType.JsonEncodedMessage);
+            writer.Write((int)AdvancedMessageBodyType.JsonEncodedMessage);
             writer.Write(name);
             Serializer serializer = Serializer.GetSerializer(typeof(object));
             serializer.Context.ReferenceWritingType = SerializationContext.ReferenceOption.WriteIdentifier;
