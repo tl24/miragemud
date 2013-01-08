@@ -1,4 +1,4 @@
-﻿using Mirage.IO.Net;
+﻿using Mirage.Core.IO.Net;
 
 namespace Mirage.Game.IO.Net
 {

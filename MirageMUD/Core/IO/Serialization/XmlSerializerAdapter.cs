@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace Mirage.IO.Serialization
+namespace Mirage.Core.IO.Serialization
 {
     /// <summary>
     /// Serializes/Deserializes object into xml format

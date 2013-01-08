@@ -3,7 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using Mirage.Core.Collections;
 
-namespace Mirage.IO.Net
+namespace Mirage.Core.IO.Net
 {
     /// <summary>
     /// transmit type

@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using Mirage.Core.Transactions;
 
-namespace Mirage.IO.Serialization
+namespace Mirage.Core.IO.Serialization
 {
     public class ObjectStorageFactory
     {

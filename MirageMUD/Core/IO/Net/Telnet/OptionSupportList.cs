@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mirage.IO.Net.Telnet
+namespace Mirage.Core.IO.Net.Telnet
 {
     public class OptionSupportList
     {

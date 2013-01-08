@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using Mirage.Game.World;
-using Mirage.IO.Net;
+using Mirage.Core.IO.Net;
 
 namespace Mirage.Game.IO.Net
 {

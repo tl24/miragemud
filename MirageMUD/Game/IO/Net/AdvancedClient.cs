@@ -1,7 +1,7 @@
 ﻿using JsonExSerializer;
 using Mirage.Game.Command;
 using Mirage.Game.Communication;
-using Mirage.IO.Net;
+using Mirage.Core.IO.Net;
 using Mirage.Game.Command.Infrastructure;
 using Mirage.Core.Messaging;
 

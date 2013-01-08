@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Castle.Core;
-using Mirage.IO.Serialization;
+using Mirage.Core.IO.Serialization;
 
 namespace Mirage.Game.World
 {

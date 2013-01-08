@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mirage.IO.Net.Telnet.Options
+namespace Mirage.Core.IO.Net.Telnet.Options
 {
     public class NawsEventArgs : SubNegotiationEventArgs
     {

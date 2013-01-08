@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mirage.IO.Net.Telnet.Options
+namespace Mirage.Core.IO.Net.Telnet.Options
 {
     public struct EnvironValue
     {

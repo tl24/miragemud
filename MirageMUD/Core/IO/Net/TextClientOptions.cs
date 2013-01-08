@@ -1,5 +1,5 @@
 ﻿
-namespace Mirage.IO.Net
+namespace Mirage.Core.IO.Net
 {
     public class TextClientOptions
     {

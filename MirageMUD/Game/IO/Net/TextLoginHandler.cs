@@ -5,7 +5,7 @@ using Mirage.Game.Command;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
 using Mirage.Game.World.Query;
-using Mirage.IO.Net;
+using Mirage.Core.IO.Net;
 using Mirage.Core;
 using System.IO;
 using System.Configuration;

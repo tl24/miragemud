@@ -1,5 +1,5 @@
 ﻿
-namespace Mirage.IO.Net.Telnet.Options
+namespace Mirage.Core.IO.Net.Telnet.Options
 {
     /// <summary>
     /// Telnet option values

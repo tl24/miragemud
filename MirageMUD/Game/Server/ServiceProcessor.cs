@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using Mirage.Game.World;
 using Castle.Core.Logging;
-using Mirage.IO.Net;
+using Mirage.Core.IO.Net;
 using Mirage.Game.Communication;
 using Mirage.Core.Messaging;
+using Mirage.Core.IO.Net;
 
 namespace Mirage.Game.Server
 {

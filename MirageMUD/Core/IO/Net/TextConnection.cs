@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net.Sockets;
 using Mirage.Core.Collections;
-using Mirage.IO.Net.Telnet;
-using Mirage.IO.Net.Telnet.Options;
+using Mirage.Core.IO.Net.Telnet;
+using Mirage.Core.IO.Net.Telnet.Options;
 
-namespace Mirage.IO.Net
+namespace Mirage.Core.IO.Net
 {
     public class TextConnection : SocketConnection, IConnection
     {

@@ -249,10 +249,6 @@
       <Project>{05371036-8F2F-40B8-B306-462EFAAF67C8}</Project>
       <Name>Mirage.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IO\Mirage.IO.csproj">
-      <Project>{FEA3E089-043F-4934-9AE6-2E86ED1387B1}</Project>
-      <Name>Mirage.IO</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="World\Players\" />

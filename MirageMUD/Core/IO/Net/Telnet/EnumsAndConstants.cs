@@ -1,5 +1,5 @@
 ﻿
-namespace Mirage.IO.Net.Telnet
+namespace Mirage.Core.IO.Net.Telnet
 {
     /// <summary>
     /// RFC1143 state names 
