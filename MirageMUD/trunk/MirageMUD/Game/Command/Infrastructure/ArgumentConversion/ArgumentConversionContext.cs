@@ -1,49 +1,12 @@
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using Mirage.Game.Communication;
+using System.Linq;
+using System.Text;
 using Mirage.Game.World;
-using System;
 using Mirage.Core.Messaging;
 
-namespace Mirage.Game.Command.Infrastructure
+namespace Mirage.Game.Command.Infrastructure.ArgumentConversion
 {
-    public class Argument
-    {
-        public Argument(ParameterInfo parameter)
-        {
-            Parameter = parameter;
-        }
-
-        /// <summary>
-        /// The System.Reflection.ParameterInfo behind this argument
-        /// </summary>
-        public ParameterInfo Parameter { get; private set; }
-
-        /// <summary>
-        /// The handler that converts this argument
-        /// </summary>
-        public Func<Argument, ArgumentConversionContext, object> Handler { get; set; }
-
-        public object Convert(ArgumentConversionContext context)
-        {
-            return Handler(this, context);
-        }
-    }
-
-    /// <summary>
-    /// A list of arguments to be converted for a method
-    /// </summary>
-    public class ArgumentList : List<Argument>
-    {
-        public ArgumentList(ParameterInfo[] parameters)
-        {
-            foreach (ParameterInfo parm in parameters)
-            {
-                this.Add(new Argument(parm));
-            }
-        }
-    }
-
     /// <summary>
     /// Provides a context during argument conversion for ReflectedCommand.
     /// This will contain the input arguments and keep track of the current index
@@ -123,4 +86,5 @@ namespace Mirage.Game.Command.Infrastructure
         public string InvokedName { get; private set; }
 
     }
+
 }

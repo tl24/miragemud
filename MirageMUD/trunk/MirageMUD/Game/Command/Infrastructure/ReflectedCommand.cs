@@ -1,13 +1,15 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using log4net;
+using Mirage.Core.Messaging;
+using Mirage.Game.Command.Infrastructure.ArgumentConversion;
+using Mirage.Game.Command.Infrastructure.Guards;
 using Mirage.Game.Communication;
 using Mirage.Game.World;
 using Mirage.Game.World.Query;
-using System.Collections;
-using Mirage.Core.Messaging;
-using Mirage.Game.Command.Infrastructure.Guards;
-using System.Collections.Generic;
 
 
 namespace Mirage.Game.Command.Infrastructure
@@ -21,40 +23,30 @@ namespace Mirage.Game.Command.Infrastructure
 
         #region Member Variables
 
-        private ArgumentList _arguments;
-        private ReflectedCommandGroup _group;
+        private List<Argument> _arguments;
+        private IReflectedCommandGroup _group;
 
         #endregion Member Variables
 
         #region Constructor
 
-        /// <summary>
-        /// Factory method for creating an instance of ReflectedCommand
-        /// which is optionally wrapped by ConfirmationCommand if it needs
-        /// confirmation.
-        /// </summary>
-        /// <param name="methInfo">Reflection MethodInfo for the command method</param>
-        /// <returns>command</returns>
-        public static ICommand CreateInstance(MethodInfo methInfo, ReflectedCommandGroup commandGroup)
+        static ReflectedCommand()
         {
-            ICommand cmd = new ReflectedCommand(methInfo, commandGroup);
-            if (methInfo.IsDefined(typeof(ConfirmationAttribute), false))
-            {
-                ConfirmationAttribute confAttr = (ConfirmationAttribute)methInfo.GetCustomAttributes(typeof(ConfirmationAttribute), false)[0];
-                ConfirmationCommand confCmd = new ConfirmationCommand(cmd, confAttr.Message, confAttr.CancellationMessage);
-                cmd = confCmd;
-            }
-            return cmd;
+            Converters = new Dictionary<Type, Func<Argument, ArgumentConversionContext, object>>();
+            // initialize defaults
+            Converters[typeof(CustomParseAttribute)] = ConvertCustomParse;
+            Converters[typeof(ActorAttribute)] = ConvertActor;
+            Converters[typeof(ConstAttribute)] = ConvertConstArgument;
         }
 
         /// <summary>
-        /// Constructs an instace of the method helper
+        /// Constructs an instance of the method helper
         /// </summary>
         /// <param name="name">The name of the method</param>
         /// <param name="methInfo">Reflection methodInfo object</param>
         /// <param name="level">The minimum player level required to Execute the Command</param>
         /// <param name="description">A description of the method</param>
-        private ReflectedCommand(MethodInfo methInfo, ReflectedCommandGroup group)
+        public ReflectedCommand(MethodInfo methInfo, IReflectedCommandGroup group)
         {
             Name = methInfo.Name;
             Method = methInfo;
@@ -119,6 +111,7 @@ namespace Mirage.Game.Command.Infrastructure
 
         #region Properties
 
+        public static Dictionary<Type, Func<Argument, ArgumentConversionContext, object>> Converters { get; private set; }
 
         /// <summary>
         /// A description of what the Command does
@@ -134,13 +127,13 @@ namespace Mirage.Game.Command.Infrastructure
         /// <summary>
         /// Returns the expected arguments for this command's method
         /// </summary>
-        protected ArgumentList Arguments
+        protected List<Argument> Arguments
         {
             get
             {
                 if (_arguments == null)
                 {
-                    _arguments = new ArgumentList(Method.GetParameters());
+                    _arguments = Method.GetParameters().Select(p => new Argument(p)).ToList();
                     InitializeArgumentHandlers(_arguments);
                 }
                 return _arguments;
@@ -152,7 +145,7 @@ namespace Mirage.Game.Command.Infrastructure
 
         public override bool ConvertArguments(string invokedName, IActor actor, object[] arguments, out object[] convertedArguments, out IMessage errorMessage)
         {
-            ArgumentList expectedArgs = this.Arguments;
+            List<Argument> expectedArgs = this.Arguments;
 
             convertedArguments = new object[expectedArgs.Count];
             ArgumentConversionContext context = new ArgumentConversionContext(invokedName, actor, arguments);
@@ -178,7 +171,7 @@ namespace Mirage.Game.Command.Infrastructure
         /// Finds a conversion handler for each argument in the argument list
         /// </summary>
         /// <param name="arguments"></param>
-        protected void InitializeArgumentHandlers(ArgumentList arguments)
+        protected void InitializeArgumentHandlers(List<Argument> arguments)
         {
             if (_group != null)
             {
@@ -193,17 +186,16 @@ namespace Mirage.Game.Command.Infrastructure
             {
                 if (argument.Handler != null)
                     continue;
-
-                if (argument.Parameter.IsDefined(typeof(CustomParseAttribute), false))
-                    argument.Handler = ConvertCustomParse;
-                else if (argument.Parameter.IsDefined(typeof(ActorAttribute), false))
-                    argument.Handler = ConvertActor;
-                else if (argument.Parameter.IsDefined(typeof(LookupAttribute), false))
-                    argument.Handler = ConvertLookupArgument;
-                else if (argument.Parameter.IsDefined(typeof(ConstAttribute), true))
-                    argument.Handler = ConvertConstArgument;
-                else
+                var argAttr = argument.Parameter.GetCustomAttributes(typeof(CommandArgumentAttribute), false).FirstOrDefault();
+                if (argAttr != null && Converters.ContainsKey(argAttr.GetType()))
+                {
+                    argument.Handler = Converters[argAttr.GetType()];
+                }
+                if (argument.Handler == null)
+                {
+                    // still null, assign the default
                     argument.Handler = DefaultConverter;
+                }
             }
         }
 
@@ -211,7 +203,7 @@ namespace Mirage.Game.Command.Infrastructure
         /// Convert a custom parsed attribute
         /// </summary>
         /// <returns>true if converted</returns>
-        protected virtual object ConvertCustomParse(Argument argument, ArgumentConversionContext context)
+        protected static object ConvertCustomParse(Argument argument, ArgumentConversionContext context)
         {
             return context.GetCurrentAndIncrement();
         }
@@ -220,7 +212,7 @@ namespace Mirage.Game.Command.Infrastructure
         /// Converts the actor argument
         /// </summary>
         /// <returns>actor</returns>
-        protected virtual object ConvertActor(Argument argument, ArgumentConversionContext context)
+        protected static object ConvertActor(Argument argument, ArgumentConversionContext context)
         {
             // most of the time players are executing the command,
             // but sometimes it might be a mobile, make sure the command can
@@ -231,46 +223,16 @@ namespace Mirage.Game.Command.Infrastructure
             }
             else
             {
-                context.ErrorMessage = MessageFormatter.Instance.Format(context.Actor, context.Actor, CommonMessages.ErrorInvalidActor, null, new { actorType = context.Actor.GetType().Name });
+                context.ErrorMessage = new StringMessage("common.error.invalidactor", "This command can not be executed by a " + context.Actor.GetType().Name + ".\r\n");
                 return null;
             }
-        }
-
-        /// <summary>
-        /// Converts a lookup query argument by using the input to perform the query and returning the result
-        /// </summary>
-        /// <returns>the lookup result</returns>
-        protected virtual object ConvertLookupArgument(Argument argument, ArgumentConversionContext context)
-        {
-            object target = context.GetCurrentAndIncrement();
-            object result = null;
-            LookupAttribute attr = (LookupAttribute)argument.Parameter.GetCustomAttributes(typeof(LookupAttribute), false)[0];
-            if (argument.Parameter.GetType().IsInstanceOfType(target))
-            {
-                result = target;
-            }
-            else if (target is string)
-            {
-                var collection = MudFactory.GetObject<MudWorld>().ResolveUri(context.Actor, attr.BaseUri) as IEnumerable;
-                if (collection != null)
-                    result = collection.FindOne((string)target, attr.MatchType);
-            }
-            if (result == null && attr.IsRequired)
-            {
-                //ResourceMessage errorMessage = (ResourceMessage) MudFactory.GetObject<IMessageFactory>().GetMessage("common.error.NotHere");
-                //errorMessage["target"] = target;
-                var errorMessage = MessageFormatter.Instance.Format(context.Actor as Living, context.Actor, CommonMessages.ErrorNotHere, target);
-                context.ErrorMessage = errorMessage;
-                // return null below
-            }
-            return result;
         }
 
         /// <summary>
         /// Converts a constant argument by returning the constant
         /// </summary>
         /// <returns>the constant</returns>
-        protected virtual object ConvertConstArgument(Argument argument, ArgumentConversionContext context)
+        protected static object ConvertConstArgument(Argument argument, ArgumentConversionContext context)
         {
             object target = context.GetCurrentAndIncrement();
             ConstAttribute attr = (ConstAttribute)argument.Parameter.GetCustomAttributes(typeof(ConstAttribute), true)[0];
@@ -356,7 +318,7 @@ namespace Mirage.Game.Command.Infrastructure
                     error += " invoked by {1}.";
                     logger.Error(string.Format(error, invokedName, actor), e);
                     // send generic message to player
-                    return MessageFormatter.Instance.Format(actor, actor, CommonMessages.ErrorSystem);
+                    return new StringMessage("common.error.system", "A system error has occurred executing your command.");
                 }
             }
         }

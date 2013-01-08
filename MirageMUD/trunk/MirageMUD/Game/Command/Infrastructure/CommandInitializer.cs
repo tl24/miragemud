@@ -3,6 +3,8 @@ using System.Linq;
 using System.Reflection;
 using Castle.Core.Logging;
 using Mirage.Core.Collections;
+using Mirage.Game.Command.Infrastructure.ArgumentConversion;
+using System.Collections.Generic;
 
 namespace Mirage.Game.Command.Infrastructure
 {    
@@ -20,8 +22,16 @@ namespace Mirage.Game.Command.Infrastructure
             set { logger = value; }
         }
 
+        public IList<CustomAttributeConverter> Converters { get; set; }
+
+        public IReflectedCommandFactory CommandGroupFactory { get; set; }
+
         public void Execute()
         {
+            foreach (var converter in Converters)
+            {
+                ReflectedCommand.Converters[converter.AttributeType] = converter.Convert;
+            }
             foreach (Assembly assmbly in AssemblyList.Instance)
             {
                 Logger.Info("Looking for commands in " + assmbly);
@@ -32,7 +42,7 @@ namespace Mirage.Game.Command.Infrastructure
                 foreach (Type t in q)
                 {
                     Logger.Debug("Registering commands found in " + t);
-                    MethodInvoker.RegisterType(t);
+                    MethodInvoker.RegisterTypesMethods(t, CommandGroupFactory);
                 }
             }
         }
