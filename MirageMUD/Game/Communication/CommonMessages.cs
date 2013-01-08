@@ -16,7 +16,6 @@ namespace Mirage.Game.Communication
         public static readonly MessageDefinition ErrorNotHere = new MessageDefinition("common.error.NotHere", "${target} is not here.");
         public static readonly MessageDefinition ErrorPlayerNotPlaying = new MessageDefinition("common.error.playernotplaying", "${target} is not playing right now.");
         public static readonly MessageDefinition ErrorInvalidCommand = new MessageDefinition("common.error.invalidcommand", "Huh?");
-        public static readonly MessageDefinition ErrorInvalidActor = new MessageDefinition("common.error.invalidactor", "This command can not be executed by a ${actorType}.");
         public static readonly MessageDefinition ErrorSystem = new MessageDefinition("common.error.system", "A system error has occurred executing your command.");
 
         public static readonly MessageDefinition Welcome = new MessageDefinition("system.welcome", "\r\nWelcome to MirageMUD 0.1.  Still in development.");

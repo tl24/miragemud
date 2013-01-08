@@ -7,7 +7,7 @@ namespace Mirage.Game.Command.Infrastructure
     /// Placeholder for the class that contains commands
     /// Which allows for localized argument conversion
     /// </summary>
-    public class ReflectedCommandGroup
+    public class ReflectedCommandGroup : Mirage.Game.Command.Infrastructure.IReflectedCommandGroup
     {
         private Type _groupType;
         private object _instance;

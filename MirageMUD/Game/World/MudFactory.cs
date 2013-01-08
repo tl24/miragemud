@@ -18,6 +18,8 @@ using Mirage.Game.Communication;
 using Mirage.Game.World.Skills;
 using Castle.Facilities.Startable;
 using Castle.Facilities.Logging;
+using Mirage.Game.Command.Infrastructure.ArgumentConversion;
+using Mirage.Game.Command.Infrastructure;
 
 namespace Mirage.Game.World
 {
@@ -119,6 +121,7 @@ namespace Mirage.Game.World
 			    container.Register(Component.For<IMobileRepository>().ImplementedBy<MobileRepository>());
 			    container.Register(Component.For<ISkillRepository>().ImplementedBy<SkillRepository>());
 			    container.Register(Component.For<IViewManager>().ImplementedBy<ViewManager>().LifestyleTransient());
+                container.Register(Component.For<IReflectedCommandFactory>().ImplementedBy<ReflectedCommandGroupFactory>());
                 /*
                 // install default components
                 AssemblyList.Instance.ForEach(
@@ -153,6 +156,11 @@ namespace Mirage.Game.World
                     .Configure(component
                     => component.LifeStyle.Transient.Named(component.Implementation.Name))
                 );
+
+                container.Register(
+                    Classes.FromAssembly(a)
+                    .BasedOn<CustomAttributeConverter>()
+                    .WithServiceBase());
 
             }
         }

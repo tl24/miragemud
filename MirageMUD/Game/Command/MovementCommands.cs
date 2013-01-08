@@ -5,6 +5,8 @@ using Mirage.Game.World.Attribute;
 using Mirage.Game.World.Containers;
 using Mirage.Game.Command.Infrastructure;
 using Mirage.Core.Messaging;
+using Mirage.Game.Command.Infrastructure.ArgumentConversion;
+using System.Collections.Generic;
 
 namespace Mirage.Game.Command
 {
@@ -223,7 +225,7 @@ namespace Mirage.Game.Command
             return (DirectionType)dir;
         }
 
-        public override void InitializeArgumentHandlers(ArgumentList arguments)
+        public override void InitializeArgumentHandlers(IEnumerable<Argument> arguments)
         {
             foreach (Argument arg in arguments)
             {

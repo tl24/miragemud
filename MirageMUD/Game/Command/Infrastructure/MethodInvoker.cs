@@ -24,11 +24,11 @@ namespace Mirage.Game.Command.Infrastructure
         /// </summary>
         /// <see cref="Mirage.Core.Command.CommandAttribute"/>
         /// <param name="t">The type to register</param>
-        public static void RegisterType(Type t)
+        public static void RegisterTypesMethods(Type t, IReflectedCommandFactory commandFactory)
         {
             if (!registeredTypes.ContainsKey(t))
             {
-                GetTypeMethods(t);
+                GetTypeMethods(t, commandFactory);
                 registeredTypes[t] = true;
             }
         }
@@ -52,15 +52,15 @@ namespace Mirage.Game.Command.Infrastructure
             }
         }
 
-        private static void GetTypeMethods(Type objectType)
+        private static void GetTypeMethods(Type objectType, IReflectedCommandFactory commandFactory)
         {
-            ReflectedCommandGroup group = new ReflectedCommandGroup(objectType);
+            IReflectedCommandGroup group = commandFactory.GetCommandGroup(objectType);
 
             foreach (MethodInfo mInfo in objectType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static /* | BindingFlags.DeclaredOnly*/))
             {
                 if (mInfo.IsDefined(typeof(CommandAttribute), false))
                 {
-                    ICommand command = ReflectedCommand.CreateInstance(mInfo, group);
+                    ICommand command = commandFactory.CreateCommand(mInfo, group);
                     RegisterCommand(command);
                 }
             }
@@ -173,12 +173,6 @@ namespace Mirage.Game.Command.Infrastructure
             IEnumerable<ICommand> methods = GetAvailableCommands(commandName);
             bool fCommandInvoked = false;
             List<CanidateCommand> canidateCommands = new List<CanidateCommand>();
-
-            Type clientType = null;
-            if (actor is IPlayer && ((IPlayer)actor).Client != null)
-            {
-                clientType = ((IPlayer)actor).Client.GetType();
-            }
 
             foreach (ICommand method in methods)
             {
