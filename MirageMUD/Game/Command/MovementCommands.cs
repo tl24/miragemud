@@ -3,10 +3,12 @@ using Mirage.Game.Communication;
 using Mirage.Game.World;
 using Mirage.Game.World.Attribute;
 using Mirage.Game.World.Containers;
-using Mirage.Game.Command.Infrastructure;
+using Mirage.Game.Command;
 using Mirage.Core.Messaging;
-using Mirage.Game.Command.Infrastructure.ArgumentConversion;
+using Mirage.Game.Command.ArgumentConversion;
 using System.Collections.Generic;
+using Mirage.Core.Command;
+using Mirage.Core.Command.ArgumentConversion;
 
 namespace Mirage.Game.Command
 {

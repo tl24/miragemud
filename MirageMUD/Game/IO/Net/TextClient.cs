@@ -1,7 +1,7 @@
 ﻿using Mirage.Game.Command;
 using Mirage.Game.Communication;
 using Mirage.Core.IO.Net;
-using Mirage.Game.Command.Infrastructure;
+using Mirage.Game.Command;
 using Mirage.Core.Messaging;
 
 namespace Mirage.Game.IO.Net

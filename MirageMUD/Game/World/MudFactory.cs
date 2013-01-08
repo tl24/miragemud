@@ -18,8 +18,10 @@ using Mirage.Game.Communication;
 using Mirage.Game.World.Skills;
 using Castle.Facilities.Startable;
 using Castle.Facilities.Logging;
-using Mirage.Game.Command.Infrastructure.ArgumentConversion;
-using Mirage.Game.Command.Infrastructure;
+using Mirage.Game.Command.ArgumentConversion;
+using Mirage.Core.Command;
+using Mirage.Core.Command.ArgumentConversion;
+using Mirage.Game.Command;
 
 namespace Mirage.Game.World
 {

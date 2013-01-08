@@ -3,6 +3,7 @@ using Mirage.Core.Extensibility;
 using Mirage.Game.Communication;
 using Mirage.Game.World.Query;
 using Mirage.Core.Messaging;
+using Mirage.Core.Command;
 
 namespace Mirage.Game.World.Attribute
 {
@@ -76,10 +77,10 @@ namespace Mirage.Game.World.Attribute
         public void Lock()
         {
             if (Opened)
-                throw new ValidationException(Messages.CantLockWhenOpen);
+                throw new ValidationException(ToMessage(Messages.CantLockWhenOpen));
             
             if (Locked)
-                throw new ValidationException(Messages.ObjectAlreadyLocked);
+                throw new ValidationException(ToMessage(Messages.ObjectAlreadyLocked));
 
             _isLocked = true;
         }
@@ -93,7 +94,7 @@ namespace Mirage.Game.World.Attribute
         public void Unlock()
         {
             if (!Locked)
-                throw new ValidationException(Messages.ObjectAlreadyUnlocked);
+                throw new ValidationException(ToMessage(Messages.ObjectAlreadyUnlocked));
 
             _isLocked = false;
         }
@@ -113,7 +114,7 @@ namespace Mirage.Game.World.Attribute
         private void ValidateKey(ISupportUri key)
         {
             if (!IsKey(key))
-                throw new ValidationException(Messages.WrongKey);
+                throw new ValidationException(ToMessage(Messages.WrongKey));
         }
 
         /// <summary>
@@ -131,7 +132,7 @@ namespace Mirage.Game.World.Attribute
         public override void Open()
         {
             if (Locked)
-                throw new ValidationException(Messages.ObjectLocked);
+                throw new ValidationException(ToMessage(Messages.ObjectLocked));
             base.Open();
         }
 

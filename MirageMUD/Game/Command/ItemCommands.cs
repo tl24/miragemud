@@ -5,6 +5,7 @@ using Mirage.Game.World;
 using Mirage.Game.World.Containers;
 using Mirage.Game.World.Items;
 using Mirage.Game.World.Query;
+using Mirage.Core.Command;
 
 namespace Mirage.Game.Command
 {

@@ -1,6 +1,7 @@
 using System;
 using Mirage.Game.World.Query;
-using Mirage.Game.Command.Infrastructure;
+using Mirage.Game.Command;
+using Mirage.Core.Command;
 
 namespace Mirage.Game.Command
 {
