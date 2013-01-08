@@ -7,6 +7,7 @@ using Mirage.Game.World;
 using Mirage.Game.World.Query;
 using Mirage.Core;
 using Mirage.Core.Messaging;
+using Mirage.Core.Command;
 
 namespace Mirage.Game.Communication
 {

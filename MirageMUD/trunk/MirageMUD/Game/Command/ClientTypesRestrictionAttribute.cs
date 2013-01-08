@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Mirage.Game.Command.Infrastructure.Guards;
+using Mirage.Game.Command.Guards;
+using Mirage.Core.Command;
+using Mirage.Core.Command.Guards;
 
 namespace Mirage.Game.Command
 {
@@ -19,7 +21,7 @@ namespace Mirage.Game.Command
 
         public Type[] ClientTypes { get; private set; }
 
-        public override Infrastructure.Guards.ICommandGuard CreateGuard()
+        public override ICommandGuard CreateGuard()
         {
             return new ClientTypeGuard(ClientTypes);
         }

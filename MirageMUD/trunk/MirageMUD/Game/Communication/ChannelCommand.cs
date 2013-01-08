@@ -2,7 +2,9 @@ using System.Linq;
 using Mirage.Game.Command;
 using Mirage.Game.World;
 using Mirage.Core.Messaging;
-using Mirage.Game.Command.Infrastructure.Guards;
+using Mirage.Game.Command.Guards;
+using Mirage.Core.Command;
+using Mirage.Core.Command.Guards;
 
 namespace Mirage.Game.Communication
 {

@@ -1,6 +1,7 @@
 using Mirage.Core.Extensibility;
 using Mirage.Game.Communication;
 using Mirage.Core.Messaging;
+using Mirage.Core.Command;
 
 namespace Mirage.Game.World.Attribute
 {
@@ -32,6 +33,10 @@ namespace Mirage.Game.World.Attribute
             _isOpen = isOpen;
         }
 
+        protected static IMessage ToMessage(MessageDefinition msgDef)
+        {
+            return new StringMessage(msgDef.MessageType, msgDef.Name, msgDef.Text);
+        }
         #region IOpenable Members
 
         public bool Opened
@@ -43,7 +48,7 @@ namespace Mirage.Game.World.Attribute
         {
             if (Opened)
             {
-                throw new ValidationException(Messages.ObjectAlreadyOpen);
+                throw new ValidationException(ToMessage(Messages.ObjectAlreadyOpen));
             }
             else
             {
@@ -55,7 +60,7 @@ namespace Mirage.Game.World.Attribute
         {
             if (!Opened)
             {
-                throw new ValidationException(Messages.ObjectAlreadyClosed);
+                throw new ValidationException(ToMessage(Messages.ObjectAlreadyClosed));
             }
             else
             {
@@ -90,7 +95,7 @@ namespace Mirage.Game.World.Attribute
             if (o != null)
                 o.Open();
             else
-                throw new ValidationException(Messages.NotOpenable);
+                throw new ValidationException(ToMessage(Messages.NotOpenable));
         }
 
         /// <summary>
@@ -105,7 +110,7 @@ namespace Mirage.Game.World.Attribute
             if (o != null)
                 o.Close();
             else
-                throw new ValidationException(Messages.NotCloseable);
+                throw new ValidationException(ToMessage(Messages.NotCloseable));
         }
     }
 }

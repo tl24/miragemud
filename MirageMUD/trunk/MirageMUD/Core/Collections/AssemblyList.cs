@@ -17,7 +17,6 @@ namespace Mirage.Core.Collections
         {
             _assemblies = new System.Collections.Generic.HashSet<Assembly>();            
             RegisterAssembly(this.GetType().Assembly);
-            RegisterAssembly(Assembly.Load("Mirage.IO"));
             RegisterAssembly(Assembly.Load("Mirage.Game"));
         }
 

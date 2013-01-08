@@ -6,8 +6,10 @@ using Mirage.Game.World.Attribute;
 using Mirage.Game.World.Query;
 using Mirage.Core.IO.Net;
 using System.Collections;
-using Mirage.Game.Command.Infrastructure;
+using Mirage.Game.Command;
 using Mirage.Core.Messaging;
+using Mirage.Core.Command;
+
 
 namespace Mirage.Game.Command
 {

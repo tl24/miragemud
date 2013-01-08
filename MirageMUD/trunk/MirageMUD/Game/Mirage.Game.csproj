@@ -91,49 +91,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\AbstractStateMachine.cs" />
-    <Compile Include="Command\ActorAttribute.cs" />
     <Compile Include="Command\AdminCommands.cs" />
     <Compile Include="Command\AreaBuilder.cs" />
-    <Compile Include="Command\CommandRestriction.cs" />
     <Compile Include="Command\ClientTypesRestrictionAttribute.cs" />
-    <Compile Include="Command\Infrastructure\ArgumentConversion\Argument.cs" />
-    <Compile Include="Command\Infrastructure\ArgumentConversion\ArgumentConversionContext.cs" />
-    <Compile Include="Command\Infrastructure\ArgumentConversion\CustomAttributeConverter.cs" />
-    <Compile Include="Command\Infrastructure\ArgumentConversion\LookupAttributeConverter.cs" />
-    <Compile Include="Command\Infrastructure\IReflectedCommandGroup.cs" />
-    <Compile Include="Command\Infrastructure\IReflectedCommandFactory.cs" />
-    <Compile Include="Command\Infrastructure\ReflectedCommandGroupFactory.cs" />
-    <Compile Include="Command\RoleRestrictionAttribute.cs" />
-    <Compile Include="Command\Infrastructure\ArgumentParser.cs" />
-    <Compile Include="Command\Infrastructure\CommandArgumentAttribute.cs" />
+    <Compile Include="Command\ArgumentConversion\LookupAttributeConverter.cs" />
+    <Compile Include="Command\CommandInitializer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Command\ReflectedCommandGroupFactory.cs" />
     <Compile Include="Command\CoderCommands.cs" />
-    <Compile Include="Command\CommandAttribute.cs" />
-    <Compile Include="Command\CommandBase.cs" />
     <Compile Include="Command\CommandDefaults.cs" />
-    <Compile Include="Command\Infrastructure\CommandGroup.cs" />
-    <Compile Include="Command\Infrastructure\CommandInitializer.cs" />
     <Compile Include="Command\ConfirmationAttribute.cs" />
-    <Compile Include="Command\Infrastructure\ConfirmationCommand.cs" />
-    <Compile Include="Command\Infrastructure\ConfirmationInterpreter.cs" />
-    <Compile Include="Command\ConstAttribute.cs" />
-    <Compile Include="Command\CustomParseAttribute.cs" />
-    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\ConfirmationCommand.cs" />
+    <Compile Include="Command\ConfirmationInterpreter.cs" />
     <Compile Include="Command\ILoginInputHandler.cs" />
-    <Compile Include="Command\Infrastructure\Guards\ClientTypeGuard.cs" />
-    <Compile Include="Command\Infrastructure\Guards\ICommandGuard.cs" />
-    <Compile Include="Command\Infrastructure\Interpret.cs" />
-    <Compile Include="Command\Infrastructure\Guards\LevelGuard.cs" />
-    <Compile Include="Command\Infrastructure\Guards\RoleGuard.cs" />
+    <Compile Include="Command\Guards\ClientTypeGuard.cs" />
+    <Compile Include="Command\Interpret.cs" />
     <Compile Include="Command\ItemCommands.cs" />
-    <Compile Include="Command\LevelRestrictionAttribute.cs" />
     <Compile Include="Command\LookupAttribute.cs" />
-    <Compile Include="Command\Infrastructure\MethodInvoker.cs" />
     <Compile Include="Command\MiscCommands.cs" />
     <Compile Include="Command\MovementCommands.cs" />
     <Compile Include="Command\CommunicationCommands.cs" />
     <Compile Include="Command\PlayerCommands.cs" />
-    <Compile Include="Command\Infrastructure\ReflectedCommand.cs" />
-    <Compile Include="Command\Infrastructure\ReflectedCommandGroup.cs" />
+    <Compile Include="Command\ReflectedCommandGroup.cs" />
     <Compile Include="Communication\BuilderMessages\LoginMessage.cs" />
     <Compile Include="Communication\BuilderMessages\UpdateConfirmationMessage.cs" />
     <Compile Include="Communication\Channel.cs" />
@@ -149,7 +129,6 @@
     <Compile Include="Communication\Namespace.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Communication\ValidationException.cs" />
     <Compile Include="Events\EventBase.cs" />
     <Compile Include="Events\EventEnums.cs" />
     <Compile Include="Events\IEvent.cs" />
@@ -191,7 +170,6 @@
     <Compile Include="World\EditorCollectionAttribute.cs" />
     <Compile Include="World\EditorParentAttribute.cs" />
     <Compile Include="World\EditorTypeSelectorAttribute.cs" />
-    <Compile Include="World\IActor.cs" />
     <Compile Include="World\IArea.cs" />
     <Compile Include="World\IAreaRepository.cs" />
     <Compile Include="World\IMobileRepository.cs" />
