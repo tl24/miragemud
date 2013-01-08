@@ -9,7 +9,7 @@ using Castle.Windsor.Configuration.Interpreters;
 using Mirage.Core;
 using Mirage.Core.Collections;
 using Mirage.Game.IO.Net;
-using Mirage.IO.Net;
+using Mirage.Core.IO.Net;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Facilities.FactorySupport;
 using System.Configuration;

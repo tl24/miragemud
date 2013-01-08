@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Threading;
 
-namespace Mirage.IO.Net
+namespace Mirage.Core.IO.Net
 {
     public abstract class SocketConnection : IConnection, IDisposable
     {

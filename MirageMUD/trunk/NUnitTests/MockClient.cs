@@ -3,7 +3,7 @@ using Mirage.Game.Command;
 using Mirage.Game.Communication;
 using Mirage.Game.IO.Net;
 using Mirage.Game.World;
-using Mirage.IO.Net;
+using Mirage.Core.IO.Net;
 using Mirage.Core.Messaging;
 
 namespace NUnitTests

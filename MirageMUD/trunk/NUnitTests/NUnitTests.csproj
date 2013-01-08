@@ -121,10 +121,6 @@
       <Project>{A8F2A17F-F67D-4BB9-AE09-F3E0784CBB99}</Project>
       <Name>Mirage.Game</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MirageMUD\IO\Mirage.IO.csproj">
-      <Project>{FEA3E089-043F-4934-9AE6-2E86ED1387B1}</Project>
-      <Name>Mirage.IO</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MirageMUD\MirageMUD.csproj">
       <Project>{EFADF99D-5747-445E-9FC7-94CB2A17BE45}</Project>
       <Name>MirageMUD</Name>

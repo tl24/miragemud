@@ -6,8 +6,8 @@ using Mirage.Core.Collections;
 using Mirage.Game.Communication;
 using Mirage.Game.IO.Net;
 using Mirage.Game.World;
-using Mirage.IO.Net;
-using Mirage.IO.Serialization;
+using Mirage.Core.IO.Net;
+using Mirage.Core.IO.Serialization;
 using Mirage.Core.Messaging;
 
 namespace Mirage.Game.Server

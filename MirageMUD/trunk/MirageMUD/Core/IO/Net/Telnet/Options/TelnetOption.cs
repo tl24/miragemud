@@ -1,5 +1,5 @@
 ﻿
-namespace Mirage.IO.Net.Telnet
+namespace Mirage.Core.IO.Net.Telnet
 {
     /// <summary>
     /// Base telnet option class which handles state for a single option.  Derived classes

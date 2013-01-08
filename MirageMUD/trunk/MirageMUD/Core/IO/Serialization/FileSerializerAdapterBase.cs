@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Mirage.Core.Transactions;
 
-namespace Mirage.IO.Serialization
+namespace Mirage.Core.IO.Serialization
 {
 
     /// <summary>

@@ -7,7 +7,7 @@ using System.Threading;
 using Mirage.Core.Collections;
 using Castle.Core;
 
-namespace Mirage.IO.Net
+namespace Mirage.Core.IO.Net
 {
 
     /// <summary>

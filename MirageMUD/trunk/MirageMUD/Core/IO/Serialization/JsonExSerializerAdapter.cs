@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using JsonExSerializer;
 
-namespace Mirage.IO.Serialization
+namespace Mirage.Core.IO.Serialization
 {
     /// <summary>
     /// Persistence adapter that uses file storage with the object encoded

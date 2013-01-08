@@ -1,5 +1,5 @@
 
-namespace Mirage.IO.Net
+namespace Mirage.Core.IO.Net
 {
     /// <summary>
     ///     The connection state for a player.  A player goes through

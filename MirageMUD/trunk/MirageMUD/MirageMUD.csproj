@@ -95,10 +95,6 @@
       <Project>{A8F2A17F-F67D-4BB9-AE09-F3E0784CBB99}</Project>
       <Name>Mirage.Game</Name>
     </ProjectReference>
-    <ProjectReference Include="IO\Mirage.IO.csproj">
-      <Project>{FEA3E089-043F-4934-9AE6-2E86ED1387B1}</Project>
-      <Name>Mirage.IO</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

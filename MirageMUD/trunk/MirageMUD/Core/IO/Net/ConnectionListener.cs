@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using Castle.Core.Logging;
 
-namespace Mirage.IO.Net
+namespace Mirage.Core.IO.Net
 {
     /// <summary>
     /// Base class for ClientFactory implementations.  Provides most of the framework for a client factory.

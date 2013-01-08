@@ -1,5 +1,5 @@
 ﻿
-namespace Mirage.IO.Net.Telnet.Options
+namespace Mirage.Core.IO.Net.Telnet.Options
 {
     public class TermTypeEventArgs : SubNegotiationEventArgs
     {
