@@ -1,7 +1,7 @@
 ﻿using Mirage.Game.World;
 using NUnit.Framework;
 
-namespace NUnitTests.Data
+namespace NUnitTests.Game.World
 {
     [TestFixture]
     public class PlayerTest
@@ -22,13 +22,13 @@ namespace NUnitTests.Data
 
             actual = target.ComparePassword(otherPassword);
 
-            Assert.AreEqual(expected, actual, "rom.Data.Player.ComparePassword did not return the expected value.");
+            Assert.AreEqual(expected, actual, "Player.ComparePassword did not return the expected value.");
 
             target.SetPassword("someotherpassword");
             expected = false;
             actual = target.ComparePassword(otherPassword);
 
-            Assert.AreEqual(expected, actual, "rom.Data.Player.ComparePassword did not return the expected value.");
+            Assert.AreEqual(expected, actual, "Player.ComparePassword did not return the expected value.");
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace NUnitTests.Data
             target.SetPassword(val);
 
 
-            Assert.AreNotEqual(val, target.Password, "rom.Data.Player.password was not encrypted.");
+            Assert.AreNotEqual(val, target.Password, "Player.password was not encrypted.");
         }
     }
 
