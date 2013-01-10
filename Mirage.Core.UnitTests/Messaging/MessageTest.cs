@@ -1,4 +1,3 @@
-using Mirage.Game.Communication;
 using NUnit.Framework;
 using Mirage.Core.Messaging;
 
@@ -20,18 +19,18 @@ namespace NUnitTests.Communication
         public void TestIsMatchNamespace()
         {
             Message target = new Message(MessageType.Information, "negotiation.authentication.test");
-            Assert.IsTrue(target.IsMatch(Namespaces.Authentication));
-            Assert.IsTrue(target.IsMatch(Namespaces.Negotiation));
-            Assert.IsFalse(target.IsMatch(Namespaces.CommonError));
+            Assert.IsTrue(target.IsMatch("negotiation.authentication"));
+            Assert.IsTrue(target.IsMatch("negotiation"));
+            Assert.IsFalse(target.IsMatch("common.error"));
         }
 
         [Test]
         public void TestIsMatchName()
         {
             Message target = new Message(MessageType.Information, "negotiation.authentication.test");
-            Assert.IsTrue(target.IsMatch(Namespaces.Authentication, "test"));
-            Assert.IsTrue(target.IsMatch(Namespaces.Authentication + ".test"));
-            Assert.IsFalse(target.IsMatch(Namespaces.Negotiation, "test"));
+            Assert.IsTrue(target.IsMatch("negotiation.authentication", "test"));
+            Assert.IsTrue(target.IsMatch("negotiation.authentication" + ".test"));
+            Assert.IsFalse(target.IsMatch("negotiation", "test"));
         }
     }
 }

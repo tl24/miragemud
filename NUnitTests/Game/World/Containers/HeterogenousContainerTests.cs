@@ -4,7 +4,7 @@ using NUnit.Framework;
 using NUnitTests.Mock;
 using System.Linq;
 
-namespace NUnitTests.Data.Containers
+namespace NUnitTests.Game.World.Containers
 {
     [TestFixture]
     public class HeterogenousContainerTests
