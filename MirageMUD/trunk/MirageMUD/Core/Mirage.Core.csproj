@@ -103,14 +103,16 @@
     <Compile Include="Command\IReflectedCommandFactory.cs" />
     <Compile Include="Command\IReflectedCommandGroup.cs" />
     <Compile Include="Command\LevelRestrictionAttribute.cs" />
-    <Compile Include="Command\MethodInvoker.cs" />
+    <Compile Include="Command\CommandInvoker.cs" />
     <Compile Include="Command\ReflectedCommand.cs" />
     <Compile Include="Command\RoleRestrictionAttribute.cs" />
     <Compile Include="Command\ValidationException.cs" />
     <Compile Include="IO\Net\AdvancedConnection.cs" />
+    <Compile Include="IO\Net\ClientBase.cs" />
     <Compile Include="IO\Net\ConnectedState.cs" />
     <Compile Include="IO\Net\ConnectionListener.cs" />
     <Compile Include="IO\Net\ConnectionManager.cs" />
+    <Compile Include="IO\Net\IClient.cs" />
     <Compile Include="IO\Net\IConnection.cs" />
     <Compile Include="IO\Net\IConnectionListener.cs" />
     <Compile Include="IO\Net\SocketConnection.cs" />
@@ -125,6 +127,7 @@
     <Compile Include="IO\Net\Telnet\TelnetCommands.cs" />
     <Compile Include="IO\Net\Telnet\TelnetOptionProcessor.cs" />
     <Compile Include="IO\Net\Telnet\TelnetState.cs" />
+    <Compile Include="IO\Net\TextClientBase.cs" />
     <Compile Include="IO\Net\TextClientOptions.cs" />
     <Compile Include="IO\Net\TextConnection.cs" />
     <Compile Include="IO\Serialization\FileSerializerAdapterBase.cs" />
@@ -138,6 +141,8 @@
     <Compile Include="Messaging\MessageName.cs" />
     <Compile Include="Messaging\StringMessage.cs" />
     <Compile Include="ReflectionUtils.cs" />
+    <Compile Include="Server\IInitializer.cs" />
+    <Compile Include="Server\ServerBase.cs" />
     <Compile Include="StringUtils.cs" />
     <Compile Include="Collections\SynchronizedQueue.cs" />
     <Compile Include="Extensibility\TypeSupports.cs" />

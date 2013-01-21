@@ -22,6 +22,7 @@ using Mirage.Game.Command.ArgumentConversion;
 using Mirage.Core.Command;
 using Mirage.Core.Command.ArgumentConversion;
 using Mirage.Game.Command;
+using Mirage.Core.Server;
 
 namespace Mirage.Game.World
 {
@@ -141,8 +142,7 @@ namespace Mirage.Game.World
                     Classes.FromAssembly(a)
                     .BasedOn<IInitializer>()
                     .WithService.FromInterface()
-                    .Configure(component
-                    => component.LifeStyle.Transient.Named(component.Implementation.Name))
+                    .LifestyleTransient()                    
                 );
 
                 container.Register(
@@ -154,7 +154,7 @@ namespace Mirage.Game.World
 
                 container.Register(
                     Classes.FromAssembly(a)
-                    .BasedOn<IClient>()
+                    .BasedOn<IClient<ClientPlayerState>>()
                     .Configure(component
                     => component.LifeStyle.Transient.Named(component.Implementation.Name))
                 );

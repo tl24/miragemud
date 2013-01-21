@@ -1,17 +1,17 @@
-﻿using Mirage.Game.Command;
-using Mirage.Game.Communication;
-using Mirage.Game.World;
-using Mirage.Core.IO.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Mirage.Core.Messaging;
 
-namespace Mirage.Game.IO.Net
+namespace Mirage.Core.IO.Net
 {
     /// <summary>
     /// Handles communication to the Connection, such as translating messages
     /// into the the correct format that the connection understands.  A client type
     /// is usually paired to a connection type.
     /// </summary>
-    public interface IClient
+    public interface IClient<TState> where TState : new()
     {
         /// <summary>
         /// Close the client and its underlying connection
@@ -42,22 +42,9 @@ namespace Mirage.Game.IO.Net
         bool CommandRead { get; set; }
 
         /// <summary>
-        /// The current connected state of the Client
+        /// State for the client such as the connected player instance and any other information necessary
         /// </summary>
-        ConnectedState State { get; set; }
-
-        /// <summary>
-        /// The player object associated with this client
-        /// </summary>
-        IPlayer Player { get; set; }
-
-        /// <summary>
-        /// The state handler for the client that will receive a series of
-        /// input from the client.  If this is non-null it will take precedence over the
-        /// command interpreter.
-        /// </summary>
-        /// <see cref="Mirage.Core.Command.LoginStateHandler"/>
-        ILoginInputHandler LoginHandler { get; set; }
+        TState ClientState { get; }
 
         /// <summary>
         /// Checks to see if the client socket is still open

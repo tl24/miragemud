@@ -5,6 +5,7 @@ using Mirage.Game.IO.Net;
 using Mirage.Game.World.Query;
 using Mirage.Game.Command;
 using Mirage.Core.Command;
+using Mirage.Core.IO.Net;
 
 namespace Mirage.Game.World
 {
@@ -13,7 +14,7 @@ namespace Mirage.Game.World
     /// </summary>
     public interface IPlayer : IActor
     {
-        IClient Client { get; set; }
+        IClient<ClientPlayerState> Client { get; set; }
 
         string Name { get; }
 

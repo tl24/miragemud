@@ -13,6 +13,7 @@ using Mirage.Game.World.Query;
 using Mirage.Game.World.Skills;
 using Mirage.Game.Command;
 using Mirage.Core.Messaging;
+using Mirage.Core.IO.Net;
 
 namespace Mirage.Game.World
 {
@@ -108,7 +109,7 @@ namespace Mirage.Game.World
         /// </summary>
         [XmlIgnore]
         [JsonExIgnore]
-        public IClient Client { get; set; }
+        public IClient<ClientPlayerState> Client { get; set; }
 
         /// <summary>
         ///     The Command interpreters in effect for this player

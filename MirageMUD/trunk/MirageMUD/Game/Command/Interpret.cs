@@ -76,7 +76,7 @@ namespace Mirage.Game.Command
         /// <returns>true if executed successfully</returns>
         public bool Execute(IActor actor, string input)
         {
-            return MethodInvoker.Interpret(actor, input);
+            return CommandInvoker.Instance.Interpret(actor, input);
         }
 
         

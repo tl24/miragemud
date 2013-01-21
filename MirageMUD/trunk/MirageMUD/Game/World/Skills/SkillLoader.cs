@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Mirage.Core.Server;
 
 namespace Mirage.Game.World.Skills
 {
@@ -13,11 +14,6 @@ namespace Mirage.Game.World.Skills
         public SkillsLoader(ISkillRepository skillRepository)
         {
             this.skillRepository = skillRepository;
-        }
-
-        public string Name
-        {
-            get { return "Skills Loader"; }
         }
 
         public void Execute()

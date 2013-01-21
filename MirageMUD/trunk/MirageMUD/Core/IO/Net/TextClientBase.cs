@@ -1,34 +1,32 @@
-﻿using Mirage.Game.Command;
-using Mirage.Game.Communication;
-using Mirage.Core.IO.Net;
-using Mirage.Game.Command;
+﻿using Mirage.Core.IO.Net;
 using Mirage.Core.Messaging;
 
-namespace Mirage.Game.IO.Net
+namespace Mirage.Core.IO.Net
 {
     /// <summary>
     /// Handles communication with a text connection
     /// </summary>
-    public class TextClient : TextClientBase<ClientPlayerState>
+    public abstract class TextClientBase<TClientState> : ClientBase<TClientState> where TClientState : new()
     {
         TextConnection _connection;
 
-        public TextClient(TextConnection connection) : base(connection)
+        public TextClientBase(TextConnection connection)
+            : base(connection)
         {
             _connection = connection;
         }
 
-        protected override void OnInputReceived(string input)
+        public override void ProcessInput()
         {
-            if (ClientState.LoginHandler != null)
+            string input;
+            if (_connection.TryGetInput(out input))
             {
-                ClientState.LoginHandler.HandleInput(input);
-            }
-            else if (input.Trim().Length > 0)
-            {
-                Interpreter.ExecuteCommand(ClientState.Player, input);
+                CommandRead = true;
+                OnInputReceived(input);
             }
         }
+
+        protected abstract void OnInputReceived(string input);
 
         /// <summary>
         /// Write the specified text to the descriptors output buffer. 

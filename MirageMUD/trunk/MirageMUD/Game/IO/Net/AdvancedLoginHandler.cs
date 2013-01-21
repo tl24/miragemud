@@ -3,6 +3,7 @@ using Mirage.Game.Communication;
 using Mirage.Game.Communication.BuilderMessages;
 using Mirage.Game.World;
 using Mirage.Core.Messaging;
+using Mirage.Core.IO.Net;
 
 namespace Mirage.Game.IO.Net
 {
@@ -14,7 +15,7 @@ namespace Mirage.Game.IO.Net
     {
         private IPlayerRepository _playerRepository;
 
-        public AdvancedLoginHandler(IClient client)
+        public AdvancedLoginHandler(IClient<ClientPlayerState> client)
         {
             Client = client;
             _playerRepository = MudFactory.GetObject<IPlayerRepository>();
@@ -39,10 +40,9 @@ namespace Mirage.Game.IO.Net
                 }
                 else
                 {
-                    PlayerFinalizer finalizer = new PlayerFinalizer(Client, p);
-                    finalizer.Finalize(false);
+                    PlayerFinalizer.Finalize(false, p, Client);
 
-                    Client.LoginHandler = null;
+                    Client.ClientState.LoginHandler = null;
                     Client.Write(new StringMessage(MessageType.Confirmation, "negotiation.authentication.Login", "Login Successful"));
                 }
             }
@@ -50,6 +50,6 @@ namespace Mirage.Game.IO.Net
 
         #endregion
 
-        public IClient Client { get; set; }
+        public IClient<ClientPlayerState> Client { get; set; }
     }
 }

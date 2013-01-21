@@ -15,7 +15,7 @@ namespace NUnitTests.Communication
             p.ShortDescription = "a " + title;
             p.Gender = gender;
             MockClient client = new MockClient();
-            client.Player = p;
+            client.ClientState.Player = p;
             p.Client = client;
             return p;
         }

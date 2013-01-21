@@ -1,18 +1,16 @@
-﻿using Mirage.Game.Command;
-using Mirage.Game.Communication;
-using Mirage.Game.World;
-using Mirage.Core.IO.Net;
+﻿using Mirage.Core.IO.Net;
 using Mirage.Core.Messaging;
 
-namespace Mirage.Game.IO.Net
+namespace Mirage.Core.IO.Net
 {
-    public abstract class ClientBase : IClient
+    public abstract class ClientBase<TClientState> : IClient<TClientState> where TClientState : new()
     {
         private IConnection _connection;
 
         public ClientBase(IConnection connection)
         {
             _connection = connection;
+            ClientState = new TClientState();
         }
 
         public void Close()
@@ -28,10 +26,6 @@ namespace Mirage.Game.IO.Net
 
         public bool CommandRead { get; set; }
 
-        public ConnectedState State { get; set; }
-
-        public IPlayer Player { get; set; }
-
         public bool IsOpen
         {
             get { return _connection.IsOpen; }
@@ -42,11 +36,6 @@ namespace Mirage.Game.IO.Net
             get { return _connection.Address; }
         }
 
-        #region IConnectionAdapter Members
-
-
-        public ILoginInputHandler LoginHandler { get; set; }
-
-        #endregion
+        public TClientState ClientState { get; private set; }
     }
 }

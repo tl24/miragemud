@@ -134,13 +134,11 @@
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\IEventContainer.cs" />
     <Compile Include="Events\SensoryEvent.cs" />
-    <Compile Include="IInitializer.cs" />
     <Compile Include="IO\Net\AdvancedClient.cs" />
     <Compile Include="IO\Net\ClientListener.cs" />
-    <Compile Include="IO\Net\ClientBase.cs" />
     <Compile Include="IO\Net\ClientFactory.cs" />
     <Compile Include="IO\Net\AdvancedLoginHandler.cs" />
-    <Compile Include="IO\Net\IClient.cs" />
+    <Compile Include="IO\Net\ClientPlayerState.cs" />
     <Compile Include="IO\Net\IClientFactory.cs" />
     <Compile Include="IO\Net\PlayerFinalizer.cs" />
     <Compile Include="IO\Net\TextClient.cs" />

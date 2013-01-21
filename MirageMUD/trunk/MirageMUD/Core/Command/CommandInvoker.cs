@@ -5,53 +5,70 @@ using Mirage.Core.Collections;
 using Mirage.Core.Messaging;
 namespace Mirage.Core.Command
 {
-    public static class MethodInvoker
+    /// <summary>
+    /// Parses and Invokes commands from the players.  The commands are registered first by
+    /// registering types that expose commands or command instances themselves
+    /// </summary>
+    public class CommandInvoker
     {
-        private static Dictionary<Type, bool> registeredTypes;
-        private static IIndexedDictionary<ICommand> methods;
+        private static CommandInvoker _instance = new CommandInvoker();
 
-        static MethodInvoker()
+        private HashSet<Type> _registeredTypes;
+        private IIndexedDictionary<ICommand> _methods;
+        private HashSet<char> _singleCharCommands;
+
+        private CommandInvoker()
         {
-            registeredTypes = new Dictionary<Type, bool>();
-            methods = new IndexedDictionary<ICommand>();
+            _registeredTypes = new HashSet<Type>();
+            _methods = new IndexedDictionary<ICommand>();
+            _singleCharCommands = new HashSet<char>();
         }
 
         /// <summary>
-        ///     Register a class that exposes Command methods.
-        ///     The methods must be marked with the CommandAttribute
+        /// Gets the static instance of the class instance.
         /// </summary>
-        /// <see cref="Mirage.Core.Command.CommandAttribute"/>
-        /// <param name="t">The type to register</param>
-        public static void RegisterTypesMethods(Type t, IReflectedCommandFactory commandFactory)
+        public static CommandInvoker Instance
         {
-            if (!registeredTypes.ContainsKey(t))
-            {
-                GetTypeMethods(t, commandFactory);
-                registeredTypes[t] = true;
-            }
+            get { return _instance; }
         }
+
 
         /// <summary>
         /// Registers a command with the system
         /// </summary>
         /// <param name="command">the command to register</param>
-        public static void RegisterCommand(ICommand command)
+        public void RegisterCommand(ICommand command)
         {
             if (command.Aliases != null && command.Aliases.Length > 0)
             {
                 foreach (string alias in command.Aliases)
                 {
-                    methods.Put(alias, command);
+                    _methods.Put(alias, command);
+                    if (alias.Length == 1 && !char.IsLetterOrDigit(alias[0]))
+                        _singleCharCommands.Add(alias[0]);
                 }
             }
             else
             {
-                methods.Put(command.Name, command);
+                _methods.Put(command.Name, command);
+                if (command.Name.Length == 1 && !char.IsLetterOrDigit(command.Name[0]))
+                    _singleCharCommands.Add(command.Name[0]);
             }
         }
 
-        private static void GetTypeMethods(Type objectType, IReflectedCommandFactory commandFactory)
+        /// <summary>
+        /// Register a class that exposes Command methods.
+        /// The methods must be marked with the CommandAttribute
+        /// </summary>
+        /// <param name="objectType">Type of the object containing command methods</param>
+        /// <param name="commandFactory">The command factory for creating commands from the methods.</param>
+        /// <see cref="Mirage.Core.Command.CommandAttribute"/>
+        public void RegisterTypeMethods(Type objectType, IReflectedCommandFactory commandFactory)
         {
+            if (_registeredTypes.Contains(objectType))
+            {
+                return;
+            }
             IReflectedCommandGroup group = commandFactory.GetCommandGroup(objectType);
 
             foreach (MethodInfo mInfo in objectType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static /* | BindingFlags.DeclaredOnly*/))
@@ -62,18 +79,24 @@ namespace Mirage.Core.Command
                     RegisterCommand(command);
                 }
             }
+            _registeredTypes.Add(objectType);
         }
 
-        public static bool Interpret(IActor actor, string commandString)
+        /// <summary>
+        /// parse the command from the actor and invoke it if it's a valid command
+        /// </summary>
+        /// <param name="actor">the actor</param>
+        /// <param name="commandString">the command and arguments</param>
+        /// <returns>true if invoked successfully</returns>
+        public bool Interpret(IActor actor, string commandString)
         {
             ArgumentParser parser;
             string commandName;
             string args;
 
-            //TODO: Come up with a better method for single character commands
-            if (commandString.StartsWith("'"))
+            if (commandString != null && commandString.Length > 0 && _singleCharCommands.Contains(commandString[0]))
             {
-                commandName = "'";
+                commandName = commandString.Substring(0, 1);
                 args = commandString.Substring(1);
             }
             else
@@ -165,7 +188,14 @@ namespace Mirage.Core.Command
             return fCommandInvoked;
         }
 
-        public static bool Interpret(IActor actor, string commandName, object[] arguments)
+        /// <summary>
+        /// Invokes a command with provided arguments
+        /// </summary>
+        /// <param name="actor">the actor</param>
+        /// <param name="commandName">the name of the command to invoke</param>
+        /// <param name="arguments">the arguments for the command</param>
+        /// <returns>true if a command was invoked successfully</returns>
+        public bool Interpret(IActor actor, string commandName, object[] arguments)
         {
 
             IEnumerable<ICommand> methods = GetAvailableCommands(commandName);
@@ -226,19 +256,18 @@ namespace Mirage.Core.Command
         /// </summary>
         /// <param name="commandName">command string to search for</param>
         /// <returns>list of commands</returns>
-        public static IEnumerable<ICommand> GetAvailableCommands(string commandName)
+        public IEnumerable<ICommand> GetAvailableCommands(string commandName)
         {
-            return methods.FindStartsWith(commandName);
+            return _methods.FindStartsWith(commandName);
         }
 
         /// <summary>
-        /// Returns a list of available commands
+        /// Returns the list of all available commands
         /// </summary>
-        /// <param name="commandName">command string to search for</param>
         /// <returns>list of commands</returns>
-        public static IEnumerable<ICommand> GetAvailableCommands()
+        public IEnumerable<ICommand> GetAvailableCommands()
         {
-            return methods;
+            return _methods;
         }
 
         private class CanidateCommand : IComparable<CanidateCommand>
