@@ -13,7 +13,7 @@ namespace Mirage.Game.IO.Net
     /// Advanced client is capable of sending/recieving serialized messages
     /// as well as text and is used for the Area builder.
     /// </summary>
-    public class AdvancedClient : ClientBase
+    public class AdvancedClient : ClientBase<ClientPlayerState>
     {
         AdvancedConnection _connection;
 
@@ -37,24 +37,24 @@ namespace Mirage.Game.IO.Net
                 }
                 if (msg.BodyType == AdvancedMessageBodyType.StringMessage)
                 {
-                    if (LoginHandler != null)
+                    if (ClientState.LoginHandler != null)
                     {
-                        LoginHandler.HandleInput((string)msg.Body);
+                        ClientState.LoginHandler.HandleInput((string)msg.Body);
                     }
                     else if (((string)msg.Body).Trim().Length > 0)
                     {
-                        Interpreter.ExecuteCommand(Player, (string)msg.Body);
+                        Interpreter.ExecuteCommand(ClientState.Player, (string)msg.Body);
                     }
                 }
                 else
                 {
-                    if (LoginHandler != null)
+                    if (ClientState.LoginHandler != null)
                     {
-                        LoginHandler.HandleInput(msg.Body);
+                        ClientState.LoginHandler.HandleInput(msg.Body);
                     }
                     else
                     {
-                        MethodInvoker.Interpret(this.Player, msg.Name, (object[])msg.Body);
+                        CommandInvoker.Instance.Interpret(ClientState.Player, msg.Name, (object[])msg.Body);
                     }
                 }
             }

@@ -146,7 +146,7 @@ namespace Mirage.Game.World
 
         public void Execute(Mobile actor)
         {
-            MethodInvoker.Interpret(actor, _commandName, _arguments);
+            CommandInvoker.Instance.Interpret(actor, _commandName, _arguments);
         }
 
         #endregion

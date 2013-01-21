@@ -14,45 +14,27 @@ namespace Mirage.Game.IO.Net
     public class PlayerFinalizer
     {
         private static ILog logger = LogManager.GetLogger(typeof(PlayerFinalizer));
-        private Player _player;
-        private IClient _client;
-
-        public PlayerFinalizer(IClient client, Player player)
-        {
-            _player = player;
-            _client = client;
-        }
-
-        public Player Player
-        {
-            get { return _player; }
-        }
-
-        public IClient Client
-        {
-            get { return _client; }
-        }
 
         /// <summary>
         /// Finalizes the player
         /// </summary>
         /// <param name="isNew">true if this is a new player, false for existing</param>
         /// <returns>true if successful, false if validation failed, which should trigger a disconnect</returns>
-        public bool Finalize(bool isNew)
+        public static bool Finalize(bool isNew, Player player, IClient<ClientPlayerState> client)
         {
-            if (CheckAlreadyPlaying())
+            if (CheckAlreadyPlaying(player, client))
             {
                 return false;
             }
             else
             {
                 //TODO: probably need to pick a different logger here
-                LogManager.GetLogger(typeof(ClientBase)).Info(string.Format("{0}@{1} has connected.", Player.Uri, Client.Address));
+                LogManager.GetLogger(typeof(ClientBase<ClientPlayerState>)).Info(string.Format("{0}@{1} has connected.", player.Uri, client.Address));
                 IChannelRepository channelRepository = MudFactory.GetObject<IChannelRepository>();
                 IPlayerRepository playerRepository = MudFactory.GetObject<IPlayerRepository>();
                 if (isNew)
                 {
-                    Player.Roles = new string[] { "player" };
+                    player.Roles = new string[] { "player" };
                     // default channels
                     foreach (Channel channel in channelRepository)
                     {
@@ -60,58 +42,58 @@ namespace Mirage.Game.IO.Net
                         {
                             // don't worry about security here, we'll try and actually join them down below
                             // which will tell us whether we can really have the channel on
-                            Player.CommunicationPreferences.ChannelOn(channel.Name);
+                            player.CommunicationPreferences.ChannelOn(channel.Name);
                         }
                     }
                 }
 
                 
-                playerRepository.Add(Player);
-                if (Player.Room == null)
+                playerRepository.Add(player);
+                if (player.Room == null)
                 {
                     Room defaultRoom = (Room)MudFactory.GetObject<MudWorld>().ResolveUri(ConfigurationManager.AppSettings["default.room"]);
-                    defaultRoom.Add(Player);
+                    defaultRoom.Add(player);
                 }
                 else
                 {
-                    Player.Room.Add(Player);
+                    player.Room.Add(player);
                 }
 
-                Client.Write(Player.ForSelf(CommonMessages.Welcome));
+                client.Write(player.ForSelf(CommonMessages.Welcome));
                 // Try to turn on channels
                 foreach (Channel channel in channelRepository)
                 {
-                    if (Player.CommunicationPreferences.IsChannelOn(channel.Name))
+                    if (player.CommunicationPreferences.IsChannelOn(channel.Name))
                     {
                         // check to see that the player can still join the channel
-                        if (channel.CanJoin(Player))
+                        if (channel.CanJoin(player))
                         {
-                            channel.Add(Player);
+                            channel.Add(player);
                         }
                         else
                         {
                             // can't join, so turn it off in their preferences
-                            Player.CommunicationPreferences.ChannelOff(channel.Name);
+                            player.CommunicationPreferences.ChannelOff(channel.Name);
                         }
                     }
                 }
-                Client.State = ConnectedState.Playing;
-                Client.Player = Player;
-                Player.Client = Client;
-                logger.Info("Player " + Player.Uri + " has joined the game.");
+                client.ClientState.State = ConnectedState.Playing;
+                client.ClientState.Player = player;
+                player.Client = client;
+                logger.Info("Player " + player.Uri + " has joined the game.");
                 return true;
             }
         }
 
-        public bool CheckAlreadyPlaying()
+        private static bool CheckAlreadyPlaying(Player player, IClient<ClientPlayerState> client)
         {
-            Player isPlaying = (Player)MudFactory.GetObject<MudWorld>().Players.FindOne(Player.Uri, QueryMatchType.Exact);
-            if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
+            Player isPlaying = (Player)MudFactory.GetObject<MudWorld>().Players.FindOne(player.Uri, QueryMatchType.Exact);
+            if (isPlaying != null && isPlaying.Client.ClientState.State == ConnectedState.Playing)
             {
-                Client.Write(MessageFormatter.Instance.Format(null, null, LoginAndPlayerCreationMessages.PlayerAlreadyPlaying));
-                Client.Player = null;
-                Client.State = ConnectedState.Connecting;
-                Client.Close();
+                client.Write(MessageFormatter.Instance.Format(null, null, LoginAndPlayerCreationMessages.PlayerAlreadyPlaying));
+                client.ClientState.Player = null;
+                client.ClientState.State = ConnectedState.Connecting;
+                client.Close();
                 return true;
             }
             return false;

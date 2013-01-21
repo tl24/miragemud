@@ -37,7 +37,7 @@ namespace Mirage.Game.Command
         public void quit([Actor] Player player)
         {
             player.ToSelf(Messages.Goodbye);
-            if (player.Client.State == ConnectedState.Playing)
+            if (player.Client.ClientState.State == ConnectedState.Playing)
             {
                 PlayerRepository.Save(player);
             }
@@ -121,7 +121,7 @@ namespace Mirage.Game.Command
         [CommandAttribute(Description="Lists commands available to a user")]
         public void commands([Actor] Player actor, string searchText)
         {
-            var commandList = MethodInvoker.GetAvailableCommands(searchText);
+            var commandList = CommandInvoker.Instance.GetAvailableCommands(searchText);
             StringBuilder sb = new StringBuilder();
 
             SortedList<string, ICommand> list = FilterAndSortCommands(commandList, actor);
@@ -138,7 +138,7 @@ namespace Mirage.Game.Command
         [CommandAttribute(Description = "Lists commands available to a user")]
         public void commands([Actor] Player actor)
         {
-            var commandList = MethodInvoker.GetAvailableCommands();
+            var commandList = CommandInvoker.Instance.GetAvailableCommands();
             StringBuilder sb = new StringBuilder();
 
             SortedList<string, ICommand> list = FilterAndSortCommands(commandList, actor);

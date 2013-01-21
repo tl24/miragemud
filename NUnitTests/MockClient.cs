@@ -8,15 +8,30 @@ using Mirage.Core.Messaging;
 
 namespace NUnitTests
 {
-    public class MockClient : IClient
+    public class MockClient : IClient<ClientPlayerState>
     {
-        private bool _isOpen = true;
-        private ILoginInputHandler _loginHandler;
-        private IPlayer _player;
-        private ConnectedState _state = ConnectedState.Playing;
-        private bool _commandRead;
-        private bool _outputWritten;
-        private List<IMessage> _messages = new List<IMessage>();
+        public MockClient()
+        {
+            ClientState = new ClientPlayerState();
+            ClientState.State = ConnectedState.Playing;
+            IsOpen = true;
+            Messages = new List<IMessage>();
+        }
+
+        public bool OutputWritten { get; set; }
+
+        public bool CommandRead { get; set; }
+
+        public bool IsOpen { get; set; }
+
+        public string Address
+        {
+            get { return this.GetType().FullName; }
+        }
+
+        public List<IMessage> Messages { get; private set; }
+
+        public ClientPlayerState ClientState { get; private set; }
 
         public void Initialize()
         {
@@ -34,56 +49,9 @@ namespace NUnitTests
 
         public void Write(IMessage message)
         {
-            _messages.Add(message);
+            Messages.Add(message);
             OutputWritten = true;
         }
-
-        public bool OutputWritten
-        {
-            get { return _outputWritten; }
-            set { _outputWritten = value; }
-        }
-
-        public bool CommandRead
-        {
-            get { return _commandRead; }
-            set { _commandRead = true; }
-        }
-
-        public ConnectedState State
-        {
-            get { return _state; }
-            set { _state = value; }
-        }
-
-        public Mirage.Game.World.IPlayer Player
-        {
-            get { return _player; }
-            set { _player = value; }
-        }
-
-        public ILoginInputHandler LoginHandler
-        {
-            get { return _loginHandler; }
-            set { _loginHandler = value; }
-        }
-
-        public bool IsOpen
-        {
-            get { return _isOpen; }
-            set { _isOpen = value; }
-        }
-
-        public string Address
-        {
-            get { return this.GetType().FullName; }
-        }
-
-        public List<IMessage> Messages
-        {
-            get { return this._messages; }
-        }
-
 
     }
 }

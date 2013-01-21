@@ -7,16 +7,12 @@ using Mirage.Game.Command.ArgumentConversion;
 using System.Collections.Generic;
 using Mirage.Core.Command.ArgumentConversion;
 using Mirage.Core.Command;
+using Mirage.Core.Server;
 
 namespace Mirage.Game.Command
 {    
     public class CommandInitializer : IInitializer
     {
-        public string Name
-        {
-            get { return this.GetType().Name; }
-        }
-
         private ILogger logger;
         public ILogger Logger
         {
@@ -44,7 +40,7 @@ namespace Mirage.Game.Command
                 foreach (Type t in q)
                 {
                     Logger.Debug("Registering commands found in " + t);
-                    MethodInvoker.RegisterTypesMethods(t, CommandGroupFactory);
+                    CommandInvoker.Instance.RegisterTypeMethods(t, CommandGroupFactory);
                 }
             }
         }

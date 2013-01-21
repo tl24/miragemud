@@ -107,7 +107,7 @@ namespace Mirage.Game.Server
                 {
                     if (player.Client.CommandRead || player.Client.OutputWritten)
                     {
-                        if (player.Client.State == ConnectedState.Playing)
+                        if (player.Client.ClientState.State == ConnectedState.Playing)
                         {
                             string clientName = player.Name;
                             player.Client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));

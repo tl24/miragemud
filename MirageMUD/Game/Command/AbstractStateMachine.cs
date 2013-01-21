@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using Mirage.Game.Communication;
 using Mirage.Game.IO.Net;
 using Mirage.Core.Messaging;
+using Mirage.Core.IO.Net;
 
 namespace Mirage.Game.Command
 {
@@ -21,10 +22,10 @@ namespace Mirage.Game.Command
         private HybridDictionary _properties;
 
         /// <summary>
-        /// The next state for the state machine.  SubClasses set
+        /// The current state for the state machine.  SubClasses set
         /// this by calling Require
         /// </summary>
-        private ValidateDelegate _nextState;
+        private ValidateDelegate _currentState;
 
         /// <summary>
         /// Delegate type for the validation routines.  Passed as
@@ -38,7 +39,7 @@ namespace Mirage.Game.Command
         /// object is used to send prompts for information.
         /// </summary>
         /// <param name="client">The current client</param>
-        public AbstractStateMachine(IClient client)
+        public AbstractStateMachine(IClient<ClientPlayerState> client)
         {
             _properties = new HybridDictionary();
             this.Client = client;
@@ -122,7 +123,7 @@ namespace Mirage.Game.Command
         /// <summary>
         /// The client object that this state machine is managing
         /// </summary>
-        public IClient Client { get; set; }
+        public IClient<ClientPlayerState> Client { get; set; }
 
         /// <summary>
         /// Called when a given parameter is not set.  The user will be prompted with
@@ -147,7 +148,7 @@ namespace Mirage.Game.Command
         public void Require(IMessage prompt, ValidateDelegate nextStep)
         {
             Client.Write(prompt);
-            _nextState = nextStep;
+            _currentState = nextStep;
         }
 
         public void Require(IEnumerable<IMessage> messages, ValidateDelegate nextStep)
@@ -156,7 +157,7 @@ namespace Mirage.Game.Command
             {
                 Client.Write(m);
             }
-            _nextState = nextStep;
+            _currentState = nextStep;
         }
 
         /// <summary>
@@ -167,13 +168,13 @@ namespace Mirage.Game.Command
         /// <param name="input">client input</param>
         public void HandleInput(object input)
         {
-            if (_nextState == null)
+            if (_currentState == null)
             {
                 InitialState();
             }
             else
             {
-                _nextState(input);
+                _currentState(input);
             }
 
             if (!Finished)

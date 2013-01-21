@@ -22,7 +22,7 @@ namespace Mirage.Game.IO.Net
         private IPlayerRepository _playerRepository;
         private IRaceRepository _raceRepository;
 
-        public TextLoginHandler(IClient client)
+        public TextLoginHandler(IClient<ClientPlayerState> client)
             : base(client)
         {
             _failed = false;
@@ -120,10 +120,9 @@ namespace Mirage.Game.IO.Net
             }
             else
             {
-                PlayerFinalizer finalizer = new PlayerFinalizer(Client, GetValue<Player>("player"));
-                finalizer.Finalize(GetValue<bool>("isNew"));
+                PlayerFinalizer.Finalize(GetValue<bool>("isNew"), GetValue<Player>("player"), Client);
             }
-            Client.LoginHandler = null;
+            Client.ClientState.LoginHandler = null;
             Client = null;            
         }
 
@@ -172,7 +171,7 @@ namespace Mirage.Game.IO.Net
 	        }
 
             Player isPlaying = (Player)MudFactory.GetObject<MudWorld>().Players.FindOne(input, QueryMatchType.Exact);
-            if (isPlaying != null && isPlaying.Client.State == ConnectedState.Playing)
+            if (isPlaying != null && isPlaying.Client.ClientState.State == ConnectedState.Playing)
             {
                 Client.Write(FormatMessage(LoginAndPlayerCreationMessages.ErrorAlreadyPlaying));
                 return;

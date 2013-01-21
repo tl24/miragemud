@@ -20,7 +20,7 @@ namespace NUnitTests
             cmd = new ItemCommands();
             player = new Player();
             MockClient client = new MockClient();
-            client.Player = player;
+            client.ClientState.Player = player;
             player.Client = client;
 
             area = new Area();

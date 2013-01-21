@@ -1,6 +1,7 @@
 using Mirage.Game.Command;
 using Mirage.Game.Command;
 using Mirage.Core.Command;
+using Mirage.Core.Server;
 
 namespace Mirage.Game.Communication
 {
@@ -33,7 +34,7 @@ namespace Mirage.Game.Communication
             {
                 foreach (ICommand command in channel.CreateCommands())
                 {
-                    MethodInvoker.RegisterCommand(command);
+                    CommandInvoker.Instance.RegisterCommand(command);
                 }
             }
         }

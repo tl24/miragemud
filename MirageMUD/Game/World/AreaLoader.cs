@@ -1,6 +1,7 @@
 using Mirage.Game.World.Attribute;
 using Mirage.Game.World.Items;
 using Mirage.Game.World.MobAI;
+using Mirage.Core.Server;
 
 namespace Mirage.Game.World
 {
@@ -13,11 +14,6 @@ namespace Mirage.Game.World
         {
             _areaRespository = AreaRepository;
             _mobileRepository = MobileRepository;
-        }
-
-        public string Name
-        {
-            get { return this.GetType().Name; }
         }
 
         public void Execute()
