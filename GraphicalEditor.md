@@ -1,0 +1,1 @@
+![http://miragemud.googlecode.com/svn/wiki/gui_screenshots.png](http://miragemud.googlecode.com/svn/wiki/gui_screenshots.png)
