@@ -21,6 +21,8 @@ namespace Mirage.Game.World
             {
                 otherLiving.Level = this.Level;
                 otherLiving.Gender = this.Gender;
+                otherLiving.HitPoints = this.MaxHitPoints; // start at max
+                otherLiving.MaxHitPoints = this.MaxHitPoints;
             }
         }
         
@@ -34,5 +36,8 @@ namespace Mirage.Game.World
         ///     The object's gender
         /// </summary>
         public GenderType Gender { get; set; }
+
+        public int HitPoints { get; set; }
+        public int MaxHitPoints { get; set; }
     }
 }

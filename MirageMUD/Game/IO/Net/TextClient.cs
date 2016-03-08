@@ -41,5 +41,13 @@ namespace Mirage.Game.IO.Net
                 OutputWritten = true;
             }
         }
+
+        public TextClientOptions Options
+        {
+            get
+            {
+                return _connection.Options;
+            }
+        }
     }
 }

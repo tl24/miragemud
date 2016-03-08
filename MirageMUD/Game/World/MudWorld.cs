@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using JsonExSerializer;
 using Mirage.Game.World.Query;
 using Mirage.Game.Communication;
+using System.Linq;
 
 namespace Mirage.Game.World
 {
@@ -28,6 +29,13 @@ namespace Mirage.Game.World
             _resolver = new ObjectUriResolver(this);
         }
 
+        public IEnumerable<Living> LivingThings
+        {
+            get
+            {
+                return Mobiles.Cast<Living>().Concat(Players);
+            }
+        }
         /// <summary>
         /// The list of actively playing Players
         /// </summary>

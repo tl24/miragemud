@@ -35,6 +35,8 @@ namespace Mirage.Game.World
         {
             this.CommunicationPreferences = new CommunicationPreferences();
             this.Skills = new Dictionary<SkillDefinition, Skill>();
+            this.HitPoints = 50;
+            this.MaxHitPoints = 50;
         }
 
         /// <summary>
@@ -118,6 +120,8 @@ namespace Mirage.Game.World
         [JsonExIgnore]
         public IInterpret Interpreter { get; set; }
 
+        public string Prompt { get; set; }
+
         /// <summary>
         /// The uri to the room that they are in
         /// </summary>
@@ -174,6 +178,43 @@ namespace Mirage.Game.World
 
             if (Client != null)
                 Client.Write(message);
+        }
+
+        public void WritePrompt()
+        {
+            var promptMessage = BuildPromptMessage(Prompt);
+            if (promptMessage == null)
+            {
+                var oldPrompt = Prompt;
+                Prompt = "";
+                promptMessage = BuildPromptMessage(Prompt);
+                Write(promptMessage);
+                throw new Exception("Prompt '" + oldPrompt + "' for player '" + Name + "' is invalid.  Resetting to default");
+            }
+            Write(promptMessage);
+        }
+
+        public bool ValidatePrompt(string prompt)
+        {
+            return BuildPromptMessage(prompt) != null;
+        }
+
+        private Message BuildPromptMessage(string prompt)
+        {
+            if (string.IsNullOrWhiteSpace(prompt))
+            {
+                prompt = "${actor.name}";
+            }
+            if (!prompt.EndsWith(">"))
+            {
+                prompt += "> ";
+            }
+            var promptMessage = MessageFormatter.Instance.Format(this, this, "DefaultPrompt", prompt, null, new { hp = HitPoints, maxhp = MaxHitPoints, name = Name, AddNewLine = false });
+            if (promptMessage != null)
+            {
+                promptMessage.MessageType = MessageType.Prompt;
+            }
+            return promptMessage;
         }
 
         /// <summary>

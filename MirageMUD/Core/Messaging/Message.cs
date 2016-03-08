@@ -105,7 +105,7 @@ namespace Mirage.Core.Messaging
         }
 
         /// <summary>
-        /// The Name of the message, every message should have an Name.
+        /// The Name of the message, every message should have a Name.
         /// </summary>
         //[ConstructorParameter]
         public MessageName Name

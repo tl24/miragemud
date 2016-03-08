@@ -44,7 +44,7 @@ namespace Mirage.Game.Command
             public static readonly MessageDefinition NotADoor = new MessageDefinition("movement.common.error.notadoor", "The exit in that direction does not have a door.");
             public static readonly MessageDefinition DoorNotLockable = new MessageDefinition("movement.common.error.doornotlockable", "The exit in that direction can not be locked.");
             public static readonly MessageDefinition InvalidDirection = new MessageDefinition("movement.common.error.invaliddirection", "That's not a valid direction.");
-
+            public static readonly MessageDefinition Fighting = new MessageDefinition("movement.common.error.fighting", "You can't leave a fight, you must flee.");
         }
 
         [CommandAttribute(Priority=80)]
@@ -83,6 +83,9 @@ namespace Mirage.Game.Command
         {
             if (actor.Room == null)
                 return actor.ForSelf(Messages.NotInRoom);
+
+            if (actor.IsFighting)
+                return actor.ForSelf(Messages.Fighting);
 
             string dirName = direction.ToString().ToLower();
             Room inRoom = actor.Room;
@@ -139,6 +142,10 @@ namespace Mirage.Game.Command
             if (actor.Room == null)
                 return actor.ForSelf(Messages.NotInRoom);
 
+            if (actor.IsFighting)
+            {
+
+            }
             string dirName = direction.ToString().ToLower();
             Room room = actor.Room;
             if (!room.Exits.ContainsKey(direction))

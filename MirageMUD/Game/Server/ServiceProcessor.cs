@@ -26,6 +26,8 @@ namespace Mirage.Game.Server
 
         public MudWorld World { get; set; }
 
+        public ICombatModule CombatModule { get; set; }
+
         public bool IsStarted { get; set; }
 
         public void Start()
@@ -42,6 +44,7 @@ namespace Mirage.Game.Server
         public void Process()
         {
             ClearPlayerFlagsAndRemove();
+            CombatModule.ProcessCombat();
             ReadPlayerInput();
             ProcessMobileInput();
             WritePlayerOutput();
@@ -109,8 +112,7 @@ namespace Mirage.Game.Server
                     {
                         if (player.Client.ClientState.State == ConnectedState.Playing)
                         {
-                            string clientName = player.Name;
-                            player.Client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
+                            player.WritePrompt();
                         }
                     }
                 }

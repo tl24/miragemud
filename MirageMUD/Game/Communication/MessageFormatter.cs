@@ -141,7 +141,7 @@ namespace Mirage.Game.Communication
             }
             result.MessageType = MessageType.Information;
             result.Name = new MessageName(messageID);
-            if (result.Name.Namespace.Contains("error"))
+            if (result.Name.FullName.Contains("error"))
                 result.MessageType = MessageType.PlayerError;
             else
                 result.MessageType = MessageType.Information;
