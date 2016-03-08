@@ -1,28 +1,24 @@
 using System;
-using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.MicroKernel.SubSystems.Conversion;
 using Castle.Windsor;
-using Castle.Windsor.Configuration;
-using Castle.Windsor.Configuration.Interpreters;
 using Mirage.Core;
 using Mirage.Core.Collections;
 using Mirage.Game.IO.Net;
 using Mirage.Core.IO.Net;
 using Castle.MicroKernel.SubSystems.Configuration;
-using Castle.Facilities.FactorySupport;
-using System.Configuration;
 using Mirage.Game.Server;
 using Mirage.Game.Communication;
 using Mirage.Game.World.Skills;
 using Castle.Facilities.Startable;
 using Castle.Facilities.Logging;
-using Mirage.Game.Command.ArgumentConversion;
 using Mirage.Core.Command;
 using Mirage.Core.Command.ArgumentConversion;
 using Mirage.Game.Command;
 using Mirage.Core.Server;
+using Castle.Facilities.TypedFactory;
+using Castle.Services.Logging.Log4netIntegration;
 
 namespace Mirage.Game.World
 {
@@ -67,10 +63,11 @@ namespace Mirage.Game.World
 
                 //IConversionManager manager = (IConversionManager)
                 //    Kernel.GetSubSystem(Castle.MicroKernel.SubSystemConstants.ConversionManagerKey);
-
-                Kernel.AddFacility(new FactorySupportFacility());
+                Kernel.AddFacility<TypedFactoryFacility>();
                 Kernel.AddFacility<StartableFacility>();
-                Kernel.AddFacility(new LoggingFacility(LoggerImplementation.Log4net));
+                //Kernel.AddFacility(new LoggingFacility(LoggerImplementation.Log4net));
+                Log4netFactory x; // force a reference so it gets copied
+                this.AddFacility<LoggingFacility>(f => f.LogUsing(LoggerImplementation.Log4net).WithConfig("log4net.config"));
                 //interpreter.ProcessResource(interpreter.Source, Kernel.ConfigurationStore, Kernel);
 
                 // Install the components                

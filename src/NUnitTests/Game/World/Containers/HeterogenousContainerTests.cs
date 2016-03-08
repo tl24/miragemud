@@ -69,11 +69,10 @@ namespace NUnitTests.Game.World.Containers
         }
 
         [Test]
-        [ExpectedException(typeof(ContainerAddException))]
         public void TestAddD()
         {
             MockContainableD item = new MockContainableD();
-            container.Add(item);
+            Assert.Throws<ContainerAddException>(() => container.Add(item));    
         }
 
         [Test]
