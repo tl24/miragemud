@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 using JsonExSerializer;
-using Mirage.Game.Communication;
-using Mirage.IO.Net;
 using Mirage.Core.Messaging;
+using Mirage.Core.IO.Net;
 
 namespace MirageGUI.Code
 {
