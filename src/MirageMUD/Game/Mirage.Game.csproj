@@ -95,6 +95,7 @@
     <Compile Include="Command\AreaBuilder.cs" />
     <Compile Include="Command\ClientTypesRestrictionAttribute.cs" />
     <Compile Include="Command\ArgumentConversion\LookupAttributeConverter.cs" />
+    <Compile Include="Command\CombatCommands.cs" />
     <Compile Include="Command\CommandInitializer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -129,6 +130,7 @@
     <Compile Include="Communication\Namespace.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dice.cs" />
     <Compile Include="Events\EventBase.cs" />
     <Compile Include="Events\EventEnums.cs" />
     <Compile Include="Events\IEvent.cs" />
@@ -164,12 +166,14 @@
     <Compile Include="World\Containers\HeterogenousContainer.cs" />
     <Compile Include="World\Containers\IContainable.cs" />
     <Compile Include="World\Containers\IContainer.cs" />
+    <Compile Include="World\DefaultCombatModule.cs" />
     <Compile Include="World\EditorAttribute.cs" />
     <Compile Include="World\EditorCollectionAttribute.cs" />
     <Compile Include="World\EditorParentAttribute.cs" />
     <Compile Include="World\EditorTypeSelectorAttribute.cs" />
     <Compile Include="World\IArea.cs" />
     <Compile Include="World\IAreaRepository.cs" />
+    <Compile Include="World\ICombatModule.cs" />
     <Compile Include="World\IMobileRepository.cs" />
     <Compile Include="World\IMudRepository.cs" />
     <Compile Include="World\IPlayer.cs" />

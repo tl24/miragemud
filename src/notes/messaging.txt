@@ -26,15 +26,15 @@ by with the exception of certain common error messages or other shared messages.
 
 Response to the initiating player (for self-only and multi-targeting commands)
 For Success:
-	<namespace>.<command>.<self>[.<substatus>] substatus can be present if there
+	<namespace>.<command>[.<substatus>].self substatus can be present if there
 		multiple results
 For Failure (including validation failure)
-	<namespace>.<command>.<self>.failed[.<substatus>]
+	<namespace>.<command>.error[.<substatus>].self
 	
 Response to non-initiating players:
 	<namespace>.<command>[.<substatus>]
 	Failures broadcast to others aren't as common, but are similar to the response to the player
-	<namespace>.<command>.failed[.<substatus>]
+	<namespace>.<command>.error[.<substatus>].<target|others>
 
 Prompts:
 	<namespace>.prompt.<name>

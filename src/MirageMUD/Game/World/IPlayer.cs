@@ -16,6 +16,8 @@ namespace Mirage.Game.World
     {
         IClient<ClientPlayerState> Client { get; set; }
 
+        void WritePrompt();
+
         string Name { get; }
 
         void FirePlayerEvent(PlayerEventType eventType);

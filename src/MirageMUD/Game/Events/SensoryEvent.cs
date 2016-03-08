@@ -25,9 +25,9 @@ namespace Mirage.Game.Events
 
             if (string.IsNullOrEmpty(@event.Name))
             {
-                EventBase eb = (EventBase)@event;
+                EventBase eb = @event as EventBase;
                 if (eb != null)
-                    eb.Name = string.Format("{0}.{1:s}", this.Name, eb.Sense);
+                    eb.Name = string.Format("{0}.{1:s}", this.Name, @event.Sense);
             }
             events.Add(@event);
         }

@@ -114,6 +114,7 @@ namespace Mirage.Game.World
                                     .OptionallyDependsOnAppSetting(typeof(int), "clientmanager.maxthreads", "maxthreads"));
 
                 container.Register(Component.For<IClientFactory>().ImplementedBy<ClientFactory>());
+                container.Register(Component.For<ICombatModule>().ImplementedBy<DefaultCombatModule>());
                 container.Register(Component.For<ServiceProcessor>());
                 container.Register(Component.For<MirageServer>());
                 container.Register(Component.For<IRaceRepository>().ImplementedBy<RaceRepository>());

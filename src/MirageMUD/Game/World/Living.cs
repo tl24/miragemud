@@ -56,6 +56,20 @@ namespace Mirage.Game.World
 
         [XmlIgnore]
         [JsonExIgnore]
+        public bool IsFighting
+        {
+            get
+            {
+                return Fighting != null;
+            }
+        }
+
+        [XmlIgnore]
+        [JsonExIgnore]
+        public Living Fighting { get; set; }
+
+        [XmlIgnore]
+        [JsonExIgnore]
         public Room Room
         {
             get

@@ -44,11 +44,7 @@ namespace Mirage.Game.Server
                         if (NannyClients[i].ClientState.Player != null && NannyClients[i].ClientState.State == ConnectedState.Playing)
                         {
                             // graduated...remove from the list
-                            //NannyClients[i].WritePrompt();
-                            //TODO: centralize this
-                            string clientName = NannyClients[i].ClientState.Player.Name;
-                            NannyClients[i].ClientState.Player.Client.Write(new StringMessage(MessageType.Prompt, "DefaultPrompt", clientName + ">> "));
-
+                            NannyClients[i].ClientState.Player.WritePrompt();
                             NannyClients.RemoveAt(i);
                         }
                     }

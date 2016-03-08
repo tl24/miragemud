@@ -73,6 +73,8 @@ namespace Mirage.Game.World
             mob.Name = "First Mob";
             mob.Level = 1;
             mob.Gender = GenderType.Male;
+            mob.HitPoints = 50;
+            mob.MaxHitPoints = 50;
             mob.Programs.Add(new Wanderer(mob));
             mob.Programs.Add(new EchoProgram(mob));
             return mob;
