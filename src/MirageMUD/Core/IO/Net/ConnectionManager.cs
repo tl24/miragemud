@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Mirage.Core.Collections;
 using Castle.Core;
+using System.Collections.Concurrent;
 
 namespace Mirage.Core.IO.Net
 {
@@ -17,11 +18,11 @@ namespace Mirage.Core.IO.Net
     public class ConnectionManager
     {
         private List<IConnectionListener> _listeners;
-        private ISynchronizedQueue<IConnection> _newClients;
+        private BlockingCollection<IConnection> _newClients;
         private bool _started = false;
-        private BlockingQueue<ClientOperation> workItems;
+        private BlockingCollection<ClientOperation> _workItems;
         private int _maxThreads = 0;
-        private ISynchronizedQueue<SocketConnection> _internalNewClients;
+        private ConcurrentQueue<SocketConnection> _internalNewClients;
 
         private IList<Thread> threads;
         private IList<Socket> _sockets;
@@ -44,8 +45,8 @@ namespace Mirage.Core.IO.Net
         {
             _listeners = new List<IConnectionListener>(listeners);
             _maxThreads = maxThreads > 0 ? maxThreads : 1;
-            workItems = new BlockingQueue<ClientOperation>(15);
-            _internalNewClients = new SynchronizedQueue<SocketConnection>();
+            _workItems = new BlockingCollection<ClientOperation>(15);
+            _internalNewClients = new ConcurrentQueue<SocketConnection>();
             threads = new List<Thread>();
             _sockets = new List<Socket>();
             _clientMap = new Hashtable();
@@ -94,7 +95,7 @@ namespace Mirage.Core.IO.Net
             {
                 _sockets.Add(newClient.TcpClient.Client);
                 _clientMap.Add(newClient.TcpClient.Client, newClient);
-                _newClients.Enqueue(newClient);
+                _newClients.Add(newClient);
             }
         }
 
@@ -110,9 +111,8 @@ namespace Mirage.Core.IO.Net
             List<Socket> checkError = new List<Socket>(_sockets);
 
             Socket.Select(checkRead, checkWrite, checkError, 100000);
-
+            
             List<ClientOperation> ops = new List<ClientOperation>(checkRead.Count + checkWrite.Count + checkError.Count);
-
             foreach (Socket s in checkRead)
             {
                 object client = _clientMap[s];
@@ -137,7 +137,7 @@ namespace Mirage.Core.IO.Net
             {
                 _allProcessedEvent.Reset();
                 foreach (ClientOperation op in ops)
-                    workItems.Enqueue(op);
+                    _workItems.Add(op);
 
                 _allProcessedEvent.WaitOne();
             }
@@ -203,9 +203,9 @@ namespace Mirage.Core.IO.Net
 
         private void ProcessIO()
         {
-            while (true)
+            // blocks until something is ready
+            foreach (var op in _workItems.GetConsumingEnumerable())
             {
-                ClientOperation op = workItems.Dequeue();  // blocks until something is ready
                 try
                 {
                     switch (op.Type)
@@ -288,7 +288,7 @@ namespace Mirage.Core.IO.Net
             _started = false;
         }
 
-        public ISynchronizedQueue<IConnection> NewClients
+        public BlockingCollection<IConnection> NewClients
         {
             get { return this._newClients; }
             set

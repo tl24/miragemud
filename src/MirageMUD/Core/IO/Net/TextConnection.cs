@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using Mirage.Core.Collections;
 using Mirage.Core.IO.Net.Telnet;
 using Mirage.Core.IO.Net.Telnet.Options;
+using System.Collections.Concurrent;
 
 namespace Mirage.Core.IO.Net
 {
@@ -13,7 +14,7 @@ namespace Mirage.Core.IO.Net
         /// <summary>
         ///     The lines that have been read from the socket
         /// </summary>
-        protected ISynchronizedQueue<string> inputQueue;
+        protected ConcurrentQueue<string> inputQueue;
 
         /// <summary>
         ///     Buffer to hold input until it forms a complete line
@@ -29,8 +30,8 @@ namespace Mirage.Core.IO.Net
             : base(client)
         {
             socketStream = _client.GetStream();
-            inputQueue = new SynchronizedQueue<string>();
-            outputQueue = new SynchronizedQueue<string>();
+            inputQueue = new ConcurrentQueue<string>();
+            outputQueue = new ConcurrentQueue<string>();
             Options = new TextClientOptions();
             inputBuffer = new char[512];
             bufferLength = 0;
@@ -41,7 +42,7 @@ namespace Mirage.Core.IO.Net
         /// <summary>
         ///     The lines that are waiting to be written to the socket
         /// </summary>
-        private ISynchronizedQueue<string> outputQueue;
+        private ConcurrentQueue<string> outputQueue;
 
         protected bool checkDisconnect = false;
 
@@ -187,9 +188,9 @@ namespace Mirage.Core.IO.Net
         public override void FlushOutput()
         {
             bool bProcess = false;
-            while (outputQueue.Count > 0)
+            string data;
+            while (outputQueue.TryDequeue(out data))
             {
-                string data = outputQueue.Dequeue();
                 tnHandler.Write(data);
                 bProcess = true;
             }

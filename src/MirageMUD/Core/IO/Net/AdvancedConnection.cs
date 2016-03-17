@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Sockets;
 using Mirage.Core.Collections;
+using System.Collections.Concurrent;
 
 namespace Mirage.Core.IO.Net
 {
@@ -39,18 +40,18 @@ namespace Mirage.Core.IO.Net
         protected BinaryReader reader;
         protected BinaryWriter writer;
 
-        protected ISynchronizedQueue<AdvancedMessage> inputQueue;
+        protected ConcurrentQueue<AdvancedMessage> inputQueue;
 
         /// <summary>
         ///     The lines that are waiting to be written to the socket
         /// </summary>
-        protected ISynchronizedQueue<AdvancedMessage> outputQueue;
+        protected ConcurrentQueue<AdvancedMessage> outputQueue;
 
         public AdvancedConnection(TcpClient client)
             : base(client)
         {
-            inputQueue = new SynchronizedQueue<AdvancedMessage>();
-            outputQueue = new SynchronizedQueue<AdvancedMessage>();
+            inputQueue = new ConcurrentQueue<AdvancedMessage>();
+            outputQueue = new ConcurrentQueue<AdvancedMessage>();
             NetworkStream stm = client.GetStream();
             reader = new BinaryReader(stm);
             writer = new BinaryWriter(stm);
@@ -84,9 +85,9 @@ namespace Mirage.Core.IO.Net
         public override void FlushOutput()
         {
             bool bProcess = false;
-            while (outputQueue.Count > 0)
+            AdvancedMessage advMsg;
+            while (outputQueue.TryDequeue(out advMsg))
             {
-                AdvancedMessage advMsg = outputQueue.Dequeue();
                 writer.Write((int)advMsg.BodyType);
                 writer.Write(advMsg.Name);
                 writer.Write((string)advMsg.Body);

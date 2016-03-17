@@ -7,6 +7,7 @@ using Mirage.Core.IO.Net;
 using System.Threading;
 using Mirage.Core.Collections;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 
 namespace Mirage.Core.Server
 {
@@ -65,12 +66,12 @@ namespace Mirage.Core.Server
             Thread.CurrentThread.Name = "Main";
             logger.Info("Starting up");
 
-            BlockingQueue<IConnection> NannyQueue = null;
+            BlockingCollection<IConnection> NannyQueue = null;
             try
             {
                 Init();
                 // These are the new connections waiting to be put in the nanny list
-                NannyQueue = new BlockingQueue<IConnection>(15);
+                NannyQueue = new BlockingCollection<IConnection>(15);
 
                 ConnectionManager.NewClients = NannyQueue;
                 ConnectionManager.Start();
@@ -91,7 +92,7 @@ namespace Mirage.Core.Server
                     try
                     {
                         IConnection connection;
-                        while (NannyQueue.TryDequeue(out connection))
+                        while (NannyQueue.TryTake(out connection))
                         {
                             OnNewConnection(connection);
                         }

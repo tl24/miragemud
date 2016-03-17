@@ -82,11 +82,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\AssemblyList.cs" />
-    <Compile Include="Collections\BlockingQueue.cs" />
     <Compile Include="Collections\CollectionEvent.cs" />
     <Compile Include="Collections\Collections.cs" />
     <Compile Include="Collections\ICollectionEvents.cs" />
-    <Compile Include="Collections\ISynchronizedQueue.cs" />
     <Compile Include="Collections\ListWithEvents.cs" />
     <Compile Include="Command\ActorAttribute.cs" />
     <Compile Include="Command\ArgumentConversion\Argument.cs" />
@@ -149,7 +147,6 @@
     <Compile Include="Server\IInitializer.cs" />
     <Compile Include="Server\ServerBase.cs" />
     <Compile Include="StringUtils.cs" />
-    <Compile Include="Collections\SynchronizedQueue.cs" />
     <Compile Include="Extensibility\TypeSupports.cs" />
     <Compile Include="Extensibility\AttributeNotSupportedException.cs" />
     <Compile Include="Extensibility\IAttributable.cs" />
