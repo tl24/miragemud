@@ -7,6 +7,8 @@ using System.Threading;
 using Mirage.Core.Collections;
 using Castle.Core;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Mirage.Core.IO.Net
 {
@@ -20,36 +22,21 @@ namespace Mirage.Core.IO.Net
         private List<IConnectionListener> _listeners;
         private BlockingCollection<IConnection> _newClients;
         private bool _started = false;
-        private BlockingCollection<ClientOperation> _workItems;
-        private int _maxThreads = 0;
         private ConcurrentQueue<SocketConnection> _internalNewClients;
 
-        private IList<Thread> threads;
         private IList<Socket> _sockets;
-        private Hashtable _clientMap;
-        private int _processCount;
-        private ManualResetEvent _allProcessedEvent = new ManualResetEvent(false);
+        private Dictionary<Socket, object> _clientMap = new Dictionary<Socket, object>();
+        private Task _runTask;
+        private CancellationTokenSource _tokenSource;
 
         /// <summary>
         /// Creates a new instance of the ClientManager
         /// </summary>
         public ConnectionManager(IList<IConnectionListener> listeners)
-            : this(listeners, Environment.ProcessorCount)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance of the ClientManager
-        /// </summary>
-        public ConnectionManager(IList<IConnectionListener> listeners, int maxThreads)
         {
             _listeners = new List<IConnectionListener>(listeners);
-            _maxThreads = maxThreads > 0 ? maxThreads : 1;
-            _workItems = new BlockingCollection<ClientOperation>(15);
             _internalNewClients = new ConcurrentQueue<SocketConnection>();
-            threads = new List<Thread>();
             _sockets = new List<Socket>();
-            _clientMap = new Hashtable();
         }
 
         /// <summary>
@@ -57,21 +44,18 @@ namespace Mirage.Core.IO.Net
         /// to and have errors.  These lists can then be access through the ReadableClients,
         /// WritableClients, and ErroredClients properties.
         /// </summary>
-        /// <param name="timeout">time to wait for a client event</param>
-        /// <returns>true if any clients are ready to be read, written or errored</returns>
-        protected virtual void Run()
+        protected virtual async Task Run(CancellationToken token)
         {
-            StartWorkerThreads();
             StartListeners();
 
             DateTime startTime;
             TimeSpan elapsed;
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 startTime = DateTime.Now;
 
                 RemoveClosedConnections();
-                PollForIO();
+                await PollForIO();
 
                 // add any new clients
                 AddNewClients();
@@ -103,7 +87,7 @@ namespace Mirage.Core.IO.Net
         /// Polls the sockets to see if any have any pending activity and the queues the
         /// appropriate action
         /// </summary>
-        private void PollForIO()
+        private async Task PollForIO()
         {
             //TODO: Use Socket.DuplicateAndClose for copyover support
             List<Socket> checkRead = new List<Socket>(_sockets);
@@ -112,35 +96,18 @@ namespace Mirage.Core.IO.Net
 
             Socket.Select(checkRead, checkWrite, checkError, 100000);
             
-            List<ClientOperation> ops = new List<ClientOperation>(checkRead.Count + checkWrite.Count + checkError.Count);
+            List<Task> ops = new List<Task>(checkRead.Count + checkWrite.Count + checkError.Count);
             foreach (Socket s in checkRead)
             {
                 object client = _clientMap[s];
                 if (client is IConnectionListener)
-                    ops.Add(new ClientOperation(client, OpType.Accept));
+                    ops.Add(ProcessOperation((IConnectionListener)client, AcceptClient));
                 else
-                    ops.Add(new ClientOperation(client, OpType.Read));
+                    ops.Add(ProcessOperation((SocketConnection)client, ReadFromConnection));
             }
-            foreach (Socket s in checkWrite)
-            {
-                object client = _clientMap[s];
-                ops.Add(new ClientOperation(client, OpType.Write));
-            }
-            foreach (Socket s in checkError)
-            {
-                object client = _clientMap[s];
-                ops.Add(new ClientOperation(client, OpType.Error));
-            }
-
-            _processCount = ops.Count;
-            if (_processCount > 0)
-            {
-                _allProcessedEvent.Reset();
-                foreach (ClientOperation op in ops)
-                    _workItems.Add(op);
-
-                _allProcessedEvent.WaitOne();
-            }
+            ops.AddRange(checkWrite.Select(s => ProcessOperation((SocketConnection)_clientMap[s], WriteToConnection)));
+            ops.AddRange(checkError.Select(s => ProcessOperation((SocketConnection)_clientMap[s], ProcessConnectionError)));
+            await Task.WhenAll(ops.ToArray());
         }
 
         private void StartListeners()
@@ -157,18 +124,6 @@ namespace Mirage.Core.IO.Net
             }
         }
 
-        private void StartWorkerThreads()
-        {
-            for (int i = 0; i < 1; i++)
-            {
-                Thread t = new Thread(new ThreadStart(ProcessIO));
-                t.Name = "IOWorker" + i;
-                t.IsBackground = true;
-                t.Start();
-                threads.Add(t);
-            }
-        }
-
         /// <summary>
         /// Removes and cleans up any closed or errored connections
         /// </summary>
@@ -176,7 +131,7 @@ namespace Mirage.Core.IO.Net
         {
             Queue<Socket> removeItems = new Queue<Socket>();
 
-            foreach (DictionaryEntry entry in _clientMap)
+            foreach (KeyValuePair<Socket, object> entry in _clientMap)
             {
                 Socket skey = (Socket)entry.Key;
                 SocketConnection client = entry.Value as SocketConnection;
@@ -184,7 +139,7 @@ namespace Mirage.Core.IO.Net
                 {
                     if (!client.IsOpen)
                     {
-                        client.FlushOutput();
+                        client.FlushOutputAsync();
                         // close the connection
                         client.Dispose();
                         // remove from the list
@@ -201,90 +156,58 @@ namespace Mirage.Core.IO.Net
             }
         }
 
-        private void ProcessIO()
+        private async Task ProcessOperation<T>(T arg, Func<T, Task> operation)
         {
-            // blocks until something is ready
-            foreach (var op in _workItems.GetConsumingEnumerable())
+            try
             {
-                try
-                {
-                    switch (op.Type)
-                    {
-                        case OpType.Accept:
-                            SocketConnection client = ((IConnectionListener)op.Client).Accept();
-                            _internalNewClients.Enqueue(client);
-                            break;
-                        case OpType.Read:
-                            ((SocketConnection)op.Client).ReadInput();
-                            break;
-                        case OpType.Write:
-                            ((SocketConnection)op.Client).FlushOutput();
-                            break;
-                        case OpType.Error:
-                            ((SocketConnection)op.Client).Close();
-                            break;
-                    }
-                }
-                catch (IOException)
-                {
-                    if (op.Client is SocketConnection)
-                        // error, close the connection, main thread will clean it up
-                        ((SocketConnection)op.Client).Close();
-                }
-                int count = Interlocked.Decrement(ref _processCount);
-                if (count == 0)
-                {
-                    _allProcessedEvent.Set();
-                }
+                await operation(arg);
+            }
+            catch (IOException)
+            {
+                var connection = arg as SocketConnection;
+                if (connection != null)
+                    // error, close the connection, main thread will clean it up
+                    connection.Close();
             }
         }
 
-        private enum OpType
+        private async Task AcceptClient(IConnectionListener listener)
         {
-            Accept = 1,
-            Read = 2,
-            Write = 4,
-            Error = 8
+            SocketConnection client = await listener.AcceptAsync();
+            _internalNewClients.Enqueue(client);
         }
 
-        private struct ClientOperation
+        private async Task ReadFromConnection(SocketConnection client)
         {
-            private object _client;
-            private OpType _type;
+            await client.ReadInputAsync();
+        }
 
-            public ClientOperation(object client, OpType type)
-            {
-                _client = client;
-                _type = type;
-            }
+        private async Task WriteToConnection(SocketConnection client)
+        {
+            await client.FlushOutputAsync();
+        }
 
-            public object Client
-            {
-                get { return this._client; }
-            }
-
-            public OpType Type
-            {
-                get { return this._type; }
-            }
+        private Task ProcessConnectionError(SocketConnection client)
+        {
+            client.Close();
+            return Task.CompletedTask;
         }
 
         public void Start()
         {
-            Thread t = new Thread(new ThreadStart(Run));
-            t.Name = "IOManager";
-            t.IsBackground = true;
-            t.Start();
+            _tokenSource = new CancellationTokenSource();            
+            _runTask = Task.Run(() => Run(_tokenSource.Token));            
             _started = true;
         }
 
         public void Stop()
         {
-            
+            _tokenSource.Cancel();
             foreach (IConnectionListener listener in _listeners)
             {
                 listener.Stop();
             }
+            _runTask.Wait();
             _started = false;
         }
 

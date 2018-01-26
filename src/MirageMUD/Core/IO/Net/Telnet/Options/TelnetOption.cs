@@ -1,4 +1,6 @@
 ﻿
+using System.Threading.Tasks;
+
 namespace Mirage.Core.IO.Net.Telnet
 {
     /// <summary>
@@ -63,11 +65,11 @@ namespace Mirage.Core.IO.Net.Telnet
             Parent.OnOptionStateChanged(new OptionStateChangedEventArgs(OptionCode, enabled, local));
         }
 
-        protected void SendResponse(TelnetCommands optionCode)
+        protected async Task SendResponseAsync(TelnetCommands optionCode)
         {
             Parent.LogLine(OptionCode.ToString("d"));
             Parent.LogLine(string.Format("Sending IAC {0:g} {1:d}", optionCode, OptionCode));
-            Parent.WriteRaw(new byte[] { (byte)TelnetCommands.IAC, (byte)optionCode, OptionCode });
+            await Parent.WriteRawAsync(new byte[] { (byte)TelnetCommands.IAC, (byte)optionCode, OptionCode });
         }
 
         public virtual void OnSubNegotiation(byte[] subData)

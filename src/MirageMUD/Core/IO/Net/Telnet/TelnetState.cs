@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Mirage.Core.IO.Net.Telnet
 {
@@ -16,7 +17,7 @@ namespace Mirage.Core.IO.Net.Telnet
         {
         }
 
-        public abstract void ProcessByte(byte data);
+        public abstract Task ProcessByteAsync(byte data);
     }
 
     /// <summary>
@@ -28,7 +29,7 @@ namespace Mirage.Core.IO.Net.Telnet
         {
         }
 
-        public override void ProcessByte(byte data)
+        public override Task ProcessByteAsync(byte data)
         {
             if (data == (byte)TelnetCommands.IAC)
             {
@@ -39,6 +40,7 @@ namespace Mirage.Core.IO.Net.Telnet
             {
                 Parent.AddProcessedByte(data);
             }
+            return Task.CompletedTask;
         }
     }
 
@@ -49,7 +51,7 @@ namespace Mirage.Core.IO.Net.Telnet
         {
         }
 
-        public override void ProcessByte(byte data)
+        public override Task ProcessByteAsync(byte data)
         {
             switch ((TelnetCommands)data)
             {
@@ -74,6 +76,7 @@ namespace Mirage.Core.IO.Net.Telnet
                     Parent.SetState<TelnetUnknownSequenceState>(data);
                     break;
             }
+            return Task.CompletedTask;
         }
     }
 
@@ -102,7 +105,7 @@ namespace Mirage.Core.IO.Net.Telnet
             }
         }
 
-        public override void ProcessByte(byte telopt)
+        public override async Task ProcessByteAsync(byte telopt)
         {
             Parent.AppendLog(telopt.ToString());
 
@@ -112,22 +115,22 @@ namespace Mirage.Core.IO.Net.Telnet
             switch (currentCode)
             {
                 case TelnetCommands.DO:
-                    HandleDo(option, telopt);
+                    await HandleDoAsync(option, telopt);
                     break;
                 case TelnetCommands.DONT:
-                    HandleDont(option, telopt);
+                    await HandleDontAsync(option, telopt);
                     break;
                 case TelnetCommands.WILL:
-                    HandleWill(option, telopt);
+                    await HandleWillAsync(option, telopt);
                     break;
                 case TelnetCommands.WONT:
-                    HandleWont(option, telopt);
+                    await HandleWontAsync(option, telopt);
                     break;
             }
             Parent.SetState<TelnetTextState>();
         }
 
-        private void HandleWill(TelnetOption option, byte telopt)
+        private async Task HandleWillAsync(TelnetOption option, byte telopt)
         {
             switch (option.RemoteState)
             {
@@ -136,12 +139,12 @@ namespace Mirage.Core.IO.Net.Telnet
                     {
                         option.RemoteState = QState.Q_YES;
                         // send confirmation
-                        Parent.SendNegotiate(TelnetCommands.DO, telopt);
+                        await Parent.SendNegotiateAsync(TelnetCommands.DO, telopt);
                         option.OnOptionChanged(true, false);
                     }
                     else
                         // send rejection
-                        Parent.SendNegotiate(TelnetCommands.DONT, telopt);
+                        await Parent.SendNegotiateAsync(TelnetCommands.DONT, telopt);
                     break;
                 case QState.Q_WANTNO:
                     option.RemoteState = QState.Q_NO;
@@ -158,18 +161,18 @@ namespace Mirage.Core.IO.Net.Telnet
                     break;
                 case QState.Q_WANTYES_OP:
                     option.RemoteState = QState.Q_WANTNO;
-                    Parent.SendNegotiate(TelnetCommands.DONT, telopt);
+                    await Parent.SendNegotiateAsync(TelnetCommands.DONT, telopt);
                     break;
             }
 
         }
-        private void HandleWont(TelnetOption option, byte telopt)
+        private async Task HandleWontAsync(TelnetOption option, byte telopt)
         {
             switch (option.RemoteState)
             {
                 case QState.Q_YES:
                     option.RemoteState = QState.Q_NO;
-                    Parent.SendNegotiate(TelnetCommands.DONT, telopt);
+                    await Parent.SendNegotiateAsync(TelnetCommands.DONT, telopt);
                     option.OnOptionChanged(false, false);
                     break;
                 case QState.Q_WANTNO:
@@ -186,7 +189,7 @@ namespace Mirage.Core.IO.Net.Telnet
                     break;
             }
         }
-        private void HandleDo(TelnetOption option, byte telopt)
+        private async Task HandleDoAsync(TelnetOption option, byte telopt)
         {
             switch (option.LocalState)
             {
@@ -195,12 +198,12 @@ namespace Mirage.Core.IO.Net.Telnet
                     {
                         option.LocalState = QState.Q_YES;
                         // send confirmation
-                        Parent.SendNegotiate(TelnetCommands.WILL, telopt);
+                        await Parent.SendNegotiateAsync(TelnetCommands.WILL, telopt);
                         option.OnOptionChanged(true, true);
                     }
                     else
                         // send rejection
-                        Parent.SendNegotiate(TelnetCommands.WONT, telopt);
+                        await Parent.SendNegotiateAsync(TelnetCommands.WONT, telopt);
                     break;
                 case QState.Q_WANTNO:
                     option.LocalState = QState.Q_NO;
@@ -217,17 +220,17 @@ namespace Mirage.Core.IO.Net.Telnet
                     break;
                 case QState.Q_WANTYES_OP:
                     option.LocalState = QState.Q_WANTNO;
-                    Parent.SendNegotiate(TelnetCommands.WONT, telopt);
+                    await Parent.SendNegotiateAsync(TelnetCommands.WONT, telopt);
                     break;
             }
         }
-        private void HandleDont(TelnetOption option, byte telopt)
+        private async Task HandleDontAsync(TelnetOption option, byte telopt)
         {
             switch (option.LocalState)
             {
                 case QState.Q_YES:
                     option.LocalState = QState.Q_NO;
-                    Parent.SendNegotiate(TelnetCommands.WONT, telopt);
+                    await Parent.SendNegotiateAsync(TelnetCommands.WONT, telopt);
                     option.OnOptionChanged(false, true);
                     break;
                 case QState.Q_WANTNO:
@@ -262,7 +265,7 @@ namespace Mirage.Core.IO.Net.Telnet
             buffer.Clear();
         }
 
-        public override void ProcessByte(byte data)
+        public override Task ProcessByteAsync(byte data)
         {
             Parent.LogLine(data.ToString("d"));
             switch (data)
@@ -302,6 +305,7 @@ namespace Mirage.Core.IO.Net.Telnet
                     buffer.Add(data);
                     break;
             }
+            return Task.CompletedTask;
         }
     }
 
@@ -312,10 +316,11 @@ namespace Mirage.Core.IO.Net.Telnet
         {
         }
 
-        public override void ProcessByte(byte data)
+        public override Task ProcessByteAsync(byte data)
         {
             Parent.LogLine(data.ToString("d"));
             Parent.SetState<TelnetTextState>();
+            return Task.CompletedTask;
         }
     }
 

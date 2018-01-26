@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Mirage.Core.IO.Net.Telnet.Options;
+using System.Threading.Tasks;
 
 namespace Mirage.Core.IO.Net.Telnet
 {
@@ -95,15 +96,16 @@ namespace Mirage.Core.IO.Net.Telnet
 
         internal OptionSupportList OptionSupport { get; private set; }
 
-        public char[] Read(int availableBytes)
+        public async Task<char[]> ReadAsync(int availableBytes)
         {
             // TODO: reuse buffers
             byte[] inBuf = new byte[availableBytes];
             int bRead = 0;
-            lock (inputStream)
-            {
-                bRead = inputStream.Read(inBuf, 0, inBuf.Length);
-            }
+            // TODO: not sure why we were locking, make sure there isn't concurrent access
+            //lock (inputStream)
+            //{
+                bRead = await inputStream.ReadAsync(inBuf, 0, inBuf.Length);
+            //}
             return ProcessInput(inBuf, bRead);
         }
 
@@ -118,7 +120,7 @@ namespace Mirage.Core.IO.Net.Telnet
             processedInputCount = 0;
             for (index = 0; index < length; index++)
             {
-                currentState.ProcessByte(inputBuffer[index]);
+                currentState.ProcessByteAsync(inputBuffer[index]);
             }
             if (processedInputCount > 0)
                 return encoding.GetChars(processedInput, 0, processedInputCount);
@@ -226,33 +228,33 @@ namespace Mirage.Core.IO.Net.Telnet
             processedInput[processedInputCount++] = data;
         }
 
-        public void SendTestConnected()
+        public async Task SendTestConnectedAsync()
         {
             // for now send null...could send NOP
-            WriteRaw(new byte[1]);
+            await WriteRawAsync(new byte[1]);
         }
 
-        public void Write(string text)
+        public async Task WriteAsync(string text)
         {
             // for now, don't worry about escaping
             byte[] data = encoding.GetBytes(text);
-            WriteRaw(data);
+            await WriteRawAsync(data);
         }
 
-        public void WriteRaw(byte[] data)
+        public async Task WriteRawAsync(byte[] data)
         {
-            lock (outputStream)
-            {
+            //lock (outputStream)
+            //{
                 //TODO: buffering?
-                outputStream.Write(data, 0, data.Length);
-            }
+                await outputStream.WriteAsync(data, 0, data.Length);
+            //}
         }
 
-        internal void SendSubNegotiate(byte[] data)
+        internal async Task SendSubNegotiate(byte[] data)
         {
-            WriteRaw(subNegotiateStart);
-            WriteRaw(data);
-            WriteRaw(subNegotiateEnd);
+            await WriteRawAsync(subNegotiateStart);
+            await WriteRawAsync(data);
+            await WriteRawAsync(subNegotiateEnd);
         }
         internal void OnSubNegotiationOccurred(SubNegotiationEventArgs args)
         {
@@ -266,10 +268,10 @@ namespace Mirage.Core.IO.Net.Telnet
                 OptionStateChanged(this, args);
         }
 
-        internal void SendNegotiate(TelnetCommands cmd, byte telopt)
+        internal async Task SendNegotiateAsync(TelnetCommands cmd, byte telopt)
         {
             Logger.DebugFormat("Sending IAC {0:g} {1:g}", cmd, telopt);
-            WriteRaw(new byte[] { (byte) TelnetCommands.IAC, (byte) cmd, telopt });
+            await WriteRawAsync(new byte[] { (byte) TelnetCommands.IAC, (byte) cmd, telopt });
         }
 
         internal void OnProtocolError(string errorText)
@@ -282,7 +284,7 @@ namespace Mirage.Core.IO.Net.Telnet
         /// </summary>
         /// <param name="cmd">the command: DO, DONT, WILL, WONT</param>
         /// <param name="telopt">The telnet option</param>
-        public void TelnetNegotiate(TelnetCommands cmd, byte telopt)
+        public async Task TelnetNegotiateAsync(TelnetCommands cmd, byte telopt)
         {
             // get current option states
             TelnetOption option = LookupOption(telopt);
@@ -294,7 +296,7 @@ namespace Mirage.Core.IO.Net.Telnet
                     {
                         case QState.Q_NO:
                             option.LocalState = QState.Q_WANTYES;
-                            SendNegotiate(TelnetCommands.WILL, telopt);
+                            await SendNegotiateAsync(TelnetCommands.WILL, telopt);
                             break;
                         case QState.Q_WANTNO:
                             option.LocalState = QState.Q_WANTNO_OP;
@@ -311,7 +313,7 @@ namespace Mirage.Core.IO.Net.Telnet
                     {
                         case QState.Q_YES:
                             option.LocalState = QState.Q_WANTNO;
-                            SendNegotiate(TelnetCommands.WONT, telopt);
+                            await SendNegotiateAsync(TelnetCommands.WONT, telopt);
                             break;
                         case QState.Q_WANTYES:
                             option.LocalState = QState.Q_WANTYES_OP;
@@ -328,7 +330,7 @@ namespace Mirage.Core.IO.Net.Telnet
                     {
                         case QState.Q_NO:
                             option.RemoteState = QState.Q_WANTYES;
-                            SendNegotiate(TelnetCommands.DO, telopt);
+                            await SendNegotiateAsync(TelnetCommands.DO, telopt);
                             break;
                         case QState.Q_WANTNO:
                             option.RemoteState = QState.Q_WANTNO_OP;
@@ -345,7 +347,7 @@ namespace Mirage.Core.IO.Net.Telnet
                     {
                         case QState.Q_YES:
                             option.RemoteState = QState.Q_WANTNO;
-                            SendNegotiate(TelnetCommands.DONT, telopt);
+                            await SendNegotiateAsync(TelnetCommands.DONT, telopt);
                             break;
                         case QState.Q_WANTYES:
                             option.RemoteState = QState.Q_WANTYES_OP;

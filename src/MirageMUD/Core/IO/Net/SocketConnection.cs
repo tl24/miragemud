@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Mirage.Core.IO.Net
 {
@@ -73,8 +74,13 @@ namespace Mirage.Core.IO.Net
             get { return TcpClient.Client.LocalEndPoint.ToString(); }
         }
 
-        public abstract void ReadInput();
+        public virtual Task InitializeAsync()
+        {
+            return Task.CompletedTask;
+        }
 
-        public abstract void FlushOutput();
+        public abstract Task ReadInputAsync();
+
+        public abstract Task FlushOutputAsync();
     }
 }

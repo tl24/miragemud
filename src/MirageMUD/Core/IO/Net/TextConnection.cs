@@ -4,6 +4,7 @@ using Mirage.Core.Collections;
 using Mirage.Core.IO.Net.Telnet;
 using Mirage.Core.IO.Net.Telnet.Options;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Mirage.Core.IO.Net
 {
@@ -36,7 +37,7 @@ namespace Mirage.Core.IO.Net
             inputBuffer = new char[512];
             bufferLength = 0;
             //for now, just call this, not sure we need to expose it
-            Initialize();
+            //Initialize();
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace Mirage.Core.IO.Net
 
         private TelnetOptionProcessor tnHandler;
 
-        private void Initialize()
+        public override async Task InitializeAsync()
         {
             var telnetOpts = new OptionSupportList(new[] { 
                 new OptionSupportEntry(OptionCodes.NAWS, true, false),
@@ -59,10 +60,10 @@ namespace Mirage.Core.IO.Net
             tnHandler = new TelnetOptionProcessor(telnetOpts, socketStream, Logger);
             tnHandler.SubNegotiationOccurred += new EventHandler<SubNegotiationEventArgs>(tnHandler_SubNegotiationOccurred);
             tnHandler.OptionStateChanged += new EventHandler<OptionStateChangedEventArgs>(tnHandler_OptionStateChanged);
-            tnHandler.TelnetNegotiate(TelnetCommands.DO, OptionCodes.NAWS);
-            tnHandler.TelnetNegotiate(TelnetCommands.DO, OptionCodes.TTYPE);
-            tnHandler.TelnetNegotiate(TelnetCommands.WILL, OptionCodes.SGA);
-            tnHandler.TelnetNegotiate(TelnetCommands.WILL, OptionCodes.ECHO);
+            await tnHandler.TelnetNegotiateAsync(TelnetCommands.DO, OptionCodes.NAWS);
+            await tnHandler.TelnetNegotiateAsync(TelnetCommands.DO, OptionCodes.TTYPE);
+            await tnHandler.TelnetNegotiateAsync(TelnetCommands.WILL, OptionCodes.SGA);
+            await tnHandler.TelnetNegotiateAsync(TelnetCommands.WILL, OptionCodes.ECHO);
             //Write(new StringMessage(MessageType.Information, "Newline", "\r\n"));            
         }
 
@@ -101,7 +102,7 @@ namespace Mirage.Core.IO.Net
         ///     Read from the descriptor.  Returns True if successful.
         ///     Populates an internal buffer, which can be read by read_from_buffer.
         /// </summary>
-        public override void ReadInput() {
+        public override async Task ReadInputAsync() {
             int available = _client.Available;
 
             if (bufferLength == inputBuffer.Length)
@@ -111,7 +112,7 @@ namespace Mirage.Core.IO.Net
             if (available == 0)
                 available = 1;
 
-            int nRead = ReadFromSocket(available);
+            int nRead = await ReadFromSocket(available);
 
             // if we're trying to read, the socket told us there is something to read so there shouldn't be 0 bytes
             checkDisconnect = nRead == 0;
@@ -158,10 +159,10 @@ namespace Mirage.Core.IO.Net
             inputQueue.Enqueue(line);            
         }
 
-        private int ReadFromSocket(int available)
+        private async Task<int> ReadFromSocket(int available)
         {
             available = Math.Min(inputBuffer.Length - bufferLength, available);
-            char[] outBuf = tnHandler.Read(available);
+            char[] outBuf = await tnHandler.ReadAsync(available);
             Array.Copy(outBuf, 0, inputBuffer, bufferLength, outBuf.Length);
             return outBuf.Length;
         }
@@ -185,13 +186,13 @@ namespace Mirage.Core.IO.Net
         ///     Process the output waiting in the output buffer.  This
         /// Data will be sent to the socket.
         /// </summary>
-        public override void FlushOutput()
+        public override async Task FlushOutputAsync()
         {
             bool bProcess = false;
             string data;
             while (outputQueue.TryDequeue(out data))
             {
-                tnHandler.Write(data);
+                await tnHandler.WriteAsync(data);
                 bProcess = true;
             }
             if (bProcess)
@@ -204,7 +205,7 @@ namespace Mirage.Core.IO.Net
                 {
                     // if we read 0 bytes in the Read function, then try to send something to see if
                     // the connection is closed
-                    tnHandler.SendTestConnected();
+                    await tnHandler.SendTestConnectedAsync();
                     //this.socketStream.Write(new byte[1],0,1);
                     if (!this._client.Connected)
                         Close();

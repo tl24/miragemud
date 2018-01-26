@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using Castle.Core.Logging;
+using System.Threading.Tasks;
 
 namespace Mirage.Core.IO.Net
 {
@@ -24,8 +25,8 @@ namespace Mirage.Core.IO.Net
         }
 
         public ConnectionListenerBase(int port)
-        {            
-            _listener = new TcpListener(IPAddress.Any, port);
+        {
+            _listener = TcpListener.Create(port);
         }
 
         /// <summary>
@@ -66,13 +67,13 @@ namespace Mirage.Core.IO.Net
         /// returns it
         /// </summary>
         /// <returns>new client object</returns>
-        public SocketConnection Accept()
+        public async Task<SocketConnection> AcceptAsync()
         {
-            TcpClient client = _listener.AcceptTcpClient();
+            TcpClient client = await _listener.AcceptTcpClientAsync();
             Socket newSocket = client.Client;
             Logger.Info("Connection from " + client.Client.RemoteEndPoint.ToString());
             SocketConnection telnetClient = CreateClient(client);
-            //telnetClient.Initialize();
+            await telnetClient.InitializeAsync();
             return telnetClient;
         }
 

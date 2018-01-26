@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using Mirage.Core.Collections;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Mirage.Core.IO.Net
 {
@@ -61,7 +62,7 @@ namespace Mirage.Core.IO.Net
         ///     Read from the descriptor.  Returns True if successful.
         ///     Populates an internal buffer, which can be read by read_from_buffer.
         /// </summary>
-        public override void ReadInput()
+        public override Task ReadInputAsync()
         {
             int type = reader.ReadInt32();
             AdvancedMessage msg = new AdvancedMessage();
@@ -79,10 +80,11 @@ namespace Mirage.Core.IO.Net
                     throw new Exception("Unrecognized message type: " + type);
             }
             inputQueue.Enqueue(msg);
+            return Task.CompletedTask;
         }
 
 
-        public override void FlushOutput()
+        public override Task FlushOutputAsync()
         {
             bool bProcess = false;
             AdvancedMessage advMsg;
@@ -97,6 +99,7 @@ namespace Mirage.Core.IO.Net
             {
                 writer.Flush();
             }
+            return Task.CompletedTask;
         }
 
         public bool TryGetInput(out AdvancedMessage input)

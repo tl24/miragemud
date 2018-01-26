@@ -1,4 +1,6 @@
 ﻿using System.Net.Sockets;
+using System.Threading.Tasks;
+
 namespace Mirage.Core.IO.Net
 {
     public interface IConnectionListener
@@ -7,7 +9,7 @@ namespace Mirage.Core.IO.Net
         /// Accepts a new connection and creates a client for it
         /// </summary>
         /// <returns>the client connection</returns>
-        SocketConnection Accept();
+        Task<SocketConnection> AcceptAsync();
 
         /// <summary>
         /// Returns true if there are any pending connection requests
