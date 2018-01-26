@@ -22,19 +22,14 @@ namespace Mirage.Core.IO.Net
         /// tcp client (Socket)
         /// </summary>
         /// <param name="client"> the client to read and write from</param>
-        protected SocketConnection(TcpClient client)
+        protected SocketConnection(TcpClient client, Castle.Core.Logging.ILogger logger)
         {
             this._client = client;
+            Logger = logger;
         }
 
-        #region Logger
-        private Castle.Core.Logging.ILogger logger = Castle.Core.Logging.NullLogger.Instance;
-        public Castle.Core.Logging.ILogger Logger
-        {
-            get { return logger; }
-            set { logger = value; }
-        }
-        #endregion
+        
+        public Castle.Core.Logging.ILogger Logger { get; set; } = Castle.Core.Logging.NullLogger.Instance;
 
         /// <summary>
         /// Indicates if this client is still open or connected

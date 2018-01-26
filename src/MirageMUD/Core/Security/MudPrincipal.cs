@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Principal;
 
 namespace Mirage.Core.Security
@@ -18,8 +19,7 @@ namespace Mirage.Core.Security
         public const string AdministratorRole = "admin";
 
         private IIdentity _identity;
-        private IDictionary<string, bool> _roles = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
-        private bool _isAdmin = false;
+        private HashSet<string> _roles = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
         /// <summary>
         /// Creates a mud principal with an identity and no roles.
@@ -35,7 +35,7 @@ namespace Mirage.Core.Security
         /// </summary>
         /// <param name="identity">the identity for the principal object</param>
         /// <param name="roles">the roles for the principal</param>
-        public MudPrincipal(IIdentity identity, string[] roles)
+        public MudPrincipal(IIdentity identity, IEnumerable<string> roles)
             : this(identity)
         {
             AddRoles(roles);
@@ -57,12 +57,7 @@ namespace Mirage.Core.Security
         public bool IsInRole(string role)
         {
             //admin can fulfill any role
-            if (IsAdmin)
-                return true;
-
-            bool allow = false;
-            _roles.TryGetValue(role, out allow);
-            return allow;
+            return _roles.Contains(role) || IsAdmin;
         }
 
         /// <summary>
@@ -71,10 +66,7 @@ namespace Mirage.Core.Security
         /// <param name="roleName">the name of the role to add</param>
         public void AddRole(string roleName)
         {
-            if (roleName.Equals(AdministratorRole, StringComparison.CurrentCultureIgnoreCase))
-                _isAdmin = true;
-
-            _roles[roleName] = true;
+            _roles.Add(roleName);
         }
 
         /// <summary>
@@ -82,7 +74,7 @@ namespace Mirage.Core.Security
         /// that have already been added
         /// </summary>
         /// <param name="roles">the roles to add</param>
-        public void AddRoles(string[] roles)
+        public void AddRoles(IEnumerable<string> roles)
         {
             foreach (string role in roles)
                 AddRole(role);
@@ -93,8 +85,6 @@ namespace Mirage.Core.Security
         /// <param name="roleName"></param>
         public void RemoveRole(string roleName)
         {
-            if (roleName.Equals(AdministratorRole, StringComparison.CurrentCultureIgnoreCase))
-                _isAdmin = false;
             _roles.Remove(roleName);
         }
 
@@ -104,27 +94,19 @@ namespace Mirage.Core.Security
         public void Clear()
         {
             _roles.Clear();
-            _isAdmin = false;
         }
 
         /// <summary>
         /// The roles for this principal
         /// </summary>
-        public string[] Roles
-        {
-            get { 
-                string[] result = new string[_roles.Count];
-                _roles.Keys.CopyTo(result, 0);
-                return result;
-            }
-        }
+        public IEnumerable<string> Roles => _roles.ToList();
 
         /// <summary>
         /// Returns true if this user has the Administrator role
         /// </summary>
         public bool IsAdmin
         {
-            get { return _isAdmin; }
+            get { return _roles.Contains(AdministratorRole); }
         }
     }
 }

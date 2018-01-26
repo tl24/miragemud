@@ -9,9 +9,7 @@ using Mirage.Core.Security;
 using Mirage.Game.Command;
 using Mirage.Game.Communication;
 using Mirage.Game.IO.Net;
-using Mirage.Game.World.Query;
 using Mirage.Game.World.Skills;
-using Mirage.Game.Command;
 using Mirage.Core.Messaging;
 using Mirage.Core.IO.Net;
 
@@ -25,7 +23,7 @@ namespace Mirage.Game.World
     public class Player : Living, IPlayer
     {
         private MudPrincipal _principal;
-        private string[] _roles;
+        private IEnumerable<string> _roles;
         public event PlayerEventHandler PlayerEvent;
 
         /// <summary>
@@ -239,7 +237,7 @@ namespace Mirage.Game.World
         /// Gets or sets the roles that the user has. Normally one should not call set, but
         /// use the principal object to add the roles.
         /// </summary>
-        public string[] Roles
+        public IEnumerable<string> Roles
         {
             get
             {

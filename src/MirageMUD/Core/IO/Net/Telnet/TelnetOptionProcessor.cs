@@ -211,7 +211,10 @@ namespace Mirage.Core.IO.Net.Telnet
         {
             TelnetOption option = options.Find((o) => (o.OptionCode == optionValue));
             if (option == null)
+            {
                 option = new TelnetOption(this, optionValue);
+                options.Add(option);
+            }
             return option;
         }
         /// <summary>

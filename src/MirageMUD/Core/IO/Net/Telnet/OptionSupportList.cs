@@ -11,6 +11,7 @@ namespace Mirage.Core.IO.Net.Telnet
 
         public OptionSupportList(IEnumerable<OptionSupportEntry> options)
         {
+            AddRange(options);
         }
 
         public void AddRange(IEnumerable<OptionSupportEntry> options)

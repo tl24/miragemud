@@ -104,6 +104,8 @@ namespace Mirage.Core.IO.Net.Telnet
 
         public override void ProcessByte(byte telopt)
         {
+            Parent.AppendLog(telopt.ToString());
+
             // lookup the current state of the option
             TelnetOption option = Parent.LookupOption(telopt);
 

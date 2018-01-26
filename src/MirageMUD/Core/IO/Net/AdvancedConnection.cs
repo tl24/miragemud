@@ -47,8 +47,8 @@ namespace Mirage.Core.IO.Net
         /// </summary>
         protected ConcurrentQueue<AdvancedMessage> outputQueue;
 
-        public AdvancedConnection(TcpClient client)
-            : base(client)
+        public AdvancedConnection(TcpClient client, Castle.Core.Logging.ILogger logger)
+            : base(client, logger)
         {
             inputQueue = new ConcurrentQueue<AdvancedMessage>();
             outputQueue = new ConcurrentQueue<AdvancedMessage>();

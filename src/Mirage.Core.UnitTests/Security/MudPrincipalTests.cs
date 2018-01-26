@@ -1,6 +1,7 @@
 using System.Security.Principal;
 using Mirage.Core.Security;
 using NUnit.Framework;
+using System.Linq;
 
 namespace NUnitTests.Security
 {
@@ -19,7 +20,7 @@ namespace NUnitTests.Security
         public void TestNoDefaultRoles()
         {
             MudPrincipal p = new MudPrincipal(identity);
-            Assert.AreEqual(0, p.Roles.Length, "should not have roles");
+            Assert.AreEqual(0, p.Roles.Count(), "should not have roles");
             Assert.IsFalse(p.IsInRole("default"), "IsInRole should return false when no roles");
         }
 

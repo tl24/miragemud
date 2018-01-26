@@ -26,8 +26,8 @@ namespace Mirage.Core.IO.Net
         /// </summary>
         protected int bufferLength;
 
-        public TextConnection(TcpClient client)
-            : base(client)
+        public TextConnection(TcpClient client, Castle.Core.Logging.ILogger logger)
+            : base(client, logger)
         {
             socketStream = _client.GetStream();
             inputQueue = new ConcurrentQueue<string>();
@@ -67,7 +67,7 @@ namespace Mirage.Core.IO.Net
         }
 
         void tnHandler_OptionStateChanged(object sender, OptionStateChangedEventArgs e)
-        {
+       { 
             /*
             if (e.Option == OptionCodes.TTYPE && e.Enabled)
             {
